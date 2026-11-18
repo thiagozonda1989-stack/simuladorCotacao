@@ -92,7 +92,8 @@ class Order:
 
 
 class Engine:
-    def __init__(self, program, frame, tick, overrides, seconds, point_value):
+    def __init__(self, program, frame, tick, overrides, seconds, point_value,
+                 series_data=None, history=None, days=None):
         self.program, self.frame, self.tick = program, frame, float(tick)
         if not math.isfinite(self.tick) or self.tick <= 0:
             raise ValueError("O tick precisa ser positivo.")
@@ -103,20 +104,9 @@ class Engine:
         self.arrays = {symbol.slot: [0.0]*(program.defaults[symbol.slot][1]-program.defaults[symbol.slot][0]+1)
                        for symbol in program.symbols.values() if symbol.kind == "array"}
         self.loop_budget = 0
-        self.series_data = {}
-        required = {name: SERIES[name] for name in program.used & SERIES.keys()}
-        for name, column in (("totalbuyqtd","v_qtd_compra_book"),
-                             ("totalsellqtd","v_qtd_venda_book")):
-            if name in program.used:
-                required[name] = column
-        required.update({key: SERIES[key] for key in ("open","high","low","close")})
-        for name, column in required.items():
-            if column not in frame:
-                raise ValueError(f"{name} precisa da coluna {column} no CSV.")
-            values = pd.to_numeric(frame[column], errors="raise").to_numpy(dtype=float)
-            if not np.isfinite(values).all():
-                raise ValueError(f"A coluna {column} contém dados ausentes ou inválidos.")
-            self.series_data[name] = values
+        self.series_data = (self.prepare_series(program, frame) if series_data is None else series_data)
+        self.days = frame["pregao"].to_numpy() if days is None else days
+        self.checkpoint = None
         for name, value in overrides.items():
             name = name.lower()
             if name not in program.inputs:
@@ -126,7 +116,7 @@ class Engine:
             self.values[program.symbols[name].slot] = value
         self.ignored_asset = any(symbol.kind == "asset" for symbol in program.symbols.values())
         self.seconds = seconds
-        self.history = np.empty((len(frame),len(self.values)), dtype=float)
+        self.history = np.empty((len(frame),len(self.values)), dtype=float) if history is None else history
         self.variable_slots = [s.slot for s in program.symbols.values()
                                if s.kind in {"float","real","boolean","integer"}]
         self.row = self.cursor = self.session_start = 0
@@ -140,6 +130,24 @@ class Engine:
         self.rolling = {}
         self.ambiguities = 0
         self.entry_intentions = set()
+
+    @staticmethod
+    def prepare_series(program, frame):
+        series_data = {}
+        required = {name: SERIES[name] for name in program.used & SERIES.keys()}
+        for name, column in (("totalbuyqtd","v_qtd_compra_book"),
+                             ("totalsellqtd","v_qtd_venda_book")):
+            if name in program.used:
+                required[name] = column
+        required.update({key: SERIES[key] for key in ("open","high","low","close")})
+        for name, column in required.items():
+            if column not in frame:
+                raise ValueError(f"{name} precisa da coluna {column} no CSV.")
+            values = pd.to_numeric(frame[column], errors="raise").to_numpy(dtype=float)
+            if not np.isfinite(values).all():
+                raise ValueError(f"A coluna {column} contém dados ausentes ou inválidos.")
+            series_data[name] = values
+        return series_data
 
     def series(self, name, offset=0):
         index = self.cursor - self.integer(offset,0)
@@ -170,6 +178,8 @@ class Engine:
 
     def loop_step(self):
         self.loop_budget -= 1
+        if self.checkpoint and self.loop_budget % 1024 == 0:
+            self.checkpoint()
         if self.loop_budget < 0:
             raise NTSLError("limite de 100.000 iterações por candle atingido.")
 
@@ -427,7 +437,7 @@ class Engine:
                            if not item.action.startswith("exit")}
             if not self.position:
                 self.basis = 0.0
-        self.fills.append(dict(barra=self.row+1,pregao=self.frame["pregao"].iat[self.row],
+        self.fills.append(dict(barra=self.row+1,pregao=self.days[self.row],
                                ordem=order.function,acao=action,preco=price,quantidade=quantity,
                                pontos_contrato=pnl,posicao=self.position, tipo=order.kind))
 
@@ -454,14 +464,17 @@ class Engine:
                 self.orders.pop(key,None)
                 self.execute(order,fill)
 
-    def run(self, record_trace=True, on_progress=None):
-        days = self.frame["pregao"].to_numpy()
+    def run(self, record_trace=True, on_progress=None, checkpoint=None):
+        self.checkpoint = checkpoint
+        days = self.days
         var_slots = self.variable_slots
         var_set = set(var_slots)
         constants = [(idx,val) for idx,val in enumerate(self.values) if idx not in var_set]
         numeric_constants = [(idx,0.0 if isinstance(val,(tuple,str)) else val) for idx,val in constants]
         last_update = 0.0
         for row in range(len(self.frame)):
+            if checkpoint and row % 64 == 0:
+                checkpoint()
             self.row = self.cursor = row
             if row==0 or days[row]!=days[row-1]:
                 self.session_start = row
@@ -496,12 +509,14 @@ class Engine:
                                "posicao":self.position,"pontos_contrato_acumulados":self.realized,**self.plots})
 
 
-def run_strategy(csv, source, output, seconds, format_name, tick, overrides=None, point_value=1, on_progress=None):
+def run_strategy(csv, source, output, seconds, format_name, tick, overrides=None, point_value=1, on_progress=None, checkpoint=None):
     program = compile_ntsl(source)
     format_name = csv_format(csv, format_name)
     frame = load_bars(csv,seconds,format_name)
     engine = Engine(program,frame,tick,overrides or {},seconds,point_value)
-    engine.run(on_progress=on_progress)
+    engine.run(on_progress=on_progress, checkpoint=checkpoint)
+    if checkpoint:
+        checkpoint()
     if on_progress:
         on_progress(dict(etapa="relatorio", barras=len(frame), barras_total=len(frame),
                          resultado=engine.realized, preenchimentos=len(engine.fills)))
@@ -593,6 +608,9 @@ class StrategyReplay:
         self.tick, self.point_value = tick, point_value
         self.day = frame["pregao"].to_numpy()
         self.defaults = program.inputs
+        self.in_memory = False
+        self.prepared_series = None
+        self.history_buffer = None
         if self.specification.get("modo") == "resultado":
             self.label, self.valid_label = np.zeros(len(frame), bool), np.ones(len(frame), bool)
         else:
@@ -602,9 +620,15 @@ class StrategyReplay:
         return StrategyReplay(self.frame.loc[mask].reset_index(drop=True), self.program, self.seconds,
                               self.target, self.specification, self.excluded, self.tick, self.point_value)
 
-    def score(self, parameters):
-        engine = Engine(self.program, self.frame, self.tick, parameters, self.seconds, self.point_value)
-        engine.run(record_trace=False)
+    def score(self, parameters, checkpoint=None):
+        if self.in_memory and self.prepared_series is None:
+            self.prepared_series = Engine.prepare_series(self.program, self.frame)
+            self.history_buffer = np.empty((len(self.frame), len(self.program.defaults)), dtype=float)
+        engine = Engine(self.program, self.frame, self.tick, parameters, self.seconds, self.point_value,
+                        series_data=self.prepared_series, history=self.history_buffer, days=self.day)
+        engine.run(record_trace=False, checkpoint=checkpoint)
+        if checkpoint:
+            checkpoint()
         scores = np.zeros((len(self.frame), 4))
         for fill in engine.fills:
             row = scores[fill["barra"]-1]

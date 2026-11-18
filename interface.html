@@ -81,7 +81,10 @@ progress{display:block;width:100%;height:12px;accent-color:var(--accent);margin:
 <div class="field"><label for="opcoes" id="titulo-opcoes">Substituição de inputs (JSON)</label><textarea id="opcoes" spellcheck="false">{}</textarea><small id="ajuda-opcoes">Use {} para aplicar os valores do código. Exemplo de ajuste: {"p_Lote": 2}.</small></div>
 <div class="actions"><button class="primary" id="executar" type="submit">Executar</button></div>
 </section>
-<section class="panel result"><h2>Resultado</h2><p id="situacao" role="status" aria-live="polite">Aguardando dados e estratégia.</p><section id="execucao-parcial" hidden>
+<section class="panel result"><h2>Resultado</h2><p id="situacao" role="status" aria-live="polite">Aguardando dados e estratégia.</p><div id="controle-execucao" class="acoes" hidden>
+<button type="button" id="pausar-processamento">Pausar</button>
+<button type="button" id="cancelar-processamento">Cancelar processamento</button>
+</div><section id="execucao-parcial" hidden>
 <progress id="barra-execucao" aria-label="Progresso da execução"></progress>
 <p id="contagem-execucao"></p>
 <dl id="metricas-parciais"></dl>
@@ -407,12 +410,45 @@ function showPartial(state) {
     if (leader) writePairs("parametros-parciais", Object.entries(leader.parametros)
         .map(([key,value]) => [key,String(value)]));
 }
+let currentExecution = null;
+let controlPending = false;
+function updateControls(state) {
+    currentExecution = state.estado === "executando" ? state : null;
+    $("controle-execucao").hidden = !currentExecution;
+    $("pausar-processamento").textContent = state.pausado ? "Retomar" : "Pausar";
+    for (const id of ["pausar-processamento","cancelar-processamento"]) {
+        $(id).disabled = !currentExecution || Boolean(state.cancelando) || controlPending;
+    }
+}
+async function controlExecution(command) {
+    if (!currentExecution || controlPending) return;
+    const state = currentExecution;
+    controlPending = true;
+    updateControls(state);
+    try {
+        await post(command, JSON.stringify({id:state.id}), "application/json", {}, 1);
+        if (command === "cancelar") state.cancelando = true;
+        else state.pausado = command === "pausar";
+    } catch (error) {
+        show(error.message);
+    } finally {
+        controlPending = false;
+        updateControls(currentExecution ?? {});
+    }
+}
+$("pausar-processamento").addEventListener("click", () =>
+    controlExecution(currentExecution?.pausado ? "retomar" : "pausar"));
+$("cancelar-processamento").addEventListener("click", () => controlExecution("cancelar"));
+
 async function poll(failures = 0) {
     try {
         const response = await localFetch("estado");
         if (!response.ok) throw Error("A consulta de andamento retornou HTTP " + response.status + ".");
         const state = await response.json();
         showPartial(state);
+        updateControls(state);
+        if (state.cancelando) show("Cancelando o processamento…");
+        else if (state.pausado) show("Pausa solicitada · retome para continuar");
         if (state.graficos) $("andamento").innerHTML = state.graficos;
         if (state.estado === "executando") {
             timer = setTimeout(poll,1200);
@@ -422,6 +458,8 @@ async function poll(failures = 0) {
                 show("Execução concluída.\n" + state.pasta);
                 $("relatorio").href = endpoint("resultados/"+state.id+"/relatorio.html");
                 $("relatorio").hidden = false;
+            } else if (state.estado === "cancelado") {
+                show("Processamento cancelado.");
             } else {
                 show(state.mensagem || "Aguardando dados e estratégia.");
             }
@@ -443,6 +481,7 @@ $("form").addEventListener("submit", async event => {
     $("relatorio").hidden = true;
     $("andamento").replaceChildren();
     $("execucao-parcial").hidden = true;
+    updateControls({});
     try {
         const options = {
             modo:$("modo").value, csv:$("csv").files[0].name, ntsl:$("ntsl").value,

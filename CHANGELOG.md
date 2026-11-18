@@ -1,5 +1,11 @@
 # Histórico de versões
 
+## 0.5.3
+
+- Pausa, retomada e cancelamento cooperativos no replay e na otimização.
+- Reuso em RAM das séries e do histórico entre candidatos NTSL no modo máximo.
+- Cache do Ensemble dimensionado pela RAM disponível após a reserva do sistema e dos trabalhadores.
+
 ## 0.5.2
 
 - Progresso durante cada geração com métricas e parâmetros do melhor candidato até o momento.

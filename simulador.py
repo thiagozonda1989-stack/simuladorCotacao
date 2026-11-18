@@ -180,7 +180,9 @@ class Replay:
         return (s.groupby(self.segment, sort=False).rolling(int(n)).mean()
                 .reset_index(level=0, drop=True).reindex(s.index))
 
-    def score(self, params):
+    def score(self, params, checkpoint=None):
+        if checkpoint:
+            checkpoint()
         f, lag, sma = self.frame, self.lag, self.sma
         o, h, l, c = (f[k] for k in OHLC)
         trades, buy, sell = (f[k] for k in ('v_trades_atual', 'v_agressao_compra', 'v_agressao_venda'))
@@ -242,6 +244,8 @@ class Replay:
         result = np.full(len(f), self.model.bias)
         rows = np.flatnonzero(valid)
         for tree in self.trees:
+            if checkpoint:
+                checkpoint()
             add_tree(tree, rows, features, result)
         result[~valid] = np.nan
         return result
@@ -326,15 +330,16 @@ def strategy_metrics(ys, score, side, financial, trade_score=None):
     return result | dict(resultado=pnl, drawdown=drawdown,
                          resultado_menos_drawdown=pnl-drawdown, saidas=int(trade_score[:,3].sum()))
 
-def init_replay_worker(replay, mask, side, financial):
-    global worker_replay, worker_mask, worker_side, worker_financial
+def init_replay_worker(replay, mask, side, financial, control):
+    global worker_replay, worker_mask, worker_side, worker_financial, worker_control
     worker_replay, worker_mask = replay, mask
     worker_side, worker_financial = side, financial
+    worker_control = control
 
 
 def evaluate_replay_worker(parameters):
     try:
-        score = worker_replay.score(parameters)
+        score = worker_replay.score(parameters, worker_control.checkpoint if worker_control else None)
         return strategy_metrics(worker_replay.label[worker_mask], score[worker_mask],
                                 worker_side, worker_financial, score)
     except (ValueError, TypeError, ArithmeticError) as error:
@@ -364,14 +369,17 @@ def parallel_replays(executor, entries, parameters, workers, deadline, record, m
             stats = future.result()
             fitness = stats[metric] if stats.get('sinais', -1) >= minimum_signals else -math.inf
             record({genome: (fitness, stats)})
-            if deadline is not None and time.monotonic() >= deadline:
+            if deadline():
                 deadline_hit = True
             else:
                 submit()
     return deadline_hit
 
 
-def optimize(replay, config, out, on_progress=None, on_resources=None, on_partial=None):
+def optimize(replay, config, out, on_progress=None, on_resources=None, on_partial=None, control=None):
+    checkpoint = control.checkpoint if control else None
+    if checkpoint:
+        checkpoint()
     cfg = config['genetico']
     generic = not isinstance(replay, Replay)
     defaults = replay.defaults if generic else replay.model.defaults
@@ -452,22 +460,40 @@ def optimize(replay, config, out, on_progress=None, on_resources=None, on_partia
             worker_estimate += n * (8*len(replay.program.defaults) + 512)
         reserve = max(512*1024**2, available//5) if available else 0
         usable = max(0, available-reserve) if available else None
-        budget = 0 if generic or usable is None else usable//4
+        budget = 0
         workers = min(cores, population, 61 if os.name == 'nt' and generic else cores)
         if usable is not None:
-            workers = min(workers, max(1, (usable-budget)//worker_estimate))
+            workers = min(workers, max(1, usable//worker_estimate))
+            if not generic:
+                budget = max(0, usable-workers*worker_estimate)
+        if generic:
+            replay.in_memory = search_replay.in_memory = True
     processes = generic and maximize and workers > 1
     resources = dict(recursos_maximos=maximize, modo_paralelo='processos' if processes else 'threads',
                      trabalhadores=workers, nucleos_logicos=cores,
                      ram_disponivel_mb=round(available/1024**2) if available is not None else None,
                      estimativa_por_trabalhador_mb=round(worker_estimate/1024**2, 1),
-                     cache_ram_mb=budget/1024**2)
+                     cache_ram_mb=budget/1024**2,
+                     series_em_ram=generic and maximize,
+                     historico_por_worker_mb=round(n*8*len(replay.program.defaults)/1024**2,2)
+                     if generic and maximize else 0)
     if on_resources:
         on_resources(resources)
     rng = random.Random(cfg['semente'])
     scores = OrderedDict()
     history, seen = [], {}
     clock = time.monotonic()
+    prior_paused = control.paused_seconds if control else 0.0
+
+    def elapsed_search():
+        if control:
+            return control.elapsed(clock, prior_paused)
+        return time.monotonic()-clock
+
+    def time_limit_reached():
+        if checkpoint:
+            checkpoint()
+        return bool(seconds and elapsed_search() >= seconds)
 
     def parameters(genome):
         return defaults | dict(zip(keys, genome))
@@ -501,7 +527,7 @@ def optimize(replay, config, out, on_progress=None, on_resources=None, on_partia
 
     def run_group(genome, members, cache_hit):
         try:
-            score = cache_hit if cache_hit is not None else search_replay.score(parameters(genome))
+            score = cache_hit if cache_hit is not None else search_replay.score(parameters(genome), checkpoint)
         except (ValueError, TypeError, ArithmeticError) as error:
             if not generic:
                 raise
@@ -564,10 +590,12 @@ def optimize(replay, config, out, on_progress=None, on_resources=None, on_partia
     reason = 'limite de gerações'
     pool = (ProcessPoolExecutor(max_workers=workers, mp_context=get_context('spawn'),
                                initializer=init_replay_worker,
-                               initargs=(search_replay, local_mask, side, financial))
+                               initargs=(search_replay, local_mask, side, financial, control))
             if processes else ThreadPoolExecutor(max_workers=workers))
     with pool as executor:
         for generation in range(1, generations+1):
+            if checkpoint:
+                checkpoint()
             groups = {}
             for genome in candidates:
                 if genome not in seen:
@@ -577,14 +605,14 @@ def optimize(replay, config, out, on_progress=None, on_resources=None, on_partia
             report_partial('busca')
             deadline_hit = False
             if processes:
-                if seconds and seen and time.monotonic()-clock >= seconds:
+                if seen and time_limit_reached():
                     deadline_hit = True
                 else:
                     deadline_hit = parallel_replays(executor, entries, parameters, workers,
-                                                    clock+seconds if seconds else None,
+                                                    time_limit_reached,
                                                     record, metric, minimum_signals)
             for start in range(0, 0 if processes else len(entries), workers):
-                if seconds and seen and time.monotonic()-clock >= seconds:
+                if seen and time_limit_reached():
                     deadline_hit = True
                     break
                 futures = {}
@@ -616,7 +644,7 @@ def optimize(replay, config, out, on_progress=None, on_resources=None, on_partia
                 best, best_value, unchanged = winner, seen[winner][0], 0
             else:
                 unchanged += 1
-            elapsed = round(time.monotonic()-clock, 2)
+            elapsed = round(elapsed_search(), 2)
             history.append(dict(geracao=generation, aptidao=best_value if math.isfinite(best_value) else None, avaliados=len(seen), segundos=elapsed)
                            | seen[best][1] | dict(zip((f"input:{name}" for name in names), best)))
             if on_progress:
@@ -641,13 +669,15 @@ def optimize(replay, config, out, on_progress=None, on_resources=None, on_partia
     fitted = parameters(best)
     optimized = dict(zip(names, best))
     try:
-        original_score = replay.score(defaults)
+        original_score = replay.score(defaults, checkpoint)
     except (ValueError, TypeError, ArithmeticError) as error:
         if not generic:
             raise
         raise ValueError(f"A estratégia com os inputs originais falhou: {error}") from error
     scores.clear()
-    best_score = replay.score(fitted)
+    best_score = original_score if fitted == defaults else replay.score(fitted, checkpoint)
+    if checkpoint:
+        checkpoint()
     report_partial('relatorio')
     pred = predictions(fitted, best_score)
     baseline = predictions(defaults, original_score)
@@ -695,6 +725,8 @@ def optimize(replay, config, out, on_progress=None, on_resources=None, on_partia
         warning = 'Nenhum candidato cumpriu o mínimo de sinais na busca.'
     else:
         warning = 'A avaliação reaproveita o score do ensemble. A configuração não é exportada como NTSL quando muda o alvo ou remove árvores.'
+    if checkpoint:
+        checkpoint()
     write_html(out, summary, warning, history, names)
     print(f'Relatório: {out/"relatorio.html"}')
 

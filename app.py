@@ -16,6 +16,7 @@ from threading import Lock, Thread
 from urllib.parse import urlsplit
 import webbrowser
 
+from controle import ProcessingCancelled, ProcessingControl
 from diagnostico import charts
 from estrategia import csv_format, main as strategy_cli, run_strategy, strategy_replay
 from simulador import NTSLModel, Replay, main as simulator_cli, optimize, read_export, validate_ohlc
@@ -49,6 +50,7 @@ class Workspace:
         self.upload_transfer = None
         self.last_request = None
         self.started_at = None
+        self.control = None
         self.job = {"estado": "pronto"}
         self.lock = Lock()
 
@@ -142,20 +144,35 @@ class Workspace:
             self.pending_input = None
             if self.upload_transfer and self.upload_transfer[1] == path:
                 self.upload_transfer = None
+            self.control = ProcessingControl()
             self.started_at = monotonic()
             self.job = {"estado": "executando", "id": name, "parcial": {"etapa":"preparacao"}}
             self.last_request = request
             Thread(target=self.run,args=(path,name,options),daemon=True).start()
             return name
 
+    def control_job(self, job_id, command):
+        with self.lock:
+            if self.job.get("id") != job_id or self.job["estado"] != "executando":
+                raise ValueError("Esta execução já terminou ou não está ativa.")
+            if command == "cancelar":
+                self.control.cancel()
+            elif not self.control.cancelled.is_set():
+                if command == "pausar":
+                    self.control.pause()
+                else:
+                    self.control.resume()
+
     def run(self, csv, name, options):
         destination = self.output/name
+        control = self.control
         try:
+            control.checkpoint()
             if options["modo"] == "estrategia":
                 def replay_progress(snapshot):
                     self.job = self.job | {"parcial": snapshot}
                 run_strategy(csv,options["ntsl"], destination,int(options["segundos"]),
-                             options["formato"],float(options["tick"]),options["opcoes"],float(options.get("valor_ponto",1)), on_progress=replay_progress)
+                             options["formato"],float(options["tick"]),options["opcoes"],float(options.get("valor_ponto",1)), on_progress=replay_progress, checkpoint=control.checkpoint)
             elif options["modo"] == "otimizar":
                 requested = options["formato"]
                 config = options["opcoes"]
@@ -187,15 +204,26 @@ class Workspace:
                 def partial(snapshot):
                     self.job = self.job | {"parcial": snapshot}
 
-                optimize(replay, config, destination, progress, resources, partial)
+                optimize(replay, config, destination, progress, resources, partial, control)
             else:
                 raise ValueError("Modo de execução desconhecido.")
+            control.checkpoint()
+            outcome = {"estado":"concluido", "pasta":str(destination)}
+        except ProcessingCancelled:
+            outcome = {"estado":"cancelado"}
         except Exception as error:
-            self.job = self.job | {"estado":"erro","mensagem":str(error),"segundos":round(monotonic()-self.started_at)}
-        else:
-            self.job = self.job | {"estado":"concluido","pasta":str(destination),"segundos":round(monotonic()-self.started_at)}
+            outcome = {"estado":"erro", "mensagem":str(error)}
         finally:
-            csv.unlink(missing_ok=True)
+            try:
+                csv.unlink(missing_ok=True)
+            finally:
+                with self.lock:
+                    if control.cancelled.is_set():
+                        # O diretório pertence a esta execução e o relatório pode estar incompleto.
+                        if destination.is_dir():
+                            shutil.rmtree(destination, ignore_errors=True)
+                        outcome = {"estado":"cancelado"}
+                    self.job = self.job | outcome | {"segundos": round(control.elapsed(self.started_at))}
 
 
 def build_handler(workspace):
@@ -230,9 +258,13 @@ def build_handler(workspace):
             if path == "/":
                 self.send_bytes((APP/"interface.html").read_bytes(),"text/html; charset=utf-8")
             elif path == "/estado":
-                job = workspace.job
-                if job["estado"] == "executando":
-                    job = job | {"segundos": round(monotonic()-workspace.started_at)}
+                with workspace.lock:
+                    job = workspace.job
+                    if job["estado"] == "executando":
+                        control = workspace.control
+                        job = job | {"segundos": round(control.elapsed(workspace.started_at)),
+                                     "pausado": control.paused_at is not None,
+                                     "cancelando": control.cancelled.is_set()}
                 self.json(job)
             elif path == "/modelo-exemplo":
                 self.send_bytes((APP/"modelo_profit.ntsl").read_bytes(),"text/plain; charset=utf-8")
@@ -264,7 +296,7 @@ def build_handler(workspace):
 
         def do_POST(self):
             path = self.route()
-            if path not in {"/csv","/csv-bloco","/executar","/encerrar"}:
+            if path not in {"/csv","/csv-bloco","/executar","/encerrar","/pausar","/retomar","/cancelar"}:
                 self.send_error(HTTPStatus.NOT_FOUND)
                 return
             try:
@@ -275,7 +307,14 @@ def build_handler(workspace):
                     Thread(target=self.server.shutdown, daemon=True).start()
                     return
                 length = int(self.headers.get("Content-Length","0"))
-                if path == "/csv":
+                if path in {"/pausar","/retomar","/cancelar"}:
+                    if not 0 < length <= 512:
+                        raise ValueError("Identificação da execução inválida.")
+                    data = json.loads(self.rfile.read(length))
+                    if not isinstance(data, dict):
+                        raise ValueError("Identificação da execução inválida.")
+                    workspace.control_job(data.get("id"), path[1:])
+                elif path == "/csv":
                     workspace.upload(self.rfile,length)
                 elif path == "/csv-bloco":
                     self.connection.settimeout(35)

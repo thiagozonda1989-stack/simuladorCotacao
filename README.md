@@ -1,4 +1,4 @@
-# simuladorCotacao 0.5.2
+# simuladorCotacao 0.5.3
 
 [Histórico de alterações](CHANGELOG.md) · [Manutenção e hashes dos pacotes](MANUTENCAO.md)
 
@@ -111,7 +111,7 @@ Em Linux, use Python 3.11+ e um toolchain MinGW-w64 x64. Baixe a distribuição 
 
 ```bash
 python -m pip download --only-binary=:all: --platform win_amd64 --python-version 312 -r windows/requirements.lock -d wheels
-python windows/package.py --python-win python-3.12.10-embed-amd64.zip --wheels wheels --saida simuladorCotacao-v0.5.2-win64.zip
+python windows/package.py --python-win python-3.12.10-embed-amd64.zip --wheels wheels --saida simuladorCotacao-v0.5.3-win64.zip
 ```
 
 Para desenvolver ou testar com o seu Python local, instale `requirements.txt` e rode `python app.py`. Para um comando de terminal no código-fonte, use `python app.py --cli estrategia --help`.
@@ -123,3 +123,9 @@ Se uma aba antiga perder a conexão, abra novamente o executável e use a nova a
 ### Acompanhamento durante a execução
 
 Na busca genética, acompanhe a geração, os candidatos concluídos e os melhores parâmetros assim que termina cada avaliação. As métricas parciais usam o conjunto de busca. A validação cronológica tem uma etapa separada e seus resultados aparecem no relatório. No replay direto, acompanhe as barras processadas, as ordens executadas e o resultado bruto realizado.
+
+### Pausar, retomar e cancelar
+
+Durante a busca ou o replay, os controles ficam junto ao progresso. A pausa mantém a execução e os resultados parciais na memória e não conta para o limite de tempo da busca. Cancelar interrompe a execução e mantém as métricas parciais na tela. As ações são aplicadas no próximo ponto de parada do motor. Leitura de arquivos, cálculos vetorizados e escrita de relatórios podem levar alguns instantes para responder.
+
+Em **Usar recursos máximos**, cada processo NTSL reaproveita as séries numéricas do CSV e a matriz de histórico entre candidatos. O Ensemble destina a RAM restante ao cache de scores, depois de calcular a reserva do sistema e a memória estimada dos trabalhadores. A RAM ocupada depende do tamanho do CSV, do modelo e da quantidade de avaliações úteis.
