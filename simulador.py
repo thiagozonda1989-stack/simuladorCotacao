@@ -1,7 +1,7 @@
 """Reconstrução OHLC e otimização cronológica do classificador NTSL."""
 import argparse
 from collections import OrderedDict
-from concurrent.futures import FIRST_COMPLETED, ProcessPoolExecutor, ThreadPoolExecutor, as_completed, wait
+from concurrent.futures import FIRST_COMPLETED, ProcessPoolExecutor, ThreadPoolExecutor, wait
 from datetime import datetime
 from decimal import Decimal
 import html
@@ -346,7 +346,7 @@ def evaluate_replay_worker(parameters):
         return {"erro": str(error)}
 
 
-def parallel_replays(executor, entries, parameters, workers, deadline, record, metric, minimum_signals):
+def parallel_replays(executor, entries, parameters, workers, deadline, record, metric, minimum_signals, checkpoint):
     remaining = iter(entries)
     active = {}
 
@@ -363,7 +363,9 @@ def parallel_replays(executor, entries, parameters, workers, deadline, record, m
             break
     deadline_hit = False
     while active:
-        finished, _ = wait(active, return_when=FIRST_COMPLETED)
+        finished, _ = wait(active, timeout=.2 if checkpoint else None, return_when=FIRST_COMPLETED)
+        if checkpoint:
+            checkpoint()
         for future in finished:
             genome = active.pop(future)
             stats = future.result()
@@ -376,10 +378,11 @@ def parallel_replays(executor, entries, parameters, workers, deadline, record, m
     return deadline_hit
 
 
-def optimize(replay, config, out, on_progress=None, on_resources=None, on_partial=None, control=None):
-    checkpoint = control.checkpoint if control else None
-    if checkpoint:
-        checkpoint()
+def optimize(replay, config, out, on_progress=None, on_resources=None, on_partial=None, control=None, session=None):
+    worker_checkpoint = control.checkpoint if control else None
+    checkpoint = (lambda: session.checkpoint(control)) if session else worker_checkpoint
+    if control and (not session or control.cancelled.is_set()):
+        control.checkpoint()
     cfg = config['genetico']
     generic = not isinstance(replay, Replay)
     defaults = replay.defaults if generic else replay.model.defaults
@@ -482,13 +485,14 @@ def optimize(replay, config, out, on_progress=None, on_resources=None, on_partia
     rng = random.Random(cfg['semente'])
     scores = OrderedDict()
     history, seen = [], {}
+    restored = session.resume if session and session.resume else {}
     clock = time.monotonic()
     prior_paused = control.paused_seconds if control else 0.0
 
     def elapsed_search():
         if control:
-            return control.elapsed(clock, prior_paused)
-        return time.monotonic()-clock
+            return restored.get("segundos",0) + control.elapsed(clock, prior_paused)
+        return restored.get("segundos",0) + time.monotonic()-clock
 
     def time_limit_reached():
         if checkpoint:
@@ -527,7 +531,7 @@ def optimize(replay, config, out, on_progress=None, on_resources=None, on_partia
 
     def run_group(genome, members, cache_hit):
         try:
-            score = cache_hit if cache_hit is not None else search_replay.score(parameters(genome), checkpoint)
+            score = cache_hit if cache_hit is not None else search_replay.score(parameters(genome), worker_checkpoint)
         except (ValueError, TypeError, ArithmeticError) as error:
             if not generic:
                 raise
@@ -561,8 +565,35 @@ def optimize(replay, config, out, on_progress=None, on_resources=None, on_partia
                      else pool[0] for key, pool in zip(keys, pools))
     candidates = populate([original])
     best, best_value, unchanged = None, -math.inf, 0
-    partial_best = None
-    failed_candidates = 0
+    generation_start = 1
+    phase = 'busca'
+    reason = 'limite de gerações'
+    if restored:
+        generation_start = restored["geracao"]
+        candidates = [tuple(item) for item in restored["candidatos"]]
+        history = restored["historico"]
+        for genome, fitness, stats in restored["avaliados"]:
+            seen[tuple(genome)] = (-math.inf if fitness is None else fitness, stats)
+        best = tuple(restored["melhor"]) if restored["melhor"] is not None else None
+        best_value = seen[best][0] if best is not None else -math.inf
+        unchanged = restored["sem_melhora"]
+        state = restored["rng"]
+        rng.setstate((state[0],tuple(state[1]),state[2]))
+        phase, reason = restored["fase"], restored["motivo"]
+    generation = generation_start
+    completed = sum(genome in seen for genome in candidates)
+    if session:
+        def snapshot():
+            return dict(geracao=generation, candidatos=candidates, historico=history,
+                        avaliados=[(genome, fitness if math.isfinite(fitness) else None, stats)
+                                   for genome,(fitness,stats) in seen.items()],
+                        melhor=best, sem_melhora=unchanged, rng=rng.getstate(),
+                        fase=phase, motivo=reason, segundos=elapsed_search()), None
+        session.snapshot = snapshot
+
+    partial_best = max((genome for genome in seen if math.isfinite(seen[genome][0])),
+                       key=lambda genome: seen[genome][0],default=None)
+    failed_candidates = sum('erro' in stats for _,stats in seen.values())
 
     def report_partial(stage):
         if not on_partial:
@@ -586,14 +617,14 @@ def optimize(replay, config, out, on_progress=None, on_resources=None, on_partia
                 if math.isfinite(fitness) and (partial_best is None or fitness > seen[partial_best][0]):
                     partial_best = genome
             report_partial('busca')
-
-    reason = 'limite de gerações'
+        if session:
+            session.service()
     pool = (ProcessPoolExecutor(max_workers=workers, mp_context=get_context('spawn'),
                                initializer=init_replay_worker,
                                initargs=(search_replay, local_mask, side, financial, control))
             if processes else ThreadPoolExecutor(max_workers=workers))
     with pool as executor:
-        for generation in range(1, generations+1):
+        for generation in range(generation_start, generations+1) if phase == "busca" else ():
             if checkpoint:
                 checkpoint()
             groups = {}
@@ -610,7 +641,7 @@ def optimize(replay, config, out, on_progress=None, on_resources=None, on_partia
                 else:
                     deadline_hit = parallel_replays(executor, entries, parameters, workers,
                                                     time_limit_reached,
-                                                    record, metric, minimum_signals)
+                                                    record, metric, minimum_signals, checkpoint)
             for start in range(0, 0 if processes else len(entries), workers):
                 if seen and time_limit_reached():
                     deadline_hit = True
@@ -621,15 +652,20 @@ def optimize(replay, config, out, on_progress=None, on_resources=None, on_partia
                     if hit is not None:
                         scores.move_to_end(key)
                     futures[executor.submit(run_group, members[0], members, hit)] = key
-                for future in as_completed(futures):
-                    key = futures[future]
-                    score, results = future.result()
-                    record(results)
-                    if score is not None and score.nbytes <= budget:
-                        scores[key] = score
-                        scores.move_to_end(key)
-                        while len(scores)*score.nbytes > budget:
-                            scores.popitem(last=False)
+                pending = set(futures)
+                while pending:
+                    done, pending = wait(pending, timeout=.2 if checkpoint else None, return_when=FIRST_COMPLETED)
+                    if checkpoint:
+                        checkpoint()
+                    for future in done:
+                        key = futures[future]
+                        score, results = future.result()
+                        record(results)
+                        if score is not None and score.nbytes <= budget:
+                            scores[key] = score
+                            scores.move_to_end(key)
+                            while len(scores)*score.nbytes > budget:
+                                scores.popitem(last=False)
             available_candidates = [g for g in candidates if g in seen and "erro" not in seen[g][1]]
             ranked = sorted(available_candidates, key=lambda g: seen[g][0], reverse=True)
             if not ranked:
@@ -665,6 +701,9 @@ def optimize(replay, config, out, on_progress=None, on_resources=None, on_partia
             parents = ranked[:max(2, population//3)]
             candidates = populate([best], parents)
 
+    phase = 'validacao'
+    if checkpoint:
+        checkpoint()
     report_partial('validacao')
     fitted = parameters(best)
     optimized = dict(zip(names, best))

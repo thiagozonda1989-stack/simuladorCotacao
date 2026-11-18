@@ -1,13 +1,14 @@
 """Replay local de estratégias NTSL por candle."""
 import argparse
 import csv
-from dataclasses import dataclass
+from dataclasses import asdict, dataclass
 import hashlib
 import html
 import json
 import math
 from time import monotonic
 from pathlib import Path
+from zipfile import ZipFile
 
 import numpy as np
 import pandas as pd
@@ -119,7 +120,7 @@ class Engine:
         self.history = np.empty((len(frame),len(self.values)), dtype=float) if history is None else history
         self.variable_slots = [s.slot for s in program.symbols.values()
                                if s.kind in {"float","real","boolean","integer"}]
-        self.row = self.cursor = self.session_start = 0
+        self.row = self.cursor = self.session_start = self.completed = 0
         self.position = 0
         self.basis = self.daily = self.realized = 0.0
         self.orders = {}
@@ -464,7 +465,59 @@ class Engine:
                 self.orders.pop(key,None)
                 self.execute(order,fill)
 
-    def run(self, record_trace=True, on_progress=None, checkpoint=None):
+    def snapshot(self):
+        state = dict(barras=self.completed, inicio_pregao=self.session_start,
+                     valores=[self.values[slot] for slot in self.variable_slots],
+                     arrays=self.arrays, posicao=self.position, preco_medio=self.basis,
+                     diario=self.daily, realizado=self.realized, ambiguidades=self.ambiguities,
+                     ordens=[(key, asdict(order)) for key, order in self.orders.items()],
+                     execucoes=self.fills, candles=self.trace, console=self.logs,
+                     indicadores=[(key, value.window.maxlen, list(value.window),
+                                   value.row, value.sum, value.ema, value.value)
+                                  for key, value in self.rolling.items()])
+        return state, self.history[:self.completed]
+
+    def restore(self, state, package):
+        completed = state["barras"]
+        if type(completed) is not int or not 0 <= completed <= len(self.frame):
+            raise ValueError("Quantidade de barras da sessão incompatível.")
+        if len(state["valores"]) != len(self.variable_slots) or len(state["candles"]) != completed:
+            raise ValueError("Estado do replay incompatível com a estratégia.")
+        target = self.history[:completed]
+        with ZipFile(package) as archive, archive.open("historico.npy") as member:
+            version = np.lib.format.read_magic(member)
+            if version != (1, 0):
+                raise ValueError("Formato do histórico do replay incompatível.")
+            shape, is_fortran, dtype = np.lib.format.read_array_header_1_0(member)
+            if shape != target.shape or is_fortran or dtype != target.dtype:
+                raise ValueError("Dimensões ou tipo do histórico incompatíveis.")
+            if target.nbytes:
+                remaining = memoryview(target).cast("B")
+                while remaining:
+                    count = member.readinto(remaining[:1024**2])
+                    if not count:
+                        raise ValueError("Histórico do replay incompleto.")
+                    remaining = remaining[count:]
+            if member.read(1):
+                raise ValueError("Histórico do replay contém dados excedentes.")
+        self.completed = completed
+        self.session_start = state["inicio_pregao"]
+        for slot, value in zip(self.variable_slots, state["valores"]):
+            self.values[slot] = value
+        self.arrays = {int(slot): values for slot, values in state["arrays"].items()}
+        self.position, self.basis = state["posicao"], state["preco_medio"]
+        self.daily, self.realized = state["diario"], state["realizado"]
+        self.ambiguities = state["ambiguidades"]
+        self.orders = {key: Order(**order) for key, order in state["ordens"]}
+        self.fills, self.trace, self.logs = state["execucoes"], state["candles"], state["console"]
+        for key, period, window, row, total, ema, value in state["indicadores"]:
+            if type(period) is not int or not 1 <= period <= 100_000 or len(window) > period:
+                raise ValueError("Janela de indicador inválida na sessão.")
+            indicator = self.rolling[key] = Rolling(period)
+            indicator.window.extend(window)
+            indicator.row, indicator.sum, indicator.ema, indicator.value = row, total, ema, value
+
+    def run(self, record_trace=True, on_progress=None, checkpoint=None, safe_point=None):
         self.checkpoint = checkpoint
         days = self.days
         var_slots = self.variable_slots
@@ -472,9 +525,10 @@ class Engine:
         constants = [(idx,val) for idx,val in enumerate(self.values) if idx not in var_set]
         numeric_constants = [(idx,0.0 if isinstance(val,(tuple,str)) else val) for idx,val in constants]
         last_update = 0.0
-        for row in range(len(self.frame)):
-            if checkpoint and row % 64 == 0:
-                checkpoint()
+        boundary = safe_point or checkpoint
+        for row in range(self.completed, len(self.frame)):
+            if boundary and row % 64 == 0:
+                boundary()
             self.row = self.cursor = row
             if row==0 or days[row]!=days[row-1]:
                 self.session_start = row
@@ -507,16 +561,25 @@ class Engine:
                 self.trace.append({"sinal_compra": "long" in self.entry_intentions,
                                "sinal_venda": "short" in self.entry_intentions,
                                "posicao":self.position,"pontos_contrato_acumulados":self.realized,**self.plots})
+            self.completed = row + 1
 
 
-def run_strategy(csv, source, output, seconds, format_name, tick, overrides=None, point_value=1, on_progress=None, checkpoint=None):
+def run_strategy(csv, source, output, seconds, format_name, tick, overrides=None, point_value=1,
+                 on_progress=None, checkpoint=None, session=None, resume_archive=None, safe_point=None):
     program = compile_ntsl(source)
     format_name = csv_format(csv, format_name)
     frame = load_bars(csv,seconds,format_name)
     engine = Engine(program,frame,tick,overrides or {},seconds,point_value)
-    engine.run(on_progress=on_progress, checkpoint=checkpoint)
-    if checkpoint:
-        checkpoint()
+    if session:
+        if session.resume is not None:
+            engine.restore(session.resume, resume_archive)
+        session.snapshot = engine.snapshot
+    if safe_point:
+        safe_point()
+    engine.run(on_progress=on_progress, checkpoint=checkpoint if not session else None, safe_point=safe_point)
+    boundary = safe_point or checkpoint
+    if boundary:
+        boundary()
     if on_progress:
         on_progress(dict(etapa="relatorio", barras=len(frame), barras_total=len(frame),
                          resultado=engine.realized, preenchimentos=len(engine.fills)))

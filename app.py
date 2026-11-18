@@ -16,6 +16,7 @@ from threading import Lock, Thread
 from urllib.parse import urlsplit
 import webbrowser
 
+from sessao import Session, extract_csv, load_session
 from controle import ProcessingCancelled, ProcessingControl
 from diagnostico import charts
 from estrategia import csv_format, main as strategy_cli, run_strategy, strategy_replay
@@ -123,7 +124,7 @@ class Workspace:
                 self.pending_input = path
             return received
 
-    def start(self, options):
+    def start(self, options, restore=False):
         with self.lock:
             request = options.get("solicitacao")
             if request and self.last_request == request:
@@ -131,31 +132,50 @@ class Workspace:
             if self.job["estado"] == "executando":
                 raise ValueError("Já existe uma execução em andamento.")
             if not self.pending_input:
-                raise ValueError("O CSV ainda não foi carregado.")
+                raise ValueError("O arquivo ainda não foi carregado.")
             transfer = options.get("transferencia")
             if transfer and (not self.upload_transfer or
                              self.upload_transfer[:2] != (transfer, self.pending_input)):
-                raise ValueError("O CSV desta solicitação foi substituído. Envie o arquivo novamente.")
-            source = options["ntsl"]
-            if not isinstance(source,str) or not source.strip():
-                raise ValueError("Carregue ou cole uma estratégia NTSL.")
+                raise ValueError("O arquivo desta solicitação foi substituído. Envie o arquivo novamente.")
             name = datetime.now().strftime("%Y%m%d-%H%M%S-%f")
             path = self.pending_input
+            state = None
+            if restore:
+                options, state = load_session(path)
+            source = options["ntsl"]
+            if not isinstance(source, str) or not source.strip():
+                raise ValueError("Carregue ou cole uma estratégia NTSL.")
+            self.session = Session(self.output, name, path, options, state, self.saved_session)
             self.pending_input = None
             if self.upload_transfer and self.upload_transfer[1] == path:
                 self.upload_transfer = None
             self.control = ProcessingControl()
             self.started_at = monotonic()
-            self.job = {"estado": "executando", "id": name, "parcial": {"etapa":"preparacao"}}
+            self.job = {"estado": "executando", "id": name, "parcial": {"etapa":"preparacao"},
+                        "salvar_minutos": self.session.interval // 60}
             self.last_request = request
-            Thread(target=self.run,args=(path,name,options),daemon=True).start()
+            Thread(target=self.run, args=(path, name, options, restore), daemon=True).start()
             return name
+
+    def saved_session(self, status):
+        with self.lock:
+            self.job = self.job | {"sessao": status}
+
+    def publish(self, **fields):
+        with self.lock:
+            self.job = self.job | fields
 
     def control_job(self, job_id, command):
         with self.lock:
             if self.job.get("id") != job_id or self.job["estado"] != "executando":
                 raise ValueError("Esta execução já terminou ou não está ativa.")
-            if command == "cancelar":
+            if command == "salvar-sessao":
+                if self.control.cancelled.is_set():
+                    raise ValueError("O processamento está sendo cancelado.")
+                self.job = self.job | {"sessao": self.job.get("sessao", {}) |
+                                       {"mensagem": "Salvamento solicitado. Aguardando um ponto seguro."}}
+                self.session.requested.set()
+            elif command == "cancelar":
                 self.control.cancel()
             elif not self.control.cancelled.is_set():
                 if command == "pausar":
@@ -163,16 +183,23 @@ class Workspace:
                 else:
                     self.control.resume()
 
-    def run(self, csv, name, options):
+    def run(self, path, name, options, restore):
         destination = self.output/name
-        control = self.control
+        control, session = self.control, self.session
+        csv = None if restore else path
+        resume_archive = path if restore else None
         try:
-            control.checkpoint()
+            if restore:
+                csv = extract_csv(path, self.output)
+                session.csv = csv
+            if control.cancelled.is_set():
+                control.checkpoint()
             if options["modo"] == "estrategia":
                 def replay_progress(snapshot):
-                    self.job = self.job | {"parcial": snapshot}
+                    self.publish(parcial=snapshot)
                 run_strategy(csv,options["ntsl"], destination,int(options["segundos"]),
-                             options["formato"],float(options["tick"]),options["opcoes"],float(options.get("valor_ponto",1)), on_progress=replay_progress, checkpoint=control.checkpoint)
+                             options["formato"],float(options["tick"]),options["opcoes"],float(options.get("valor_ponto",1)), on_progress=replay_progress, checkpoint=control.checkpoint,
+                             session=session, resume_archive=resume_archive, safe_point=lambda: session.checkpoint(control))
             elif options["modo"] == "otimizar":
                 requested = options["formato"]
                 config = options["opcoes"]
@@ -195,19 +222,19 @@ class Workspace:
                                     config.get("alvo"), config.get("campos_excluidos", ()))
                 destination.mkdir()
                 def resources(plan):
-                    self.job = self.job | {"recursos": plan}
+                    self.publish(recursos=plan)
 
                 def progress(history, names):
-                    self.job = self.job | {"graficos": charts(history[-100:], names,
-                                                    financial=replay.specification.get("modo") == "resultado")}
+                    self.publish(graficos=charts(history[-100:], names,
+                                                 financial=replay.specification.get("modo") == "resultado"))
 
                 def partial(snapshot):
-                    self.job = self.job | {"parcial": snapshot}
+                    self.publish(parcial=snapshot)
 
-                optimize(replay, config, destination, progress, resources, partial, control)
+                optimize(replay, config, destination, progress, resources, partial, control, session)
             else:
                 raise ValueError("Modo de execução desconhecido.")
-            control.checkpoint()
+            session.checkpoint(control)
             outcome = {"estado":"concluido", "pasta":str(destination)}
         except ProcessingCancelled:
             outcome = {"estado":"cancelado"}
@@ -215,7 +242,10 @@ class Workspace:
             outcome = {"estado":"erro", "mensagem":str(error)}
         finally:
             try:
-                csv.unlink(missing_ok=True)
+                if csv:
+                    csv.unlink(missing_ok=True)
+                if resume_archive:
+                    resume_archive.unlink(missing_ok=True)
             finally:
                 with self.lock:
                     if control.cancelled.is_set():
@@ -270,33 +300,40 @@ def build_handler(workspace):
                 self.send_bytes((APP/"modelo_profit.ntsl").read_bytes(),"text/plain; charset=utf-8")
             elif path == "/config-exemplo":
                 self.send_bytes((APP/"config_v7.json").read_bytes(),"application/json; charset=utf-8")
-            elif path and path.startswith("/resultados/"):
+            elif path and path.startswith(("/resultados/", "/sessoes/")):
                 pieces = path.split("/")
-                if (len(pieces)!=4 or not re.fullmatch(r'\d{8}-\d{6}-\d{6}',pieces[2])
-                        or pieces[3] not in REPORTS):
+                if pieces[1] == "sessoes" and len(pieces) == 3 and re.fullmatch(
+                        r"\d{8}-\d{6}-\d{6}\.sessao\.zip", pieces[2]):
+                    file = workspace.output / "sessoes" / pieces[2]
+                elif (len(pieces)!=4 or not re.fullmatch(r'\d{8}-\d{6}-\d{6}',pieces[2])
+                        or pieces[3] not in REPORTS or pieces[1] != "resultados"):
                     self.send_error(HTTPStatus.NOT_FOUND)
                     return
-                file = workspace.output.joinpath(*pieces[2:])
+                else:
+                    file = workspace.output.joinpath(*pieces[2:])
                 if not file.is_file():
                     self.send_error(HTTPStatus.NOT_FOUND)
                     return
                 mime = mimetypes.guess_type(file.name)[0] or "application/octet-stream"
-                self.send_response(200)
-                self.send_header("Content-Type",mime)
-                self.send_header("Content-Length",str(file.stat().st_size))
-                self.send_header("X-Content-Type-Options","nosniff")
-                self.send_header("Referrer-Policy","no-referrer")
-                if file.suffix != ".html":
-                    self.send_header("Content-Disposition",f'attachment; filename="{file.name}"')
-                self.end_headers()
                 with file.open("rb") as stream:
+                    self.send_response(200)
+                    self.send_header("Content-Type",mime)
+                    self.send_header("Content-Length",str(stream.seek(0, 2)))
+                    stream.seek(0)
+                    self.send_header("X-Content-Type-Options","nosniff")
+                    self.send_header("Referrer-Policy","no-referrer")
+                    if pieces[1] == "sessoes":
+                        self.send_header("Cache-Control","no-store")
+                    if file.suffix != ".html":
+                        self.send_header("Content-Disposition",f'attachment; filename="{file.name}"')
+                    self.end_headers()
                     shutil.copyfileobj(stream,self.wfile,length=MIB)
             else:
                 self.send_error(HTTPStatus.NOT_FOUND)
 
         def do_POST(self):
             path = self.route()
-            if path not in {"/csv","/csv-bloco","/executar","/encerrar","/pausar","/retomar","/cancelar"}:
+            if path not in {"/csv","/csv-bloco","/executar","/encerrar","/carregar-sessao","/pausar","/retomar","/cancelar","/salvar-sessao"}:
                 self.send_error(HTTPStatus.NOT_FOUND)
                 return
             try:
@@ -307,7 +344,7 @@ def build_handler(workspace):
                     Thread(target=self.server.shutdown, daemon=True).start()
                     return
                 length = int(self.headers.get("Content-Length","0"))
-                if path in {"/pausar","/retomar","/cancelar"}:
+                if path in {"/pausar","/retomar","/cancelar","/salvar-sessao"}:
                     if not 0 < length <= 512:
                         raise ValueError("Identificação da execução inválida.")
                     data = json.loads(self.rfile.read(length))
@@ -326,9 +363,10 @@ def build_handler(workspace):
                     return
                 elif 0 < length <= 8*MIB:
                     options = json.loads(self.rfile.read(length))
-                    if not isinstance(options.get("opcoes"),dict):
+                    restore = path == "/carregar-sessao"
+                    if not isinstance(options, dict) or (not restore and not isinstance(options.get("opcoes"),dict)):
                         raise ValueError("As opções precisam ser um objeto JSON.")
-                    job = workspace.start(options)
+                    job = workspace.start(options, restore)
                     self.json({"ok":True,"id":job})
                     return
                 else:

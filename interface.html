@@ -79,12 +79,20 @@ progress{display:block;width:100%;height:12px;accent-color:var(--accent);margin:
 <small>Classe, tipo de ordem e rótulo de amplitude são protegidos. No ensemble, exclusões adicionais desativam árvores dependentes. No Replay NTSL, se o código usar um campo excluído, a busca aponta o conflito. O alvo e o horário continuam sendo calculados.</small><div id="campos"></div></details>
 </div>
 <div class="field"><label for="opcoes" id="titulo-opcoes">Substituição de inputs (JSON)</label><textarea id="opcoes" spellcheck="false">{}</textarea><small id="ajuda-opcoes">Use {} para aplicar os valores do código. Exemplo de ajuste: {"p_Lote": 2}.</small></div>
-<div class="actions"><button class="primary" id="executar" type="submit">Executar</button></div>
+<div class="field"><label for="salvar-minutos">Salvar sessão a cada N minutos</label>
+<input id="salvar-minutos" type="number" min="0" max="1440" step="1" value="0">
+<small>Use 0 para desativar. Ao carregar uma sessão, o intervalo gravado nela será aplicado.</small></div>
+<div class="actions"><button class="primary" id="executar" type="submit">Executar</button>
+<button type="button" id="carregar-sessao">Carregar sessão</button>
+<input type="file" id="arquivo-sessao" accept=".zip" hidden></div>
 </section>
 <section class="panel result"><h2>Resultado</h2><p id="situacao" role="status" aria-live="polite">Aguardando dados e estratégia.</p><div id="controle-execucao" class="acoes" hidden>
 <button type="button" id="pausar-processamento">Pausar</button>
+<button type="button" id="salvar-sessao">Salvar sessão</button>
 <button type="button" id="cancelar-processamento">Cancelar processamento</button>
-</div><section id="execucao-parcial" hidden>
+</div><p id="status-sessao" aria-live="polite" hidden></p>
+<a id="baixar-sessao" hidden download>Baixar última sessão salva</a>
+<section id="execucao-parcial" hidden>
 <progress id="barra-execucao" aria-label="Progresso da execução"></progress>
 <p id="contagem-execucao"></p>
 <dl id="metricas-parciais"></dl>
@@ -262,6 +270,7 @@ const busy = active => {
     running = active;
     $("executar").disabled = active;
     $("encerrar").disabled = active;
+    $("carregar-sessao").disabled = active;
 };
 async function localFetch(name, options = {}, retries = 0) {
     for (let attempt = 0; ; attempt++) {
@@ -289,17 +298,17 @@ async function post(name, body, type, headers = {}, retries = 0) {
     }
     return data;
 }
-async function uploadCsv(file) {
-    if (!file?.size) throw Error("Selecione um CSV de dados.");
+async function uploadCsv(file, label = "CSV") {
+    if (!file?.size) throw Error("Selecione um arquivo de " + label + ".");
     const transfer = crypto.randomUUID();
     const chunkSize = 4 * 1024 * 1024;
     for (let offset = 0; offset < file.size;) {
         const end = Math.min(file.size, offset + chunkSize);
-        show("Enviando CSV ao simulador local · " + Math.floor(100 * offset / file.size) + "%");
+        show("Enviando " + label + " ao simulador local · " + Math.floor(100 * offset / file.size) + "%");
         const response = await post("csv-bloco", file.slice(offset, end), "application/octet-stream", {
             "X-Upload-Id":transfer, "X-Upload-Offset":String(offset), "X-Upload-Size":String(file.size)
         }, 2);
-        if (response.recebido !== end) throw Error("O simulador não confirmou este bloco do CSV.");
+        if (response.recebido !== end) throw Error("O simulador não confirmou este bloco do arquivo.");
         offset = end;
     }
     return transfer;
@@ -416,9 +425,14 @@ function updateControls(state) {
     currentExecution = state.estado === "executando" ? state : null;
     $("controle-execucao").hidden = !currentExecution;
     $("pausar-processamento").textContent = state.pausado ? "Retomar" : "Pausar";
-    for (const id of ["pausar-processamento","cancelar-processamento"]) {
+    for (const id of ["pausar-processamento","cancelar-processamento","salvar-sessao"]) {
         $(id).disabled = !currentExecution || Boolean(state.cancelando) || controlPending;
     }
+    const saved = state.sessao;
+    $("status-sessao").hidden = !saved?.mensagem;
+    $("status-sessao").textContent = (saved?.mensagem ?? "") + (saved?.horario ? " Última gravação às " + saved.horario + "." : "");
+    $("baixar-sessao").hidden = !saved?.arquivo;
+    if (saved?.arquivo) $("baixar-sessao").href = endpoint("sessoes/" + saved.arquivo);
 }
 async function controlExecution(command) {
     if (!currentExecution || controlPending) return;
@@ -428,7 +442,7 @@ async function controlExecution(command) {
     try {
         await post(command, JSON.stringify({id:state.id}), "application/json", {}, 1);
         if (command === "cancelar") state.cancelando = true;
-        else state.pausado = command === "pausar";
+        else if (command === "pausar" || command === "retomar") state.pausado = command === "pausar";
     } catch (error) {
         show(error.message);
     } finally {
@@ -438,6 +452,7 @@ async function controlExecution(command) {
 }
 $("pausar-processamento").addEventListener("click", () =>
     controlExecution(currentExecution?.pausado ? "retomar" : "pausar"));
+$("salvar-sessao").addEventListener("click", () => controlExecution("salvar-sessao"));
 $("cancelar-processamento").addEventListener("click", () => controlExecution("cancelar"));
 
 async function poll(failures = 0) {
@@ -486,7 +501,8 @@ $("form").addEventListener("submit", async event => {
         const options = {
             modo:$("modo").value, csv:$("csv").files[0].name, ntsl:$("ntsl").value,
             formato:$("formato").value, segundos:Number($("segundos").value),
-            tick:Number($("tick").value), valor_ponto:Number($("valor-ponto").value), opcoes:JSON.parse($("opcoes").value || "{}")
+            tick:Number($("tick").value), valor_ponto:Number($("valor-ponto").value),
+            salvar_minutos:Number($("salvar-minutos").value), opcoes:JSON.parse($("opcoes").value || "{}")
         };
         if (options.modo === "otimizar") {
             const declared = new Set([...$("parametros").rows].map(row => row.cells[0].textContent.toLowerCase()));
@@ -499,6 +515,26 @@ $("form").addEventListener("submit", async event => {
         options.solicitacao = crypto.randomUUID();
         await post("executar",JSON.stringify(options),"application/json", {}, 1);
         show("Executando…");
+        poll();
+    } catch (error) { busy(false); show(error.message); }
+});
+$("carregar-sessao").addEventListener("click", () => $("arquivo-sessao").click());
+$("arquivo-sessao").addEventListener("change", async () => {
+    const input = $("arquivo-sessao");
+    const file = input.files[0];
+    input.value = "";
+    if (running || !file) return;
+    busy(true);
+    $("relatorio").hidden = true;
+    $("andamento").replaceChildren();
+    $("execucao-parcial").hidden = true;
+    updateControls({});
+    try {
+        const transferencia = await uploadCsv(file, "sessão");
+        show("Restaurando a sessão…");
+        await post("carregar-sessao", JSON.stringify({transferencia, solicitacao:crypto.randomUUID()}),
+                   "application/json", {}, 1);
+        show("Retomando o processamento…");
         poll();
     } catch (error) { busy(false); show(error.message); }
 });

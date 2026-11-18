@@ -1,6 +1,15 @@
-# simuladorCotacao 0.5.3
+# simuladorCotacao 0.6.0
 
 [Histórico de alterações](CHANGELOG.md) · [Manutenção e hashes dos pacotes](MANUTENCAO.md)
+
+
+## Salvar e retomar uma execução
+
+- Antes de iniciar, configure **Salvar sessão a cada N minutos**. Use `0` para desativar o salvamento automático.
+- Durante a execução ou a pausa, clique em **Salvar sessão** e aguarde a confirmação. Use **Baixar última sessão salva** para copiar o arquivo antes de cancelar ou fechar o programa.
+- O simulador também grava automaticamente a última sessão no subdiretório `sessoes` da pasta de saída do aplicativo. Cada execução tem seu próprio `.sessao.zip`.
+- Em outra execução do aplicativo, clique em **Carregar sessão** e escolha o ZIP completo. O arquivo da sessão já contém o CSV e o código NTSL.
+- No replay, a retomada começa na barra seguinte à salva. Na otimização, candidatos com resultados já gravados são reaproveitados. Avaliações em andamento e a validação final podem ser refeitas. O ZIP inclui os dados originais e deve ser tratado como o CSV de origem.
 
 ## Abrir no Windows
 
@@ -111,7 +120,7 @@ Em Linux, use Python 3.11+ e um toolchain MinGW-w64 x64. Baixe a distribuição 
 
 ```bash
 python -m pip download --only-binary=:all: --platform win_amd64 --python-version 312 -r windows/requirements.lock -d wheels
-python windows/package.py --python-win python-3.12.10-embed-amd64.zip --wheels wheels --saida simuladorCotacao-v0.5.3-win64.zip
+python windows/package.py --python-win python-3.12.10-embed-amd64.zip --wheels wheels --saida simuladorCotacao-v0.6.0-win64.zip
 ```
 
 Para desenvolver ou testar com o seu Python local, instale `requirements.txt` e rode `python app.py`. Para um comando de terminal no código-fonte, use `python app.py --cli estrategia --help`.

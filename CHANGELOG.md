@@ -1,5 +1,12 @@
 # Histórico de versões
 
+
+## 0.6.0
+
+- Sessão portátil em um único arquivo ZIP com o CSV, o código NTSL, a configuração e o progresso da execução.
+- Salvamento manual durante a execução ou pausa e salvamento automático em intervalo configurável.
+- Retomada do replay pela próxima barra e da otimização pelos candidatos pendentes. A sessão anterior é preservada se a próxima gravação falhar.
+
 ## 0.5.3
 
 - Pausa, retomada e cancelamento cooperativos no replay e na otimização.
