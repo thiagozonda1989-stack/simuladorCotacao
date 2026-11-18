@@ -11,6 +11,7 @@ import secrets
 import shutil
 import sys
 import tempfile
+from time import monotonic
 from threading import Lock, Thread
 from urllib.parse import urlsplit
 import webbrowser
@@ -47,6 +48,7 @@ class Workspace:
         self.pending_input = None
         self.upload_transfer = None
         self.last_request = None
+        self.started_at = None
         self.job = {"estado": "pronto"}
         self.lock = Lock()
 
@@ -140,7 +142,8 @@ class Workspace:
             self.pending_input = None
             if self.upload_transfer and self.upload_transfer[1] == path:
                 self.upload_transfer = None
-            self.job = {"estado": "executando", "id": name}
+            self.started_at = monotonic()
+            self.job = {"estado": "executando", "id": name, "parcial": {"etapa":"preparacao"}}
             self.last_request = request
             Thread(target=self.run,args=(path,name,options),daemon=True).start()
             return name
@@ -149,8 +152,10 @@ class Workspace:
         destination = self.output/name
         try:
             if options["modo"] == "estrategia":
+                def replay_progress(snapshot):
+                    self.job = self.job | {"parcial": snapshot}
                 run_strategy(csv,options["ntsl"], destination,int(options["segundos"]),
-                             options["formato"],float(options["tick"]),options["opcoes"],float(options.get("valor_ponto",1)))
+                             options["formato"],float(options["tick"]),options["opcoes"],float(options.get("valor_ponto",1)), on_progress=replay_progress)
             elif options["modo"] == "otimizar":
                 requested = options["formato"]
                 config = options["opcoes"]
@@ -172,23 +177,23 @@ class Workspace:
                     replay = Replay(frame, model, seconds, config.get("classe_alvo", "1C"),
                                     config.get("alvo"), config.get("campos_excluidos", ()))
                 destination.mkdir()
-                execution = {}
-
                 def resources(plan):
-                    execution.update(plan)
-                    self.job = self.job | {"recursos": dict(execution)}
+                    self.job = self.job | {"recursos": plan}
 
                 def progress(history, names):
-                    latest = history[-1]
-                    self.job = {"estado": "executando", "id": name, "geracao": latest["geracao"],
-                                "avaliados": latest["avaliados"], "recursos": dict(execution), "graficos": charts(history[-100:], names, financial=replay.specification.get("modo")=="resultado")}
-                optimize(replay, config, destination, progress, resources)
+                    self.job = self.job | {"graficos": charts(history[-100:], names,
+                                                    financial=replay.specification.get("modo") == "resultado")}
+
+                def partial(snapshot):
+                    self.job = self.job | {"parcial": snapshot}
+
+                optimize(replay, config, destination, progress, resources, partial)
             else:
                 raise ValueError("Modo de execução desconhecido.")
         except Exception as error:
-            self.job = {"estado":"erro","mensagem":str(error),"id":name}
+            self.job = self.job | {"estado":"erro","mensagem":str(error),"segundos":round(monotonic()-self.started_at)}
         else:
-            self.job = {"estado":"concluido","id":name,"pasta":str(destination)}
+            self.job = self.job | {"estado":"concluido","pasta":str(destination),"segundos":round(monotonic()-self.started_at)}
         finally:
             csv.unlink(missing_ok=True)
 
@@ -225,7 +230,10 @@ def build_handler(workspace):
             if path == "/":
                 self.send_bytes((APP/"interface.html").read_bytes(),"text/html; charset=utf-8")
             elif path == "/estado":
-                self.json(workspace.job)
+                job = workspace.job
+                if job["estado"] == "executando":
+                    job = job | {"segundos": round(monotonic()-workspace.started_at)}
+                self.json(job)
             elif path == "/modelo-exemplo":
                 self.send_bytes((APP/"modelo_profit.ntsl").read_bytes(),"text/plain; charset=utf-8")
             elif path == "/config-exemplo":

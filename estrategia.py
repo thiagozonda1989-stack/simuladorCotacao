@@ -6,6 +6,7 @@ import hashlib
 import html
 import json
 import math
+from time import monotonic
 from pathlib import Path
 
 import numpy as np
@@ -453,12 +454,13 @@ class Engine:
                 self.orders.pop(key,None)
                 self.execute(order,fill)
 
-    def run(self, record_trace=True):
+    def run(self, record_trace=True, on_progress=None):
         days = self.frame["pregao"].to_numpy()
         var_slots = self.variable_slots
         var_set = set(var_slots)
         constants = [(idx,val) for idx,val in enumerate(self.values) if idx not in var_set]
         numeric_constants = [(idx,0.0 if isinstance(val,(tuple,str)) else val) for idx,val in constants]
+        last_update = 0.0
         for row in range(len(self.frame)):
             self.row = self.cursor = row
             if row==0 or days[row]!=days[row-1]:
@@ -482,18 +484,27 @@ class Engine:
                 if self.position:
                     action = "exit_long" if self.position>0 else "exit_short"
                     self.execute(Order("fim_pregao",action,"market",abs(self.position)),self.series("close"))
+            if on_progress and (row % 256 == 0 or row+1 == len(days)):
+                now = monotonic()
+                if now-last_update >= .5 or row+1 == len(days):
+                    on_progress(dict(etapa='replay', barras=row+1, barras_total=len(days),
+                                     resultado=self.realized, preenchimentos=len(self.fills)))
+                    last_update = now
             if record_trace:
                 self.trace.append({"sinal_compra": "long" in self.entry_intentions,
                                "sinal_venda": "short" in self.entry_intentions,
                                "posicao":self.position,"pontos_contrato_acumulados":self.realized,**self.plots})
 
 
-def run_strategy(csv, source, output, seconds, format_name, tick, overrides=None, point_value=1):
+def run_strategy(csv, source, output, seconds, format_name, tick, overrides=None, point_value=1, on_progress=None):
     program = compile_ntsl(source)
     format_name = csv_format(csv, format_name)
     frame = load_bars(csv,seconds,format_name)
     engine = Engine(program,frame,tick,overrides or {},seconds,point_value)
-    engine.run()
+    engine.run(on_progress=on_progress)
+    if on_progress:
+        on_progress(dict(etapa="relatorio", barras=len(frame), barras_total=len(frame),
+                         resultado=engine.realized, preenchimentos=len(engine.fills)))
     output = Path(output)
     output.mkdir(parents=True,exist_ok=False)
     fills = pd.DataFrame(engine.fills,columns=[

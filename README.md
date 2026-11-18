@@ -1,4 +1,4 @@
-# simuladorCotacao 0.5.1
+# simuladorCotacao 0.5.2
 
 [Histórico de alterações](CHANGELOG.md) · [Manutenção e hashes dos pacotes](MANUTENCAO.md)
 
@@ -111,7 +111,7 @@ Em Linux, use Python 3.11+ e um toolchain MinGW-w64 x64. Baixe a distribuição 
 
 ```bash
 python -m pip download --only-binary=:all: --platform win_amd64 --python-version 312 -r windows/requirements.lock -d wheels
-python windows/package.py --python-win python-3.12.10-embed-amd64.zip --wheels wheels --saida simuladorCotacao-v0.5.1-win64.zip
+python windows/package.py --python-win python-3.12.10-embed-amd64.zip --wheels wheels --saida simuladorCotacao-v0.5.2-win64.zip
 ```
 
 Para desenvolver ou testar com o seu Python local, instale `requirements.txt` e rode `python app.py`. Para um comando de terminal no código-fonte, use `python app.py --cli estrategia --help`.
@@ -119,3 +119,7 @@ Para desenvolver ou testar com o seu Python local, instale `requirements.txt` e 
 ### Conexão com a interface local
 
 Se uma aba antiga perder a conexão, abra novamente o executável e use a nova aba que ele abrir. O CSV é enviado em blocos com indicação de progresso. A interface tenta novamente após uma interrupção transitória e identifica a etapa da falha.
+
+### Acompanhamento durante a execução
+
+Na busca genética, acompanhe a geração, os candidatos concluídos e os melhores parâmetros assim que termina cada avaliação. As métricas parciais usam o conjunto de busca. A validação cronológica tem uma etapa separada e seus resultados aparecem no relatório. No replay direto, acompanhe as barras processadas, as ordens executadas e o resultado bruto realizado.

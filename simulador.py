@@ -1,7 +1,7 @@
 """Reconstrução OHLC e otimização cronológica do classificador NTSL."""
 import argparse
 from collections import OrderedDict
-from concurrent.futures import FIRST_COMPLETED, ProcessPoolExecutor, ThreadPoolExecutor, wait
+from concurrent.futures import FIRST_COMPLETED, ProcessPoolExecutor, ThreadPoolExecutor, as_completed, wait
 from datetime import datetime
 from decimal import Decimal
 import html
@@ -341,7 +341,7 @@ def evaluate_replay_worker(parameters):
         return {"erro": str(error)}
 
 
-def parallel_replays(executor, entries, parameters, workers, deadline, seen, metric, minimum_signals):
+def parallel_replays(executor, entries, parameters, workers, deadline, record, metric, minimum_signals):
     remaining = iter(entries)
     active = {}
 
@@ -363,7 +363,7 @@ def parallel_replays(executor, entries, parameters, workers, deadline, seen, met
             genome = active.pop(future)
             stats = future.result()
             fitness = stats[metric] if stats.get('sinais', -1) >= minimum_signals else -math.inf
-            seen[genome] = (fitness, stats)
+            record({genome: (fitness, stats)})
             if deadline is not None and time.monotonic() >= deadline:
                 deadline_hit = True
             else:
@@ -371,7 +371,7 @@ def parallel_replays(executor, entries, parameters, workers, deadline, seen, met
     return deadline_hit
 
 
-def optimize(replay, config, out, on_progress=None, on_resources=None):
+def optimize(replay, config, out, on_progress=None, on_resources=None, on_partial=None):
     cfg = config['genetico']
     generic = not isinstance(replay, Replay)
     defaults = replay.defaults if generic else replay.model.defaults
@@ -535,6 +535,32 @@ def optimize(replay, config, out, on_progress=None, on_resources=None):
                      else pool[0] for key, pool in zip(keys, pools))
     candidates = populate([original])
     best, best_value, unchanged = None, -math.inf, 0
+    partial_best = None
+    failed_candidates = 0
+
+    def report_partial(stage):
+        if not on_partial:
+            return
+        leader = None
+        if partial_best is not None:
+            fitness, stats = seen[partial_best]
+            leader = dict(aptidao=fitness, metricas=stats, parametros=dict(zip(names, partial_best)))
+        on_partial(dict(etapa=stage, geracao= generation, geracoes_limite=generations,
+                        concluidos_geracao=completed, candidatos_geracao=len(candidates),
+                        avaliados=len(seen), erros=failed_candidates, objetivo=metric,
+                        financeiro=financial, melhor=leader))
+
+    def record(results):
+        nonlocal partial_best, failed_candidates, completed
+        seen.update(results)
+        completed += len(results)
+        if on_partial:
+            for genome, (fitness, stats) in results.items():
+                failed_candidates += int('erro' in stats)
+                if math.isfinite(fitness) and (partial_best is None or fitness > seen[partial_best][0]):
+                    partial_best = genome
+            report_partial('busca')
+
     reason = 'limite de gerações'
     pool = (ProcessPoolExecutor(max_workers=workers, mp_context=get_context('spawn'),
                                initializer=init_replay_worker,
@@ -547,6 +573,8 @@ def optimize(replay, config, out, on_progress=None, on_resources=None):
                 if genome not in seen:
                     groups.setdefault(score_key(genome), []).append(genome)
             entries = list(groups.items())
+            completed = len(candidates) - sum(len(members) for members in groups.values())
+            report_partial('busca')
             deadline_hit = False
             if processes:
                 if seconds and seen and time.monotonic()-clock >= seconds:
@@ -554,20 +582,21 @@ def optimize(replay, config, out, on_progress=None, on_resources=None):
                 else:
                     deadline_hit = parallel_replays(executor, entries, parameters, workers,
                                                     clock+seconds if seconds else None,
-                                                    seen, metric, minimum_signals)
+                                                    record, metric, minimum_signals)
             for start in range(0, 0 if processes else len(entries), workers):
                 if seconds and seen and time.monotonic()-clock >= seconds:
                     deadline_hit = True
                     break
-                futures = []
+                futures = {}
                 for key, members in entries[start:start+workers]:
                     hit = scores.get(key)
                     if hit is not None:
                         scores.move_to_end(key)
-                    futures.append((key, executor.submit(run_group, members[0], members, hit)))
-                for key, future in futures:
+                    futures[executor.submit(run_group, members[0], members, hit)] = key
+                for future in as_completed(futures):
+                    key = futures[future]
                     score, results = future.result()
-                    seen.update(results)
+                    record(results)
                     if score is not None and score.nbytes <= budget:
                         scores[key] = score
                         scores.move_to_end(key)
@@ -608,6 +637,7 @@ def optimize(replay, config, out, on_progress=None, on_resources=None):
             parents = ranked[:max(2, population//3)]
             candidates = populate([best], parents)
 
+    report_partial('validacao')
     fitted = parameters(best)
     optimized = dict(zip(names, best))
     try:
@@ -618,6 +648,7 @@ def optimize(replay, config, out, on_progress=None, on_resources=None):
         raise ValueError(f"A estratégia com os inputs originais falhou: {error}") from error
     scores.clear()
     best_score = replay.score(fitted)
+    report_partial('relatorio')
     pred = predictions(fitted, best_score)
     baseline = predictions(defaults, original_score)
     summary = dict(

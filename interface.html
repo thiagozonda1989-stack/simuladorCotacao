@@ -27,6 +27,9 @@ td input[type=number]{min-width:76px}input[type=checkbox]{width:auto;display:inl
 #campos label{font-weight:400;overflow-wrap:anywhere}details{margin:12px 0}summary{cursor:pointer;font-weight:650}
 figure{margin:10px 0;background:#f5f9f8;padding:12px;border-radius:8px}svg{width:100%;max-height:235px;font-size:11px}
 .legenda{font-size:13px}
+progress{display:block;width:100%;height:12px;accent-color:var(--accent);margin:8px 0}
+#metricas-parciais,#parametros-parciais{display:grid;grid-template-columns:max-content 1fr;gap:4px 14px;margin:10px 0}
+#metricas-parciais dd,#parametros-parciais dd{margin:0;overflow-wrap:anywhere}
 </style>
 </head>
 <body>
@@ -78,7 +81,12 @@ figure{margin:10px 0;background:#f5f9f8;padding:12px;border-radius:8px}svg{width
 <div class="field"><label for="opcoes" id="titulo-opcoes">Substituição de inputs (JSON)</label><textarea id="opcoes" spellcheck="false">{}</textarea><small id="ajuda-opcoes">Use {} para aplicar os valores do código. Exemplo de ajuste: {"p_Lote": 2}.</small></div>
 <div class="actions"><button class="primary" id="executar" type="submit">Executar</button></div>
 </section>
-<section class="panel result"><h2>Resultado</h2><p id="situacao" role="status" aria-live="polite">Aguardando dados e estratégia.</p><div id="andamento"></div><a id="relatorio" hidden target="_blank" rel="noopener">Abrir relatório</a></section>
+<section class="panel result"><h2>Resultado</h2><p id="situacao" role="status" aria-live="polite">Aguardando dados e estratégia.</p><section id="execucao-parcial" hidden>
+<progress id="barra-execucao" aria-label="Progresso da execução"></progress>
+<p id="contagem-execucao"></p>
+<dl id="metricas-parciais"></dl>
+<details id="detalhes-parciais" hidden><summary>Parâmetros da combinação líder</summary><dl id="parametros-parciais"></dl></details>
+</section><div id="andamento"></div><a id="relatorio" hidden target="_blank" rel="noopener">Abrir relatório</a></section>
 </form>
 </main>
 <script>
@@ -333,19 +341,80 @@ $("modo").addEventListener("change", async () => {
         ? "Edite os inputs pela tabela e os limites da busca no JSON."
         : "Use {} para aplicar os valores do código. Exemplo de ajuste: {\"p_Lote\": 2}.";
 });
+const metricLabels = {accuracy:"Acurácia",balanced_accuracy:"Acurácia balanceada",
+    precision:"Precisão dos sinais",recall:"Recall",f1:"F1",sinais:"Sinais",
+    resultado:"Resultado bruto (pontos × contratos)",drawdown:"Drawdown (pontos × contratos)",
+    resultado_menos_drawdown:"Resultado menos drawdown",saidas:"Saídas"};
+const percentageMetrics = new Set(["accuracy","balanced_accuracy","precision","recall","f1"]);
+const formattedNumber = (value, percent = false) => new Intl.NumberFormat("pt-BR", {
+    maximumFractionDigits:2, style:percent ? "percent" : "decimal"
+}).format(value);
+function writePairs(id, pairs) {
+    const list = $(id);
+    list.replaceChildren();
+    for (const [name, value] of pairs) {
+        const term = document.createElement("dt"), detail = document.createElement("dd");
+        term.textContent = name; detail.textContent = value;
+        list.append(term,detail);
+    }
+}
+function showPartial(state) {
+    const partial = state.parcial;
+    if (!partial) return;
+    const steps = {preparacao:"Preparando dados e estratégia",busca:"Avaliando candidatos",
+        replay:"Executando replay",validacao:"Validando a estratégia e a combinação líder",
+        relatorio:"Gerando relatório"};
+    const running = state.estado === "executando";
+    if (running) show(steps[partial.etapa] ?? "Executando");
+    $("execucao-parcial").hidden = false;
+    const bar = $("barra-execucao");
+    const plan = state.recursos;
+    const elapsed = state.segundos ?? 0;
+    const duration = Math.floor(elapsed/60) + " min " + (elapsed%60) + " s";
+    let counters = ["Tempo decorrido " + duration];
+    if (partial.geracao) counters.push(
+        "Geração " + partial.geracao + " de até " + partial.geracoes_limite,
+        partial.concluidos_geracao + " de " + partial.candidatos_geracao + " nesta geração",
+        partial.avaliados + " avaliações únicas");
+    if (partial.barras_total) counters.push(partial.barras + " de " + partial.barras_total + " barras");
+    if (partial.erros) counters.push(partial.erros + " avaliações com erro");
+    if (plan) counters.push(plan.trabalhadores + " " + plan.modo_paralelo);
+    $("contagem-execucao").textContent = counters.join(" · ");
+    const current = partial.etapa === "busca" ? partial.concluidos_geracao : partial.barras;
+    const total = partial.etapa === "busca" ? partial.candidatos_geracao : partial.barras_total;
+    if (running && total && ["replay","busca"].includes(partial.etapa)) {
+        bar.hidden = false; bar.max = total; bar.value = current;
+    } else if (running) {
+        bar.hidden = false; bar.removeAttribute("value");
+    } else {
+        bar.hidden = true;
+    }
+    const leader = partial.melhor;
+    const metrics = leader?.metricas ?? {};
+    const keys = partial.financeiro ? ["resultado","drawdown","saidas","sinais"]
+        : ["accuracy","balanced_accuracy","precision","recall","f1","sinais","resultado","drawdown"];
+    const values = leader ? [
+        ["Melhor " + (metricLabels[partial.objetivo] ?? partial.objetivo) + " na busca",
+            formattedNumber(leader.aptidao, percentageMetrics.has(partial.objetivo))],
+        ...keys.filter(key => key !== partial.objetivo && Number.isFinite(metrics[key]))
+            .map(key => [metricLabels[key],formattedNumber(metrics[key],percentageMetrics.has(key))])
+    ] : partial.barras_total ? [
+        [metricLabels.resultado,formattedNumber(partial.resultado)],
+        ["Ordens executadas",formattedNumber(partial.preenchimentos)]
+    ] : [];
+    writePairs("metricas-parciais",values);
+    $("detalhes-parciais").hidden = !leader;
+    if (leader) writePairs("parametros-parciais", Object.entries(leader.parametros)
+        .map(([key,value]) => [key,String(value)]));
+}
 async function poll(failures = 0) {
     try {
         const response = await localFetch("estado");
         if (!response.ok) throw Error("A consulta de andamento retornou HTTP " + response.status + ".");
         const state = await response.json();
+        showPartial(state);
+        if (state.graficos) $("andamento").innerHTML = state.graficos;
         if (state.estado === "executando") {
-            const plan = state.recursos;
-            const parallel = plan ? " · " + plan.trabalhadores + " " + plan.modo_paralelo
-                + " / " + plan.nucleos_logicos + " núcleos lógicos" : "";
-            if (state.geracao) {
-                show("Geração " + state.geracao + " · " + state.avaliados + " candidatos avaliados" + parallel);
-                $("andamento").innerHTML = state.graficos;
-            } else if (plan) { show("Executando" + parallel); }
             timer = setTimeout(poll,1200);
         } else {
             busy(false);
@@ -373,6 +442,7 @@ $("form").addEventListener("submit", async event => {
     busy(true);
     $("relatorio").hidden = true;
     $("andamento").replaceChildren();
+    $("execucao-parcial").hidden = true;
     try {
         const options = {
             modo:$("modo").value, csv:$("csv").files[0].name, ntsl:$("ntsl").value,

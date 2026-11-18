@@ -1,5 +1,10 @@
 # Histórico de versões
 
+## 0.5.2
+
+- Progresso durante cada geração com métricas e parâmetros do melhor candidato até o momento.
+- Indicadores de preparação, validação e geração do relatório e progresso por barras no replay direto.
+
 ## 0.5.1
 
 - Envio local de CSV em blocos de 4 MiB, com progresso e retomada de blocos em caso de falha transitória.
