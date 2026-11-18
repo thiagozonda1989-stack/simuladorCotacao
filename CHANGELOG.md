@@ -1,5 +1,10 @@
 # Histórico de versões
 
+## 0.5.0
+
+- Modo de recursos máximos com dimensionamento automático por CPU, RAM e população.
+- Replay NTSL em processos isolados, com reuso da estratégia compilada e progresso preservado.
+
 ## 0.4.0
 
 - Busca genética por execução NTSL com faixas para todos os inputs, incluindo listas booleanas e de texto, e objetivos de resultado e drawdown.

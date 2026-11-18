@@ -1,4 +1,4 @@
-# simuladorCotacao 0.4.0
+# simuladorCotacao 0.5.0
 
 [Histórico de alterações](CHANGELOG.md) · [Manutenção e hashes dos pacotes](MANUTENCAO.md)
 
@@ -70,6 +70,14 @@ Em **Otimização genética**, o motor padrão da interface é **Replay NTSL**. 
 
 Um exemplo sintético com laços, funções, `SendOrder` e três inputs configuráveis está em `exemplos/otimizacao_ntsl`.
 
+### Usar recursos máximos
+
+Ative **Usar recursos máximos** na tela de otimização genética ou defina `"recursos_maximos": true` no JSON. O simulador mede os núcleos lógicos disponíveis ao processo e a RAM livre no início da busca. A população e a estimativa de memória por trabalhador limitam o paralelismo. A reserva para o sistema é de pelo menos 512 MiB ou 20% da RAM que estava disponível, o que for maior.
+
+No **Replay NTSL**, candidatos são avaliados em processos separados. Cada processo recebe os candles e compila a estratégia uma vez, enviando apenas métricas ao processo principal. No **Ensemble**, o programa continua usando threads para compartilhar a base em memória. A opção substitui os valores manuais de `threads` e `cache_ram_mb` durante a execução. Desmarcada, a configuração anterior segue aplicável.
+
+A interface mostra o limite de trabalhadores selecionado e o relatório registra núcleos, RAM disponível, estimativa por trabalhador e modo de paralelismo. O uso pode cair quando há poucos candidatos, na geração do relatório ou quando o Ensemble compartilha o mesmo cálculo entre vários candidatos.
+
 ### Alvos e acompanhamento
 
 | Alvo | Regra |
@@ -103,7 +111,7 @@ Em Linux, use Python 3.11+ e um toolchain MinGW-w64 x64. Baixe a distribuição 
 
 ```bash
 python -m pip download --only-binary=:all: --platform win_amd64 --python-version 312 -r windows/requirements.lock -d wheels
-python windows/package.py --python-win python-3.12.10-embed-amd64.zip --wheels wheels --saida simuladorCotacao-v0.4.0-win64.zip
+python windows/package.py --python-win python-3.12.10-embed-amd64.zip --wheels wheels --saida simuladorCotacao-v0.5.0-win64.zip
 ```
 
 Para desenvolver ou testar com o seu Python local, instale `requirements.txt` e rode `python app.py`. Para um comando de terminal no código-fonte, use `python app.py --cli estrategia --help`.

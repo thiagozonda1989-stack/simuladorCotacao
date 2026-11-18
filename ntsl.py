@@ -75,6 +75,7 @@ class Compiler:
     def __init__(self, source):
         self.tokens = []
         source = source.lstrip('\ufeff')
+        self.source = source
         pos, line = 0, 1
         while pos < len(source):
             match = TOKEN.match(source, pos)
@@ -197,7 +198,7 @@ class Compiler:
         self.expect("<fim>")
         namespace = {"__builtins__": {}}
         exec(compile("\n".join(self.routine_lines + self.lines), "<NTSL compilado>", "exec"), namespace)
-        return Program(namespace["strategy"], self.symbols, self.defaults, self.inputs, self.used, self.used_inputs)
+        return Program(namespace["strategy"], self.symbols, self.defaults, self.inputs, self.used, self.used_inputs, self.source)
 
     def array_type(self):
         self.expect("[")
@@ -466,6 +467,11 @@ class Program:
     inputs: dict
     used: set
     used_inputs: set
+    source: str
+
+    def __reduce__(self):
+        # A função gerada por exec é reconstruída uma vez no processo filho.
+        return compile_ntsl, (self.source,)
 
 
 def compile_ntsl(source):

@@ -1,13 +1,14 @@
 """Reconstrução OHLC e otimização cronológica do classificador NTSL."""
 import argparse
 from collections import OrderedDict
-from concurrent.futures import ThreadPoolExecutor
+from concurrent.futures import FIRST_COMPLETED, ProcessPoolExecutor, ThreadPoolExecutor, wait
 from datetime import datetime
 from decimal import Decimal
 import html
 from itertools import product
 import json
 import math
+from multiprocessing import get_context
 import os
 from pathlib import Path
 import random
@@ -313,7 +314,64 @@ def cpu_count():
     return len(os.sched_getaffinity(0)) if hasattr(os, 'sched_getaffinity') else os.cpu_count() or 1
 
 
-def optimize(replay, config, out, on_progress=None):
+def strategy_metrics(ys, score, side, financial, trade_score=None):
+    pred = score[:, side] > 0
+    result = metrics(ys, pred)
+    if financial:
+        result['sinais'] = int(np.count_nonzero(score[:,0] + score[:,1]))
+    trade_score = score if trade_score is None else trade_score
+    equity = np.r_[0, np.cumsum(trade_score[:,2])]
+    pnl = float(equity[-1])
+    drawdown = float((np.maximum.accumulate(equity)-equity).max())
+    return result | dict(resultado=pnl, drawdown=drawdown,
+                         resultado_menos_drawdown=pnl-drawdown, saidas=int(trade_score[:,3].sum()))
+
+def init_replay_worker(replay, mask, side, financial):
+    global worker_replay, worker_mask, worker_side, worker_financial
+    worker_replay, worker_mask = replay, mask
+    worker_side, worker_financial = side, financial
+
+
+def evaluate_replay_worker(parameters):
+    try:
+        score = worker_replay.score(parameters)
+        return strategy_metrics(worker_replay.label[worker_mask], score[worker_mask],
+                                worker_side, worker_financial, score)
+    except (ValueError, TypeError, ArithmeticError) as error:
+        return {"erro": str(error)}
+
+
+def parallel_replays(executor, entries, parameters, workers, deadline, seen, metric, minimum_signals):
+    remaining = iter(entries)
+    active = {}
+
+    def submit():
+        entry = next(remaining, None)
+        if entry is not None:
+            genome = entry[1][0]
+            active[executor.submit(evaluate_replay_worker, parameters(genome))] = genome
+            return True
+        return False
+
+    for _ in range(workers):
+        if not submit():
+            break
+    deadline_hit = False
+    while active:
+        finished, _ = wait(active, return_when=FIRST_COMPLETED)
+        for future in finished:
+            genome = active.pop(future)
+            stats = future.result()
+            fitness = stats[metric] if stats.get('sinais', -1) >= minimum_signals else -math.inf
+            seen[genome] = (fitness, stats)
+            if deadline is not None and time.monotonic() >= deadline:
+                deadline_hit = True
+            else:
+                submit()
+    return deadline_hit
+
+
+def optimize(replay, config, out, on_progress=None, on_resources=None):
     cfg = config['genetico']
     generic = not isinstance(replay, Replay)
     defaults = replay.defaults if generic else replay.model.defaults
@@ -368,9 +426,16 @@ def optimize(replay, config, out, on_progress=None):
         raise ValueError('threads e cache_ram_mb precisam ser não negativos.')
     # O orçamento limita o cache, e a RAM disponível limita também os workers.
     available = None
+    cores = cpu_count()
+    maximize = config.get("recursos_maximos", False) is True
     try:
         import psutil
         available = psutil.virtual_memory().available
+        if os.name == 'nt':
+            try:
+                cores = len(psutil.Process().cpu_affinity()) or cores
+            except (psutil.Error, OSError, NotImplementedError):
+                pass
     except ImportError:
         pass
     worker_estimate = max(24*1024**2, n*2300)
@@ -379,6 +444,26 @@ def optimize(replay, config, out, on_progress=None):
     workers = min(requested or (1 if generic else cpu_count()), population)
     if available:
         workers = min(workers, max(1, (available//2)//worker_estimate))
+    if maximize:
+        # Cada replay mantém uma matriz de histórico e pode criar listas de ordens.
+        worker_estimate = max(worker_estimate, 64*1024**2)
+        if generic:
+            worker_estimate += int(search_replay.frame.memory_usage(deep=True).sum())
+            worker_estimate += n * (8*len(replay.program.defaults) + 512)
+        reserve = max(512*1024**2, available//5) if available else 0
+        usable = max(0, available-reserve) if available else None
+        budget = 0 if generic or usable is None else usable//4
+        workers = min(cores, population, 61 if os.name == 'nt' and generic else cores)
+        if usable is not None:
+            workers = min(workers, max(1, (usable-budget)//worker_estimate))
+    processes = generic and maximize and workers > 1
+    resources = dict(recursos_maximos=maximize, modo_paralelo='processos' if processes else 'threads',
+                     trabalhadores=workers, nucleos_logicos=cores,
+                     ram_disponivel_mb=round(available/1024**2) if available is not None else None,
+                     estimativa_por_trabalhador_mb=round(worker_estimate/1024**2, 1),
+                     cache_ram_mb=budget/1024**2)
+    if on_resources:
+        on_resources(resources)
     rng = random.Random(cfg['semente'])
     scores = OrderedDict()
     history, seen = [], {}
@@ -394,18 +479,6 @@ def optimize(replay, config, out, on_progress=None):
                  or (replay.specification.get('modo', 'classe') == 'classe'
                      and str(config.get('classe_alvo', '1C')).upper().endswith('V'))) else 0
 
-    def strategy_metrics(ys, score, trade_score=None):
-        pred = score[:, side] > 0
-        result = metrics(ys, pred)
-        if financial:
-            result['sinais'] = int(np.count_nonzero(score[:,0] + score[:,1]))
-        trade_score = score if trade_score is None else trade_score
-        equity = np.r_[0, np.cumsum(trade_score[:,2])]
-        pnl = float(equity[-1])
-        drawdown = float((np.maximum.accumulate(equity)-equity).max())
-        return result | dict(resultado=pnl, drawdown=drawdown,
-                             resultado_menos_drawdown=pnl-drawdown, saidas=int(trade_score[:,3].sum()))
-
     def predictions(p, score):
         if generic:
             return score[:, side] > 0
@@ -418,7 +491,7 @@ def optimize(replay, config, out, on_progress=None):
         for genome in genomes:
             p = parameters(genome)
             if generic:
-                stats = strategy_metrics(labels, local_score, score)
+                stats = strategy_metrics(labels, local_score, side, financial, score)
             else:
                 pred = (local_score >= p['p_CorteScoreModelo']) & (local_age >= p['p_BarrasAquecimento'])
                 stats = metrics(labels, pred)
@@ -463,7 +536,11 @@ def optimize(replay, config, out, on_progress=None):
     candidates = populate([original])
     best, best_value, unchanged = None, -math.inf, 0
     reason = 'limite de gerações'
-    with ThreadPoolExecutor(max_workers=workers) as executor:
+    pool = (ProcessPoolExecutor(max_workers=workers, mp_context=get_context('spawn'),
+                               initializer=init_replay_worker,
+                               initargs=(search_replay, local_mask, side, financial))
+            if processes else ThreadPoolExecutor(max_workers=workers))
+    with pool as executor:
         for generation in range(1, generations+1):
             groups = {}
             for genome in candidates:
@@ -471,7 +548,14 @@ def optimize(replay, config, out, on_progress=None):
                     groups.setdefault(score_key(genome), []).append(genome)
             entries = list(groups.items())
             deadline_hit = False
-            for start in range(0, len(entries), workers):
+            if processes:
+                if seconds and seen and time.monotonic()-clock >= seconds:
+                    deadline_hit = True
+                else:
+                    deadline_hit = parallel_replays(executor, entries, parameters, workers,
+                                                    clock+seconds if seconds else None,
+                                                    seen, metric, minimum_signals)
+            for start in range(0, 0 if processes else len(entries), workers):
                 if seconds and seen and time.monotonic()-clock >= seconds:
                     deadline_hit = True
                     break
@@ -541,7 +625,7 @@ def optimize(replay, config, out, on_progress=None):
         entradas_na_abertura=not generic, motor='ntsl' if generic else 'ensemble', configuracao=config,
         arvores=None if generic else len(replay.trees),
         arvores_removidas=None if generic else len(replay.model.trees)-len(replay.trees),
-        campos_excluidos=sorted(replay.excluded), threads=workers, cache_ram_mb=budget/1024**2,
+        campos_excluidos=sorted(replay.excluded), threads=workers, **resources,
         metrica=metric, parada=reason, candidatos_avaliados=len(seen), espaco_busca=total,
         segundos_busca=history[-1]['segundos'], atende_min_sinais=math.isfinite(best_value),
         parametros_otimizados=optimized,
@@ -549,8 +633,8 @@ def optimize(replay, config, out, on_progress=None):
         resultados={name: dict(
             pregoes=np.unique(replay.day[mask]).tolist(),
             barras_com_score=int(np.count_nonzero(mask)) if generic else int(np.count_nonzero(np.isfinite(best_score[mask]))),
-            original=strategy_metrics(replay.label[mask], original_score[mask], original_score[search_rows if name=='busca' else ~search_rows]) if generic else metrics(replay.label[mask], baseline[mask]),
-            otimizado=strategy_metrics(replay.label[mask], best_score[mask], best_score[search_rows if name=='busca' else ~search_rows]) if generic else metrics(replay.label[mask], pred[mask]),
+            original=strategy_metrics(replay.label[mask], original_score[mask], side, financial, original_score[search_rows if name=='busca' else ~search_rows]) if generic else metrics(replay.label[mask], baseline[mask]),
+            otimizado=strategy_metrics(replay.label[mask], best_score[mask], side, financial, best_score[search_rows if name=='busca' else ~search_rows]) if generic else metrics(replay.label[mask], pred[mask]),
         ) for name, mask in splits.items()},
     )
     (out/'metricas.json').write_text(json.dumps(summary, indent=2, ensure_ascii=False, allow_nan=False), encoding='utf-8')

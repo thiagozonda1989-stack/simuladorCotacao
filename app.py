@@ -117,11 +117,17 @@ class Workspace:
                     replay = Replay(frame, model, seconds, config.get("classe_alvo", "1C"),
                                     config.get("alvo"), config.get("campos_excluidos", ()))
                 destination.mkdir()
+                execution = {}
+
+                def resources(plan):
+                    execution.update(plan)
+                    self.job = self.job | {"recursos": dict(execution)}
+
                 def progress(history, names):
                     latest = history[-1]
                     self.job = {"estado": "executando", "id": name, "geracao": latest["geracao"],
-                                "avaliados": latest["avaliados"], "graficos": charts(history[-100:], names, financial=replay.specification.get("modo")=="resultado")}
-                optimize(replay, config, destination, progress)
+                                "avaliados": latest["avaliados"], "recursos": dict(execution), "graficos": charts(history[-100:], names, financial=replay.specification.get("modo")=="resultado")}
+                optimize(replay, config, destination, progress, resources)
             else:
                 raise ValueError("Modo de execução desconhecido.")
         except Exception as error:

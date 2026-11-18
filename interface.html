@@ -54,6 +54,10 @@ figure{margin:10px 0;background:#f5f9f8;padding:12px;border-radius:8px}svg{width
 <h2>Execução</h2>
 <div class="field"><label for="modo">Modo</label><select id="modo"><option value="estrategia">Replay da estratégia</option><option value="otimizar">Otimização genética</option></select></div>
 <div id="genetica" hidden>
+<div class="field">
+<label><input id="recursos-maximos" type="checkbox"> Usar recursos máximos</label>
+<small>Usa os núcleos disponíveis e dimensiona a execução pela RAM livre, com reserva para o sistema.</small>
+</div>
 <div class="split">
 <div><label for="motor">Motor da busca</label><select id="motor"><option value="ntsl">Replay NTSL · todos os inputs</option><option value="ensemble">Ensemble · avaliação na abertura</option></select></div>
 <div><label for="metrica">Objetivo da busca</label><select id="metrica"><option value="f1">F1</option><option value="accuracy">Acurácia</option><option value="balanced_accuracy">Acurácia balanceada</option><option value="precision">Precisão</option><option value="recall">Recall</option><option value="resultado">Resultado em pontos × contratos</option><option value="resultado_menos_drawdown">Resultado menos drawdown</option></select></div>
@@ -174,6 +178,7 @@ function renderGenetic() {
     try { settings = config(); } catch { return; }
     $("motor").value = settings.motor ?? "ensemble";
     $("metrica").value = settings.genetico?.metrica ?? "f1";
+    $("recursos-maximos").checked = settings.recursos_maximos === true;
     const financial = ["resultado","resultado_menos_drawdown"].includes($("metrica").value);
     $("alvo").disabled = financial;
     for (const option of $("metrica").options) {
@@ -216,6 +221,9 @@ $("motor").addEventListener("change",() => {
         }
     });
     renderGenetic();
+});
+$("recursos-maximos").addEventListener("change",() => {
+    updateConfig(s => { s.recursos_maximos = $("recursos-maximos").checked; });
 });
 $("metrica").addEventListener("change",() => {
     updateConfig(s => { s.genetico.metrica = $("metrica").value; });
@@ -295,10 +303,13 @@ async function poll() {
         const response = await fetch(endpoint("estado"));
         const state = await response.json();
         if (state.estado === "executando") {
+            const plan = state.recursos;
+            const parallel = plan ? " · " + plan.trabalhadores + " " + plan.modo_paralelo
+                + " / " + plan.nucleos_logicos + " núcleos lógicos" : "";
             if (state.geracao) {
-                show("Geração " + state.geracao + " · " + state.avaliados + " candidatos avaliados");
+                show("Geração " + state.geracao + " · " + state.avaliados + " candidatos avaliados" + parallel);
                 $("andamento").innerHTML = state.graficos;
-            }
+            } else if (plan) { show("Executando" + parallel); }
             timer = setTimeout(poll,1200);
         } else {
             busy(false);
