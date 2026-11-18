@@ -1,5 +1,10 @@
 # Histórico de versões
 
+## 0.5.1
+
+- Envio local de CSV em blocos de 4 MiB, com progresso e retomada de blocos em caso de falha transitória.
+- A interface diferencia erros de envio, execução e consulta do andamento.
+
 ## 0.5.0
 
 - Modo de recursos máximos com dimensionamento automático por CPU, RAM e população.

@@ -45,6 +45,8 @@ class Workspace:
         self.output = output.resolve()
         self.token = secrets.token_urlsafe(24)
         self.pending_input = None
+        self.upload_transfer = None
+        self.last_request = None
         self.job = {"estado": "pronto"}
         self.lock = Lock()
 
@@ -75,20 +77,73 @@ class Workspace:
                 self.pending_input.unlink(missing_ok=True)
             self.pending_input = path
 
+    def upload_chunk(self, stream, length, transfer, offset, total):
+        if (not re.fullmatch(r"[a-zA-Z0-9-]{16,64}", transfer) or not 0 < length <= 4*MIB
+                or offset < 0 or offset+length > total):
+            raise ValueError("Bloco do CSV inválido.")
+        with self.lock:
+            if self.job["estado"] == "executando":
+                raise ValueError("Aguarde a execução atual.")
+            current = self.upload_transfer
+            if current is None or current[0] != transfer:
+                if offset != 0:
+                    raise ValueError("O envio do CSV expirou. Selecione o arquivo novamente.")
+                if total + 64*MIB > shutil.disk_usage(self.output).free:
+                    raise ValueError("Espaço livre insuficiente para receber o CSV.")
+                with tempfile.NamedTemporaryFile(prefix="blocos-", suffix=".csv",
+                                                 dir=self.output, delete=False) as destination:
+                    path = Path(destination.name)
+                if current and current[1] != self.pending_input:
+                    current[1].unlink(missing_ok=True)
+                self.upload_transfer = current = (transfer, path, total)
+            _, path, expected = current
+            received = path.stat().st_size
+            if expected != total or offset > received or offset < received < offset+length:
+                raise ValueError("Sequência de blocos do CSV inválida.")
+            block = stream.read(length)
+            if len(block) != length:
+                raise ValueError("Transferência local interrompida.")
+            if offset == received:
+                with path.open("r+b") as destination:
+                    destination.seek(received)
+                    try:
+                        destination.write(block)
+                        destination.flush()
+                    except OSError:
+                        destination.truncate(received)
+                        raise
+                received += length
+            if received == total:
+                if self.pending_input and self.pending_input != path:
+                    self.pending_input.unlink(missing_ok=True)
+                self.pending_input = path
+            return received
+
     def start(self, options):
         with self.lock:
+            request = options.get("solicitacao")
+            if request and self.last_request == request:
+                return self.job["id"]
             if self.job["estado"] == "executando":
                 raise ValueError("Já existe uma execução em andamento.")
             if not self.pending_input:
                 raise ValueError("O CSV ainda não foi carregado.")
+            transfer = options.get("transferencia")
+            if transfer and (not self.upload_transfer or
+                             self.upload_transfer[:2] != (transfer, self.pending_input)):
+                raise ValueError("O CSV desta solicitação foi substituído. Envie o arquivo novamente.")
             source = options["ntsl"]
             if not isinstance(source,str) or not source.strip():
                 raise ValueError("Carregue ou cole uma estratégia NTSL.")
             name = datetime.now().strftime("%Y%m%d-%H%M%S-%f")
             path = self.pending_input
             self.pending_input = None
+            if self.upload_transfer and self.upload_transfer[1] == path:
+                self.upload_transfer = None
             self.job = {"estado": "executando", "id": name}
+            self.last_request = request
             Thread(target=self.run,args=(path,name,options),daemon=True).start()
+            return name
 
     def run(self, csv, name, options):
         destination = self.output/name
@@ -201,7 +256,7 @@ def build_handler(workspace):
 
         def do_POST(self):
             path = self.route()
-            if path not in {"/csv","/executar","/encerrar"}:
+            if path not in {"/csv","/csv-bloco","/executar","/encerrar"}:
                 self.send_error(HTTPStatus.NOT_FOUND)
                 return
             try:
@@ -214,14 +269,28 @@ def build_handler(workspace):
                 length = int(self.headers.get("Content-Length","0"))
                 if path == "/csv":
                     workspace.upload(self.rfile,length)
+                elif path == "/csv-bloco":
+                    self.connection.settimeout(35)
+                    offset = workspace.upload_chunk(
+                        self.rfile, length, self.headers.get("X-Upload-Id",""),
+                        int(self.headers.get("X-Upload-Offset","-1")),
+                        int(self.headers.get("X-Upload-Size","-1")))
+                    self.json({"recebido": offset})
+                    return
                 elif 0 < length <= 8*MIB:
                     options = json.loads(self.rfile.read(length))
                     if not isinstance(options.get("opcoes"),dict):
                         raise ValueError("As opções precisam ser um objeto JSON.")
-                    workspace.start(options)
+                    job = workspace.start(options)
+                    self.json({"ok":True,"id":job})
+                    return
                 else:
                     raise ValueError("O código e a configuração excedem 8 MiB ou estão vazios.")
                 self.json({"ok":True})
+            except (BrokenPipeError, ConnectionResetError):
+                return
+            except TimeoutError:
+                self.json({"erro":"O envio do bloco expirou."},408)
             except (ValueError,OSError,KeyError,TypeError) as error:
                 self.json({"erro":str(error)},400)
     return Handler
@@ -240,6 +309,8 @@ def serve(output,open_browser):
         finally:
             if workspace.pending_input:
                 workspace.pending_input.unlink(missing_ok=True)
+            if workspace.upload_transfer:
+                workspace.upload_transfer[1].unlink(missing_ok=True)
 
 
 def main():

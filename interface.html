@@ -252,11 +252,46 @@ const busy = active => {
     $("executar").disabled = active;
     $("encerrar").disabled = active;
 };
-async function post(name, body, type) {
-    const response = await fetch(endpoint(name), {method:"POST",body,headers:{"Content-Type":type}});
-    const data = await response.json();
-    if (!response.ok) throw new Error(data.erro || "Falha na execução.");
+async function localFetch(name, options = {}, retries = 0) {
+    for (let attempt = 0; ; attempt++) {
+        try {
+            const response = await fetch(endpoint(name), {...options, signal: AbortSignal.timeout(25000)});
+            if (response.status === 408 && attempt < retries) continue;
+            return response;
+        } catch (error) {
+            if (attempt >= retries) {
+                const failure = new Error("Conexão com o simulador local perdida em " + name +
+                    ". Se o executável fechou, abra-o novamente e use a nova aba.");
+                failure.connection = true;
+                throw failure;
+            }
+            await new Promise(resolve => setTimeout(resolve, 350 * (attempt + 1)));
+        }
+    }
+}
+async function post(name, body, type, headers = {}, retries = 0) {
+    const response = await localFetch(name, {method:"POST",body,headers:{"Content-Type":type,...headers}}, retries);
+    const data = await response.json().catch(() => null);
+    if (!response.ok || !data) {
+        throw Error(data?.erro || "O simulador respondeu com HTTP " + response.status + " em " + name +
+            ". Se esta aba for de uma versão anterior, abra o executável atualizado.");
+    }
     return data;
+}
+async function uploadCsv(file) {
+    if (!file?.size) throw Error("Selecione um CSV de dados.");
+    const transfer = crypto.randomUUID();
+    const chunkSize = 4 * 1024 * 1024;
+    for (let offset = 0; offset < file.size;) {
+        const end = Math.min(file.size, offset + chunkSize);
+        show("Enviando CSV ao simulador local · " + Math.floor(100 * offset / file.size) + "%");
+        const response = await post("csv-bloco", file.slice(offset, end), "application/octet-stream", {
+            "X-Upload-Id":transfer, "X-Upload-Offset":String(offset), "X-Upload-Size":String(file.size)
+        }, 2);
+        if (response.recebido !== end) throw Error("O simulador não confirmou este bloco do CSV.");
+        offset = end;
+    }
+    return transfer;
 }
 $("arquivo").addEventListener("change", async () => {
     const file = $("arquivo").files[0];
@@ -270,7 +305,7 @@ $("arquivo").addEventListener("change", async () => {
 });
 $("modelo").addEventListener("click", async () => {
     try {
-        const response = await fetch(endpoint("modelo-exemplo"));
+        const response = await localFetch("modelo-exemplo", {}, 1);
         if (!response.ok) throw Error("Falha ao abrir a estratégia do pacote.");
         $("ntsl").value = await response.text();
         renderGenetic();
@@ -282,7 +317,7 @@ $("modo").addEventListener("change", async () => {
         replaySettings = $("opcoes").value;
         try {
             if (optimizationTemplate === null) {
-                const response = await fetch(endpoint("config-exemplo"));
+                const response = await localFetch("config-exemplo", {}, 1);
                 optimizationTemplate = JSON.stringify({...await response.json(),motor:"ntsl"},null,2);
             }
             if ($("modo").value === "otimizar") $("opcoes").value = optimizationTemplate;
@@ -298,9 +333,10 @@ $("modo").addEventListener("change", async () => {
         ? "Edite os inputs pela tabela e os limites da busca no JSON."
         : "Use {} para aplicar os valores do código. Exemplo de ajuste: {\"p_Lote\": 2}.";
 });
-async function poll() {
+async function poll(failures = 0) {
     try {
-        const response = await fetch(endpoint("estado"));
+        const response = await localFetch("estado");
+        if (!response.ok) throw Error("A consulta de andamento retornou HTTP " + response.status + ".");
         const state = await response.json();
         if (state.estado === "executando") {
             const plan = state.recursos;
@@ -321,7 +357,15 @@ async function poll() {
                 show(state.mensagem || "Aguardando dados e estratégia.");
             }
         }
-    } catch (error) { busy(false); show(error.message); }
+    } catch (error) {
+        if (error.connection && failures < 3) {
+            show("Conexão local interrompida. Tentando consultar o andamento novamente…");
+            timer = setTimeout(() => poll(failures + 1), 1500);
+            return;
+        }
+        busy(false);
+        show(error.message);
+    }
 }
 $("form").addEventListener("submit", async event => {
     event.preventDefault();
@@ -342,9 +386,9 @@ $("form").addEventListener("submit", async event => {
                 throw Error("O JSON contém faixas para inputs ausentes neste NTSL. Revise a seleção na tabela ou o JSON.");
             }
         }
-        show("Lendo o CSV local…");
-        await post("csv",$("csv").files[0],"text/csv");
-        await post("executar",JSON.stringify(options),"application/json");
+        options.transferencia = await uploadCsv($("csv").files[0]);
+        options.solicitacao = crypto.randomUUID();
+        await post("executar",JSON.stringify(options),"application/json", {}, 1);
         show("Executando…");
         poll();
     } catch (error) { busy(false); show(error.message); }
