@@ -1,5 +1,14 @@
 # Histórico de versões
 
+## 0.5.0
+
+- Catálogo versionado das estratégias NTSL do projeto ProfitRTD e indicadores de geração de datasets.
+- Matriz separando evidência de compilação no Profit e compatibilidade com o subconjunto NTSL do simulador.
+- Diretrizes de validação, contrato canônico para Negócios/Preços/Ofertas e exemplos sintéticos.
+- Arquitetura proposta para replay causal por eventos, tratamento de lacunas, custos, latência e paridade com o Profit.
+- Script incremental de sincronização com manifesto SHA-256 e prompt de continuidade para outra IA.
+- Inventário incremental de CSVs com registro de arquivos processados, colunas, períodos, inversões, repetições e lacunas.
+
 ## 0.4.0
 
 - Busca genética por execução NTSL com faixas para todos os inputs, incluindo listas booleanas e de texto, e objetivos de resultado e drawdown.

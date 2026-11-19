@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Evento integrado ProfitRTD v1",
+  "type": "object",
+  "required": ["timestamp_evento", "sequencia_fonte", "pregao", "ativo_origem", "qualidade_dados"],
+  "properties": {
+    "timestamp_evento": {"type": "string", "format": "date-time"},
+    "sequencia_fonte": {"type": "integer", "minimum": 0},
+    "pregao": {"type": "string", "format": "date"},
+    "ativo_origem": {"type": "string"},
+    "preco_ultimo": {"type": ["number", "null"]},
+    "quantidade_negocio": {"type": ["number", "null"], "minimum": 0},
+    "bid": {"type": ["number", "null"]},
+    "ask": {"type": ["number", "null"]},
+    "qtd_bid": {"type": ["number", "null"], "minimum": 0},
+    "qtd_ask": {"type": ["number", "null"], "minimum": 0},
+    "qtd_compra_book": {"type": ["number", "null"], "minimum": 0},
+    "qtd_venda_book": {"type": ["number", "null"], "minimum": 0},
+    "agressao_compra": {"type": ["number", "null"], "minimum": 0},
+    "agressao_venda": {"type": ["number", "null"], "minimum": 0},
+    "saldo_agressao": {"type": ["number", "null"]},
+    "idade_preco_ms": {"type": ["integer", "null"], "minimum": 0},
+    "idade_oferta_ms": {"type": ["integer", "null"], "minimum": 0},
+    "segmento": {"type": "integer", "minimum": 1},
+    "qualidade_dados": {"enum": ["ok", "parcial", "lacuna", "invalido"]}
+  },
+  "additionalProperties": true
+}

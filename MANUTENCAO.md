@@ -1,5 +1,7 @@
 # Manutenção do simuladorCotacao
 
+> A versão 0.5.0 adiciona documentação, schemas e estratégias NTSL. Ainda não há pacote executável 0.5.0 publicado; os hashes abaixo continuam correspondendo aos pacotes anteriores.
+
 - Use a branch `main` como base para mudanças.
 - Registre alterações relevantes no `CHANGELOG.md`. Em cada lançamento, atualize `VERSION` e `windows/version.rc`.
 - Guarde os fontes, configurações, documentação e exemplos sintéticos pequenos no Git. Os CSVs brutos de captura ficam fora do repositório.

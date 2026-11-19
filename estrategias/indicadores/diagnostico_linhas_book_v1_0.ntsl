@@ -1,0 +1,68 @@
+{ ============================================================================ }
+{ INDICADOR: diagnostico_linhas_book_v1_0                                  }
+{ FINALIDADE: visualizar a disponibilidade do book durante Replay           }
+{ NAO ENVIA ORDENS                                                          }
+{                                                                            }
+{ Plot 1 verde      = quantidade compradora bruta                            }
+{ Plot 2 vermelho   = quantidade vendedora bruta                             }
+{ Plot 3 verde claro= ultima quantidade compradora valida                    }
+{ Plot 4 rosa       = ultima quantidade vendedora valida                     }
+{ ============================================================================ }
+
+const
+  c_Ativo = Asset(GetAsset, itSecond, 5);
+
+input
+  p_NiveisBook(5);
+  p_MinQtdBookValida(1.0);
+
+var
+  v_QtdCompraBruta       : Float;
+  v_QtdVendaBruta        : Float;
+  v_QtdCompraPersistida  : Float;
+  v_QtdVendaPersistida   : Float;
+  v_TotalBookBruto       : Float;
+  v_IdadeBookBarras      : Integer;
+  v_BarraUltimoBook      : Integer;
+  v_DataControle         : Integer;
+
+begin
+  { Reinicia a memoria no primeiro calculo de cada pregao. }
+  if Date <> v_DataControle then
+  begin
+    v_DataControle        := Date;
+    v_QtdCompraPersistida := 0;
+    v_QtdVendaPersistida  := 0;
+    v_IdadeBookBarras     := 0;
+    v_BarraUltimoBook     := 0;
+  end;
+
+  { Leitura bruta entregue pelo Profit neste instante. }
+  v_QtdCompraBruta := TotalBuyQtd(c_Ativo, p_NiveisBook);
+  v_QtdVendaBruta  := TotalSellQtd(c_Ativo, p_NiveisBook);
+  v_TotalBookBruto := v_QtdCompraBruta + v_QtdVendaBruta;
+
+  { Atualiza a memoria somente quando existe uma leitura realmente valida. }
+  if v_TotalBookBruto >= p_MinQtdBookValida then
+  begin
+    v_QtdCompraPersistida := v_QtdCompraBruta;
+    v_QtdVendaPersistida  := v_QtdVendaBruta;
+    v_BarraUltimoBook     := CurrentBar;
+    v_IdadeBookBarras     := 0;
+  end
+  else if v_BarraUltimoBook > 0 then
+    v_IdadeBookBarras := CurrentBar - v_BarraUltimoBook;
+
+  { Linhas brutas: mostram exatamente quando o Profit entrega o book. }
+  Plot(v_QtdCompraBruta);
+  Plot2(v_QtdVendaBruta);
+
+  { Linhas persistidas: mantem a ultima leitura valida observada. }
+  Plot3(v_QtdCompraPersistida);
+  Plot4(v_QtdVendaPersistida);
+
+  SetPlotColor(1, clGreen);
+  SetPlotColor(2, clRed);
+  SetPlotColor(3, clLime);
+  SetPlotColor(4, clFuchsia);
+end;

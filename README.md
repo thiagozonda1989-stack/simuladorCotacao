@@ -1,6 +1,18 @@
-# simuladorCotacao 0.4.0
+# simuladorCotacao 0.5.0
 
 [Histórico de alterações](CHANGELOG.md) · [Manutenção e hashes dos pacotes](MANUTENCAO.md)
+
+## Integração ProfitRTD
+
+O repositório inclui agora um catálogo versionado das estratégias desenvolvidas no projeto ProfitRTD, indicadores para geração de datasets, diretrizes de validação e um contrato canônico para integrar Negócios, Preços e Ofertas.
+
+- [Diretrizes do projeto](DIRETRIZES_PROJETO.md)
+- [Estratégias e matriz de compatibilidade](estrategias/README.md)
+- [Dados de entrada](docs/DADOS_ENTRADA_PROFITRTD.md)
+- [Arquitetura de unificação](docs/ARQUITETURA_UNIFICACAO.md)
+- [Prompt para continuidade por outra IA](docs/PROMPT_IA_UNIFICACAO.md)
+
+Os dados reais de mercado não são publicados. `dados/exemplos` contém somente registros sintéticos.
 
 ## Abrir no Windows
 

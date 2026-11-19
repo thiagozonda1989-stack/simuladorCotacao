@@ -1,0 +1,144 @@
+{
+  "versao_manifesto": 1,
+  "gerado_utc": "2026-11-19T03:01:07.203662+00:00",
+  "arquivos": [
+    {
+      "arquivo": "execucao/modelo_1c_antecipado_profit_v1_0.ntsl",
+      "sha256": "45c1d1fb0acca14905ab00028cad065bfc325065b365a5cdfa675ca5f07b4538",
+      "bytes": 230762,
+      "origem_relativa": "validacao_modelo_1c_antecipado_v1_0/modelo_1c_antecipado_profit_v1_0.ntsl"
+    },
+    {
+      "arquivo": "execucao/modelo_1c_antecipado_profit_v1_1.ntsl",
+      "sha256": "3b71b1158075aa7b981d281c7184a50ef71c401e6d0161f213bcab9fd5c1bcf0",
+      "bytes": 231816,
+      "origem_relativa": "validacao_modelo_1c_antecipado_v1_1/modelo_1c_antecipado_profit_v1_1.ntsl"
+    },
+    {
+      "arquivo": "execucao/modelo_micro_scalper_v4_0.ntsl",
+      "sha256": "99f009e49f4a8ec8550bbe55dc99cb45cdcc1841e4011e9af3f3fe18d438e533",
+      "bytes": 11682,
+      "origem_relativa": "validacao_modelo_micro_scalper_v4_0/modelo_micro_scalper_v4_0.ntsl"
+    },
+    {
+      "arquivo": "execucao/modelo_micro_scalper_v4_1_5s.ntsl",
+      "sha256": "435e0a306732102d4c8d6ddbcdd0d23c5bf47d4762b10743135f376c69d7b3d4",
+      "bytes": 12125,
+      "origem_relativa": "validacao_modelo_micro_scalper_v4_1/modelo_micro_scalper_v4_1_5s.ntsl"
+    },
+    {
+      "arquivo": "indicadores/indicador_features_supervisionado_v4_2_v1_0.ntsl",
+      "sha256": "6d267af1f14b45f214f7d8233ca2d896e01eff36e9ff26616ba79b77c3808498",
+      "bytes": 20777,
+      "origem_relativa": "validacao_modelo_micro_scalper_v4_2/dataset_supervisionado_v1_0/indicador_features_supervisionado_v4_2_v1_0.ntsl"
+    },
+    {
+      "arquivo": "execucao/modelo_micro_scalper_v4_2_5s.ntsl",
+      "sha256": "55762a608a165615ce78176a78cdfd91a69c3f21b655cda4ed321e5d2d1a1c27",
+      "bytes": 15478,
+      "origem_relativa": "validacao_modelo_micro_scalper_v4_2/modelo_micro_scalper_v4_2_5s.ntsl"
+    },
+    {
+      "arquivo": "indicadores/diagnostico_linhas_book_v1_0.ntsl",
+      "sha256": "ee6ff08a2f6854926f671f55dfbeab583ab0d78048b52b512ccd6295aabf0a56",
+      "bytes": 2462,
+      "origem_relativa": "validacao_modelo_micro_scalper_v4_3_ranges/dataset_supervisionado_v1_0/diagnostico_linhas_book_v1_0.ntsl"
+    },
+    {
+      "arquivo": "indicadores/indicador_features_supervisionado_v4_3_ranges_v1_0.ntsl",
+      "sha256": "6dd69c7ade154451f16d702a40e918d1e334ed15749caf0bc326bc3237c40719",
+      "bytes": 25808,
+      "origem_relativa": "validacao_modelo_micro_scalper_v4_3_ranges/dataset_supervisionado_v1_0/indicador_features_supervisionado_v4_3_ranges_v1_0.ntsl"
+    },
+    {
+      "arquivo": "indicadores/indicador_features_supervisionado_v4_3_ranges_v1_1.ntsl",
+      "sha256": "eccda9645d073ca2115bc76a888d16afa725266efaba4d1117639b7b0744816a",
+      "bytes": 26836,
+      "origem_relativa": "validacao_modelo_micro_scalper_v4_3_ranges/dataset_supervisionado_v1_0/indicador_features_supervisionado_v4_3_ranges_v1_1.ntsl"
+    },
+    {
+      "arquivo": "indicadores/indicador_features_supervisionado_v4_3_ranges_v1_2.ntsl",
+      "sha256": "0f69cf6eacfaee582b9ff75b5aef1ccbf31737340cd4ad38c924bf32f750ed60",
+      "bytes": 30794,
+      "origem_relativa": "validacao_modelo_micro_scalper_v4_3_ranges/dataset_supervisionado_v1_0/indicador_features_supervisionado_v4_3_ranges_v1_2.ntsl"
+    },
+    {
+      "arquivo": "indicadores/indicador_features_supervisionado_v4_3_ranges_v1_3.ntsl",
+      "sha256": "f4cbb67d3dc2dc3ff2af4b500f16a75b00234cd0f45e9627ee1b88a3da4b3a7f",
+      "bytes": 35370,
+      "origem_relativa": "validacao_modelo_micro_scalper_v4_3_ranges/dataset_supervisionado_v1_0/indicador_features_supervisionado_v4_3_ranges_v1_3.ntsl"
+    },
+    {
+      "arquivo": "execucao/modelo_micro_scalper_v4_3_ranges_5s.ntsl",
+      "sha256": "f3584ba27fb5f26692730a31be55321b7674b2bd92435150d65abc403c1321e5",
+      "bytes": 18962,
+      "origem_relativa": "validacao_modelo_micro_scalper_v4_3_ranges/modelo_micro_scalper_v4_3_ranges_5s.ntsl"
+    },
+    {
+      "arquivo": "execucao/modelo_scalper_micro_hft_v3_0.ntsl",
+      "sha256": "ab13625c100358c7b364cd77920ec08d24adc9aa64cca50d48699804e11abd33",
+      "bytes": 8413,
+      "origem_relativa": "validacao_modelo_scalper_micro_hft_v3_0/modelo_scalper_micro_hft_v3_0.ntsl"
+    },
+    {
+      "arquivo": "execucao/modelo_scalper_v1_1.ntsl",
+      "sha256": "64d74abc6dda857582351fd8c797d1801a457fc4cc40b95c6c1d754a1899cf0c",
+      "bytes": 5327,
+      "origem_relativa": "validacao_modelo_scalper_v1_1/modelo_scalper_v1_1.ntsl"
+    },
+    {
+      "arquivo": "indicadores/Monitor_Dados_Brutos_Nelogica.ntsl",
+      "sha256": "db53669eab2f7ada3e85e55601bc63ca339ab781a480ac0f5cf898e03938b570",
+      "bytes": 1933,
+      "origem_relativa": "validacao_modelo_scalper_v1_1/Monitor_Dados_Brutos_Nelogica.ntsl"
+    },
+    {
+      "arquivo": "execucao/modelo_scalper_v2_0.ntsl",
+      "sha256": "4b3c9678cb58ed35febbcaa5a93b462a3ab3f0de0bdcb5ba6e1ea8b1e63b39ef",
+      "bytes": 7946,
+      "origem_relativa": "validacao_modelo_scalper_v2_0/modelo_scalper_v2_0.ntsl"
+    },
+    {
+      "arquivo": "indicadores/diagnostico_filtros_v2_1.ntsl",
+      "sha256": "ec63aab09e0570a4e4a624ca9f711c9d955126b9002b126168d8c13ba157132f",
+      "bytes": 7738,
+      "origem_relativa": "validacao_modelo_scalper_v2_1/diagnostico_filtros_v2_1.ntsl"
+    },
+    {
+      "arquivo": "execucao/modelo_scalper_v2_1.ntsl",
+      "sha256": "b3d57177c8b7157c533f7bc2bcd9e34260b6d53a703f1195d5801dc460ea73a7",
+      "bytes": 7784,
+      "origem_relativa": "validacao_modelo_scalper_v2_1/modelo_scalper_v2_1.ntsl"
+    },
+    {
+      "arquivo": "execucao/modelo_scalper_v2_2.ntsl",
+      "sha256": "fd1da0fa8fdd5d1339f9607aa74c08258ecf84b6bfd75643266661ee722adea2",
+      "bytes": 7786,
+      "origem_relativa": "validacao_modelo_scalper_v2_2/modelo_scalper_v2_2.ntsl"
+    },
+    {
+      "arquivo": "indicadores/indicador_entradas_scalper_v2_2_1.ntsl",
+      "sha256": "c26a36394927249560b1bbbb8e770a97f2ce6ed29a3cf7b433eeb440190ad5c2",
+      "bytes": 4679,
+      "origem_relativa": "validacao_modelo_scalper_v2_2_1/indicador_entradas_scalper_v2_2_1.ntsl"
+    },
+    {
+      "arquivo": "indicadores/indicador_entradas_scalper_v2_2_2.ntsl",
+      "sha256": "a15bcfbe64afb690e91f9cb1579441ab505b179cd93b5b8c05abce382fe17c1b",
+      "bytes": 4151,
+      "origem_relativa": "validacao_modelo_scalper_v2_2_2/indicador_entradas_scalper_v2_2_2.ntsl"
+    },
+    {
+      "arquivo": "execucao/modelo_scalper_v2_3.ntsl",
+      "sha256": "863fab842bdff2ff2a207c53e3874cf34a52aa5f41c597dd5b5da44a5b74fd15",
+      "bytes": 8595,
+      "origem_relativa": "validacao_modelo_scalper_v2_3/modelo_scalper_v2_3.ntsl"
+    },
+    {
+      "arquivo": "execucao/Modelo_Unificado_Refatorado_v5_7.ntsl",
+      "sha256": "0cf2d0d90973a46c38af6dd5bbe4cfeba9d97d3b9242f9ad5cc490318395a22a",
+      "bytes": 3596,
+      "origem_relativa": "validacao_modelo_unificado_v5_7/Modelo_Unificado_Refatorado_v5_7.ntsl"
+    }
+  ]
+}

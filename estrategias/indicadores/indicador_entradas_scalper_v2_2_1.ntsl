@@ -1,0 +1,171 @@
+{ ============================================================================ }
+{ INDICADOR: entradas_scalper_v2_2_1                                       }
+{ DERIVADO: modelo_scalper_v2_2                                             }
+{ FINALIDADE: marcar somente pontos de entrada, sem enviar ou fechar ordens  }
+{ VERDE: entrada compradora | VERMELHO: entrada vendedora                    }
+{ GRAFICO: WIN 5 segundos | Replay Tick a Tick                              }
+{ ============================================================================ }
+
+input
+  p_SegundosPorBarra(5);
+  p_MinVelocidade(2.0);
+  p_MinAceleracao(0.2);
+  p_MinForcaContratos(10.0);
+  p_RazaoDesbalanco(1.0);
+  p_MinTradesBarra(5);
+  p_PeriodoMediaPreco(9);
+  p_HorarioInicio(0915);
+  p_HorarioFimEntradas(1700);
+
+var
+  v_VariacaoPreco       : Float;
+  v_PercursoCompra      : Float;
+  v_PercursoVenda       : Float;
+  v_VolumeAgressaoCompra: Float;
+  v_VolumeAgressaoVenda : Float;
+  v_VelocidadeCompra    : Float;
+  v_VelocidadeVenda     : Float;
+  v_AceleracaoCompra    : Float;
+  v_AceleracaoVenda     : Float;
+  v_ForcaCompra         : Float;
+  v_ForcaVenda          : Float;
+  v_MediaPreco          : Float;
+  v_PrecoEntrada        : Float;
+
+  v_FiltroHorario       : Boolean;
+  v_DensidadeOK         : Boolean;
+  v_SinalCompra         : Boolean;
+  v_SinalVenda          : Boolean;
+
+  v_BarraControle       : Integer;
+  v_DirecaoEntradaBarra : Integer;
+
+begin
+  { Reinicia o marcador somente quando uma nova barra e formada. }
+  if CurrentBar <> v_BarraControle then
+  begin
+    v_BarraControle       := CurrentBar;
+    v_DirecaoEntradaBarra := 0;
+    v_PrecoEntrada        := 0;
+  end;
+
+  v_FiltroHorario :=
+    (Time >= p_HorarioInicio)
+    and (Time < p_HorarioFimEntradas);
+  v_DensidadeOK := Trades >= p_MinTradesBarra;
+
+  { Mesma cinemática de entrada utilizada pela v2.2. }
+  v_VariacaoPreco := Close - Close[1];
+
+  if v_VariacaoPreco > 0 then
+  begin
+    v_PercursoCompra := v_VariacaoPreco;
+    v_PercursoVenda  := 0;
+  end
+  else if v_VariacaoPreco < 0 then
+  begin
+    v_PercursoCompra := 0;
+    v_PercursoVenda  := Abs(v_VariacaoPreco);
+  end
+  else
+  begin
+    v_PercursoCompra := 0;
+    v_PercursoVenda  := 0;
+  end;
+
+  if p_SegundosPorBarra > 0 then
+  begin
+    v_VelocidadeCompra := v_PercursoCompra / p_SegundosPorBarra;
+    v_VelocidadeVenda  := v_PercursoVenda / p_SegundosPorBarra;
+
+    v_AceleracaoCompra :=
+      (v_VelocidadeCompra - v_VelocidadeCompra[1])
+      / p_SegundosPorBarra;
+    v_AceleracaoVenda :=
+      (v_VelocidadeVenda - v_VelocidadeVenda[1])
+      / p_SegundosPorBarra;
+
+    v_VolumeAgressaoCompra := AgressionVolBuy;
+    v_VolumeAgressaoVenda  := AgressionVolSell;
+    v_ForcaCompra := v_VolumeAgressaoCompra / p_SegundosPorBarra;
+    v_ForcaVenda  := v_VolumeAgressaoVenda / p_SegundosPorBarra;
+  end
+  else
+  begin
+    v_VelocidadeCompra := 0;
+    v_VelocidadeVenda  := 0;
+    v_AceleracaoCompra := 0;
+    v_AceleracaoVenda  := 0;
+    v_ForcaCompra      := 0;
+    v_ForcaVenda       := 0;
+  end;
+
+  v_MediaPreco := Media(p_PeriodoMediaPreco, Close);
+
+  v_SinalCompra :=
+    v_FiltroHorario
+    and v_DensidadeOK
+    and (v_VelocidadeCompra >= p_MinVelocidade)
+    and (v_AceleracaoCompra >= p_MinAceleracao)
+    and (v_ForcaCompra >= p_MinForcaContratos)
+    and (v_ForcaCompra >= (p_RazaoDesbalanco * v_ForcaVenda))
+    and (Close > Open)
+    and (Close > v_MediaPreco);
+
+  v_SinalVenda :=
+    v_FiltroHorario
+    and v_DensidadeOK
+    and (v_VelocidadeVenda >= p_MinVelocidade)
+    and (v_AceleracaoVenda >= p_MinAceleracao)
+    and (v_ForcaVenda >= p_MinForcaContratos)
+    and (v_ForcaVenda >= (p_RazaoDesbalanco * v_ForcaCompra))
+    and (Close < Open)
+    and (Close < v_MediaPreco);
+
+  { Registra somente o primeiro sinal de entrada ocorrido na barra. }
+  if v_DirecaoEntradaBarra = 0 then
+  begin
+    if v_SinalCompra then
+    begin
+      v_DirecaoEntradaBarra := 1;
+
+      if AskPrice > 0 then
+        v_PrecoEntrada := AskPrice
+      else
+        v_PrecoEntrada := Close;
+    end
+    else if v_SinalVenda then
+    begin
+      v_DirecaoEntradaBarra := -1;
+
+      if BidPrice > 0 then
+        v_PrecoEntrada := BidPrice
+      else
+        v_PrecoEntrada := Close;
+    end;
+  end;
+
+  { Colore e marca o preco teorico. Nao envia ordens. }
+  if v_DirecaoEntradaBarra = 1 then
+  begin
+    PaintBar(clGreen);
+    PlotText(
+      "▲ C " + FloatToString(v_PrecoEntrada, 0),
+      clLime,
+      3,
+      8,
+      v_PrecoEntrada
+    );
+  end
+  else if v_DirecaoEntradaBarra = -1 then
+  begin
+    PaintBar(clRed);
+    PlotText(
+      "▼ V " + FloatToString(v_PrecoEntrada, 0),
+      clRed,
+      3,
+      8,
+      v_PrecoEntrada
+    );
+  end;
+end;
