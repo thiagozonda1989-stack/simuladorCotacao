@@ -139,6 +139,12 @@
       "sha256": "0cf2d0d90973a46c38af6dd5bbe4cfeba9d97d3b9242f9ad5cc490318395a22a",
       "bytes": 3596,
       "origem_relativa": "validacao_modelo_unificado_v5_7/Modelo_Unificado_Refatorado_v5_7.ntsl"
+    },
+    {
+      "arquivo": "indicadores/indicador_paridade_modelo_unificado_v5_7_v1_0.ntsl",
+      "sha256": "e3202af01dc10ea46a3bcb895c0d1042c929cc51639f2a918de2300e9cee6c29",
+      "bytes": 2225,
+      "origem_relativa": "instrumentacao_etapa2a_20261021"
     }
   ]
 }

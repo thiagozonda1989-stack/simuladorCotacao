@@ -26,7 +26,7 @@ def test_validacao_com_extremos_ambiguos_e_taxas(tmp_path):
     assert sum(float(row["liquido_reais"].replace(",", ".")) for row in data) == pytest.approx(-2.5)
     pdf = tmp_path/"saida"/"nota_corretagem_simulada.pdf"
     assert pdf.read_bytes().startswith(b"%PDF-")
-    assert "Queda a partir do pico" in (tmp_path/"saida"/"relatorio.html").read_text()
+    assert "Queda a partir do pico" in (tmp_path/"saida"/"relatorio.html").read_text(encoding="utf-8")
 
 
 def test_validacao_sem_execucoes(tmp_path):

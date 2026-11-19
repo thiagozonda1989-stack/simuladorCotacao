@@ -48,7 +48,7 @@ py -3.11 -m pytest `
 
 Sem `PYTHONUTF8=1`, ambos os checkouts tiveram `24 passed, 1 failed`: `test_validacao_com_extremos_ambiguos_e_taxas` tentou ler um HTML UTF-8 usando o CP1252 padrão do Windows. As asserções funcionais anteriores à leitura passaram; a repetição controlada em UTF-8 passou integralmente. Os 12 avisos são `Pandas4Warning` no tratamento de timezone em `integrar_profitrtd.py:30` e `replay_ticks.py:30`.
 
-O teste tick adicional com seis negócios também passou isoladamente nos dois SHAs (`1 passed, 1 warning`). Ele validou ordem por sequência em timestamps empatados, execução somente em evento posterior, limite pela quantidade negociada, preenchimentos parciais e fechamento da posição. O caso simples de dois negócios pela CLI validou a seleção efetiva do motor, a leitura do formato e a geração do relatório; não é evidência suficiente de paridade NTSL.
+O teste tick adicional com seis negócios também passou isoladamente nos dois SHAs (`1 passed, 1 warning`). Ele validou ordem por sequência em timestamps empatados, execução somente em evento posterior, limite pela quantidade negociada, preenchimentos parciais e fechamento da posição. O caso simples de dois negócios pela CLI validou a seleção efetiva do motor, a leitura do formato e a geração do relatório; seu segundo preenchimento foi uma **zeragem sintética de fim de pregão**, não uma saída normal da estratégia, e o caso não é evidência suficiente de paridade NTSL.
 
 Depois da inclusão do inventariador, a suíte completa do PR passou com `26 passed, 12 warnings`.
 
@@ -113,6 +113,6 @@ Logo, “avaliar em cada negócio” e “manter histórico por candle” são d
 - Falta uma sequência de bolsa para resolver empates no mesmo milissegundo.
 - Falta timestamp causal de snapshot completo para Preços/Ofertas e cobertura verificável do book.
 - WDO não tem dados locais próprios.
-- O teste de validação depende de UTF-8 explícito no Windows; a leitura do relatório ainda não é robusta ao CP1252 padrão.
+- A leitura do HTML no teste foi corrigida para UTF-8 explícito na Etapa 2A e deve ser revalidada no SHA funcional publicado sem `PYTHONUTF8=1`.
 - Os avisos de timezone do pandas devem ser corrigidos antes de uma atualização maior da biblioteca.
 - A paridade NTSL por candle versus avaliação por negócio ainda precisa de uma matriz de evidências na Etapa 2.
