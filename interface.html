@@ -76,9 +76,17 @@ progress{display:block;width:100%;height:12px;accent-color:var(--accent);margin:
 <div><label for="slippage-ticks">Slippage adverso em ticks</label><input id="slippage-ticks" type="number" min="0" step="any" value="0" required></div>
 </div>
 <label><input id="ultrapassar-limite" type="checkbox"> Exigir ultrapassagem de um tick para ordens limite</label>
+<label for="motor-execucao">Granularidade da execução NTSL</label>
+<select id="motor-execucao"><option value="candle">Por candle</option><option value="ticks">Tick a tick (negócios)</option></select>
+<div id="ajustes-ticks" hidden>
+<label for="latencia-ticks">Latência em milissegundos</label><input id="latencia-ticks" type="number" min="0" max="86400000" step="1" value="0" required>
+<label for="lacuna-ticks">Cancelar pendências após lacuna em ms (0 desativa)</label><input id="lacuna-ticks" type="number" min="0" max="86400000" step="1" value="5000" required>
+<small>Use negócios com timestamp, preço e quantidade. No NTSL, cada negócio é uma observação da série.</small>
+</div>
+<div id="ajustes-candle">
 <label for="latencia-barras">Latência adicional em barras</label><input id="latencia-barras" type="number" min="0" step="1" value="0" required>
 <label><input id="ordem-proxima-barra" type="checkbox" checked> Expirar ordens que não forem reenviadas no fechamento da barra seguinte</label>
-<label><input id="historico-continuo" type="checkbox" checked> Carregar histórico de candles entre pregões</label>
+</div><label><input id="historico-continuo" type="checkbox" checked> Carregar histórico de candles entre pregões</label>
 <small>As taxas são cobradas na entrada e na saída. O slippage se aplica a mercado e no disparo de stops, respeitando o limite cadastrado.</small>
 </details>
 <small>Nos CSVs enviados, a v6 usa 1 segundo e a v7 usa 5 segundos.</small>
@@ -529,6 +537,16 @@ $("modelo").addEventListener("click", async () => {
         renderGenetic();
     } catch (error) { show(error.message); }
 });
+function updateExecutionGranularity() {
+    const ticks = $("motor-execucao").value === "ticks";
+    $("ajustes-ticks").hidden = !ticks;
+    $("ajustes-candle").hidden = ticks;
+    $("latencia-barras").disabled = ticks;
+    $("latencia-ticks").disabled = $("lacuna-ticks").disabled = !ticks;
+}
+$("motor-execucao").addEventListener("change", updateExecutionGranularity);
+updateExecutionGranularity();
+
 $("modo").addEventListener("change", async () => {
     const mode = $("modo").value;
     const optimize = mode === "otimizar";
@@ -766,6 +784,10 @@ async function reuseExecution(item, optimized) {
     $("custo-lado").value = rules.custo_por_contrato_lado ?? 0;
     $("slippage-ticks").value = rules.slippage_ticks ?? 0;
     $("latencia-barras").value = rules.latencia_barras ?? 0;
+    $("motor-execucao").value = rules.motor_ticks ? "ticks" : "candle";
+    $("latencia-ticks").value = rules.latencia_ticks_ms ?? 0;
+    $("lacuna-ticks").value = rules.lacuna_ticks_ms ?? 5000;
+    updateExecutionGranularity();
     $("ultrapassar-limite").checked = rules.limite_exige_ultrapassar === true;
     $("ordem-proxima-barra").checked = rules.ordem_so_proxima_barra !== false;
     $("historico-continuo").checked = rules.historico_continuo !== false;
@@ -922,7 +944,9 @@ $("form").addEventListener("submit", async event => {
             modo:$("modo").value, ativo:$("ativo-validacao").value, csv:$("csv").files[0]?.name, ntsl:$("ntsl").value,
             formato:$("formato").value, segundos:Number($("segundos").value),
             tick:Number($("tick").value), valor_ponto:Number($("valor-ponto").value),
-            regras_execucao:{latencia_barras:Number($("latencia-barras").value), custo_por_contrato_lado:Number($("custo-lado").value),
+            regras_execucao:{motor_ticks:$("motor-execucao").value === "ticks",
+                latencia_ticks_ms:Number($("latencia-ticks").value), lacuna_ticks_ms:Number($("lacuna-ticks").value),
+                latencia_barras:$("motor-execucao").value === "ticks" ? 0 : Number($("latencia-barras").value), custo_por_contrato_lado:Number($("custo-lado").value),
                 slippage_ticks:Number($("slippage-ticks").value), limite_exige_ultrapassar:$("ultrapassar-limite").checked,
                 ordem_so_proxima_barra:$("ordem-proxima-barra").checked, historico_continuo:$("historico-continuo").checked},
             salvar_minutos:Number($("salvar-minutos").value), publicar_github:$("publicar-github").checked, opcoes:JSON.parse($("opcoes").value || "{}")

@@ -25,7 +25,14 @@ def ledger(frame, fills, point_value, asset):
     basis = balance = 0.0
     opened_date = opened_time = ""
     for fill in fills:
-        date, time, precision = reference_time(frame, fill["barra"])
+        if "timestamp" in fill:
+            stamp = pd.Timestamp(fill["timestamp"])
+            date = stamp.strftime("%Y-%m-%d")
+            time = stamp.strftime("%H:%M:%S") + f".{stamp.microsecond//1000:03d}"
+            precision = ("último evento, zeragem simulada" if fill["fechamento_sintetico"]
+                         else "timestamp do evento")
+        else:
+            date, time, precision = reference_time(frame, fill["barra"])
         entry = fill["acao"] in {"long", "short"}
         price, quantity = fill["preco"], fill["quantidade"]
         if not position:
@@ -124,11 +131,12 @@ def write_pdf(path, rows, daily, metrics):
 
     rates = (f"{metrics['taxa_acerto']:.1%}".replace(".",",") if metrics["taxa_acerto"] is not None else "—")
     first, last = next(iter(daily), "—"), next(reversed(daily), "—")
+    timing = ("Horários referem-se a negócios do replay. A zeragem final é simulada."
+              if metrics.get("motor_execucao") == "tick_a_tick" else
+              "Horários referem-se aos candles. Se a origem informa apenas o minuto, os segundos ficam indisponíveis.")
     story = [Paragraph(title, styles["Title"]),
              Paragraph(f"Validação NTSL • {escape(metrics['ativo'])} • {first} a {last}", styles["Heading2"]),
-             Paragraph("Demonstrativo de operações simuladas, sem validade fiscal. "
-                       "Horários são referências dos candles; no CSV Profit com origem por minuto, "
-                       "os segundos ficam indisponíveis.", styles["BodyText"]), Spacer(1,10)]
+             Paragraph("Demonstrativo de operações simuladas, sem validade fiscal. "+timing, styles["BodyText"]), Spacer(1,10)]
     story.append(table([
         ["Operações","Execuções","Contratos negociados","Acerto","Bruto (R$)","Taxas (R$)","Líquido (R$)","Drawdown (R$)"],
         [metrics["operacoes"], len(rows), metrics["volume_contratos"], rates,
@@ -146,7 +154,7 @@ def write_pdf(path, rows, daily, metrics):
             lines.append([row["operacao"], row["data"], row["hora"], event, row["volume_contratos"],
                           *[br(row[key]) for key in ("preco_execucao","preco_medio_entrada","bruto_reais",
                                                      "taxas_reais","liquido_reais","saldo_acumulado_reais")]])
-        story.append(table(lines, [27,62,48,107,36,77,77,72,72,85,85],4))
+        story.append(table(lines, [27,62,70,105,33,72,71,70,71,80,81],4))
     else:
         story.append(Paragraph("Nenhuma ordem executada no período.", styles["BodyText"]))
 

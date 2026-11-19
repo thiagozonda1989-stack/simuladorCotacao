@@ -428,7 +428,7 @@ def optimize(replay, config, out, on_progress=None, on_resources=None, on_partia
     cfg = config['genetico']
     generic = not isinstance(replay, Replay)
     if not generic and any((config.get("regras_execucao") or {}).get(key) for key in
-                           ("custo_por_contrato_lado", "slippage_ticks", "limite_exige_ultrapassar", "latencia_barras")):
+                           ("custo_por_contrato_lado", "slippage_ticks", "limite_exige_ultrapassar", "latencia_barras", "motor_ticks")):
         raise ValueError("Custos, slippage e preenchimento conservador exigem o motor Replay NTSL.")
     defaults = replay.defaults if generic else replay.model.defaults
     names = tuple(config['parametros'])

@@ -1,5 +1,11 @@
 # Histórico de versões
 
+## 0.14.0
+
+- Replay, validação e otimização NTSL tick a tick por negócios, com desempate por sequência, latência em milissegundos e cancelamento em lacunas.
+- Preenchimentos parciais limitados pela quantidade observada, timestamps de execução e identificação da zeragem sintética final.
+- Testes de causalidade, empate, latência, execução intrabar, preenchimento parcial e stop-limit.
+
 ## 0.13.0
 
 - Incorpora o catálogo publicado do ProfitRTD com seus 23 NTSL intactos.

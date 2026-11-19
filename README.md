@@ -1,4 +1,4 @@
-# simuladorCotacao 0.13.0
+# simuladorCotacao 0.14.0
 
 [Histórico de alterações](CHANGELOG.md) · [Manutenção e hashes dos pacotes](MANUTENCAO.md)
 
@@ -120,7 +120,7 @@ Em Linux, use Python 3.11+ e um toolchain MinGW-w64 x64. Baixe a distribuição 
 
 ```bash
 python -m pip download --only-binary=:all: --platform win_amd64 --python-version 312 -r windows/requirements.lock -d wheels
-python windows/package.py --python-win python-3.12.10-embed-amd64.zip --wheels wheels --saida simuladorCotacao-v0.13.0-win64.zip
+python windows/package.py --python-win python-3.12.10-embed-amd64.zip --wheels wheels --saida simuladorCotacao-v0.14.0-win64.zip
 ```
 
 Para desenvolver ou testar com o seu Python local, instale `requirements.txt` e rode `python app.py`. Para um comando de terminal no código-fonte, use `python app.py --cli estrategia --help`.
@@ -227,3 +227,15 @@ O motor reajusta parâmetros em cada janela e usa blocos de teste cronológicos 
 Para comparar um replay já exportado pelo Profit, normalize os dois arquivos com `timestamp;sequencia;etapa` e os mesmos campos comparáveis.
 Use as etapas `sinal`, `ordem`, `execucao` e `posicao`. O utilitário `python tools/comparar_paridade.py --profit profit.csv --simulador local.csv --saida paridade`
 gera uma matriz por etapa e a lista de divergências. A comparação exige os dois rastros normalizados e não assume paridade de execução.
+
+### Replay tick a tick por negócios
+
+Em **Custos e preenchimento no Replay NTSL**, escolha **Tick a tick (negócios)** para replay, validação ou otimização NTSL. Carregue um CSV de negócios com `timestamp;preco;quantidade;sequencia` ou um CSV canônico de eventos do integrador ProfitRTD. A sequência é obrigatória quando houver timestamps empatados. Timestamps sem fuso são lidos em America/Sao_Paulo.
+
+Cada negócio é uma observação da série NTSL. `CurrentBar`, OHLC, referências `[n]`, médias e janelas contam negócios nesse modo. Use **Por candle** quando os períodos do modelo precisarem continuar contando candles de tempo. Para estratégias que oferecem `p_Exec_Tick`, o modo tick permite testar o valor 1.
+
+O motor processa as ordens pendentes antes de avaliar a estratégia no evento. Uma ordem enviada no evento atual fica elegível a partir do próximo, após a latência configurada em milissegundos. Negócios empatados em horário são ordenados pela sequência. O preenchimento é limitado à quantidade observada e pode ser parcial. Ordens de saída têm prioridade, e os empates usam a ordem de envio simulada. A sobra da ordem continua pendente até execução, alteração, cancelamento, lacuna configurada ou fim de pregão. O relatório marca a zeragem sintética do fim do pregão, que pode exceder o volume desse último evento.
+
+O modelo usa preço e volume observados nos negócios e pode ler o topo do livro sincronizado no CSV integrado. Ele não infere a posição real na fila ou o caminho das ordens dentro do book. O CSV de execuções conserva timestamp, sequência do evento e indicação de zeragem sintética. Na validação, PDF e CSV registram o horário com milissegundos.
+
+Pela CLI de replay, use `--motor-ticks --latencia-ticks-ms 20 --lacuna-ticks-ms 5000`. Para otimização pela CLI, use no JSON `"regras_execucao": {"motor_ticks":true,"latencia_ticks_ms":20,"lacuna_ticks_ms":5000}`.

@@ -105,6 +105,8 @@ class Order:
     triggered: bool = False
     sent_at: int = -1
     eligible_at: int = -1
+    eligible_ns: int = -1
+    requested_quantity: int = 0
 
 
 @dataclass(frozen=True)
@@ -115,8 +117,18 @@ class ExecutionRules:
     ordem_so_proxima_barra: bool = True
     historico_continuo: bool = True
     latencia_barras: int = 0
+    motor_ticks: bool = False
+    latencia_ticks_ms: int = 0
+    lacuna_ticks_ms: int = 5000
 
     def __post_init__(self):
+        for value in (self.latencia_ticks_ms, self.lacuna_ticks_ms):
+            if type(value) is not int or not 0 <= value <= 86_400_000:
+                raise ValueError("Latência e lacuna tick a tick devem estar entre 0 e 86400000 ms.")
+        if type(self.motor_ticks) is not bool:
+            raise ValueError("motor_ticks deve ser booleano.")
+        if self.motor_ticks and self.latencia_barras:
+            raise ValueError("Para tick a tick, zere a latência em barras e use a latência em milissegundos.")
         if type(self.latencia_barras) is not int or self.latencia_barras < 0:
             raise ValueError("A latência adicional deve ser um inteiro não negativo em barras.")
         for value in (self.custo_por_contrato_lado, self.slippage_ticks):
@@ -161,7 +173,7 @@ class Engine:
         self.seconds = seconds
         self.history = np.empty((len(frame),len(self.values)), dtype=float) if history is None else history
         tick_input = program.symbols.get("p_exec_tick")
-        if "p_exec_tick" in program.inputs and self.values[tick_input.slot] != 0:
+        if not self.rules.motor_ticks and "p_exec_tick" in program.inputs and self.values[tick_input.slot] != 0:
             raise ValueError("O replay roda por candle. Ajuste p_Exec_Tick para 0.")
         self.variable_slots = [s.slot for s in program.symbols.values()
                                if s.kind in {"float","real","boolean","integer"}]
@@ -480,10 +492,16 @@ class Engine:
 
     def place(self, key, order):
         old = self.orders.get(key)
-        if old and old.triggered and (old.price,old.limit,old.quantity)==(order.price,order.limit,order.quantity):
-            order.triggered = True
-        same_order = old and (old.price, old.limit, old.quantity) == (order.price, order.limit, order.quantity)
+        order.requested_quantity = order.quantity
+        same_order = old and (old.price, old.limit, old.requested_quantity or old.quantity) == (
+            order.price, order.limit, order.quantity)
+        if same_order:
+            order.triggered = old.triggered
+            order.quantity = old.quantity
         order.eligible_at = old.eligible_at if same_order else self.row+1+self.rules.latencia_barras
+        if self.rules.motor_ticks:
+            order.eligible_ns = (old.eligible_ns if same_order else
+                                 int(self.event_time[self.row])+self.rules.latencia_ticks_ms*1_000_000)
         order.sent_at = self.row
         self.orders[key] = order
 
@@ -674,7 +692,7 @@ class Engine:
                 self.program.strategy(self)
             except (ValueError,TypeError,OverflowError,ZeroDivisionError,RecursionError) as error:
                 raise NTSLError(f"Barra {row+1}, pregão {days[row]}: {error}") from error
-            if self.rules.ordem_so_proxima_barra:
+            if self.rules.ordem_so_proxima_barra and not self.rules.motor_ticks:
                 self.orders = {key: order for key, order in self.orders.items() if order.sent_at == row or order.eligible_at > row}
             for slot in var_slots:
                 self.history[row,slot] = self.values[slot]
@@ -699,12 +717,20 @@ class Engine:
             self.completed = row + 1
 
 
+def replay_input(csv, seconds, format_name, rules):
+    if rules.motor_ticks:
+        from replay_ticks import TickEngine, load_events
+        return TickEngine, load_events(csv, format_name, rules)
+    return Engine, load_bars(csv, seconds, format_name)
+
+
 def run_strategy(csv, source, output, seconds, format_name, tick, overrides=None, point_value=1,
                  on_progress=None, checkpoint=None, session=None, resume_archive=None, safe_point=None, regras=None, validacao=None, on_validation=None):
     program = compile_ntsl(source)
     format_name = csv_format(csv, format_name)
-    frame = load_bars(csv,seconds,format_name)
-    engine = Engine(program,frame,tick,overrides or {},seconds,point_value,regras=regras)
+    rules = ExecutionRules(**(regras or {}))
+    engine_type, frame = replay_input(csv, seconds, format_name, rules)
+    engine = engine_type(program,frame,tick,overrides or {},seconds,point_value,regras=regras)
     if session:
         if session.resume is not None:
             engine.restore(session.resume, resume_archive)
@@ -722,8 +748,11 @@ def run_strategy(csv, source, output, seconds, format_name, tick, overrides=None
     output.mkdir(parents=True,exist_ok=False)
     fills = pd.DataFrame(engine.fills,columns=[
         "barra","pregao","ordem","acao","preco","quantidade","pontos_contrato","posicao","tipo","custo_reais","liquido_reais"])
+    if rules.motor_ticks:
+        for column in ("timestamp", "sequencia_evento", "fechamento_sintetico"):
+            fills[column] = [fill[column] for fill in engine.fills]
     fills.to_csv(output/"execucoes.csv",index=False)
-    columns = [key for key in ("timestamp","inicio","minuto","ordem_no_minuto","v_barra_id",
+    columns = [key for key in ("timestamp","sequencia","inicio","minuto","ordem_no_minuto","v_barra_id",
                                "pregao","segmento","lacuna_intradiaria","intervalo_barra_segundos","barras_no_segmento",*OHLC,"classe") if key in frame]
     trace = pd.concat([frame[columns],pd.DataFrame(engine.trace)],axis=1)
     trace.to_csv(output/"candles.csv",index_label="indice")
@@ -741,7 +770,9 @@ def run_strategy(csv, source, output, seconds, format_name, tick, overrides=None
                    drawdown_pontos_contrato=float((np.maximum.accumulate(equity)-equity).max()),
                    barras_ambiguas=engine.ambiguities, lacunas_intradiarias=int(engine.gap.sum()),
                    lacunas_com_posicao=engine.gaps_with_exposure, ordens_canceladas_lacuna=engine.orders_cancelled_at_gaps, formato_csv=FORMATS[format_name][0],
-                   intervalo_segundos=seconds,tick=tick,
+                   motor_execucao="tick_a_tick" if rules.motor_ticks else "candle",
+                   eventos=len(frame) if rules.motor_ticks else None,
+                   intervalo_segundos=None if rules.motor_ticks else seconds,tick=tick,
                    valor_por_ponto=point_value,resultado_bruto_convertido=engine.realized*point_value,
                    custos_reais=engine.costs, resultado_liquido_reais=engine.realized*point_value-engine.costs,
                    drawdown_liquido_reais=float((np.maximum.accumulate(liquid_equity)-liquid_equity).max()),
@@ -767,6 +798,10 @@ def run_strategy(csv, source, output, seconds, format_name, tick, overrides=None
     performance = chart(payoff, [("resultado", "R$ líquido")], "Resultado líquido realizado", axis="Execução")
     report_title = "Validação do modelo" if validacao is not None else "Replay NTSL"
     items = '<a href="execucoes.csv">Execuções</a> · <a href="candles.csv">Candles e sinais</a> · <a href="console.csv">Console</a> · <a href="metricas.json">Métricas e inputs</a>'
+    description = ("O código é executado a cada negócio. Ordens novas ficam elegíveis em evento posterior. "
+                   "O preenchimento usa preço e quantidade observados, sem posição real na fila."
+                   if rules.motor_ticks else
+                   "O código roda no fechamento de cada candle. Ordens novas só são elegíveis na barra seguinte.")
     (output/"relatorio.html").write_text(f"""<!doctype html><html lang="pt-BR"><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1"><title>{report_title}</title>
 <style>
@@ -775,7 +810,7 @@ h1{{font-size:2.3rem}}table{{border-collapse:collapse;width:100%;background:whit
 th,td{{text-align:left;padding:.6rem 1rem;border-bottom:1px solid #d9e4e1}}a{{color:#146253}}
 figure{{margin:1rem 0;background:white;padding:1rem}} svg{{width:100%;max-height:245px;font-size:11px}}
 </style><h1>{report_title}</h1><p>{items}{validation_links}</p>
-<p>O código roda no fechamento de cada candle. Ordens novas só são elegíveis na barra seguinte.
+<p>{description}
 O bruto usa os preços simulados após slippage. O líquido deduz as taxas configuradas por contrato e lado.
 A sequência intrabar e a fila do livro permanecem indeterminadas.</p>
 {validation_graphs or performance}<table>{table}</table></html>""",encoding="utf-8")
@@ -797,6 +832,9 @@ def main():
     p.add_argument("--ordem-so-proxima-barra", action=argparse.BooleanOptionalAction, default=True)
     p.add_argument("--latencia-barras", type=int, default=0)
     p.add_argument("--historico-continuo", action=argparse.BooleanOptionalAction, default=True)
+    p.add_argument("--motor-ticks", action="store_true")
+    p.add_argument("--latencia-ticks-ms", type=int, default=0)
+    p.add_argument("--lacuna-ticks-ms", type=int, default=5000)
     p.add_argument("--inputs",help="Arquivo JSON com valores de inputs a substituir")
     args=p.parse_args()
     try:
@@ -853,7 +891,11 @@ class StrategyReplay:
         if self.in_memory and self.prepared_series is None:
             self.prepared_series = Engine.prepare_series(self.program, self.frame)
             self.history_buffer = np.empty((len(self.frame), len(self.program.defaults)), dtype=float)
-        engine = Engine(self.program, self.frame, self.tick, parameters, self.seconds, self.point_value,
+        engine_type = Engine
+        if (self.rules or {}).get("motor_ticks"):
+            from replay_ticks import TickEngine
+            engine_type = TickEngine
+        engine = engine_type(self.program, self.frame, self.tick, parameters, self.seconds, self.point_value,
                         series_data=self.prepared_series, history=self.history_buffer, days=self.day, regras=self.rules)
         engine.run(record_trace=False, checkpoint=checkpoint)
         if checkpoint:
@@ -874,7 +916,7 @@ class StrategyReplay:
 
 def strategy_replay(path, source, seconds, format_name, config, tick, point_value):
     format_name = csv_format(path, format_name)
-    frame = load_bars(path, seconds, format_name)
+    _, frame = replay_input(path, seconds, format_name, ExecutionRules(**(config.get("regras_execucao") or {})))
     specification = search_target(config)
     if config.get("busca") != "aleatoria" and config["genetico"].get("metrica") in {"resultado", "resultado_menos_drawdown", "resultado_estavel"}:
         specification = specification | {"modo": "resultado"}
