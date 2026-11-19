@@ -212,6 +212,8 @@ class Compiler:
             upper = self.literal()
         else:
             lower, upper = 1, lower
+        if self.peek() == ",":
+            self.fail("arrays multidimensionais não são suportados.")
         self.expect("]")
         self.expect("of")
         kind = self.identifier()
@@ -230,6 +232,8 @@ class Compiler:
         args = []
         if self.take("("):
             while self.peek() != ")":
+                if self.peek() == "var":
+                    self.fail("parâmetros por referência não são suportados.")
                 args.extend(self.local_declarations())
                 if not self.take(";"):
                     break

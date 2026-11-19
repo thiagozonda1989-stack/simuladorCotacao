@@ -1,5 +1,11 @@
 # Histórico de versões
 
+## 0.10.0
+
+- Taxa configurável por contrato e lado, slippage adverso em ticks e métricas financeiras líquidas no Replay NTSL.
+- Preenchimento conservador opcional para ordens limite passivas, com ultrapassagem de um tick.
+- Diagnósticos específicos para arrays multidimensionais e parâmetros por referência. Documentação sobre fila e sequência intrabar.
+
 ## 0.9.0
 
 - Histórico local com log JSONL, motivo de parada, indicadores e ZIP reutilizável de cada execução.

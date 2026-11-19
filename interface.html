@@ -69,7 +69,15 @@ progress{display:block;width:100%;height:12px;accent-color:var(--accent);margin:
 <div><label for="segundos">Candle em segundos</label><input type="number" id="segundos" value="5" min="1" required></div>
 <div><label for="tick">Incremento de preço</label><input type="number" id="tick" value="5" min="0.000001" step="any" required></div>
 </div>
-<div class="field" style="margin-top:13px"><label for="valor-ponto">Valor em R$ por ponto e por contrato</label><input id="valor-ponto" type="number" value="0.20" step="any" min="0.000001" required><small>Mini-índice (WIN) · R$ 0,20 por ponto por contrato. Ajuste para outros ativos. O resultado exibido é bruto.</small></div>
+<div class="field" style="margin-top:13px"><label for="valor-ponto">Valor em R$ por ponto e por contrato</label><input id="valor-ponto" type="number" value="0.20" step="any" min="0.000001" required><small>Mini-índice (WIN) · R$ 0,20 por ponto por contrato. Ajuste para outros ativos.</small></div>
+<details><summary>Custos e preenchimento no Replay NTSL</summary>
+<div class="split">
+<div><label for="custo-lado">Taxas em R$ por contrato e lado</label><input id="custo-lado" type="number" min="0" step="any" value="0" required></div>
+<div><label for="slippage-ticks">Slippage adverso em ticks</label><input id="slippage-ticks" type="number" min="0" step="any" value="0" required></div>
+</div>
+<label><input id="ultrapassar-limite" type="checkbox"> Exigir ultrapassagem de um tick para ordens limite</label>
+<small>As taxas são cobradas na entrada e na saída. O slippage se aplica a mercado e no disparo de stops, respeitando o limite cadastrado.</small>
+</details>
 <small>Nos CSVs enviados, a v6 usa 1 segundo e a v7 usa 5 segundos.</small>
 </section>
 <section class="panel">
@@ -103,7 +111,7 @@ progress{display:block;width:100%;height:12px;accent-color:var(--accent);margin:
 </div>
 <div class="split">
 <div><label for="motor">Motor da busca</label><select id="motor"><option value="ntsl">Replay NTSL · todos os inputs</option><option value="ensemble">Ensemble · avaliação na abertura</option></select></div>
-<div><label for="metrica">Objetivo da busca</label><select id="metrica"><option value="f1">F1</option><option value="accuracy">Acurácia</option><option value="balanced_accuracy">Acurácia balanceada</option><option value="precision">Precisão</option><option value="recall">Taxa de verdadeiros positivos (sensibilidade)</option><option value="specificity">Taxa de verdadeiros negativos (especificidade)</option><option value="npv">Valor preditivo negativo</option><option value="resultado">Resultado em pontos × contratos</option><option value="resultado_menos_drawdown">Resultado menos drawdown</option></select></div>
+<div><label for="metrica">Objetivo da busca</label><select id="metrica"><option value="f1">F1</option><option value="accuracy">Acurácia</option><option value="balanced_accuracy">Acurácia balanceada</option><option value="precision">Precisão</option><option value="recall">Taxa de verdadeiros positivos (sensibilidade)</option><option value="specificity">Taxa de verdadeiros negativos (especificidade)</option><option value="npv">Valor preditivo negativo</option><option value="resultado">Resultado líquido em pontos × contratos</option><option value="resultado_menos_drawdown">Resultado menos drawdown</option></select></div>
 </div>
 <div class="split">
 <div><label for="alvo">Alvo</label><select id="alvo"><option value="classe">Classe do CSV</option><option value="barras">Direção após N barras</option><option value="pontos">Toque de pontos em N barras</option></select></div>
@@ -541,8 +549,8 @@ const metricLabels = {metas_classes:"Avanço da meta mais distante",accuracy:"Ac
     precision:"Precisão dos sinais",recall:"Taxa de VP (sensibilidade)",
     specificity:"Taxa de VN (especificidade)",npv:"Valor preditivo negativo",tp:"Verdadeiros positivos",
     tn:"Verdadeiros negativos",fp:"Falsos positivos",fn:"Falsos negativos",
-    resultado_reais:"Resultado bruto em reais",drawdown_reais:"Drawdown em reais",f1:"F1",sinais:"Sinais",
-    resultado:"Resultado bruto (pontos × contratos)",drawdown:"Drawdown (pontos × contratos)",
+    resultado_reais:"Resultado líquido em reais",resultado_bruto_reais:"Resultado bruto em reais",drawdown_reais:"Drawdown em reais",f1:"F1",sinais:"Sinais",
+    resultado:"Resultado (pontos × contratos)",drawdown:"Drawdown (pontos × contratos)",
     resultado_menos_drawdown:"Resultado menos drawdown",saidas:"Saídas"};
 const percentageMetrics = new Set(["metas_classes","accuracy","balanced_accuracy","precision","recall","specificity","npv","f1"]);
 const formattedNumber = (value, percent = false) => new Intl.NumberFormat("pt-BR", {
@@ -592,7 +600,7 @@ function showPartial(state) {
     }
     const leader = partial.melhor;
     const metrics = leader?.metricas ?? {};
-    const keys = ["resultado_reais","drawdown_reais","resultado","saidas","sinais"];
+    const keys = ["resultado_reais","resultado_bruto_reais","drawdown_reais","resultado","saidas","sinais"];
     if (!partial.financeiro) keys.push("tp","tn","fp","fn","precision","recall","specificity","npv","accuracy","balanced_accuracy","f1");
     const values = leader ? [
         ["Melhor " + (metricLabels[partial.objetivo] ?? partial.objetivo) + " na busca",
@@ -601,7 +609,8 @@ function showPartial(state) {
             .map(key => [metricLabels[key],metricText(key,metrics[key])])
     ] : partial.barras_total ? [
         [metricLabels.resultado,formattedNumber(partial.resultado)],
-        [metricLabels.resultado_reais,money(partial.resultado * partial.valor_ponto)],
+        [metricLabels.resultado_bruto_reais,money(partial.resultado * partial.valor_ponto)],
+        [metricLabels.resultado_reais,money(partial.liquido_reais ?? partial.resultado * partial.valor_ponto)],
         ["Ordens executadas",formattedNumber(partial.preenchimentos)]
     ] : [];
     if (partial.busca === "aleatoria") values.unshift(
@@ -739,6 +748,10 @@ async function reuseExecution(item, optimized) {
     $("segundos").value = data.segundos;
     $("tick").value = data.tick;
     $("valor-ponto").value = data.valor_ponto ?? 1;
+    const rules = data.regras_execucao ?? data.opcoes?.regras_execucao ?? {};
+    $("custo-lado").value = rules.custo_por_contrato_lado ?? 0;
+    $("slippage-ticks").value = rules.slippage_ticks ?? 0;
+    $("ultrapassar-limite").checked = rules.limite_exige_ultrapassar === true;
     $("publicar-github").checked = false;
     $("csv").value = "";
     $("serie").value = "";
@@ -876,6 +889,8 @@ $("form").addEventListener("submit", async event => {
             modo:$("modo").value, csv:$("csv").files[0]?.name, ntsl:$("ntsl").value,
             formato:$("formato").value, segundos:Number($("segundos").value),
             tick:Number($("tick").value), valor_ponto:Number($("valor-ponto").value),
+            regras_execucao:{custo_por_contrato_lado:Number($("custo-lado").value),
+                slippage_ticks:Number($("slippage-ticks").value), limite_exige_ultrapassar:$("ultrapassar-limite").checked},
             salvar_minutos:Number($("salvar-minutos").value), publicar_github:$("publicar-github").checked, opcoes:JSON.parse($("opcoes").value || "{}")
         };
         if (options.modo === "otimizar") {

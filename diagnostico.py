@@ -125,7 +125,7 @@ def charts(history, parameters, financial=False):
                                  ('f1','F1'),('balanced_accuracy','Acurácia balanceada')],
                        'Métricas do melhor candidato na busca', True)
     if history and 'resultado_reais' in history[0]:
-        result += chart(history, [('resultado_reais','Resultado bruto'),('drawdown_reais','Drawdown')],
+        result += chart(history, [('resultado_reais','Resultado líquido'),('drawdown_reais','Drawdown')],
                         'Resultado simulado em R$')
     return result + ''.join(chart(history, [(f"input:{name}",name)], name) for name in parameters
                             if history and isinstance(history[0][f"input:{name}"], (int,float)))

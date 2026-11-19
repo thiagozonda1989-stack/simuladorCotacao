@@ -317,12 +317,13 @@ class Workspace:
                     track(snapshot | {"valor_ponto": float(options.get("valor_ponto", 1))})
                 run_strategy(csv,options["ntsl"], destination,int(options["segundos"]),
                              options["formato"],float(options["tick"]),options["opcoes"],float(options.get("valor_ponto",1)), on_progress=replay_progress, checkpoint=control.checkpoint,
-                             session=session, resume_archive=resume_archive, safe_point=lambda: session.checkpoint(control))
+                             session=session, resume_archive=resume_archive, safe_point=lambda: session.checkpoint(control), regras=options.get("regras_execucao"))
             elif options["modo"] == "otimizar":
                 requested = options["formato"]
                 config = options["opcoes"]
                 config["segundos_por_candle"] = int(options["segundos"])
                 config["versao"] = VERSION
+                config["regras_execucao"] = options.get("regras_execucao") or config.get("regras_execucao", {})
                 config.pop("cotacao", None)
                 if options.get("cotacao"):
                     config["cotacao"] = options["cotacao"]
@@ -373,7 +374,7 @@ class Workspace:
             if outcome["estado"] != "concluido" and destination.is_dir():
                 shutil.rmtree(destination, ignore_errors=True)
             seconds = round(control.elapsed(self.started_at))
-            indicators = {key: summary[key] for key in ("candidatos_avaliados", "metrica", "resultado_bruto_convertido",
+            indicators = {key: summary[key] for key in ("candidatos_avaliados", "metrica", "resultado_bruto_convertido", "resultado_liquido_reais", "custos_reais",
                                                          "parametros_otimizados", "resultados") if key in summary}
             finished = initial | {"fim":utc_now(), "segundos":seconds, "estado":outcome["estado"],
                                   "parada":outcome["parada"], "indicadores":indicators,

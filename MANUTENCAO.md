@@ -50,3 +50,4 @@ Os hashes identificam os ZIPs originais gerados para cada versão. O código e o
 | 0.7.0 | `simuladorCotacao-v0.7.0-win64.zip` | `ab94526cc662d4137fced7e43539e079876fc05666cecc906859ef911c139167` |
 | 0.8.0 | `simuladorCotacao-v0.8.0-win64.zip` | `547b5bf2b652f5d99b660e64eda6499c0124a5fc9b05f3a0eb31d5f9a1330b2c` |
 | 0.9.0 | `simuladorCotacao-v0.9.0-win64.zip` | `fde138b841cfe6347cbe707381f9cd003ff941ec043804aec7001b384ffa27f8` |
+| 0.10.0 | `simuladorCotacao-v0.10.0-win64.zip` | `e68abd070780c692f7c42bcfe45a1244209271ebf61a96152e569af8e2be2196` |

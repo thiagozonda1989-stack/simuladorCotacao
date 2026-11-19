@@ -54,7 +54,7 @@ class ExecutionArchive:
                 package.writestr("resumo.json", to_json(summary))
                 package.writestr("configuracao.json", to_json({
                     key: options[key] for key in ("modo", "csv", "formato", "segundos", "tick",
-                                                  "valor_ponto", "opcoes", "cotacao") if key in options
+                                                  "valor_ponto", "opcoes", "cotacao", "regras_execucao") if key in options
                 }))
                 package.writestr("estrategia_original.ntsl", options["ntsl"].encode("utf-8"))
                 if entry and entry.is_file():

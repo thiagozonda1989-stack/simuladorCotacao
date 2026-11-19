@@ -93,15 +93,31 @@ class Order:
     triggered: bool = False
 
 
+@dataclass(frozen=True)
+class ExecutionRules:
+    custo_por_contrato_lado: float = 0.0
+    slippage_ticks: float = 0.0
+    limite_exige_ultrapassar: bool = False
+
+    def __post_init__(self):
+        for value in (self.custo_por_contrato_lado, self.slippage_ticks):
+            if type(value) not in {int, float} or not math.isfinite(value) or value < 0:
+                raise ValueError("Custo e slippage devem ser números finitos e não negativos.")
+        if type(self.limite_exige_ultrapassar) is not bool:
+            raise ValueError("A regra de ultrapassagem do limite deve ser booleana.")
+
+
 class Engine:
     def __init__(self, program, frame, tick, overrides, seconds, point_value,
-                 series_data=None, history=None, days=None):
+                 series_data=None, history=None, days=None, regras=None):
         self.program, self.frame, self.tick = program, frame, float(tick)
         if not math.isfinite(self.tick) or self.tick <= 0:
             raise ValueError("O tick precisa ser positivo.")
         self.point_value = float(point_value)
         if not math.isfinite(self.point_value) or self.point_value <= 0:
             raise ValueError("O valor por ponto precisa ser positivo.")
+        self.rules = ExecutionRules(**(regras or {}))
+        self.costs = self.daily_costs = 0.0
         self.values = program.defaults.copy()
         self.arrays = {symbol.slot: [0.0]*(program.defaults[symbol.slot][1]-program.defaults[symbol.slot][0]+1)
                        for symbol in program.symbols.values() if symbol.kind == "array"}
@@ -290,7 +306,7 @@ class Engine:
             return upper if name=="truehigh" else lower if name=="truelow" else upper-lower
         if name == "dailyresult":
             unrealized = (self.series("close")-self.basis)*self.position if args and args[0] else 0
-            return (self.daily + unrealized) * self.point_value
+            return (self.daily + unrealized) * self.point_value - self.daily_costs
         if name in {"totalbuyqtd","totalsellqtd"}:
             return self.series(name)
         if name == "sendorder":
@@ -380,18 +396,20 @@ class Engine:
         if not exit_order:
             self.entry_intentions.add(action)
 
-    @staticmethod
-    def match(order,o,h,l):
+    def slipped(self, price, buying):
+        return price + (1 if buying else -1) * self.rules.slippage_ticks * self.tick
+
+    def match(self, order,o,h,l):
         buying = order.action in {"long","exit_short","net_long"}
         price = order.price
         if order.kind == "market":
-            return o
+            return self.slipped(o, buying)
         if order.kind == "stop" and not order.triggered:
             touched = h>=price if buying else l<=price
             if not touched:
                 return None
             order.triggered = True
-            fill = max(o,price) if buying else min(o,price)
+            fill = self.slipped(max(o,price) if buying else min(o,price), buying)
             limit = order.limit
             if limit is None or (fill<=limit if buying else fill>=limit):
                 return fill
@@ -400,9 +418,10 @@ class Engine:
         limit = order.limit if order.kind == "stop" else price
         if limit is None:
             return o
-        if buying and l<=limit:
+        penetration = self.tick if self.rules.limite_exige_ultrapassar else 0
+        if buying and l<=limit-penetration:
             return min(o,limit)
-        if not buying and h>=limit:
+        if not buying and h>=limit+penetration:
             return max(o,limit)
         return None
 
@@ -439,9 +458,13 @@ class Engine:
                            if not item.action.startswith("exit")}
             if not self.position:
                 self.basis = 0.0
+        cost = quantity * self.rules.custo_por_contrato_lado
+        self.costs += cost
+        self.daily_costs += cost
         self.fills.append(dict(barra=self.row+1,pregao=self.days[self.row],
                                ordem=order.function,acao=action,preco=price,quantidade=quantity,
-                               pontos_contrato=pnl,posicao=self.position, tipo=order.kind))
+                               pontos_contrato=pnl,posicao=self.position, tipo=order.kind,
+                               custo_reais=cost, liquido_reais=pnl*self.point_value-cost))
 
     def process_orders(self):
         o,h,l = (self.series(name) for name in ("open","high","low"))
@@ -470,7 +493,7 @@ class Engine:
         state = dict(barras=self.completed, inicio_pregao=self.session_start,
                      valores=[self.values[slot] for slot in self.variable_slots],
                      arrays=self.arrays, posicao=self.position, preco_medio=self.basis,
-                     diario=self.daily, realizado=self.realized, ambiguidades=self.ambiguities,
+                     diario=self.daily, realizado=self.realized, custos=self.costs, custos_diarios=self.daily_costs, ambiguidades=self.ambiguities,
                      ordens=[(key, asdict(order)) for key, order in self.orders.items()],
                      execucoes=self.fills, candles=self.trace, console=self.logs,
                      indicadores=[(key, value.window.maxlen, list(value.window),
@@ -508,9 +531,13 @@ class Engine:
         self.arrays = {int(slot): values for slot, values in state["arrays"].items()}
         self.position, self.basis = state["posicao"], state["preco_medio"]
         self.daily, self.realized = state["diario"], state["realizado"]
+        self.costs, self.daily_costs = state.get("custos",0.0), state.get("custos_diarios",0.0)
         self.ambiguities = state["ambiguidades"]
         self.orders = {key: Order(**order) for key, order in state["ordens"]}
         self.fills, self.trace, self.logs = state["execucoes"], state["candles"], state["console"]
+        for fill in self.fills:
+            fill.setdefault("custo_reais", 0.0)
+            fill.setdefault("liquido_reais", fill["pontos_contrato"] * self.point_value)
         for key, period, window, row, total, ema, value in state["indicadores"]:
             if type(period) is not int or not 1 <= period <= 100_000 or len(window) > period:
                 raise ValueError("Janela de indicador inválida na sessão.")
@@ -533,7 +560,7 @@ class Engine:
             self.row = self.cursor = row
             if row==0 or days[row]!=days[row-1]:
                 self.session_start = row
-                self.daily = 0.0
+                self.daily = self.daily_costs = 0.0
                 self.rolling.clear()
             self.process_orders()
             self.plots = {}
@@ -551,12 +578,13 @@ class Engine:
                 self.orders.clear()
                 if self.position:
                     action = "exit_long" if self.position>0 else "exit_short"
-                    self.execute(Order("fim_pregao",action,"market",abs(self.position)),self.series("close"))
+                    self.execute(Order("fim_pregao",action,"market",abs(self.position)),
+                                 self.slipped(self.series("close"), action=="exit_short"))
             if on_progress and (row % 256 == 0 or row+1 == len(days)):
                 now = monotonic()
                 if now-last_update >= .5 or row+1 == len(days):
                     on_progress(dict(etapa='replay', barras=row+1, barras_total=len(days),
-                                     resultado=self.realized, preenchimentos=len(self.fills)))
+                                     resultado=self.realized, liquido_reais=self.realized*self.point_value-self.costs, preenchimentos=len(self.fills)))
                     last_update = now
             if record_trace:
                 self.trace.append({"sinal_compra": "long" in self.entry_intentions,
@@ -566,11 +594,11 @@ class Engine:
 
 
 def run_strategy(csv, source, output, seconds, format_name, tick, overrides=None, point_value=1,
-                 on_progress=None, checkpoint=None, session=None, resume_archive=None, safe_point=None):
+                 on_progress=None, checkpoint=None, session=None, resume_archive=None, safe_point=None, regras=None):
     program = compile_ntsl(source)
     format_name = csv_format(csv, format_name)
     frame = load_bars(csv,seconds,format_name)
-    engine = Engine(program,frame,tick,overrides or {},seconds,point_value)
+    engine = Engine(program,frame,tick,overrides or {},seconds,point_value,regras=regras)
     if session:
         if session.resume is not None:
             engine.restore(session.resume, resume_archive)
@@ -583,11 +611,11 @@ def run_strategy(csv, source, output, seconds, format_name, tick, overrides=None
         boundary()
     if on_progress:
         on_progress(dict(etapa="relatorio", barras=len(frame), barras_total=len(frame),
-                         resultado=engine.realized, preenchimentos=len(engine.fills)))
+                         resultado=engine.realized, liquido_reais=engine.realized*point_value-engine.costs, preenchimentos=len(engine.fills)))
     output = Path(output)
     output.mkdir(parents=True,exist_ok=False)
     fills = pd.DataFrame(engine.fills,columns=[
-        "barra","pregao","ordem","acao","preco","quantidade","pontos_contrato","posicao"])
+        "barra","pregao","ordem","acao","preco","quantidade","pontos_contrato","posicao","tipo","custo_reais","liquido_reais"])
     fills.to_csv(output/"execucoes.csv",index=False)
     columns = [key for key in ("timestamp","inicio","minuto","ordem_no_minuto","v_barra_id",
                                "pregao",*OHLC,"classe") if key in frame]
@@ -597,6 +625,7 @@ def run_strategy(csv, source, output, seconds, format_name, tick, overrides=None
     exits = fills[fills.acao.str.startswith("exit")] if len(fills) else fills
     pnl = exits["pontos_contrato"].to_numpy(dtype=float)
     equity = np.r_[0,pnl.cumsum()]
+    liquid_equity = np.r_[0,fills["liquido_reais"].fillna(0).to_numpy(dtype=float).cumsum()]
     summary = dict(versao=Path(__file__).with_name("VERSION").read_text().strip(),
                    estrategia_sha256=hashlib.sha256(source.encode()).hexdigest(),
                    barras=len(frame),pregoes=int(frame["pregao"].nunique()),
@@ -607,15 +636,18 @@ def run_strategy(csv, source, output, seconds, format_name, tick, overrides=None
                    barras_ambiguas=engine.ambiguities,formato_csv=FORMATS[format_name][0],
                    intervalo_segundos=seconds,tick=tick,
                    valor_por_ponto=point_value,resultado_bruto_convertido=engine.realized*point_value,
+                   custos_reais=engine.costs, resultado_liquido_reais=engine.realized*point_value-engine.costs,
+                   drawdown_liquido_reais=float((np.maximum.accumulate(liquid_equity)-liquid_equity).max()),
+                   regras_execucao=asdict(engine.rules),
                    inputs=program.inputs|{k.lower():v for k,v in (overrides or {}).items()},
                    usa_asset_snapshot=engine.ignored_asset)
     (output/"metricas.json").write_text(json.dumps(summary,indent=2,ensure_ascii=False),encoding="utf-8")
     (output/"estrategia.ntsl").write_text(source,encoding="utf-8")
     table = "".join(f"<tr><th>{html.escape(k.replace('_',' '))}</th><td>{html.escape(str(v))}</td></tr>"
                     for k,v in summary.items() if k!="inputs")
-    sample = sorted(set(np.linspace(0, len(equity)-1, min(len(equity), 350), dtype=int)))
-    payoff = [{"geracao": int(i), "resultado": float(equity[i])} for i in sample]
-    performance = chart(payoff, [("resultado", "Pontos × contratos")], "Resultado realizado", axis="Saída")
+    sample = sorted(set(np.linspace(0, len(liquid_equity)-1, min(len(liquid_equity), 350), dtype=int)))
+    payoff = [{"geracao": int(i), "resultado": float(liquid_equity[i])} for i in sample]
+    performance = chart(payoff, [("resultado", "R$ líquido")], "Resultado líquido realizado", axis="Execução")
     items = '<a href="execucoes.csv">Execuções</a> · <a href="candles.csv">Candles e sinais</a> · <a href="console.csv">Console</a> · <a href="metricas.json">Métricas e inputs</a>'
     (output/"relatorio.html").write_text(f"""<!doctype html><html lang="pt-BR"><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1"><title>Replay NTSL</title>
@@ -626,7 +658,8 @@ th,td{{text-align:left;padding:.6rem 1rem;border-bottom:1px solid #d9e4e1}}a{{co
 figure{{margin:1rem 0;background:white;padding:1rem}} svg{{width:100%;max-height:245px;font-size:11px}}
 </style><h1>Replay NTSL</h1><p>{items}</p>
 <p>O código roda no fechamento de cada candle. Ordens novas só são elegíveis na barra seguinte.
-O resultado é bruto em pontos × contratos. Barras ambíguas podem alterar os preenchimentos.</p>
+O bruto usa os preços simulados após slippage. O líquido deduz as taxas configuradas por contrato e lado.
+A sequência intrabar e a fila do livro permanecem indeterminadas.</p>
 {performance}<table>{table}</table></html>""",encoding="utf-8")
     return summary
 
@@ -640,20 +673,24 @@ def main():
     p.add_argument("--formato",choices=["auto", "profit", "negocios", "ohlc"],default="auto")
     p.add_argument("--tick",type=float,default=5)
     p.add_argument("--valor-ponto",type=float,default=1,help="Multiplicador de DailyResult e do resultado bruto")
+    p.add_argument("--custo-por-contrato-lado", type=float, default=0)
+    p.add_argument("--slippage-ticks", type=float, default=0)
+    p.add_argument("--limite-exige-ultrapassar", action="store_true")
     p.add_argument("--inputs",help="Arquivo JSON com valores de inputs a substituir")
     args=p.parse_args()
     try:
         with cli_audit(args.saida, args.csv, "estrategia"):
             overrides=json.loads(Path(args.inputs).read_text(encoding="utf-8-sig")) if args.inputs else {}
             print(json.dumps(run_strategy(args.csv,source_text(args.ntsl),args.saida,args.segundos,
-                                          args.formato,args.tick,overrides,args.valor_ponto),ensure_ascii=False,indent=2))
+                                          args.formato,args.tick,overrides,args.valor_ponto,
+                                          regras={key:getattr(args,key) for key in ExecutionRules.__dataclass_fields__}),ensure_ascii=False,indent=2))
     except (ValueError,OSError,KeyError) as error:
         p.exit(2,f"Erro: {error}\n")
 
 
 class StrategyReplay:
     """Executa o NTSL com cada conjunto de inputs do otimizador."""
-    def __init__(self, frame, program, seconds, target, specification, excluded, tick, point_value):
+    def __init__(self, frame, program, seconds, target, specification, excluded, tick, point_value, regras=None):
         from diagnostico import BLOCKED, labels
 
         self.frame, self.program, self.seconds = frame, program, seconds
@@ -670,7 +707,7 @@ class StrategyReplay:
         if conflicts:
             raise ValueError("O NTSL lê campos excluídos: " + ", ".join(sorted(conflicts))
                              + ". Altere o código ou a seleção para executar a estratégia.")
-        self.tick, self.point_value = tick, point_value
+        self.tick, self.point_value, self.rules = tick, point_value, regras
         self.day = frame["pregao"].to_numpy()
         self.defaults = program.inputs
         self.in_memory = False
@@ -683,26 +720,27 @@ class StrategyReplay:
 
     def subset(self, mask):
         return StrategyReplay(self.frame.loc[mask].reset_index(drop=True), self.program, self.seconds,
-                              self.target, self.specification, self.excluded, self.tick, self.point_value)
+                              self.target, self.specification, self.excluded, self.tick, self.point_value, self.rules)
 
     def score(self, parameters, checkpoint=None):
         if self.in_memory and self.prepared_series is None:
             self.prepared_series = Engine.prepare_series(self.program, self.frame)
             self.history_buffer = np.empty((len(self.frame), len(self.program.defaults)), dtype=float)
         engine = Engine(self.program, self.frame, self.tick, parameters, self.seconds, self.point_value,
-                        series_data=self.prepared_series, history=self.history_buffer, days=self.day)
+                        series_data=self.prepared_series, history=self.history_buffer, days=self.day, regras=self.rules)
         engine.run(record_trace=False, checkpoint=checkpoint)
         if checkpoint:
             checkpoint()
-        scores = np.zeros((len(self.frame), 4))
+        scores = np.zeros((len(self.frame), 5))
         for fill in engine.fills:
             row = scores[fill["barra"]-1]
+            row[2] += fill["pontos_contrato"] - fill["custo_reais"] / self.point_value
+            row[4] += fill["pontos_contrato"]
             action = fill["acao"]
             if action in {"long", "short"}:
                 if self.specification.get("modo") == "resultado" or fill["tipo"] == "market":
                     row[0 if action == "long" else 1] = 1
             else:
-                row[2] += fill["pontos_contrato"]
                 row[3] += 1
         return scores
 
@@ -718,7 +756,7 @@ def strategy_replay(path, source, seconds, format_name, config, tick, point_valu
     if config.get("busca") != "aleatoria" and config["genetico"].get("metrica") in {"resultado", "resultado_menos_drawdown"}:
         specification = specification | {"modo": "resultado"}
     return StrategyReplay(frame, compile_ntsl(source), seconds, config.get("classe_alvo", "1C"),
-                          specification, config.get("campos_excluidos", ()), tick, point_value)
+                          specification, config.get("campos_excluidos", ()), tick, point_value, config.get("regras_execucao"))
 
 
 if __name__=="__main__":

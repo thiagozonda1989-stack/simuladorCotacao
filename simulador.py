@@ -330,7 +330,8 @@ def strategy_metrics(ys, score, side, financial, trade_score=None, point_value=1
     equity = np.r_[0, np.cumsum(trade_score[:,2])]
     pnl = float(equity[-1])
     drawdown = float((np.maximum.accumulate(equity)-equity).max())
-    return result | dict(resultado=pnl, drawdown=drawdown,
+    gross = float(trade_score[:,4].sum()) if trade_score.shape[1] > 4 else pnl
+    return result | dict(resultado_bruto_reais=gross*point_value, custo_reais=(gross-pnl)*point_value, resultado=pnl, drawdown=drawdown,
                          resultado_menos_drawdown=pnl-drawdown, resultado_reais=pnl*point_value,
                          drawdown_reais=drawdown*point_value, saidas=int(trade_score[:,3].sum()))
 
@@ -401,6 +402,8 @@ def optimize(replay, config, out, on_progress=None, on_resources=None, on_partia
         control.checkpoint()
     cfg = config['genetico']
     generic = not isinstance(replay, Replay)
+    if not generic and any((config.get("regras_execucao") or {}).values()):
+        raise ValueError("Custos, slippage e preenchimento conservador exigem o motor Replay NTSL.")
     defaults = replay.defaults if generic else replay.model.defaults
     names = tuple(config['parametros'])
     keys = tuple(name.lower() for name in names) if generic else names
@@ -893,7 +896,7 @@ def write_html(out, summary, warning, history, names):
         for split, result in summary['resultados'].items():
             for version in ('original', 'otimizado'):
                 m = result[version]
-                details.append(f"<li>{split} · {version} · {m['saidas']} saídas · resultado bruto R$ {m['resultado_reais']:.2f} ({m['resultado']:.2f} pontos × contratos) · drawdown R$ {m['drawdown_reais']:.2f}</li>")
+                details.append(f"<li>{split} · {version} · {m['saidas']} saídas · líquido R$ {m['resultado_reais']:.2f} · bruto R$ {m['resultado_bruto_reais']:.2f} · taxas R$ {m['custo_reais']:.2f} ({m['resultado']:.2f} pontos × contratos) · drawdown R$ {m['drawdown_reais']:.2f}</li>")
         trade_stats = '<h2>Resultado financeiro simulado</h2><ul>'+''.join(details)+'</ul>'
     else:
         trade_stats = ''
