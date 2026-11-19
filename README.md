@@ -1,4 +1,4 @@
-# simuladorCotacao 0.6.0
+# simuladorCotacao 0.8.0
 
 [Histórico de alterações](CHANGELOG.md) · [Manutenção e hashes dos pacotes](MANUTENCAO.md)
 
