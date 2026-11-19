@@ -196,3 +196,10 @@ Selecione **Validar modelo**, carregue o NTSL com os parâmetros finais e escolh
 O resultado mostra operações, volume em contratos, acerto, fator de lucro, bruto, taxas, líquido, drawdown e gráficos da curva líquida, drawdown e resultado por pregão. Uma operação vai da primeira entrada até a zeragem. Aumentos de posição e saídas parciais ficam vinculados à mesma operação. O acerto e o fator de lucro são calculados por operação líquida, incluindo as taxas da entrada e da saída. O fator fica indefinido se não há perdas.
 
 O **CSV de conferência** registra cada execução, com data e hora de referência, identificação da operação, lado, volume, preço, preço médio de entrada, posição, resultado, taxas e saldo acumulado. A **nota de corretagem simulada em PDF** traz o balanço por pregão e as execuções detalhadas. É um demonstrativo da simulação, sem validade fiscal. Os horários são do candle de referência, não de negócios reais. Se a origem Profit só contém a hora até o minuto, o exportador deixa a precisão em minutos. O ZIP do histórico inclui ambos os arquivos.
+
+## Catálogo ProfitRTD
+
+Consulte o [catálogo de estratégias NTSL](estrategias/catalogo_estrategias.csv),
+o [contrato de dados](docs/DADOS_ENTRADA_PROFITRTD.md) e a
+[arquitetura de unificação](docs/ARQUITETURA_UNIFICACAO.md).
+O catálogo tem metadados e versionamento próprios em `estrategias/VERSION`.

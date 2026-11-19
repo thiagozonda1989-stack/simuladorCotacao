@@ -5,3 +5,7 @@ resultados/
 build/
 *.zip
 *.exe
+dados/brutos/
+dados/derivados/
+*.parquet
+*.feather

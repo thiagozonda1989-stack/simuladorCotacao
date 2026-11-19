@@ -1,0 +1,275 @@
+{ ============================================================================ }
+{ ALGORITMO: modelo_scalper_v2_1                                            }
+{ FINALIDADE: Scalping de fluxo com velocidade e aceleracao por barra       }
+{ ATIVO: WIN | GRAFICO: 5 segundos | EXECUCAO: Tick a Tick                  }
+{ AMBIENTE INICIAL: Replay e conta de simulacao                             }
+{ ============================================================================ }
+
+input
+  p_AlvoPontos(200);
+  p_StopPontos(150);
+  p_OffsetStop(20);
+  p_Lote(1);
+
+  p_SegundosPorBarra(5);
+  p_TempoMaxSegundos(90);
+  p_MinBarrasAntesExaustao(1);
+
+  p_MinVelocidade(2.0);
+  p_MinAceleracao(0.2);
+  p_MinForcaContratos(10.0);
+  p_RazaoDesbalanco(1.5);
+  p_MinTradesBarra(5);
+  p_PeriodoMediaPreco(9);
+
+  p_MaxStopsConsecutivos(3);
+  p_CooldownMinutos(15);
+  p_LimitePerdaDia(300);
+
+  p_HorarioInicio(0915);
+  p_HorarioFimEntradas(1700);
+  p_HorarioZeragem(1730);
+
+var
+  v_VariacaoPreco       : Float;
+  v_PercursoCompra      : Float;
+  v_PercursoVenda       : Float;
+  v_VolumeAgressaoCompra: Float;
+  v_VolumeAgressaoVenda : Float;
+  v_VelocidadeCompra    : Float;
+  v_VelocidadeVenda     : Float;
+  v_AceleracaoCompra    : Float;
+  v_AceleracaoVenda     : Float;
+  v_ForcaCompra         : Float;
+  v_ForcaVenda          : Float;
+  v_MediaPreco          : Float;
+  v_ResultadoDia        : Float;
+  v_ResultadoFechado    : Float;
+  v_ResultadoAnterior   : Float;
+
+  v_EstaPosicionado     : Boolean;
+  v_FiltroHorario       : Boolean;
+  v_DensidadeOK         : Boolean;
+  v_CooldownAtivo       : Boolean;
+  v_BloqueioDiario      : Boolean;
+  v_SinalCompra         : Boolean;
+  v_SinalVenda          : Boolean;
+  v_SaidaExaustao       : Boolean;
+
+  v_DataControle        : Integer;
+  v_BarraEntrada        : Integer;
+  v_BarrasPosicao       : Integer;
+  v_TempoPosicaoSeg     : Integer;
+  v_CooldownAte         : Integer;
+  v_StopsConsecutivos   : Integer;
+  v_PosicaoAnterior     : Boolean;
+
+begin
+  { Protecao contra parametros invalidos. }
+  if p_SegundosPorBarra <= 0 then
+    v_TempoPosicaoSeg := 0;
+
+  { Reinicia os controles no primeiro calculo de cada pregao. }
+  if Date <> v_DataControle then
+  begin
+    v_DataControle      := Date;
+    v_BarraEntrada      := 0;
+    v_BarrasPosicao     := 0;
+    v_TempoPosicaoSeg   := 0;
+    v_CooldownAte       := 0;
+    v_StopsConsecutivos := 0;
+    v_PosicaoAnterior   := False;
+    v_ResultadoAnterior := DailyResult(False);
+  end;
+
+  v_EstaPosicionado  := IsBought or IsSold;
+  v_ResultadoFechado := DailyResult(False);
+  v_ResultadoDia     := DailyResult(True);
+
+  { Detecta o fechamento da operacao e atualiza a sequencia de perdas. }
+  if (not v_EstaPosicionado) and v_PosicaoAnterior then
+  begin
+    if v_ResultadoFechado < v_ResultadoAnterior then
+      v_StopsConsecutivos := v_StopsConsecutivos + 1
+    else
+      v_StopsConsecutivos := 0;
+
+    v_ResultadoAnterior := v_ResultadoFechado;
+    v_BarraEntrada      := 0;
+    v_BarrasPosicao     := 0;
+    v_TempoPosicaoSeg   := 0;
+
+    if v_StopsConsecutivos >= p_MaxStopsConsecutivos then
+    begin
+      v_CooldownAte       := CalcTime(Time, p_CooldownMinutos);
+      v_StopsConsecutivos := 0;
+    end;
+  end;
+
+  { Registra a primeira barra em que a posicao foi reconhecida. }
+  if v_EstaPosicionado and (not v_PosicaoAnterior) then
+    v_BarraEntrada := CurrentBar;
+
+  if v_EstaPosicionado and (v_BarraEntrada > 0) then
+  begin
+    v_BarrasPosicao   := CurrentBar - v_BarraEntrada;
+    v_TempoPosicaoSeg := v_BarrasPosicao * p_SegundosPorBarra;
+  end
+  else
+  begin
+    v_BarrasPosicao   := 0;
+    v_TempoPosicaoSeg := 0;
+  end;
+
+  if (v_CooldownAte > 0) and (Time >= v_CooldownAte) then
+    v_CooldownAte := 0;
+
+  v_CooldownAtivo  := (v_CooldownAte > 0) and (Time < v_CooldownAte);
+  v_BloqueioDiario := v_ResultadoDia <= (-1 * p_LimitePerdaDia);
+  v_FiltroHorario  :=
+    (Time >= p_HorarioInicio)
+    and (Time < p_HorarioFimEntradas);
+  v_DensidadeOK := Trades >= p_MinTradesBarra;
+
+  { Velocidade direcional por barra, nao por tick individual. }
+  v_VariacaoPreco := Close - Close[1];
+
+  if v_VariacaoPreco > 0 then
+  begin
+    v_PercursoCompra := v_VariacaoPreco;
+    v_PercursoVenda  := 0;
+  end
+  else if v_VariacaoPreco < 0 then
+  begin
+    v_PercursoCompra := 0;
+    v_PercursoVenda  := Abs(v_VariacaoPreco);
+  end
+  else
+  begin
+    v_PercursoCompra := 0;
+    v_PercursoVenda  := 0;
+  end;
+
+  if p_SegundosPorBarra > 0 then
+  begin
+    v_VelocidadeCompra := v_PercursoCompra / p_SegundosPorBarra;
+    v_VelocidadeVenda  := v_PercursoVenda / p_SegundosPorBarra;
+
+    v_AceleracaoCompra :=
+      (v_VelocidadeCompra - v_VelocidadeCompra[1])
+      / p_SegundosPorBarra;
+    v_AceleracaoVenda :=
+      (v_VelocidadeVenda - v_VelocidadeVenda[1])
+      / p_SegundosPorBarra;
+
+    v_VolumeAgressaoCompra := AgressionVolBuy;
+    v_VolumeAgressaoVenda  := AgressionVolSell;
+    v_ForcaCompra := v_VolumeAgressaoCompra / p_SegundosPorBarra;
+    v_ForcaVenda  := v_VolumeAgressaoVenda / p_SegundosPorBarra;
+  end
+  else
+  begin
+    v_VelocidadeCompra := 0;
+    v_VelocidadeVenda  := 0;
+    v_AceleracaoCompra := 0;
+    v_AceleracaoVenda  := 0;
+    v_ForcaCompra      := 0;
+    v_ForcaVenda       := 0;
+  end;
+
+  v_MediaPreco := Media(p_PeriodoMediaPreco, Close);
+
+  { A razao e comparada por multiplicacao para evitar divisao por zero. }
+  v_SinalCompra :=
+    (v_VelocidadeCompra >= p_MinVelocidade)
+    and (v_AceleracaoCompra >= p_MinAceleracao)
+    and (v_ForcaCompra >= p_MinForcaContratos)
+    and (v_ForcaCompra >= (p_RazaoDesbalanco * v_ForcaVenda))
+    and (Close > Open)
+    and (Close > v_MediaPreco);
+
+  v_SinalVenda :=
+    (v_VelocidadeVenda >= p_MinVelocidade)
+    and (v_AceleracaoVenda >= p_MinAceleracao)
+    and (v_ForcaVenda >= p_MinForcaContratos)
+    and (v_ForcaVenda >= (p_RazaoDesbalanco * v_ForcaCompra))
+    and (Close < Open)
+    and (Close < v_MediaPreco);
+
+  v_SaidaExaustao := False;
+
+  if IsBought and (v_BarrasPosicao >= p_MinBarrasAntesExaustao) then
+    v_SaidaExaustao := v_AceleracaoCompra < (-1 * p_MinAceleracao)
+  else if IsSold and (v_BarrasPosicao >= p_MinBarrasAntesExaustao) then
+    v_SaidaExaustao := v_AceleracaoVenda < (-1 * p_MinAceleracao);
+
+  { Zeragem obrigatoria e limite financeiro incluindo resultado em aberto. }
+  if (Time >= p_HorarioZeragem) or v_BloqueioDiario then
+  begin
+    if HasPendingOrders then
+      CancelPendingOrders;
+
+    if IsBought then
+      SellToCoverAtMarket(p_Lote)
+    else if IsSold then
+      BuyToCoverAtMarket(p_Lote);
+  end
+  else if IsBought then
+  begin
+    if v_SaidaExaustao
+       or (v_TempoPosicaoSeg >= p_TempoMaxSegundos) then
+    begin
+      if HasPendingOrders then
+        CancelPendingOrders;
+      SellToCoverAtMarket(p_Lote);
+    end
+    else
+    begin
+      SellToCoverLimit(BuyPrice + p_AlvoPontos, p_Lote);
+      SellToCoverStop(
+        BuyPrice - p_StopPontos,
+        BuyPrice - p_StopPontos - p_OffsetStop,
+        p_Lote
+      );
+    end;
+  end
+  else if IsSold then
+  begin
+    if v_SaidaExaustao
+       or (v_TempoPosicaoSeg >= p_TempoMaxSegundos) then
+    begin
+      if HasPendingOrders then
+        CancelPendingOrders;
+      BuyToCoverAtMarket(p_Lote);
+    end
+    else
+    begin
+      BuyToCoverLimit(SellPrice - p_AlvoPontos, p_Lote);
+      BuyToCoverStop(
+        SellPrice + p_StopPontos,
+        SellPrice + p_StopPontos + p_OffsetStop,
+        p_Lote
+      );
+    end;
+  end
+  else
+  begin
+    if HasPendingOrders then
+      CancelPendingOrders;
+
+    if v_FiltroHorario
+       and v_DensidadeOK
+       and (not v_CooldownAtivo)
+       and (not v_BloqueioDiario) then
+    begin
+      if v_SinalCompra then
+        BuyAtMarket(p_Lote)
+      else if v_SinalVenda then
+        SellShortAtMarket(p_Lote);
+    end;
+  end;
+
+  v_PosicaoAnterior := v_EstaPosicionado;
+end;
+
+

@@ -1,0 +1,40 @@
+{ Strategy: Monitor de Dados Brutos }
+{ Author: Nelogica - Code Builder }
+{ Description: Lê dados do book, da posição e das ordens pendentes e os exibe no console e no gráfico para apoiar o desenvolvimento de estratégias. }
+
+var
+    qtdOfertasCompra : Integer;  { Número de ofertas de compra no book (5 níveis) }
+    qtdOfertasVenda  : Integer;  { Número de ofertas de venda no book (5 níveis) }
+    volCompraBook    : Integer;  { Quantidade total ofertada na compra }
+    volVendaBook     : Integer;  { Quantidade total ofertada na venda }
+    melhorCompra     : Float;    { Melhor preço de compra (bid) }
+    melhorVenda      : Float;    { Melhor preço de venda (ask) }
+    precoMedioVenda  : Float;    { Preço médio da posição vendida }
+    qtdPosicao_      : Float;    { Quantidade da posição (+ comprado / - vendido) }
+    ordensPendentes  : Boolean;  { Existem ordens pendentes? }
+
+begin
+    { Dados do book: o Asset deve ser informado diretamente na chamada, usando GetAsset }
+    qtdOfertasCompra := BuyOfferCount(Asset(GetAsset, itMinute, 1), 5);
+    qtdOfertasVenda  := SellOfferCount(Asset(GetAsset, itMinute, 1), 5);
+    volCompraBook    := TotalBuyQtd(Asset(GetAsset, itMinute, 1), 5);
+    volVendaBook     := TotalSellQtd(Asset(GetAsset, itMinute, 1), 5);
+
+    { Topo do book }
+    melhorCompra := BidPrice;
+    melhorVenda  := AskPrice;
+
+    { Dados da posição e das ordens da estratégia }
+    precoMedioVenda := SellPrice;
+    qtdPosicao_      := PositionQty;
+    ordensPendentes := HasPendingOrders;
+
+    { Exibição no gráfico }
+    Plot(melhorCompra);
+    Plot2(melhorVenda);
+
+    { Exibição no console }
+    ConsoleLog("Ofertas compra: " + qtdOfertasCompra + " | Ofertas venda: " + qtdOfertasVenda);
+    ConsoleLog("Qtd book compra: " + volCompraBook + " | Qtd book venda: " + volVendaBook);
+    ConsoleLog("Posição: " + qtdPosicao_ + " | Preço médio venda: " + precoMedioVenda);
+end;

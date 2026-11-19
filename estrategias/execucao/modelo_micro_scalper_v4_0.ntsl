@@ -1,0 +1,400 @@
+{ ============================================================================ }
+{ ALGORITMO: modelo_micro_scalper_v4_0                                      }
+{ FINALIDADE: micro-scalping por book, agressao, micropreco e ritmo          }
+{ ATIVO: WIN | GRAFICO: 1 segundo | EXECUCAO: Tick a Tick                    }
+{ ESCOPO: pesquisa, Replay e conta de simulacao                              }
+{ OBS.: stop nominal nao garante perda realizada por causa de slippage/fila  }
+{ ============================================================================ }
+
+const
+  c_Ativo = Asset(GetAsset, itSecond, 1);
+
+input
+  p_AlvoPontos(50);
+  p_StopPontos(15);
+  p_OffsetStop(5);
+  p_Lote(1);
+
+  p_SegundosPorBarra(1);
+  p_TempoMinSaidaSegundos(1);
+  p_TempoMaxSegundos(6);
+  p_CooldownBarras(1);
+
+  p_NiveisBook(5);
+  p_MaxSpreadTicks(1.0);
+  p_MinQtdTopo(40.0);
+  p_MinQtdBook(250.0);
+  p_MinImbalanceTopo(0.20);
+  p_MinImbalanceBook(0.10);
+  p_MinImpulsoBook(10.0);
+  p_MinDeslocamentoMicroTicks(0.10);
+
+  p_MinAgressaoContratos(8.0);
+  p_RazaoAgressaoEntrada(1.20);
+  p_RazaoAgressaoSaida(1.10);
+  p_MinTradesBarra(2);
+  p_Confirmacoes(2);
+
+  p_ImbalanceSaida(0.05);
+  p_MaxOperacoesDia(350);
+  p_MaxStopsConsecutivos(5);
+  p_CooldownStopsBarras(60);
+  p_LimitePerdaDia(150.0);
+
+  p_HorarioInicio(0915);
+  p_HorarioFimEntradas(1655);
+  p_HorarioZeragem(1700);
+
+var
+  v_Bid                    : Float;
+  v_Ask                    : Float;
+  v_QtdBid                 : Float;
+  v_QtdAsk                 : Float;
+  v_QtdCompraBook          : Float;
+  v_QtdVendaBook           : Float;
+  v_QtdCompraBookAnterior  : Float;
+  v_QtdVendaBookAnterior   : Float;
+  v_PrecoMeio              : Float;
+  v_MicroPreco             : Float;
+  v_DeslocamentoMicroTicks : Float;
+  v_Spread                 : Float;
+  v_SpreadTicks            : Float;
+  v_Tick                   : Float;
+  v_ImbalanceTopo          : Float;
+  v_ImbalanceBook          : Float;
+  v_ImpulsoBook            : Float;
+
+  v_AgressaoCompra         : Float;
+  v_AgressaoVenda          : Float;
+  v_DeltaAgressao          : Float;
+  v_ResultadoDia           : Float;
+  v_ResultadoFechado       : Float;
+  v_ResultadoAnterior      : Float;
+
+  v_EstaPosicionado        : Boolean;
+  v_PosicaoAnterior        : Boolean;
+  v_LeituraInicializada    : Boolean;
+  v_DadosBookOK            : Boolean;
+  v_SpreadOK               : Boolean;
+  v_DensidadeOK            : Boolean;
+  v_FiltroHorario          : Boolean;
+  v_BloqueioDiario         : Boolean;
+  v_CooldownAtivo          : Boolean;
+  v_BaseCompra             : Boolean;
+  v_BaseVenda              : Boolean;
+  v_SinalCompra            : Boolean;
+  v_SinalVenda             : Boolean;
+  v_SaidaAdversa           : Boolean;
+
+  v_DataControle           : Integer;
+  v_BarraEntrada           : Integer;
+  v_BarrasPosicao          : Integer;
+  v_TempoPosicaoSeg        : Integer;
+  v_CooldownAteBarra       : Integer;
+  v_UltimaBarraEntrada     : Integer;
+  v_OperacoesDia           : Integer;
+  v_StopsConsecutivos      : Integer;
+  v_ConfirmacaoCompra      : Integer;
+  v_ConfirmacaoVenda       : Integer;
+
+begin
+  { Reinicia somente os estados internos na mudanca de pregao. }
+  if Date <> v_DataControle then
+  begin
+    v_DataControle          := Date;
+    v_BarraEntrada          := 0;
+    v_BarrasPosicao         := 0;
+    v_TempoPosicaoSeg       := 0;
+    v_CooldownAteBarra      := 0;
+    v_UltimaBarraEntrada    := 0;
+    v_OperacoesDia          := 0;
+    v_StopsConsecutivos     := 0;
+    v_ConfirmacaoCompra     := 0;
+    v_ConfirmacaoVenda      := 0;
+    v_PosicaoAnterior       := False;
+    v_LeituraInicializada   := False;
+    v_ResultadoAnterior     := DailyResult(False);
+  end;
+
+  v_EstaPosicionado  := IsBought or IsSold;
+  v_ResultadoFechado := DailyResult(False);
+  v_ResultadoDia     := DailyResult(True);
+
+  { Reconhece a entrada efetivamente executada. }
+  if v_EstaPosicionado and (not v_PosicaoAnterior) then
+  begin
+    v_BarraEntrada := CurrentBar;
+    v_OperacoesDia := v_OperacoesDia + 1;
+  end;
+
+  { Reconhece a saida, mede perda e aplica os cooldowns. }
+  if (not v_EstaPosicionado) and v_PosicaoAnterior then
+  begin
+    if v_ResultadoFechado < v_ResultadoAnterior then
+      v_StopsConsecutivos := v_StopsConsecutivos + 1
+    else
+      v_StopsConsecutivos := 0;
+
+    v_ResultadoAnterior  := v_ResultadoFechado;
+    v_BarraEntrada       := 0;
+    v_BarrasPosicao      := 0;
+    v_TempoPosicaoSeg    := 0;
+    v_CooldownAteBarra   := CurrentBar + p_CooldownBarras;
+    v_ConfirmacaoCompra  := 0;
+    v_ConfirmacaoVenda   := 0;
+
+    if v_StopsConsecutivos >= p_MaxStopsConsecutivos then
+    begin
+      v_CooldownAteBarra  := CurrentBar + p_CooldownStopsBarras;
+      v_StopsConsecutivos := 0;
+    end;
+  end;
+
+  if v_EstaPosicionado and (v_BarraEntrada > 0) then
+  begin
+    v_BarrasPosicao   := CurrentBar - v_BarraEntrada;
+    v_TempoPosicaoSeg := v_BarrasPosicao * p_SegundosPorBarra;
+  end
+  else
+  begin
+    v_BarrasPosicao   := 0;
+    v_TempoPosicaoSeg := 0;
+  end;
+
+  v_CooldownAtivo := CurrentBar < v_CooldownAteBarra;
+  v_FiltroHorario :=
+    (Time >= p_HorarioInicio)
+    and (Time < p_HorarioFimEntradas);
+
+  v_BloqueioDiario :=
+    (v_ResultadoDia <= (-1 * p_LimitePerdaDia))
+    or (v_OperacoesDia >= p_MaxOperacoesDia);
+
+  { Snapshot do topo e dos primeiros niveis do livro. }
+  v_Bid           := BidPrice;
+  v_Ask           := AskPrice;
+  v_QtdBid        := BidSize;
+  v_QtdAsk        := AskSize;
+  v_QtdCompraBook := TotalBuyQtd(c_Ativo, p_NiveisBook);
+  v_QtdVendaBook  := TotalSellQtd(c_Ativo, p_NiveisBook);
+  v_Tick          := MinPriceIncrement;
+
+  v_DadosBookOK :=
+    (v_Bid > 0)
+    and (v_Ask > 0)
+    and (v_Ask >= v_Bid)
+    and ((v_QtdBid + v_QtdAsk) >= p_MinQtdTopo)
+    and ((v_QtdCompraBook + v_QtdVendaBook) >= p_MinQtdBook);
+
+  if v_DadosBookOK then
+  begin
+    v_PrecoMeio := (v_Bid + v_Ask) / 2;
+    v_Spread    := v_Ask - v_Bid;
+
+    if v_Tick > 0 then
+      v_SpreadTicks := v_Spread / v_Tick
+    else
+      v_SpreadTicks := 999;
+
+    if (v_QtdBid + v_QtdAsk) > 0 then
+    begin
+      v_ImbalanceTopo :=
+        (v_QtdBid - v_QtdAsk) / (v_QtdBid + v_QtdAsk);
+
+      { Micropreco pondera o meio pela fila oposta. }
+      v_MicroPreco :=
+        ((v_Ask * v_QtdBid) + (v_Bid * v_QtdAsk))
+        / (v_QtdBid + v_QtdAsk);
+    end
+    else
+    begin
+      v_ImbalanceTopo := 0;
+      v_MicroPreco    := v_PrecoMeio;
+    end;
+
+    if (v_QtdCompraBook + v_QtdVendaBook) > 0 then
+      v_ImbalanceBook :=
+        (v_QtdCompraBook - v_QtdVendaBook)
+        / (v_QtdCompraBook + v_QtdVendaBook)
+    else
+      v_ImbalanceBook := 0;
+
+    if v_Tick > 0 then
+      v_DeslocamentoMicroTicks :=
+        (v_MicroPreco - v_PrecoMeio) / v_Tick
+    else
+      v_DeslocamentoMicroTicks := 0;
+  end
+  else
+  begin
+    v_PrecoMeio              := Close;
+    v_MicroPreco             := Close;
+    v_Spread                 := 0;
+    v_SpreadTicks            := 999;
+    v_ImbalanceTopo          := 0;
+    v_ImbalanceBook          := 0;
+    v_DeslocamentoMicroTicks := 0;
+  end;
+
+  v_AgressaoCompra := AgressionVolBuy;
+  v_AgressaoVenda  := AgressionVolSell;
+  v_DeltaAgressao  := v_AgressaoCompra - v_AgressaoVenda;
+
+  if not v_LeituraInicializada then
+  begin
+    v_QtdCompraBookAnterior := v_QtdCompraBook;
+    v_QtdVendaBookAnterior  := v_QtdVendaBook;
+    v_ImpulsoBook           := 0;
+    v_LeituraInicializada   := True;
+  end
+  else
+  begin
+    { Positivo: compra ganhou profundidade e/ou venda perdeu profundidade. }
+    v_ImpulsoBook :=
+      (v_QtdCompraBook - v_QtdCompraBookAnterior)
+      - (v_QtdVendaBook - v_QtdVendaBookAnterior);
+  end;
+
+  v_SpreadOK    := v_DadosBookOK and (v_SpreadTicks <= p_MaxSpreadTicks);
+  v_DensidadeOK := Trades >= p_MinTradesBarra;
+
+  { O sinal exige concordancia de filas, profundidade, micropreco e agressao. }
+  v_BaseCompra :=
+    v_SpreadOK
+    and v_DensidadeOK
+    and (v_ImbalanceTopo >= p_MinImbalanceTopo)
+    and (v_ImbalanceBook >= p_MinImbalanceBook)
+    and (v_ImpulsoBook >= p_MinImpulsoBook)
+    and (v_DeslocamentoMicroTicks >= p_MinDeslocamentoMicroTicks)
+    and (v_AgressaoCompra >= p_MinAgressaoContratos)
+    and (v_AgressaoCompra >=
+         (p_RazaoAgressaoEntrada * v_AgressaoVenda))
+    and (v_DeltaAgressao > 0)
+    and (Close >= Close[1]);
+
+  v_BaseVenda :=
+    v_SpreadOK
+    and v_DensidadeOK
+    and (v_ImbalanceTopo <= (-1 * p_MinImbalanceTopo))
+    and (v_ImbalanceBook <= (-1 * p_MinImbalanceBook))
+    and (v_ImpulsoBook <= (-1 * p_MinImpulsoBook))
+    and (v_DeslocamentoMicroTicks <= (-1 * p_MinDeslocamentoMicroTicks))
+    and (v_AgressaoVenda >= p_MinAgressaoContratos)
+    and (v_AgressaoVenda >=
+         (p_RazaoAgressaoEntrada * v_AgressaoCompra))
+    and (v_DeltaAgressao < 0)
+    and (Close <= Close[1]);
+
+  if v_BaseCompra then
+  begin
+    v_ConfirmacaoCompra := v_ConfirmacaoCompra + 1;
+    v_ConfirmacaoVenda  := 0;
+  end
+  else if v_BaseVenda then
+  begin
+    v_ConfirmacaoVenda  := v_ConfirmacaoVenda + 1;
+    v_ConfirmacaoCompra := 0;
+  end
+  else
+  begin
+    v_ConfirmacaoCompra := 0;
+    v_ConfirmacaoVenda  := 0;
+  end;
+
+  v_SinalCompra := v_ConfirmacaoCompra >= p_Confirmacoes;
+  v_SinalVenda  := v_ConfirmacaoVenda >= p_Confirmacoes;
+
+  { Saida antecipada somente com pressao contraria confirmada. }
+  v_SaidaAdversa := False;
+
+  if IsBought and (v_TempoPosicaoSeg >= p_TempoMinSaidaSegundos) then
+    v_SaidaAdversa :=
+      (v_ImbalanceBook <= (-1 * p_ImbalanceSaida))
+      and (v_AgressaoVenda >=
+           (p_RazaoAgressaoSaida * v_AgressaoCompra))
+      and (v_DeslocamentoMicroTicks < 0)
+  else if IsSold and (v_TempoPosicaoSeg >= p_TempoMinSaidaSegundos) then
+    v_SaidaAdversa :=
+      (v_ImbalanceBook >= p_ImbalanceSaida)
+      and (v_AgressaoCompra >=
+           (p_RazaoAgressaoSaida * v_AgressaoVenda))
+      and (v_DeslocamentoMicroTicks > 0);
+
+  { Posicao aberta sempre conserva stop e alvo, independentemente da entrada. }
+  if (Time >= p_HorarioZeragem) or v_BloqueioDiario then
+  begin
+    if HasPendingOrders then
+      CancelPendingOrders;
+
+    if IsBought then
+      SellToCoverAtMarket(p_Lote)
+    else if IsSold then
+      BuyToCoverAtMarket(p_Lote);
+  end
+  else if IsBought then
+  begin
+    if v_SaidaAdversa
+       or (v_TempoPosicaoSeg >= p_TempoMaxSegundos) then
+    begin
+      if HasPendingOrders then
+        CancelPendingOrders;
+      SellToCoverAtMarket(p_Lote);
+    end
+    else
+    begin
+      SellToCoverLimit(BuyPrice + p_AlvoPontos, p_Lote);
+      SellToCoverStop(
+        BuyPrice - p_StopPontos,
+        BuyPrice - p_StopPontos - p_OffsetStop,
+        p_Lote
+      );
+    end;
+  end
+  else if IsSold then
+  begin
+    if v_SaidaAdversa
+       or (v_TempoPosicaoSeg >= p_TempoMaxSegundos) then
+    begin
+      if HasPendingOrders then
+        CancelPendingOrders;
+      BuyToCoverAtMarket(p_Lote);
+    end
+    else
+    begin
+      BuyToCoverLimit(SellPrice - p_AlvoPontos, p_Lote);
+      BuyToCoverStop(
+        SellPrice + p_StopPontos,
+        SellPrice + p_StopPontos + p_OffsetStop,
+        p_Lote
+      );
+    end;
+  end
+  else
+  begin
+    if HasPendingOrders then
+      CancelPendingOrders;
+
+    if v_FiltroHorario
+       and v_DensidadeOK
+       and (not v_BloqueioDiario)
+       and (not v_CooldownAtivo)
+       and (CurrentBar <> v_UltimaBarraEntrada) then
+    begin
+      if v_SinalCompra then
+      begin
+        BuyAtMarket(p_Lote);
+        v_UltimaBarraEntrada := CurrentBar;
+      end
+      else if v_SinalVenda then
+      begin
+        SellShortAtMarket(p_Lote);
+        v_UltimaBarraEntrada := CurrentBar;
+      end;
+    end;
+  end;
+
+  v_QtdCompraBookAnterior := v_QtdCompraBook;
+  v_QtdVendaBookAnterior  := v_QtdVendaBook;
+  v_PosicaoAnterior       := v_EstaPosicionado;
+end;
+

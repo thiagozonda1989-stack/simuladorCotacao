@@ -1,0 +1,24 @@
+sequencia;arquivo;versao;tipo;tempo_grafico;status_profit;status_simulador_0_4;evidencia;incompatibilidade_simulador
+1;Modelo_Unificado_Refatorado_v5_7.ntsl;5.7;execucao;1min;replay_profit;incompativel;Compilação e execução confirmadas no ProfitUltra;VWAP
+2;modelo_scalper_v1_1.ntsl;1.1;execucao;1min;rascunho;incompativel;Correção após erro IsPositioned sem confirmação final;CalcTime
+3;modelo_scalper_v2_0.ntsl;2.0;execucao;5s;replay_profit;incompativel;Compilação e execução confirmadas no ProfitUltra;CalcTime
+4;modelo_scalper_v2_1.ntsl;2.1;execucao;5s;replay_profit;incompativel;Executou no Replay do Profit;CalcTime
+5;modelo_scalper_v2_2.ntsl;2.2;execucao;5s;replay_profit;incompativel;Executou operações e gerou relatório;CalcTime
+6;modelo_scalper_v2_3.ntsl;2.3;execucao;5s;replay_profit;incompativel;Executou operações no Replay;CalcTime
+7;modelo_scalper_micro_hft_v3_0.ntsl;3.0;execucao;1s;rascunho;incompativel;Revisão estática;AgressionVolBalance
+8;modelo_micro_scalper_v4_0.ntsl;4.0;execucao;5s;replay_profit;compativel_compilador;Entradas observadas no Profit;-
+9;modelo_micro_scalper_v4_1_5s.ntsl;4.1;execucao;5s;rascunho;compativel_compilador;Sem confirmação de paridade;-
+10;modelo_micro_scalper_v4_2_5s.ntsl;4.2;execucao;5s;replay_profit;compativel_compilador;Resultados observados em 1min e 5s;-
+11;modelo_micro_scalper_v4_3_ranges_5s.ntsl;4.3;execucao;5s;rascunho;compativel_compilador;Versão com filtros por faixas;-
+12;modelo_1c_antecipado_profit_v1_0.ntsl;1.0;execucao;1s;replay_profit;compativel_compilador;Replay com aproximadamente 3000 operações;-
+13;modelo_1c_antecipado_profit_v1_1.ntsl;1.1;execucao;1s;rascunho;compativel_compilador;Inclui tempo mínimo configurável;-
+14;Monitor_Dados_Brutos_Nelogica.ntsl;1.0;indicador;1min;rascunho;incompativel;Monitor preservado;BuyOfferCount e SellOfferCount
+15;diagnostico_filtros_v2_1.ntsl;2.1;indicador;5s;replay_profit;incompativel;Exibido no Replay;Plot5+
+16;indicador_entradas_scalper_v2_2_1.ntsl;2.2.1;indicador;5s;rascunho;incompativel;Descontinuado por repaint intrabar;PlotText
+17;indicador_entradas_scalper_v2_2_2.ntsl;2.2.2;indicador;5s;rascunho;incompativel;Correção sem repaint;PlotText
+18;indicador_features_supervisionado_v4_2_v1_0.ntsl;1.0;indicador;5s;replay_profit;incompativel;Exportação de features;Plot5+
+19;diagnostico_linhas_book_v1_0.ntsl;1.0;indicador;tick;replay_profit;incompativel;Captura de book observada;SetPlotColor
+20;indicador_features_supervisionado_v4_3_ranges_v1_0.ntsl;1.0;indicador;5s;replay_profit;incompativel;Exportação de features;Plot5+
+21;indicador_features_supervisionado_v4_3_ranges_v1_1.ntsl;1.1;indicador;5s;replay_profit;incompativel;Exportação de features;Plot5+
+22;indicador_features_supervisionado_v4_3_ranges_v1_2.ntsl;1.2;indicador;5s;replay_profit;incompativel;Captura analisada;Plot5+
+23;indicador_features_supervisionado_v4_3_ranges_v1_3.ntsl;1.3;indicador;5s;replay_profit;incompativel;Captura analisada com histórico limitado do book;Plot5+

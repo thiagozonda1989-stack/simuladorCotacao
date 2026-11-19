@@ -1,0 +1,3 @@
+timestamp_evento;sequencia_fonte;pregao;ativo_origem;preco_ultimo;quantidade_negocio;bid;ask;qtd_bid;qtd_ask;qtd_compra_book;qtd_venda_book;agressao_compra;agressao_venda;saldo_agressao;idade_preco_ms;idade_oferta_ms;segmento;qualidade_dados
+2026-11-18T09:15:00.100-03:00;1;2026-11-18;WINZ26;170000;2;169995;170000;120;95;1450;1320;2;0;2;20;35;1;ok
+2026-11-18T09:15:00.350-03:00;2;2026-11-18;WINZ26;170005;1;170000;170005;110;105;1400;1380;1;0;1;15;30;1;ok

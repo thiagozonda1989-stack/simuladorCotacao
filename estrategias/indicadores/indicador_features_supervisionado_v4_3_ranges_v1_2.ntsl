@@ -1,0 +1,843 @@
+{ ============================================================================ }
+{ INDICADOR: indicador_features_supervisionado_v4_3_ranges_v1_2           }
+{ DERIVADO: modelo_micro_scalper_v4_3_ranges_5s                            }
+{ FINALIDADE: exportar features de mercado e estados de decisao            }
+{ NAO ENVIA ORDENS E NAO USA RESULTADOS FUTUROS                            }
+{ V1.2: salva no ConsoleLog e mantem a ultima leitura valida do book       }
+{ USO: grafico de 1 segundo para captura fina ou 5 segundos para espelho   }
+{ ============================================================================ }
+
+const
+  c_Ativo = Asset(GetAsset, itSecond, 5);
+
+input
+  { Deve ser igual ao tempo do grafico usado na exportacao. }
+  p_SegundosPorBarra(5);
+
+  p_PeriodoMedia(9);
+  p_PeriodoVolatilidade(20);
+  p_MinRangeBarra(10.0);
+  p_MaxRangeBarra(80.0);
+  p_MinMediaRangeCompra(5.0);
+  p_MaxMediaRangeCompra(30.0);
+  p_MinMediaRangeVenda(5.0);
+  p_MaxMediaRangeVenda(30.0);
+  p_DistanciaMinMedia(0.0);
+  p_DistanciaMaxMedia(60.0);
+
+  p_RecuoMinPontos(5.0);
+  p_RecuoMaxPontos(20.0);
+  p_ReacaoMinPontos(5.0);
+  p_ValidadeSetupBarras(2);
+
+  { 0 = automatico; 1 = exigir book; 2 = ignorar book. }
+  p_ModoBook(0);
+  p_NiveisBook(5);
+  p_MaxSpreadTicks(2.0);
+  p_MinQtdTopo(10.0);
+  p_MinQtdBook(50.0);
+  p_MinImbalanceTopo(0.10);
+  p_MinImbalanceBook(0.05);
+  p_MinDeslocamentoMicroTicks(0.05);
+
+  p_MinAgressaoContratos(5.0);
+  p_MaxAgressaoContratos(2000.0);
+  p_MinAgressaoCompraFechada(5.0);
+  p_MaxAgressaoCompraFechada(1500.0);
+  p_MinAgressaoVendaFechada(5.0);
+  p_MaxAgressaoVendaFechada(1500.0);
+  p_MinRazaoAgressaoEntrada(1.20);
+  p_MaxRazaoAgressaoEntrada(8.00);
+  p_RazaoAgressaoSaida(1.10);
+  p_MinTradesCompraFechada(10);
+  p_MaxTradesCompraFechada(500);
+  p_MinTradesVendaFechada(10);
+  p_MaxTradesVendaFechada(500);
+  p_ConfirmacoesBarras(1);
+  p_PontosMinimosSetup(5);
+  p_ImbalanceSaida(0.05);
+
+  p_HorarioInicio(0915);
+  p_HorarioFimEntradas(1815);
+
+  { 1 = registrar BOOKHIST_V1 no console; 0 = desativar. }
+  p_RegistrarHistoricoBook(1);
+
+var
+  { Preco, ritmo, tendencia e volatilidade. }
+  v_RangeAtual                  : Float;
+  v_CorpoAtual                  : Float;
+  v_Retorno1                    : Float;
+  v_Velocidade                  : Float;
+  v_Aceleracao                  : Float;
+  v_MediaPreco                  : Float;
+  v_InclinacaoMedia             : Float;
+  v_DistanciaMediaAssinada      : Float;
+  v_PosicaoFechamentoRange      : Float;
+  v_MediaRange                  : Float;
+  v_RangeNormalizado            : Float;
+  v_TradesAtual                 : Float;
+
+  { Agressao. }
+  v_AgressaoCompra              : Float;
+  v_AgressaoVenda               : Float;
+  v_DeltaAgressao               : Float;
+  v_RazaoAgressaoAssinada       : Float;
+  v_VariacaoDeltaAgressao       : Float;
+  v_AgressaoCompraFechada       : Float;
+  v_AgressaoVendaFechada        : Float;
+
+  { Book e micropreco. }
+  v_Bid                         : Float;
+  v_Ask                         : Float;
+  v_QtdBid                      : Float;
+  v_QtdAsk                      : Float;
+  v_QtdCompraBook               : Float;
+  v_QtdVendaBook                : Float;
+  v_PrecoMeio                   : Float;
+  v_MicroPreco                  : Float;
+  v_SpreadTicks                 : Float;
+  v_ImbalanceTopo               : Float;
+  v_ImbalanceBook               : Float;
+  v_DeslocamentoMicroTicks      : Float;
+  v_ImpulsoBook                 : Float;
+  v_Tick                        : Float;
+
+  { Memoria cronologica do book. Somente para exportacao e auditoria. }
+  v_QtdCompraBookPersistida     : Float;
+  v_QtdVendaBookPersistida      : Float;
+  v_ImbalanceBookPersistido     : Float;
+  v_IdadeBookBarras             : Float;
+  v_FlagBookPersistidoValido    : Float;
+
+  { Barra fechada e estados do modelo. }
+  v_RangeBarraFechada           : Float;
+  v_DistanciaMediaFechada       : Float;
+  v_MediaRangeFechada           : Float;
+  v_CorpoFechado                : Float;
+  v_RetornoFechado              : Float;
+  v_InclinacaoMediaFechada      : Float;
+  v_PrecoReferenciaSetup        : Float;
+  v_BarrasRestantesSetup        : Float;
+  v_RecuoAtual                  : Float;
+  v_ReacaoFavoravel             : Float;
+
+  { Flags convertidas para zero ou um para exportacao. }
+  v_FlagBookOK                  : Float;
+  v_FlagAgressaoAtualOK         : Float;
+  v_FlagAgressaoFechadaOK       : Float;
+  v_FlagDensidadeFechadaOK      : Float;
+  v_FlagRangeFechadoOK          : Float;
+  v_FlagDistanciaMediaOK        : Float;
+  v_FlagBaseCompra              : Float;
+  v_FlagBaseVenda               : Float;
+  v_FlagGatilhoCompra           : Float;
+  v_FlagGatilhoVenda            : Float;
+  v_FlagEventoCompraBarra       : Float;
+  v_FlagEventoVendaBarra        : Float;
+  v_FlagPressaoSaidaLong        : Float;
+  v_FlagPressaoSaidaShort       : Float;
+  v_FlagPressaoSaidaLongBarra   : Float;
+  v_FlagPressaoSaidaShortBarra  : Float;
+  v_FlagFiltroHorario           : Float;
+  v_FlagBookPermitido           : Float;
+  v_FlagUsarBookNoScore         : Float;
+  v_FlagMediaRangeCompraOK      : Float;
+  v_FlagMediaRangeVendaOK       : Float;
+  v_FlagDensidadeCompraOK       : Float;
+  v_FlagDensidadeVendaOK        : Float;
+  v_FlagAgressaoCompraFaixaOK   : Float;
+  v_FlagAgressaoVendaFaixaOK    : Float;
+  v_FlagRazaoAgressaoCompraOK   : Float;
+  v_FlagRazaoAgressaoVendaOK    : Float;
+  v_FlagParametrosFaixaOK       : Float;
+  v_FlagTopoOK                  : Float;
+  v_FlagBookProfundoOK          : Float;
+
+  { Estados booleanos internos. }
+  v_DadosBookOK                 : Boolean;
+  v_DadosTopoOK                 : Boolean;
+  v_DadosBookProfundoOK         : Boolean;
+  v_DadosAgressaoAtualOK        : Boolean;
+  v_DadosAgressaoFechadaOK      : Boolean;
+  v_DensidadeFechadaOK          : Boolean;
+  v_DensidadeCompraOK           : Boolean;
+  v_DensidadeVendaOK            : Boolean;
+  v_RangeFechadoOK              : Boolean;
+  v_DistanciaMediaOK            : Boolean;
+  v_MediaRangeCompraOK          : Boolean;
+  v_MediaRangeVendaOK           : Boolean;
+  v_AgressaoCompraFaixaOK       : Boolean;
+  v_AgressaoVendaFaixaOK        : Boolean;
+  v_RazaoAgressaoCompraOK       : Boolean;
+  v_RazaoAgressaoVendaOK        : Boolean;
+  v_ParametrosFaixaOK           : Boolean;
+  v_UsarBookNoScore             : Boolean;
+  v_BookPermitido               : Boolean;
+  v_BaseCompraFechada           : Boolean;
+  v_BaseVendaFechada            : Boolean;
+  v_GatilhoCompra               : Boolean;
+  v_GatilhoVenda                : Boolean;
+  v_EventoCompraBarra           : Boolean;
+  v_EventoVendaBarra            : Boolean;
+  v_PressaoSaidaLong            : Boolean;
+  v_PressaoSaidaShort           : Boolean;
+  v_PressaoSaidaLongBarra       : Boolean;
+  v_PressaoSaidaShortBarra      : Boolean;
+  v_FiltroHorario               : Boolean;
+
+  { Controles de estado. }
+  v_DataControle                : Integer;
+  v_BarraControle               : Integer;
+  v_ConfirmacaoCompra           : Integer;
+  v_ConfirmacaoVenda            : Integer;
+  v_PontosCompra                : Integer;
+  v_PontosVenda                 : Integer;
+  v_DirecaoSetup                : Integer;
+  v_BarraExpiraSetup            : Integer;
+  v_BarraUltimoBookValido       : Integer;
+
+begin
+  if Date <> v_DataControle then
+  begin
+    v_DataControle               := Date;
+    v_BarraControle              := 0;
+    v_ConfirmacaoCompra          := 0;
+    v_ConfirmacaoVenda           := 0;
+    v_PontosCompra               := 0;
+    v_PontosVenda                := 0;
+    v_DirecaoSetup               := 0;
+    v_BarraExpiraSetup           := 0;
+    v_BarraUltimoBookValido      := 0;
+    v_PrecoReferenciaSetup       := 0;
+    v_QtdCompraBookPersistida    := 0;
+    v_QtdVendaBookPersistida     := 0;
+    v_ImbalanceBookPersistido    := 0;
+    v_IdadeBookBarras            := 0;
+    v_FlagBookPersistidoValido   := 0;
+    v_EventoCompraBarra          := False;
+    v_EventoVendaBarra           := False;
+    v_PressaoSaidaLongBarra      := False;
+    v_PressaoSaidaShortBarra     := False;
+  end;
+
+  { ---------------------------------------------------------------------- }
+  { 1. FEATURES DE PRECO, RITMO, TENDENCIA E VOLATILIDADE                 }
+  { ---------------------------------------------------------------------- }
+  v_RangeAtual             := High - Low;
+  v_CorpoAtual             := Close - Open;
+  v_Retorno1               := Close - Close[1];
+  v_TradesAtual            := Trades;
+  v_MediaPreco             := Media(p_PeriodoMedia, Close);
+  v_InclinacaoMedia        := v_MediaPreco - v_MediaPreco[1];
+  v_DistanciaMediaAssinada := Close - v_MediaPreco;
+  v_MediaRange             := Media(p_PeriodoVolatilidade, v_RangeAtual);
+
+  if p_SegundosPorBarra > 0 then
+  begin
+    v_Velocidade := v_Retorno1 / p_SegundosPorBarra;
+    v_Aceleracao :=
+      (v_Velocidade - v_Velocidade[1]) / p_SegundosPorBarra;
+  end
+  else
+  begin
+    v_Velocidade := 0;
+    v_Aceleracao := 0;
+  end;
+
+  if v_RangeAtual > 0 then
+    v_PosicaoFechamentoRange := (Close - Low) / v_RangeAtual
+  else
+    v_PosicaoFechamentoRange := 0.5;
+
+  if v_MediaRange > 0 then
+    v_RangeNormalizado := v_RangeAtual / v_MediaRange
+  else
+    v_RangeNormalizado := 0;
+
+  { ---------------------------------------------------------------------- }
+  { 2. FEATURES DE AGRESSAO                                                }
+  { ---------------------------------------------------------------------- }
+  v_AgressaoCompra        := AgressionVolBuy;
+  v_AgressaoVenda         := AgressionVolSell;
+  v_DeltaAgressao         := v_AgressaoCompra - v_AgressaoVenda;
+  v_VariacaoDeltaAgressao := v_DeltaAgressao - v_DeltaAgressao[1];
+
+  if v_AgressaoCompra >= v_AgressaoVenda then
+  begin
+    if v_AgressaoVenda > 0 then
+      v_RazaoAgressaoAssinada :=
+        v_AgressaoCompra / v_AgressaoVenda
+    else
+      v_RazaoAgressaoAssinada := v_AgressaoCompra;
+  end
+  else
+  begin
+    if v_AgressaoCompra > 0 then
+      v_RazaoAgressaoAssinada :=
+        (-1 * v_AgressaoVenda) / v_AgressaoCompra
+    else
+      v_RazaoAgressaoAssinada := -1 * v_AgressaoVenda;
+  end;
+
+  v_DadosAgressaoAtualOK :=
+    (v_AgressaoCompra + v_AgressaoVenda)
+    >= p_MinAgressaoContratos;
+
+  { ---------------------------------------------------------------------- }
+  { 3. FEATURES DO BOOK E MICROPRECO                                       }
+  { ---------------------------------------------------------------------- }
+  v_Bid           := BidPrice;
+  v_Ask           := AskPrice;
+  v_QtdBid        := BidSize;
+  v_QtdAsk        := AskSize;
+  v_QtdCompraBook := TotalBuyQtd(c_Ativo, p_NiveisBook);
+  v_QtdVendaBook  := TotalSellQtd(c_Ativo, p_NiveisBook);
+  v_Tick          := MinPriceIncrement;
+
+  { O topo possui serie historica em contextos onde o book profundo pode }
+  { estar disponivel apenas no snapshot atual. Nao misturar as validades. }
+  v_DadosTopoOK :=
+    (v_Bid > 0)
+    and (v_Ask > 0)
+    and (v_Ask >= v_Bid)
+    and ((v_QtdBid + v_QtdAsk) > 0)
+    and ((v_QtdBid + v_QtdAsk) >= p_MinQtdTopo);
+
+  v_DadosBookProfundoOK :=
+    ((v_QtdCompraBook + v_QtdVendaBook) > 0)
+    and ((v_QtdCompraBook + v_QtdVendaBook) >= p_MinQtdBook);
+
+  v_DadosBookOK := v_DadosTopoOK and v_DadosBookProfundoOK;
+
+  { Spread, imbalance do topo e micropreco usam somente o topo. }
+  if v_DadosTopoOK then
+  begin
+    v_PrecoMeio := (v_Bid + v_Ask) / 2;
+
+    if v_Tick > 0 then
+      v_SpreadTicks := (v_Ask - v_Bid) / v_Tick
+    else
+      v_SpreadTicks := 999;
+
+    v_ImbalanceTopo :=
+      (v_QtdBid - v_QtdAsk) / (v_QtdBid + v_QtdAsk);
+    v_MicroPreco :=
+      ((v_Ask * v_QtdBid) + (v_Bid * v_QtdAsk))
+      / (v_QtdBid + v_QtdAsk);
+
+    if v_Tick > 0 then
+      v_DeslocamentoMicroTicks :=
+        (v_MicroPreco - v_PrecoMeio) / v_Tick
+    else
+      v_DeslocamentoMicroTicks := 0;
+  end
+  else
+  begin
+    v_PrecoMeio              := Close;
+    v_MicroPreco             := Close;
+    v_SpreadTicks            := 999;
+    v_ImbalanceTopo          := 0;
+    v_DeslocamentoMicroTicks := 0;
+  end;
+
+  { Book profundo nao e inventado quando a plataforma nao fornece historico. }
+  if v_DadosBookProfundoOK then
+  begin
+    v_ImbalanceBook :=
+      (v_QtdCompraBook - v_QtdVendaBook)
+      / (v_QtdCompraBook + v_QtdVendaBook);
+
+    if (v_QtdCompraBook[1] + v_QtdVendaBook[1]) > 0 then
+      v_ImpulsoBook :=
+        (v_QtdCompraBook - v_QtdCompraBook[1])
+        - (v_QtdVendaBook - v_QtdVendaBook[1])
+    else
+      v_ImpulsoBook := 0;
+  end
+  else
+  begin
+    v_ImbalanceBook := 0;
+    v_ImpulsoBook   := 0;
+  end;
+
+  { ---------------------------------------------------------------------- }
+  { MEMORIA DO BOOK PARA EXPORTACAO                                        }
+  {                                                                        }
+  { TotalBuyQtd/TotalSellQtd nao possuem historico confiavel no Profit.    }
+  { Durante Replay cronologico, preservamos a ultima leitura realmente     }
+  { observada. A idade permite distinguir dado atual de dado carregado.     }
+  { Esta memoria NAO participa dos sinais nem das decisoes do modelo.       }
+  { ---------------------------------------------------------------------- }
+  if v_DadosBookProfundoOK then
+  begin
+    v_QtdCompraBookPersistida  := v_QtdCompraBook;
+    v_QtdVendaBookPersistida   := v_QtdVendaBook;
+    v_ImbalanceBookPersistido  := v_ImbalanceBook;
+    v_BarraUltimoBookValido    := CurrentBar;
+    v_IdadeBookBarras          := 0;
+    v_FlagBookPersistidoValido := 1;
+  end
+  else if v_BarraUltimoBookValido > 0 then
+  begin
+    v_IdadeBookBarras          := CurrentBar - v_BarraUltimoBookValido;
+    v_FlagBookPersistidoValido := 1;
+  end
+  else
+  begin
+    v_IdadeBookBarras          := 0;
+    v_FlagBookPersistidoValido := 0;
+  end;
+
+  v_UsarBookNoScore :=
+    v_DadosBookOK
+    and (p_ModoBook <> 2)
+    and (v_SpreadTicks <= p_MaxSpreadTicks);
+  v_BookPermitido :=
+    (p_ModoBook <> 1)
+    or v_UsarBookNoScore;
+
+  v_FiltroHorario :=
+    (Time >= p_HorarioInicio)
+    and (Time < p_HorarioFimEntradas);
+
+  v_ParametrosFaixaOK :=
+    (p_MinRangeBarra <= p_MaxRangeBarra)
+    and (p_MinMediaRangeCompra <= p_MaxMediaRangeCompra)
+    and (p_MinMediaRangeVenda <= p_MaxMediaRangeVenda)
+    and (p_DistanciaMinMedia <= p_DistanciaMaxMedia)
+    and (p_RecuoMinPontos <= p_RecuoMaxPontos)
+    and (p_MinAgressaoContratos <= p_MaxAgressaoContratos)
+    and (p_MinAgressaoCompraFechada <= p_MaxAgressaoCompraFechada)
+    and (p_MinAgressaoVendaFechada <= p_MaxAgressaoVendaFechada)
+    and (p_MinRazaoAgressaoEntrada <= p_MaxRazaoAgressaoEntrada)
+    and (p_MinTradesCompraFechada <= p_MaxTradesCompraFechada)
+    and (p_MinTradesVendaFechada <= p_MaxTradesVendaFechada);
+
+  { ---------------------------------------------------------------------- }
+  { 4. ESTADO DO SETUP, ATUALIZADO UMA VEZ POR BARRA                      }
+  { ---------------------------------------------------------------------- }
+  if CurrentBar <> v_BarraControle then
+  begin
+    v_BarraControle              := CurrentBar;
+
+    { ------------------------------------------------------------------ }
+    { PERSISTENCIA DO BOOK                                                }
+    {                                                                    }
+    { O Profit normalmente conserva o book apenas na barra atual e na    }
+    { anterior. No primeiro calculo da nova barra, [1] ainda representa  }
+    { o snapshot que acabou de fechar. Ele e gravado no ConsoleLog antes }
+    { que uma recalculacao posterior devolva zero para o passado.         }
+    {                                                                    }
+    { Somente snapshots realmente observados sao registrados. Zero de    }
+    { book historico nao e tratado como quantidade real.                  }
+    { ------------------------------------------------------------------ }
+    if (p_RegistrarHistoricoBook = 1)
+       and (CurrentBar > 2)
+       and (
+         ((v_Bid[1] > 0) and (v_Ask[1] > 0)
+          and ((v_QtdBid[1] + v_QtdAsk[1]) > 0))
+         or ((v_QtdCompraBook[1] + v_QtdVendaBook[1]) > 0)
+       ) then
+    begin
+      ConsoleLog(
+        "BOOKHIST_V1;"
+        + Date[1] + ";"
+        + Time[1] + ";"
+        + CurrentBar + ";"
+        + Close[1] + ";"
+        + v_Bid[1] + ";"
+        + v_Ask[1] + ";"
+        + v_QtdBid[1] + ";"
+        + v_QtdAsk[1] + ";"
+        + v_ImbalanceTopo[1] + ";"
+        + v_QtdCompraBook[1] + ";"
+        + v_QtdVendaBook[1] + ";"
+        + v_ImbalanceBook[1] + ";"
+        + v_MicroPreco[1] + ";"
+        + v_DeslocamentoMicroTicks[1] + ";"
+        + v_ImpulsoBook[1] + ";"
+        + v_FlagTopoOK[1] + ";"
+        + v_FlagBookProfundoOK[1] + ";"
+        + v_TradesAtual[1] + ";"
+        + v_AgressaoCompra[1] + ";"
+        + v_AgressaoVenda[1]
+      );
+    end;
+
+    v_EventoCompraBarra          := False;
+    v_EventoVendaBarra           := False;
+    v_PressaoSaidaLongBarra      := False;
+    v_PressaoSaidaShortBarra     := False;
+    v_PontosCompra               := 0;
+    v_PontosVenda                := 0;
+    v_AgressaoCompraFechada      := v_AgressaoCompra[1];
+    v_AgressaoVendaFechada       := v_AgressaoVenda[1];
+    v_RangeBarraFechada          := High[1] - Low[1];
+    v_DistanciaMediaFechada      := Abs(Close[1] - v_MediaPreco[1]);
+    v_MediaRangeFechada          := v_MediaRange[1];
+    v_CorpoFechado               := Close[1] - Open[1];
+    v_RetornoFechado             := Close[1] - Close[2];
+    v_InclinacaoMediaFechada     :=
+      v_MediaPreco[1] - v_MediaPreco[2];
+
+    v_RangeFechadoOK :=
+      (v_RangeBarraFechada >= p_MinRangeBarra)
+      and (v_RangeBarraFechada <= p_MaxRangeBarra);
+    v_DistanciaMediaOK :=
+      (v_DistanciaMediaFechada >= p_DistanciaMinMedia)
+      and (v_DistanciaMediaFechada <= p_DistanciaMaxMedia);
+    v_MediaRangeCompraOK :=
+      (v_MediaRangeFechada >= p_MinMediaRangeCompra)
+      and (v_MediaRangeFechada <= p_MaxMediaRangeCompra);
+    v_MediaRangeVendaOK :=
+      (v_MediaRangeFechada >= p_MinMediaRangeVenda)
+      and (v_MediaRangeFechada <= p_MaxMediaRangeVenda);
+    v_DadosAgressaoFechadaOK :=
+      ((v_AgressaoCompraFechada + v_AgressaoVendaFechada)
+       >= p_MinAgressaoContratos)
+      and
+      ((v_AgressaoCompraFechada + v_AgressaoVendaFechada)
+       <= p_MaxAgressaoContratos);
+    v_DensidadeCompraOK :=
+      (v_TradesAtual[1] >= p_MinTradesCompraFechada)
+      and (v_TradesAtual[1] <= p_MaxTradesCompraFechada);
+    v_DensidadeVendaOK :=
+      (v_TradesAtual[1] >= p_MinTradesVendaFechada)
+      and (v_TradesAtual[1] <= p_MaxTradesVendaFechada);
+    v_DensidadeFechadaOK :=
+      v_DensidadeCompraOK or v_DensidadeVendaOK;
+    v_AgressaoCompraFaixaOK :=
+      (v_AgressaoCompraFechada >= p_MinAgressaoCompraFechada)
+      and (v_AgressaoCompraFechada <= p_MaxAgressaoCompraFechada);
+    v_AgressaoVendaFaixaOK :=
+      (v_AgressaoVendaFechada >= p_MinAgressaoVendaFechada)
+      and (v_AgressaoVendaFechada <= p_MaxAgressaoVendaFechada);
+
+    if v_AgressaoVendaFechada > 0 then
+      v_RazaoAgressaoCompraOK :=
+        (v_AgressaoCompraFechada >=
+         (p_MinRazaoAgressaoEntrada * v_AgressaoVendaFechada))
+        and
+        (v_AgressaoCompraFechada <=
+         (p_MaxRazaoAgressaoEntrada * v_AgressaoVendaFechada))
+    else
+      v_RazaoAgressaoCompraOK := v_AgressaoCompraFechada > 0;
+
+    if v_AgressaoCompraFechada > 0 then
+      v_RazaoAgressaoVendaOK :=
+        (v_AgressaoVendaFechada >=
+         (p_MinRazaoAgressaoEntrada * v_AgressaoCompraFechada))
+        and
+        (v_AgressaoVendaFechada <=
+         (p_MaxRazaoAgressaoEntrada * v_AgressaoCompraFechada))
+    else
+      v_RazaoAgressaoVendaOK := v_AgressaoVendaFechada > 0;
+
+    if v_DensidadeCompraOK then
+      v_PontosCompra := v_PontosCompra + 1;
+
+    if v_DensidadeVendaOK then
+      v_PontosVenda  := v_PontosVenda + 1;
+
+    if (Close[1] > Open[1]) and (Close[1] > Close[2]) then
+      v_PontosCompra := v_PontosCompra + 2
+    else if (Close[1] < Open[1]) and (Close[1] < Close[2]) then
+      v_PontosVenda := v_PontosVenda + 2;
+
+    if (Close[1] > v_MediaPreco[1])
+       and (v_MediaPreco[1] >= v_MediaPreco[2]) then
+      v_PontosCompra := v_PontosCompra + 1
+    else if (Close[1] < v_MediaPreco[1])
+            and (v_MediaPreco[1] <= v_MediaPreco[2]) then
+      v_PontosVenda := v_PontosVenda + 1;
+
+    if v_DadosAgressaoFechadaOK then
+    begin
+      if v_AgressaoCompraFaixaOK
+         and v_RazaoAgressaoCompraOK then
+        v_PontosCompra := v_PontosCompra + 2;
+
+      if v_AgressaoVendaFaixaOK
+         and v_RazaoAgressaoVendaOK then
+        v_PontosVenda := v_PontosVenda + 2;
+    end;
+
+    if v_UsarBookNoScore then
+    begin
+      if v_ImbalanceTopo >= p_MinImbalanceTopo then
+        v_PontosCompra := v_PontosCompra + 1;
+      if v_ImbalanceTopo <= (-1 * p_MinImbalanceTopo) then
+        v_PontosVenda := v_PontosVenda + 1;
+
+      if v_ImbalanceBook >= p_MinImbalanceBook then
+        v_PontosCompra := v_PontosCompra + 1;
+      if v_ImbalanceBook <= (-1 * p_MinImbalanceBook) then
+        v_PontosVenda := v_PontosVenda + 1;
+
+      if v_DeslocamentoMicroTicks >= p_MinDeslocamentoMicroTicks then
+        v_PontosCompra := v_PontosCompra + 1;
+      if v_DeslocamentoMicroTicks <=
+         (-1 * p_MinDeslocamentoMicroTicks) then
+        v_PontosVenda := v_PontosVenda + 1;
+    end;
+
+    v_BaseCompraFechada :=
+      v_ParametrosFaixaOK
+      and v_RangeFechadoOK
+      and v_DistanciaMediaOK
+      and v_MediaRangeCompraOK
+      and v_DensidadeCompraOK
+      and (v_PontosCompra >= p_PontosMinimosSetup)
+      and (v_PontosCompra > v_PontosVenda);
+    v_BaseVendaFechada :=
+      v_ParametrosFaixaOK
+      and v_RangeFechadoOK
+      and v_DistanciaMediaOK
+      and v_MediaRangeVendaOK
+      and v_DensidadeVendaOK
+      and (v_PontosVenda >= p_PontosMinimosSetup)
+      and (v_PontosVenda > v_PontosCompra);
+
+    if v_BaseCompraFechada then
+    begin
+      v_ConfirmacaoCompra := v_ConfirmacaoCompra + 1;
+      v_ConfirmacaoVenda  := 0;
+    end
+    else if v_BaseVendaFechada then
+    begin
+      v_ConfirmacaoVenda  := v_ConfirmacaoVenda + 1;
+      v_ConfirmacaoCompra := 0;
+    end
+    else
+    begin
+      v_ConfirmacaoCompra := 0;
+      v_ConfirmacaoVenda  := 0;
+    end;
+
+    if v_ConfirmacaoCompra >= p_ConfirmacoesBarras then
+    begin
+      v_DirecaoSetup         := 1;
+      v_PrecoReferenciaSetup := Close[1];
+      v_BarraExpiraSetup     := CurrentBar + p_ValidadeSetupBarras;
+      v_ConfirmacaoCompra    := 0;
+    end
+    else if v_ConfirmacaoVenda >= p_ConfirmacoesBarras then
+    begin
+      v_DirecaoSetup         := -1;
+      v_PrecoReferenciaSetup := Close[1];
+      v_BarraExpiraSetup     := CurrentBar + p_ValidadeSetupBarras;
+      v_ConfirmacaoVenda     := 0;
+    end;
+  end;
+
+  if (v_DirecaoSetup <> 0)
+     and (CurrentBar > v_BarraExpiraSetup) then
+  begin
+    v_DirecaoSetup         := 0;
+    v_PrecoReferenciaSetup := 0;
+  end;
+
+  if v_DirecaoSetup <> 0 then
+  begin
+    v_BarrasRestantesSetup := v_BarraExpiraSetup - CurrentBar;
+    v_RecuoAtual :=
+      (v_PrecoReferenciaSetup - Close) * v_DirecaoSetup;
+
+    if v_DirecaoSetup = 1 then
+      v_ReacaoFavoravel := Close - Low
+    else
+      v_ReacaoFavoravel := High - Close;
+  end
+  else
+  begin
+    v_BarrasRestantesSetup := 0;
+    v_RecuoAtual           := 0;
+    v_ReacaoFavoravel      := 0;
+  end;
+
+  v_GatilhoCompra :=
+    (v_DirecaoSetup = 1)
+    and (Close <= (v_PrecoReferenciaSetup - p_RecuoMinPontos))
+    and (Close >= (v_PrecoReferenciaSetup - p_RecuoMaxPontos))
+    and (Close >= (Low + p_ReacaoMinPontos))
+    and (Close >= v_MediaPreco)
+    and v_BookPermitido
+    and v_FiltroHorario;
+
+  v_GatilhoVenda :=
+    (v_DirecaoSetup = -1)
+    and (Close >= (v_PrecoReferenciaSetup + p_RecuoMinPontos))
+    and (Close <= (v_PrecoReferenciaSetup + p_RecuoMaxPontos))
+    and (Close <= (High - p_ReacaoMinPontos))
+    and (Close <= v_MediaPreco)
+    and v_BookPermitido
+    and v_FiltroHorario;
+
+  if v_GatilhoCompra then
+  begin
+    v_EventoCompraBarra    := True;
+    v_DirecaoSetup         := 0;
+  end
+  else if v_GatilhoVenda then
+  begin
+    v_EventoVendaBarra     := True;
+    v_DirecaoSetup         := 0;
+  end;
+
+  { Pressao de saida e calculada sem depender de uma posicao real. }
+  v_PressaoSaidaLong :=
+    (Close < Open)
+    and
+    (
+      (v_DadosAgressaoAtualOK
+       and (v_AgressaoVenda >=
+            (p_RazaoAgressaoSaida * v_AgressaoCompra)))
+      or
+      (v_UsarBookNoScore
+       and (v_ImbalanceBook <= (-1 * p_ImbalanceSaida))
+       and (v_DeslocamentoMicroTicks < 0))
+    );
+
+  v_PressaoSaidaShort :=
+    (Close > Open)
+    and
+    (
+      (v_DadosAgressaoAtualOK
+       and (v_AgressaoCompra >=
+            (p_RazaoAgressaoSaida * v_AgressaoVenda)))
+      or
+      (v_UsarBookNoScore
+       and (v_ImbalanceBook >= p_ImbalanceSaida)
+       and (v_DeslocamentoMicroTicks > 0))
+    );
+
+  if v_PressaoSaidaLong then
+    v_PressaoSaidaLongBarra := True;
+  if v_PressaoSaidaShort then
+    v_PressaoSaidaShortBarra := True;
+
+  { ---------------------------------------------------------------------- }
+  { 5. CONVERSAO DOS ESTADOS BOOLEANOS PARA COLUNAS NUMERICAS             }
+  { ---------------------------------------------------------------------- }
+  if v_DadosBookOK then v_FlagBookOK := 1 else v_FlagBookOK := 0;
+  if v_DadosAgressaoAtualOK then v_FlagAgressaoAtualOK := 1 else v_FlagAgressaoAtualOK := 0;
+  if v_DadosAgressaoFechadaOK then v_FlagAgressaoFechadaOK := 1 else v_FlagAgressaoFechadaOK := 0;
+  if v_DensidadeFechadaOK then v_FlagDensidadeFechadaOK := 1 else v_FlagDensidadeFechadaOK := 0;
+  if v_RangeFechadoOK then v_FlagRangeFechadoOK := 1 else v_FlagRangeFechadoOK := 0;
+  if v_DistanciaMediaOK then v_FlagDistanciaMediaOK := 1 else v_FlagDistanciaMediaOK := 0;
+  if v_BaseCompraFechada then v_FlagBaseCompra := 1 else v_FlagBaseCompra := 0;
+  if v_BaseVendaFechada then v_FlagBaseVenda := 1 else v_FlagBaseVenda := 0;
+  if v_GatilhoCompra then v_FlagGatilhoCompra := 1 else v_FlagGatilhoCompra := 0;
+  if v_GatilhoVenda then v_FlagGatilhoVenda := 1 else v_FlagGatilhoVenda := 0;
+  if v_EventoCompraBarra then v_FlagEventoCompraBarra := 1 else v_FlagEventoCompraBarra := 0;
+  if v_EventoVendaBarra then v_FlagEventoVendaBarra := 1 else v_FlagEventoVendaBarra := 0;
+  if v_PressaoSaidaLong then v_FlagPressaoSaidaLong := 1 else v_FlagPressaoSaidaLong := 0;
+  if v_PressaoSaidaShort then v_FlagPressaoSaidaShort := 1 else v_FlagPressaoSaidaShort := 0;
+  if v_PressaoSaidaLongBarra then v_FlagPressaoSaidaLongBarra := 1 else v_FlagPressaoSaidaLongBarra := 0;
+  if v_PressaoSaidaShortBarra then v_FlagPressaoSaidaShortBarra := 1 else v_FlagPressaoSaidaShortBarra := 0;
+  if v_FiltroHorario then v_FlagFiltroHorario := 1 else v_FlagFiltroHorario := 0;
+  if v_BookPermitido then v_FlagBookPermitido := 1 else v_FlagBookPermitido := 0;
+  if v_UsarBookNoScore then v_FlagUsarBookNoScore := 1 else v_FlagUsarBookNoScore := 0;
+  if v_MediaRangeCompraOK then v_FlagMediaRangeCompraOK := 1 else v_FlagMediaRangeCompraOK := 0;
+  if v_MediaRangeVendaOK then v_FlagMediaRangeVendaOK := 1 else v_FlagMediaRangeVendaOK := 0;
+  if v_DensidadeCompraOK then v_FlagDensidadeCompraOK := 1 else v_FlagDensidadeCompraOK := 0;
+  if v_DensidadeVendaOK then v_FlagDensidadeVendaOK := 1 else v_FlagDensidadeVendaOK := 0;
+  if v_AgressaoCompraFaixaOK then v_FlagAgressaoCompraFaixaOK := 1 else v_FlagAgressaoCompraFaixaOK := 0;
+  if v_AgressaoVendaFaixaOK then v_FlagAgressaoVendaFaixaOK := 1 else v_FlagAgressaoVendaFaixaOK := 0;
+  if v_RazaoAgressaoCompraOK then v_FlagRazaoAgressaoCompraOK := 1 else v_FlagRazaoAgressaoCompraOK := 0;
+  if v_RazaoAgressaoVendaOK then v_FlagRazaoAgressaoVendaOK := 1 else v_FlagRazaoAgressaoVendaOK := 0;
+  if v_ParametrosFaixaOK then v_FlagParametrosFaixaOK := 1 else v_FlagParametrosFaixaOK := 0;
+  if v_DadosTopoOK then v_FlagTopoOK := 1 else v_FlagTopoOK := 0;
+  if v_DadosBookProfundoOK then v_FlagBookProfundoOK := 1 else v_FlagBookProfundoOK := 0;
+
+  { ---------------------------------------------------------------------- }
+  { 6. PLOTS: ORDEM FIXA DOCUMENTADA NO DICIONARIO                        }
+  { ---------------------------------------------------------------------- }
+  Plot  (v_RangeAtual);
+  Plot2 (v_CorpoAtual);
+  Plot3 (v_Retorno1);
+  Plot4 (v_Velocidade);
+  Plot5 (v_Aceleracao);
+  Plot6 (v_MediaPreco);
+  Plot7 (v_InclinacaoMedia);
+  Plot8 (v_DistanciaMediaAssinada);
+  Plot9 (v_PosicaoFechamentoRange);
+  Plot10(v_MediaRange);
+  Plot11(v_RangeNormalizado);
+  Plot12(v_TradesAtual);
+  Plot13(v_TradesAtual[1]);
+  Plot14(v_AgressaoCompra);
+  Plot15(v_AgressaoVenda);
+  Plot16(v_DeltaAgressao);
+  Plot17(v_RazaoAgressaoAssinada);
+  Plot18(v_VariacaoDeltaAgressao);
+  Plot19(v_AgressaoCompraFechada);
+  Plot20(v_AgressaoVendaFechada);
+  Plot21(v_Bid);
+  Plot22(v_Ask);
+  Plot23(v_SpreadTicks);
+  Plot24(v_QtdBid);
+  Plot25(v_QtdAsk);
+  Plot26(v_ImbalanceTopo);
+  Plot27(v_QtdCompraBook);
+  Plot28(v_QtdVendaBook);
+  Plot29(v_ImbalanceBook);
+  Plot30(v_MicroPreco);
+  Plot31(v_DeslocamentoMicroTicks);
+  Plot32(v_ImpulsoBook);
+  Plot33(v_FlagBookOK);
+  Plot34(v_FlagAgressaoAtualOK);
+  Plot35(v_FlagAgressaoFechadaOK);
+  Plot36(v_FlagDensidadeFechadaOK);
+  Plot37(v_RangeBarraFechada);
+  Plot38(v_DistanciaMediaFechada);
+  Plot39(v_FlagRangeFechadoOK);
+  Plot40(v_FlagDistanciaMediaOK);
+  Plot41(v_PontosCompra);
+  Plot42(v_PontosVenda);
+  Plot43(v_FlagBaseCompra);
+  Plot44(v_FlagBaseVenda);
+  Plot45(v_ConfirmacaoCompra);
+  Plot46(v_ConfirmacaoVenda);
+  Plot47(v_DirecaoSetup);
+  Plot48(v_PrecoReferenciaSetup);
+  Plot49(v_BarrasRestantesSetup);
+  Plot50(v_RecuoAtual);
+  Plot51(v_ReacaoFavoravel);
+  Plot52(v_FlagGatilhoCompra);
+  Plot53(v_FlagGatilhoVenda);
+  Plot54(v_FlagEventoCompraBarra);
+  Plot55(v_FlagEventoVendaBarra);
+  Plot56(v_FlagPressaoSaidaLong);
+  Plot57(v_FlagPressaoSaidaShort);
+  Plot58(v_FlagPressaoSaidaLongBarra);
+  Plot59(v_FlagPressaoSaidaShortBarra);
+  Plot60(v_FlagFiltroHorario);
+  Plot61(v_FlagBookPermitido);
+  Plot62(v_FlagUsarBookNoScore);
+  Plot63(v_CorpoFechado);
+  Plot64(v_RetornoFechado);
+  Plot65(v_InclinacaoMediaFechada);
+  Plot66(v_MediaRangeFechada);
+  Plot67(v_FlagMediaRangeCompraOK);
+  Plot68(v_FlagMediaRangeVendaOK);
+  Plot69(v_FlagDensidadeCompraOK);
+  Plot70(v_FlagDensidadeVendaOK);
+  Plot71(v_FlagAgressaoCompraFaixaOK);
+  Plot72(v_FlagAgressaoVendaFaixaOK);
+  Plot73(v_FlagRazaoAgressaoCompraOK);
+  Plot74(v_FlagRazaoAgressaoVendaOK);
+  Plot75(v_FlagParametrosFaixaOK);
+  Plot76(v_FlagTopoOK);
+  Plot77(v_FlagBookProfundoOK);
+  { Chave estavel para unir a exportacao dos plots ao BOOKHIST_V1. }
+  Plot78(CurrentBar);
+  { Book persistido: usar junto com idade e flag; nao confundir com bruto. }
+  Plot79(v_QtdCompraBookPersistida);
+  Plot80(v_QtdVendaBookPersistida);
+  Plot81(v_ImbalanceBookPersistido);
+  Plot82(v_IdadeBookBarras);
+  Plot83(v_FlagBookPersistidoValido);
+end;
+
