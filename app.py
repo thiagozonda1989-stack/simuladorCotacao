@@ -13,8 +13,11 @@ import sys
 import tempfile
 from time import monotonic
 from threading import Lock, Thread
-from urllib.parse import urlsplit
+from urllib.parse import parse_qs, urlsplit
 import webbrowser
+from zipfile import BadZipFile
+from execucoes import ExecutionArchive, ID, REPORTS, SCHEMA, history, utc_now
+import github_execucoes
 
 from cotacoes import Quotes, slice_csv
 from ntsl import parameterized_ntsl
@@ -26,8 +29,6 @@ from simulador import NTSLModel, Replay, main as simulator_cli, optimize, read_e
 
 APP = Path(__file__).resolve().parent
 VERSION = (APP/"VERSION").read_text().strip()
-REPORTS = {"relatorio.html", "execucoes.csv", "candles.csv", "console.csv", "metricas.json", "inputs_otimizados.json",
-           "estrategia.ntsl", "predicoes.csv", "evolucao.csv", "candidatos.csv", "modelo_parametrizado.ntsl"}
 MIB = 1024**2
 
 
@@ -48,6 +49,7 @@ def launcher_cli(args):
 class Workspace:
     def __init__(self, output):
         self.output = output.resolve()
+        self.history = self.output / "historico"
         self.token = secrets.token_urlsafe(24)
         self.pending_input = None
         self.upload_transfer = None
@@ -189,7 +191,13 @@ class Workspace:
                     raise ValueError("Use a periodicidade cadastrada para candles prontos.")
                 options = options | {"formato": meta["formato"], "csv": meta["arquivo"],
                                      "cotacao": meta | {"inicio_selecionado": start, "fim_selecionado": end}}
-            if not self.pending_input and not quote:
+            reused = None
+            if not restore and options.get("historico_id") and not quote:
+                reused = ExecutionArchive(self.history, options["historico_id"])
+                previous = reused.settings()
+                if previous.get("cotacao"):
+                    options = options | {"cotacao":previous["cotacao"]}
+            if not self.pending_input and not quote and not reused:
                 raise ValueError("O arquivo ainda não foi carregado.")
             transfer = options.get("transferencia")
             if transfer and (not self.upload_transfer or
@@ -199,12 +207,22 @@ class Workspace:
             path = self.pending_input
             state = None
             if restore:
+                share = options.get("publicar_github") is True
                 options, state = load_session(path)
+                options["publicar_github"] = share
+            if options.get("modo") not in {"estrategia", "otimizar"}:
+                raise ValueError("Modo de execução desconhecido.")
             source = options["ntsl"]
             if not isinstance(source, str) or not source.strip():
                 raise ValueError("Carregue ou cole uma estratégia NTSL.")
-            session = Session(self.output, name, path, options, state, self.saved_session)
-            if quote:
+            archive = ExecutionArchive(self.history, name)
+            archive.root.mkdir(parents=True)
+            try:
+                session = Session(self.output, name, path, options, state, self.saved_session)
+            except Exception:
+                archive.root.rmdir()
+                raise
+            if quote or reused:
                 path = self.output / (name + "-entrada.csv")
                 session.csv = path
             else:
@@ -217,7 +235,7 @@ class Workspace:
             self.job = {"estado": "executando", "id": name, "parcial": {"etapa":"preparacao"},
                         "salvar_minutos": self.session.interval // 60, "modo": options["modo"]}
             self.last_request = request
-            Thread(target=self.run, args=(path, name, options, restore, quote), daemon=True).start()
+            Thread(target=self.run, args=(path, name, options, restore, quote, reused, archive), daemon=True).start()
             return name
 
     def saved_session(self, status):
@@ -230,8 +248,9 @@ class Workspace:
 
     def control_job(self, job_id, command):
         with self.lock:
-            if self.job.get("id") != job_id or self.job["estado"] != "executando":
+            if self.job.get("id") != job_id or self.job["estado"] != "executando" or self.job.get("empacotando"):
                 raise ValueError("Esta execução já terminou ou não está ativa.")
+            ExecutionArchive(self.history, job_id).event("comando", comando=command)
             if command == "salvar-sessao":
                 if self.control.cancelled.is_set():
                     raise ValueError("O processamento está sendo cancelado.")
@@ -252,12 +271,34 @@ class Workspace:
                 else:
                     self.control.resume()
 
-    def run(self, path, name, options, restore, quote=None):
+    def run(self, path, name, options, restore, quote, reused, archive):
         destination = self.output/name
         control, session = self.control, self.session
         csv = None if restore else path
         resume_archive = path if restore else None
+        summary = {}
+        input_ready = not (quote or reused or restore)
+        initial = dict(schema=SCHEMA, id=name, versao=VERSION, inicio=utc_now(), modo=options["modo"],
+                       arquivo=Path(str(options.get("csv") or "dados.csv")).name, formato=options.get("formato"),
+                       segundos_candle=options.get("segundos"), cotacao=options.get("cotacao"),
+                       origem=options.get("historico_id"))
+        last_stage = None
+        def track(snapshot):
+            nonlocal last_stage
+            stage = snapshot["etapa"]
+            if stage != last_stage:
+                archive.event("etapa", etapa=stage)
+                last_stage = stage
+            self.publish(parcial=snapshot)
+
         try:
+            archive.event("inicio", modo=initial["modo"], arquivo=initial["arquivo"],
+                          formato=initial["formato"], segundos_candle=initial["segundos_candle"],
+                          origem=initial["origem"], restaurado=restore,
+                          github_solicitado=options.get("publicar_github") is True)
+            archive.save_summary(initial | {"estado": "iniciada", "pacote": False})
+            if reused:
+                reused.extract_csv(csv, self.output)
             if quote:
                 meta, original, start, end = quote
                 if start == meta["inicio"] and end == meta["fim"]:
@@ -268,11 +309,12 @@ class Workspace:
             if restore:
                 csv = extract_csv(path, self.output)
                 session.csv = csv
+            input_ready = True
             if control.cancelled.is_set():
                 control.checkpoint()
             if options["modo"] == "estrategia":
                 def replay_progress(snapshot):
-                    self.publish(parcial=snapshot | {"valor_ponto": float(options.get("valor_ponto", 1))})
+                    track(snapshot | {"valor_ponto": float(options.get("valor_ponto", 1))})
                 run_strategy(csv,options["ntsl"], destination,int(options["segundos"]),
                              options["formato"],float(options["tick"]),options["opcoes"],float(options.get("valor_ponto",1)), on_progress=replay_progress, checkpoint=control.checkpoint,
                              session=session, resume_archive=resume_archive, safe_point=lambda: session.checkpoint(control))
@@ -281,6 +323,7 @@ class Workspace:
                 config = options["opcoes"]
                 config["segundos_por_candle"] = int(options["segundos"])
                 config["versao"] = VERSION
+                config.pop("cotacao", None)
                 if options.get("cotacao"):
                     config["cotacao"] = options["cotacao"]
                 seconds = config["segundos_por_candle"]
@@ -300,43 +343,66 @@ class Workspace:
                                     search_target(config), config.get("campos_excluidos", ()))
                 destination.mkdir()
                 def resources(plan):
+                    archive.event("recursos", **plan)
                     self.publish(recursos=plan)
 
                 def progress(history, names):
+                    archive.event("geracao", **history[-1])
                     self.publish(graficos=charts(history[-100:], names,
                                                  financial=replay.specification.get("modo") == "resultado"))
 
-                def partial(snapshot):
-                    self.publish(parcial=snapshot)
-
-                optimize(replay, config, destination, progress, resources, partial, control, session)
+                optimize(replay, config, destination, progress, resources, track, control, session, archive.candidate)
             else:
                 raise ValueError("Modo de execução desconhecido.")
             session.checkpoint(control)
-            outcome = {"estado":"concluido", "pasta":str(destination)}
+            outcome = {"estado":"concluido", "pasta":str(destination), "parada":"fim dos dados"}
+            summary = json.loads((destination / "metricas.json").read_text(encoding="utf-8"))
             if options["modo"] == "otimizar":
-                summary = json.loads((destination / "metricas.json").read_text(encoding="utf-8"))
                 outcome |= {"parada":summary["parada"], "exportavel":(destination/"modelo_parametrizado.ntsl").is_file(),
                             "tem_candidatos":summary["atende_min_sinais"], "motor":summary["motor"],
                             "financeiro":summary["alvo"].get("modo") == "resultado"}
         except ProcessingCancelled:
-            outcome = {"estado":"cancelado"}
+            outcome = {"estado":"cancelado", "parada":"cancelamento solicitado pelo usuário"}
         except Exception as error:
-            outcome = {"estado":"erro", "mensagem":str(error)}
+            outcome = {"estado":"erro", "parada":str(error), "mensagem":str(error)}
         finally:
+            with self.lock:
+                if control.cancelled.is_set():
+                    outcome = {"estado":"cancelado", "parada":"cancelamento solicitado pelo usuário"}
+                self.job = self.job | {"empacotando":True}
+            if outcome["estado"] != "concluido" and destination.is_dir():
+                shutil.rmtree(destination, ignore_errors=True)
+            seconds = round(control.elapsed(self.started_at))
+            indicators = {key: summary[key] for key in ("candidatos_avaliados", "metrica", "resultado_bruto_convertido",
+                                                         "parametros_otimizados", "resultados") if key in summary}
+            finished = initial | {"fim":utc_now(), "segundos":seconds, "estado":outcome["estado"],
+                                  "parada":outcome["parada"], "indicadores":indicators,
+                                  "reutilizavel":bool(input_ready and csv and csv.is_file()), "pacote":True,
+                                  "otimizada":(destination/"modelo_parametrizado.ntsl").is_file()}
             try:
-                if csv and (not quote or csv != quote[1]):
-                    csv.unlink(missing_ok=True)
-                if resume_archive:
-                    resume_archive.unlink(missing_ok=True)
+                archive.event("parada", estado=outcome["estado"], motivo=outcome["parada"], segundos=seconds)
+                archive.seal(finished, options, csv if input_ready else None, destination)
+                if options.get("publicar_github") is True:
+                    try:
+                        finished["github"] = github_execucoes.publish(archive.package, finished)
+                        archive.event("github_publicado", url=finished["github"])
+                    except Exception as error:
+                        finished["github_erro"] = str(error)
+                        archive.event("github_erro", mensagem=str(error))
+            except Exception as error:
+                finished |= {"pacote":False, "reutilizavel":False, "erro_pacote":str(error)}
             finally:
-                with self.lock:
-                    if control.cancelled.is_set():
-                        # O diretório pertence a esta execução e o relatório pode estar incompleto.
-                        if destination.is_dir():
-                            shutil.rmtree(destination, ignore_errors=True)
-                        outcome = {"estado":"cancelado"}
-                    self.job = self.job | outcome | {"segundos": round(control.elapsed(self.started_at))}
+                try:
+                    archive.save_summary(finished)
+                except OSError as error:
+                    finished["erro_pacote"] = str(error)
+                for temporary in (csv if not quote or csv != quote[1] else None, resume_archive):
+                    if temporary:
+                        try:
+                            temporary.unlink(missing_ok=True)
+                        except OSError:
+                            pass
+                self.publish(**outcome, segundos=seconds, empacotando=False, historico=finished)
 
 
 def build_handler(workspace):
@@ -380,6 +446,33 @@ def build_handler(workspace):
                                      "cancelando": control.cancelled.is_set(),
                                      "finalizando": control.finish_requested.is_set()}
                 self.json(job)
+            elif path == "/historico":
+                self.json(history(workspace.history))
+            elif path and (match := re.fullmatch(rf"/historico/({ID})/(execucao.zip|execucao.jsonl|configuracao|otimizada)", path)):
+                archive = ExecutionArchive(workspace.history, match[1])
+                action = match[2]
+                try:
+                    if action in {"configuracao", "otimizada"}:
+                        self.json(archive.settings(action == "otimizada"))
+                    else:
+                        file = archive.package if action == "execucao.zip" else archive.log
+                        with file.open("rb") as stream:
+                            self.send_response(200)
+                            self.send_header("Content-Type", "application/zip" if action == "execucao.zip" else "application/x-ndjson")
+                            self.send_header("Content-Disposition", f'attachment; filename="{archive.key}-{action}"')
+                            self.send_header("Content-Length", str(file.stat().st_size))
+                            self.send_header("X-Content-Type-Options", "nosniff")
+                            self.end_headers()
+                            shutil.copyfileobj(stream, self.wfile, 4*MIB)
+                except (ValueError, KeyError, OSError, BadZipFile) as error:
+                    self.json({"erro":str(error)}, 404)
+            elif path == "/github-execucoes":
+                try:
+                    query = parse_qs(urlsplit(self.path).query)
+                    page = max(1, min(10000, int(query.get("pagina", ["1"])[0])))
+                    self.json(github_execucoes.catalog(page))
+                except (OSError, ValueError) as error:
+                    self.json({"erro":str(error)}, 502)
             elif path == "/cotacoes":
                 self.json(workspace.quotes.list())
             elif path == "/estrategias":
@@ -427,7 +520,7 @@ def build_handler(workspace):
 
         def do_POST(self):
             path = self.route()
-            if path not in {"/csv","/csv-bloco","/executar","/encerrar","/carregar-sessao","/pausar","/retomar","/cancelar","/salvar-sessao","/finalizar","/cotacoes","/selecionar-parametros","/estrategias"}:
+            if path not in {"/csv","/csv-bloco","/executar","/encerrar","/carregar-sessao","/pausar","/retomar","/cancelar","/salvar-sessao","/finalizar","/cotacoes","/selecionar-parametros","/estrategias","/importar-execucao"}:
                 self.send_error(HTTPStatus.NOT_FOUND)
                 return
             try:
@@ -445,6 +538,21 @@ def build_handler(workspace):
                     if not isinstance(data, dict):
                         raise ValueError("Identificação da execução inválida.")
                     workspace.control_job(data.get("id"), path[1:])
+                elif path == "/importar-execucao":
+                    data = json.loads(self.rfile.read(length)) if 0 < length <= 512 else {}
+                    if not isinstance(data, dict):
+                        raise ValueError("Dados de importação inválidos.")
+                    with workspace.lock:
+                        transfer = data.get("transferencia")
+                        source = workspace.pending_input
+                        if (workspace.job["estado"] == "executando" or not source or not workspace.upload_transfer
+                                or workspace.upload_transfer[:2] != (transfer, source)):
+                            raise ValueError("Envie o ZIP da execução antes de importá-lo.")
+                        archive = ExecutionArchive.import_package(workspace.history, source)
+                        source.unlink(missing_ok=True)
+                        workspace.pending_input = workspace.upload_transfer = None
+                    self.json(archive.summary())
+                    return
                 elif path == "/estrategias":
                     if not 0 < length <= 8*MIB:
                         raise ValueError("O cadastro excede 8 MiB ou está vazio.")
@@ -489,7 +597,7 @@ def build_handler(workspace):
                 return
             except TimeoutError:
                 self.json({"erro":"O envio do bloco expirou."},408)
-            except (ValueError,OSError,KeyError,TypeError) as error:
+            except (ValueError,OSError,KeyError,TypeError,BadZipFile) as error:
                 self.json({"erro":str(error)},400)
     return Handler
 

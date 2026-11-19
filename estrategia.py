@@ -14,6 +14,7 @@ import numpy as np
 import pandas as pd
 
 from diagnostico import chart
+from execucoes import cli_audit
 from ntsl import ORDER_CONSTANTS, NTSLError, Rolling, SERIES, compile_ntsl
 from simulador import OHLC, read_export, read_ticks, search_target, validate_ohlc
 
@@ -642,9 +643,10 @@ def main():
     p.add_argument("--inputs",help="Arquivo JSON com valores de inputs a substituir")
     args=p.parse_args()
     try:
-        overrides=json.loads(Path(args.inputs).read_text(encoding="utf-8-sig")) if args.inputs else {}
-        print(json.dumps(run_strategy(args.csv,source_text(args.ntsl),args.saida,args.segundos,
-                                      args.formato,args.tick,overrides,args.valor_ponto),ensure_ascii=False,indent=2))
+        with cli_audit(args.saida, args.csv, "estrategia"):
+            overrides=json.loads(Path(args.inputs).read_text(encoding="utf-8-sig")) if args.inputs else {}
+            print(json.dumps(run_strategy(args.csv,source_text(args.ntsl),args.saida,args.segundos,
+                                          args.formato,args.tick,overrides,args.valor_ponto),ensure_ascii=False,indent=2))
     except (ValueError,OSError,KeyError) as error:
         p.exit(2,f"Erro: {error}\n")
 

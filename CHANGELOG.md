@@ -1,5 +1,12 @@
 # Histórico de versões
 
+## 0.9.0
+
+- Histórico local com log JSONL, motivo de parada, indicadores e ZIP reutilizável de cada execução.
+- Evolução por geração e avaliações individuais com parâmetros e métricas legíveis por ferramentas externas.
+- Publicação opcional em pré-releases do GitHub, catálogo dos testes compartilhados e importação de pacotes.
+- Logs de início e parada para os comandos CLI.
+
 ## 0.8.0
 
 - Busca aleatória adaptativa com metas independentes de sensibilidade e especificidade e confirmação cronológica.

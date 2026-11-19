@@ -1,4 +1,4 @@
-# simuladorCotacao 0.8.0
+# simuladorCotacao 0.9.0
 
 [Histórico de alterações](CHANGELOG.md) · [Manutenção e hashes dos pacotes](MANUTENCAO.md)
 
@@ -120,7 +120,7 @@ Em Linux, use Python 3.11+ e um toolchain MinGW-w64 x64. Baixe a distribuição 
 
 ```bash
 python -m pip download --only-binary=:all: --platform win_amd64 --python-version 312 -r windows/requirements.lock -d wheels
-python windows/package.py --python-win python-3.12.10-embed-amd64.zip --wheels wheels --saida simuladorCotacao-v0.8.0-win64.zip
+python windows/package.py --python-win python-3.12.10-embed-amd64.zip --wheels wheels --saida simuladorCotacao-v0.9.0-win64.zip
 ```
 
 Para desenvolver ou testar com o seu Python local, instale `requirements.txt` e rode `python app.py`. Para um comando de terminal no código-fonte, use `python app.py --cli estrategia --help`.
@@ -162,3 +162,13 @@ Em **Otimização**, selecione **Aleatória adaptativa**. O CSV deve ter uma col
 ### Base de estratégias
 
 Carregue um arquivo NTSL ou cole o código no editor. Em **Base de estratégias NTSL**, informe o nome e clique em **Salvar estratégia na base**. Selecione uma estratégia cadastrada e clique em **Carregar no editor** para reutilizá-la. O mesmo nome com código diferente salva uma versão adicional. O mesmo nome com código idêntico atualiza a observação. A pasta de backup da base de cotações também contém o cadastro das estratégias.
+
+### Histórico, reprodução e publicação de execuções
+
+O aplicativo cria um registro em `resultados/historico/<id>/` ao aceitar uma execução. Ao terminar, registra o estado, a duração e o motivo da parada. Mostra controles, etapas e gerações no log, e guarda um ZIP local mesmo com a opção GitHub desmarcada. Após erro ou cancelamento, o pacote inclui os dados completos e as avaliações que já estiverem disponíveis. Uma interrupção abrupta do processo pode deixar apenas o registro de início e os eventos escritos até aquele momento. Na CLI, o log de início e parada fica ao lado da saída como `<nome-da-saida>.execucao.jsonl`.
+
+Na tela **Histórico de execuções**, abra os indicadores, baixe o ZIP ou carregue os dados, estratégia e configuração no formulário. Quando houver NTSL parametrizado, também é possível usá-lo como ponto de partida. Ajuste as faixas de busca, o método ou a fonte dos dados e execute novamente. Para um pacote externo, use **Importar ZIP de execução**. Sessões de pausa continuam usando **Carregar sessão**.
+
+O contrato para análise automatizada é identificado por `schema: simuladorCotacao.execucao/1` em `resumo.json`. O ZIP contém a configuração efetiva, estratégia original, entrada CSV usada, log em JSON Lines e os relatórios disponíveis. Em otimizações, `avaliacoes.csv` registra cada combinação concluída, com os inputs, a aptidão e as métricas em JSON. Geração 0 identifica avaliações trazidas de uma sessão restaurada. `evolucao.csv` registra a liderança de cada geração, `candidatos.csv` contém o ranking da execução concluída e `metricas.json` distingue busca e teste cronológico. Ferramentas externas podem ler esses arquivos para comparar execuções e sugerir parâmetros.
+
+Para compartilhar um teste, configure a variável de ambiente `SIMULADOR_GITHUB_TOKEN` antes de abrir o aplicativo, usando um token com permissão **Contents: Read and write** no repositório oficial. Marque **Publicar esta execução no GitHub do projeto** antes de iniciar. O ZIP, limitado a menos de 2 GiB para envio, é anexado a uma pré-release. Em caso de falha, o pacote local e a mensagem no histórico ficam disponíveis. Em repositório público, estratégia, resultados e dados de entrada ficam acessíveis publicamente. Em repositório privado, o download pelo navegador exige acesso ao repositório. A tela **Consultar GitHub** mostra os resumos publicados e oferece os links para baixar e importar os pacotes.

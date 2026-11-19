@@ -19,6 +19,7 @@ import time
 import numpy as np
 import pandas as pd
 
+from execucoes import cli_audit
 from diagnostico import BLOCKED, charts, dependencies, labels as make_labels, tree_features
 
 OHLC = ['abertura', 'maxima', 'minima', 'fechamento']
@@ -393,7 +394,7 @@ def parallel_replays(executor, entries, parameters, workers, deadline, record, f
     return deadline_hit
 
 
-def optimize(replay, config, out, on_progress=None, on_resources=None, on_partial=None, control=None, session=None):
+def optimize(replay, config, out, on_progress=None, on_resources=None, on_partial=None, control=None, session=None, on_candidates=None):
     worker_checkpoint = control.checkpoint if control else None
     checkpoint = (lambda: session.checkpoint(control)) if session else worker_checkpoint
     if control and (not session or control.cancelled.is_set()):
@@ -636,6 +637,8 @@ def optimize(replay, config, out, on_progress=None, on_resources=None, on_partia
         state = restored["rng"]
         rng.setstate((state[0],tuple(state[1]),state[2]))
         phase, reason = restored["fase"], restored["motivo"]
+        if on_candidates:
+            on_candidates(0, names, restored["avaliados"])
     generation = generation_start
     completed = sum(genome in seen for genome in candidates)
     if session:
@@ -666,6 +669,9 @@ def optimize(replay, config, out, on_progress=None, on_resources=None, on_partia
     def record(results):
         nonlocal partial_best, failed_candidates, completed
         seen.update(results)
+        if on_candidates:
+            on_candidates(generation, names, [(genome, fitness if math.isfinite(fitness) else None, stats)
+                                               for genome, (fitness, stats) in results.items()])
         completed += len(results)
         for genome, (fitness, stats) in results.items():
             failed_candidates += int('erro' in stats)
@@ -854,6 +860,7 @@ def optimize(replay, config, out, on_progress=None, on_resources=None, on_partia
         checkpoint()
     write_html(out, summary, warning, history, names)
     print(f'Relatório: {out/"relatorio.html"}')
+    return summary
 
 
 def write_html(out, summary, warning, history, names):
@@ -952,30 +959,31 @@ def main():
     tuner.add_argument('--saida', type=Path, default=Path('resultados')/datetime.now().strftime('%Y%m%d-%H%M%S-%f'))
     args = parser.parse_args()
     try:
-        if args.command == 'candles':
-            read = read_ticks if args.formato == 'negocios' else read_export
-            frame = read(args.csv, args.segundos)
-            validate_ohlc(frame)
-            if args.formato == 'profit':
-                frame = frame[['minuto', 'ordem_no_minuto', 'v_barra_id', 'segmento', *OHLC]]
-            args.saida.parent.mkdir(parents=True, exist_ok=True)
-            frame.to_csv(args.saida, index=False)
-            print(f'{len(frame)} candles em {args.saida}')
-        else:
-            config = json.loads(args.config.read_text(encoding='utf-8-sig'))
-            seconds = int(config['segundos_por_candle'])
-            if config.get('motor') == 'ntsl':
-                from estrategia import strategy_replay, source_text
-                replay = strategy_replay(args.csv, source_text(args.ntsl), seconds, config.get('formato','auto'),
-                                         config, config.get('tick',5), config.get('valor_ponto',1))
-            else:
-                model = NTSLModel(args.ntsl)
-                frame = read_export(args.csv, seconds)
+        with cli_audit(args.saida, args.csv, args.command) as audit:
+            if args.command == 'candles':
+                read = read_ticks if args.formato == 'negocios' else read_export
+                frame = read(args.csv, args.segundos)
                 validate_ohlc(frame)
-                replay = Replay(frame, model, seconds, config.get('classe_alvo', '1C'),
-                                search_target(config), config.get('campos_excluidos', ()))
-            args.saida.mkdir(parents=True, exist_ok=False)
-            optimize(replay, config, args.saida)
+                if args.formato == 'profit':
+                    frame = frame[['minuto', 'ordem_no_minuto', 'v_barra_id', 'segmento', *OHLC]]
+                args.saida.parent.mkdir(parents=True, exist_ok=True)
+                frame.to_csv(args.saida, index=False)
+                print(f'{len(frame)} candles em {args.saida}')
+            else:
+                config = json.loads(args.config.read_text(encoding='utf-8-sig'))
+                seconds = int(config['segundos_por_candle'])
+                if config.get('motor') == 'ntsl':
+                    from estrategia import strategy_replay, source_text
+                    replay = strategy_replay(args.csv, source_text(args.ntsl), seconds, config.get('formato','auto'),
+                                             config, config.get('tick',5), config.get('valor_ponto',1))
+                else:
+                    model = NTSLModel(args.ntsl)
+                    frame = read_export(args.csv, seconds)
+                    validate_ohlc(frame)
+                    replay = Replay(frame, model, seconds, config.get('classe_alvo', '1C'),
+                                    search_target(config), config.get('campos_excluidos', ()))
+                args.saida.mkdir(parents=True, exist_ok=False)
+                audit["motivo"] = optimize(replay, config, args.saida)["parada"]
     except (OSError, ValueError, KeyError, TypeError, AttributeError, ArithmeticError) as error:
         parser.exit(2, f'Erro: {error}\n')
 

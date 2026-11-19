@@ -122,11 +122,13 @@ progress{display:block;width:100%;height:12px;accent-color:var(--accent);margin:
 <div class="field"><label for="salvar-minutos">Salvar sessão a cada N minutos</label>
 <input id="salvar-minutos" type="number" min="0" max="1440" step="1" value="0">
 <small>Use 0 para desativar. Ao carregar uma sessão, o intervalo gravado nela será aplicado.</small></div>
+<div class="field"><label><input type="checkbox" id="publicar-github"> Publicar esta execução no GitHub do projeto</label>
+<small>Envia estratégia, parâmetros, resultados e CSV de entrada para quem tem acesso ao repositório. Em um repositório público, os dados ficam públicos. O ZIP local é gerado em qualquer caso.</small></div>
 <div class="actions"><button class="primary" id="executar" type="submit">Executar</button>
 <button type="button" id="carregar-sessao">Carregar sessão</button>
 <input type="file" id="arquivo-sessao" accept=".zip" hidden></div>
 </section>
-<section class="panel result"><h2>Resultado</h2><p id="situacao" role="status" aria-live="polite">Aguardando dados e estratégia.</p><div id="controle-execucao" class="acoes" hidden>
+<section class="panel result"><h2>Resultado</h2><p id="situacao" role="status" aria-live="polite">Aguardando dados e estratégia.</p><p id="status-publicacao" role="status"></p><div id="controle-execucao" class="acoes" hidden>
 <button type="button" id="pausar-processamento">Pausar</button>
 <button type="button" id="salvar-sessao">Salvar sessão</button>
 <button type="button" id="finalizar-processamento" hidden>Finalizar busca agora</button>
@@ -146,11 +148,24 @@ progress{display:block;width:100%;height:12px;accent-color:var(--accent);margin:
 <p id="status-parametros" role="status"></p><dl id="parametros-finais"></dl>
 <a id="json-parametros" download="inputs_otimizados.json" hidden>Baixar parâmetros (.json)</a>
 </section></section>
+<section class="panel result"><h2>Histórico de execuções</h2>
+<div class="actions">
+<button type="button" id="historico-local">Atualizar histórico local</button>
+<button type="button" id="historico-github">Consultar GitHub</button>
+<button type="button" id="historico-importar">Importar ZIP de execução</button>
+<input id="historico-arquivo" type="file" accept=".zip" hidden>
+</div>
+<p id="historico-status" role="status"></p>
+<div class="grid-scroll"><table><thead><tr><th>Execução</th><th>Estado e motivo de parada</th><th>Ações</th></tr></thead><tbody id="historico-lista"></tbody></table></div>
+<button type="button" id="historico-mais" hidden>Carregar mais do GitHub</button>
+<details id="historico-detalhes" hidden><summary>Indicadores da execução selecionada</summary><pre id="historico-indicadores"></pre></details>
+</section>
 </form>
 </main>
 <script>
 const $ = id => document.getElementById(id);
 let running = false, timer = null, optimizationTemplate = null, replaySettings = "{}";
+let reusedInput = null, githubPage = 0;
 const protectedFields = ["classe","tipo_ordem","pts_maior_30"];
 const supported = new Set(["p_PeriodoMedia","p_PeriodoVolatilidade","p_PeriodoATR","p_PeriodoEficiencia","p_PeriodoMediaTrades","p_BarrasAquecimento","p_CorteScoreModelo","p_SegundosPorBarra"]);
 let columns = [];
@@ -381,11 +396,11 @@ let series = [];
 function selectSeries() {
     const item = series.find(row => row.id === $("serie").value);
     $("csv-wrap").hidden = Boolean(item);
-    $("csv").required = !item;
+    $("csv").required = !item && !reusedInput;
     $("recorte").hidden = !item;
     $("formato").disabled = Boolean(item);
     $("segundos").readOnly = Boolean(item && item.formato !== "negocios");
-    $("serie-detalhes").textContent = item ? [item.arquivo, item.formato, item.linhas + " registros", item.observacao].filter(Boolean).join(" · ") : "";
+    $("serie-detalhes").textContent = item ? [item.arquivo, item.formato, item.linhas + " registros", item.observacao].filter(Boolean).join(" · ") : (reusedInput ? "CSV do histórico: " + reusedInput.name : "");
     if (item) {
         $("formato").value = item.formato;
         $("segundos").value = item.segundos;
@@ -409,7 +424,14 @@ async function refreshSeries(selected = "") {
     $("serie").value = selected;
     selectSeries();
 }
-$("serie").addEventListener("change", selectSeries);
+$("serie").addEventListener("change", () => { reusedInput = null; selectSeries(); });
+$("csv").addEventListener("change", () => {
+    if ($("csv").files.length && reusedInput) {
+        reusedInput = null;
+        $("csv").required = true;
+        $("serie-detalhes").textContent = "";
+    }
+});
 $("periodo-base").addEventListener("change", () => {
     $("outro-periodo-wrap").hidden = $("periodo-base").value !== "custom";
 });
@@ -598,9 +620,9 @@ function updateControls(state) {
     $("controle-execucao").hidden = !currentExecution;
     $("pausar-processamento").textContent = state.pausado ? "Retomar" : "Pausar";
     for (const id of ["pausar-processamento","cancelar-processamento","salvar-sessao"]) {
-        $(id).disabled = !currentExecution || Boolean(state.cancelando) || controlPending;
+        $(id).disabled = !currentExecution || state.empacotando || Boolean(state.cancelando) || controlPending;
     }
-    const canFinish = currentExecution && state.modo === "otimizar" &&
+    const canFinish = currentExecution && !state.empacotando && state.modo === "otimizar" &&
         ["preparacao","busca"].includes(state.parcial?.etapa);
     $("finalizar-processamento").hidden = !canFinish;
     $("finalizar-processamento").disabled = !canFinish || state.finalizando || state.cancelando || controlPending;
@@ -688,6 +710,116 @@ $("criterio-final").addEventListener("change", () => {
     $("status-parametros").textContent = "";
 });
 refreshSeries().catch(error => { $("status-cotacao").textContent = error.message; });
+async function historyData(path) {
+    const response = await localFetch(path, {}, 1);
+    const data = await response.json();
+    if (!response.ok) throw Error(data.erro || "Falha ao consultar histórico.");
+    return data;
+}
+function historyLink(cell, label, url, remote = false) {
+    const link = document.createElement("a");
+    link.textContent = label;
+    link.href = url;
+    if (remote) { link.target = "_blank"; link.rel = "noopener"; }
+    else link.download = "";
+    cell.append(link, document.createTextNode(" · "));
+}
+async function reuseExecution(item, optimized) {
+    if (running) throw Error("Aguarde a execução atual.");
+    const data = await historyData("historico/" + item.id + "/" + (optimized ? "otimizada" : "configuracao"));
+    if (running) throw Error("Aguarde a execução atual.");
+    $("modo").value = data.modo;
+    $("genetica").hidden = data.modo !== "otimizar";
+    $("meta-vp").disabled = $("meta-vn").disabled = data.modo !== "otimizar";
+    $("titulo-opcoes").textContent = data.modo === "otimizar" ? "Configuração da busca (JSON)" : "Substituição de inputs (JSON)";
+    $("ajuda-opcoes").textContent = "Ajuste o código, a configuração ou a fonte dos dados antes de executar.";
+    $("opcoes").value = JSON.stringify(data.opcoes ?? {}, null, 2);
+    $("ntsl").value = data.ntsl;
+    $("formato").value = data.formato;
+    $("segundos").value = data.segundos;
+    $("tick").value = data.tick;
+    $("valor-ponto").value = data.valor_ponto ?? 1;
+    $("publicar-github").checked = false;
+    $("csv").value = "";
+    $("serie").value = "";
+    reusedInput = {id:item.id, name:data.csv || "dados.csv"};
+    selectSeries();
+    $("historico-status").textContent = "Dados, estratégia e configuração carregados. Ajuste os campos e clique em Executar.";
+    $("modo").scrollIntoView({block:"center"});
+}
+function renderHistory(items, remote = false, append = false) {
+    const list = $("historico-lista");
+    if (!append) list.replaceChildren();
+    for (const item of items) {
+        const row = list.insertRow();
+        row.insertCell().textContent = [item.inicio ? new Date(item.inicio).toLocaleString("pt-BR") : "",
+            item.modo, item.arquivo, item.versao ? "v" + item.versao : ""].filter(Boolean).join(" · ");
+        row.insertCell().textContent = [item.estado,item.parada, item.github_erro, item.erro_pacote].filter(Boolean).join(" · ");
+        const actions = row.insertCell();
+        const addButton = (label, action) => {
+            const button = document.createElement("button");
+            button.type = "button";
+            button.textContent = label;
+            button.addEventListener("click", () => Promise.resolve().then(action).catch(error => {
+                $("historico-status").textContent = error.message;
+            }));
+            actions.append(button, document.createTextNode(" "));
+        };
+        if (remote) {
+            if (typeof item.download === "string" && item.download.startsWith("https://github.com/thiagozonda1989-stack/simuladorCotacao/"))
+                historyLink(actions, "Baixar ZIP", item.download, true);
+        } else {
+            if (item.pacote) historyLink(actions, "Baixar ZIP", endpoint("historico/" + item.id + "/execucao.zip"));
+            if (!item.importado) historyLink(actions, "Log", endpoint("historico/" + item.id + "/execucao.jsonl"));
+            if (item.reutilizavel) addButton("Usar dados e estratégia", () => reuseExecution(item, false));
+            if (item.reutilizavel && item.otimizada) addButton("Usar estratégia otimizada", () => reuseExecution(item, true));
+        }
+        addButton("Ver indicadores", () => {
+            $("historico-detalhes").hidden = false;
+            $("historico-detalhes").open = true;
+            $("historico-indicadores").textContent = JSON.stringify(item.indicadores ?? {}, null, 2);
+        });
+    }
+}
+async function showLocalHistory() {
+    try {
+        const items = await historyData("historico");
+        githubPage = 0;
+        $("historico-mais").hidden = true;
+        renderHistory(items);
+        $("historico-status").textContent = items.length ? items.length + " execuções locais" : "Nenhuma execução registrada.";
+    } catch (error) { $("historico-status").textContent = error.message; }
+}
+async function showGithubHistory(page) {
+    try {
+        $("historico-status").textContent = "Consultando GitHub…";
+        const data = await historyData("github-execucoes?pagina=" + page);
+        githubPage = page;
+        renderHistory(data.execucoes, true, page > 1);
+        $("historico-mais").hidden = !data.mais;
+        $("historico-status").textContent = "Execuções do GitHub · baixe e importe o ZIP para reutilizar os dados.";
+    } catch (error) { $("historico-status").textContent = error.message; }
+}
+$("historico-local").addEventListener("click", showLocalHistory);
+$("historico-github").addEventListener("click", () => showGithubHistory(1));
+$("historico-mais").addEventListener("click", () => showGithubHistory(githubPage + 1));
+$("historico-importar").addEventListener("click", () => { if (!running) $("historico-arquivo").click(); });
+$("historico-arquivo").addEventListener("change", async () => {
+    const input = $("historico-arquivo");
+    const file = input.files[0];
+    input.value = "";
+    if (!file || running) return;
+    busy(true);
+    try {
+        const transferencia = await uploadCsv(file, "execução");
+        await post("importar-execucao", JSON.stringify({transferencia}), "application/json");
+        await showLocalHistory();
+        $("historico-status").textContent = "Pacote importado. Selecione a execução para reutilizar os dados.";
+        show("Pacote importado.");
+    } catch (error) { $("historico-status").textContent = error.message; }
+    finally { busy(false); }
+});
+showLocalHistory();
 async function poll(failures = 0) {
     try {
         const response = await localFetch("estado");
@@ -695,7 +827,8 @@ async function poll(failures = 0) {
         const state = await response.json();
         showPartial(state);
         updateControls(state);
-        if (state.cancelando) show("Cancelando o processamento…");
+        if (state.empacotando) show("Gerando o pacote local e concluindo o histórico…");
+        else if (state.cancelando) show("Cancelando o processamento…");
         else if (state.finalizando && ["preparacao","busca"].includes(state.parcial?.etapa))
             show("Finalizando a busca · aguardando as avaliações em andamento");
         else if (state.pausado) show("Pausa solicitada · retome para continuar");
@@ -704,6 +837,9 @@ async function poll(failures = 0) {
             timer = setTimeout(poll,1200);
         } else {
             busy(false);
+            if (!githubPage) showLocalHistory();
+            $("status-publicacao").textContent = state.historico?.github_erro || state.historico?.erro_pacote ||
+                (state.historico?.github ? "Pacote publicado no GitHub." : "");
             if (state.estado === "concluido") {
                 show((state.parada?.startsWith("finalização solicitada") ? "Busca finalizada antecipadamente." : "Execução concluída.") + "\n" + state.pasta);
                 showExports(state);
@@ -730,6 +866,7 @@ $("form").addEventListener("submit", async event => {
     if (running) return;
     busy(true);
     $("relatorio").hidden = true;
+    $("status-publicacao").textContent = "";
     showExports({});
     $("andamento").replaceChildren();
     $("execucao-parcial").hidden = true;
@@ -739,7 +876,7 @@ $("form").addEventListener("submit", async event => {
             modo:$("modo").value, csv:$("csv").files[0]?.name, ntsl:$("ntsl").value,
             formato:$("formato").value, segundos:Number($("segundos").value),
             tick:Number($("tick").value), valor_ponto:Number($("valor-ponto").value),
-            salvar_minutos:Number($("salvar-minutos").value), opcoes:JSON.parse($("opcoes").value || "{}")
+            salvar_minutos:Number($("salvar-minutos").value), publicar_github:$("publicar-github").checked, opcoes:JSON.parse($("opcoes").value || "{}")
         };
         if (options.modo === "otimizar") {
             if (options.opcoes.busca === "aleatoria" && !["meta-vp","meta-vn"].every(id => $(id).validity.valid && $(id).value)) {
@@ -753,11 +890,15 @@ $("form").addEventListener("submit", async event => {
         }
         if ($("serie").value) {
             Object.assign(options, {serie:$("serie").value, inicio:$("inicio-serie").value, fim:$("fim-serie").value});
+        } else if (reusedInput && !$("csv").files.length) {
+            options.historico_id = reusedInput.id;
+            options.csv = reusedInput.name;
         } else {
             options.transferencia = await uploadCsv($("csv").files[0]);
         }
         options.solicitacao = crypto.randomUUID();
         await post("executar",JSON.stringify(options),"application/json", {}, 1);
+        $("publicar-github").checked = false;
         show("Executando…");
         poll();
     } catch (error) { busy(false); show(error.message); }
@@ -770,6 +911,7 @@ $("arquivo-sessao").addEventListener("change", async () => {
     if (running || !file) return;
     busy(true);
     $("relatorio").hidden = true;
+    $("status-publicacao").textContent = "";
     showExports({});
     $("andamento").replaceChildren();
     $("execucao-parcial").hidden = true;
@@ -777,8 +919,9 @@ $("arquivo-sessao").addEventListener("change", async () => {
     try {
         const transferencia = await uploadCsv(file, "sessão");
         show("Restaurando a sessão…");
-        await post("carregar-sessao", JSON.stringify({transferencia, solicitacao:crypto.randomUUID()}),
+        await post("carregar-sessao", JSON.stringify({transferencia, solicitacao:crypto.randomUUID(), publicar_github:$("publicar-github").checked}),
                    "application/json", {}, 1);
+        $("publicar-github").checked = false;
         show("Retomando o processamento…");
         poll();
     } catch (error) { busy(false); show(error.message); }
