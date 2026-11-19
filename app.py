@@ -16,6 +16,8 @@ from threading import Lock, Thread
 from urllib.parse import urlsplit
 import webbrowser
 
+from cotacoes import Quotes, slice_csv
+from ntsl import parameterized_ntsl
 from sessao import Session, extract_csv, load_session
 from controle import ProcessingCancelled, ProcessingControl
 from diagnostico import charts
@@ -54,6 +56,7 @@ class Workspace:
         self.control = None
         self.job = {"estado": "pronto"}
         self.lock = Lock()
+        self.quotes = Quotes(self.output.parent / "cotacoes")
 
     def upload(self, stream, length):
         if length <= 0:
@@ -124,6 +127,52 @@ class Workspace:
                 self.pending_input = path
             return received
 
+    def save_quotes(self, data):
+        with self.lock:
+            if self.job["estado"] == "executando":
+                raise ValueError("Aguarde a execução atual.")
+            transfer = data.get("transferencia")
+            if not self.pending_input or not self.upload_transfer or self.upload_transfer[:2] != (transfer, self.pending_input):
+                raise ValueError("Envie o CSV antes de cadastrá-lo.")
+            identifier = self.quotes.add(self.pending_input, data)
+            self.pending_input.unlink(missing_ok=True)
+            self.pending_input = self.upload_transfer = None
+            return identifier
+
+    def choose_parameters(self, data):
+        name = data.get("id", "")
+        criterion = data.get("criterio", "objetivo")
+        if not re.fullmatch(r"\d{8}-\d{6}-\d{6}", name):
+            raise ValueError("Execução inválida.")
+        folder = self.output / name
+        summary = json.loads((folder / "metricas.json").read_text(encoding="utf-8"))
+        criterion = summary["metrica"] if criterion == "objetivo" else criterion
+        if criterion not in {"f1", "accuracy", "balanced_accuracy", "precision", "recall",
+                             "specificity", "npv", "resultado", "resultado_menos_drawdown"}:
+            raise ValueError("Critério indisponível.")
+        best = None
+        with (folder / "selecionaveis.jsonl").open(encoding="utf-8") as stream:
+            for line in stream:
+                params, stats = json.loads(line)
+                if criterion not in stats:
+                    continue
+                rank = (stats[criterion], stats[summary["metrica"]])
+                if best is None or rank > best[0]:
+                    best = rank, params, stats
+        if best is None:
+            raise ValueError("Nenhum candidato elegível para este critério.")
+        _, params, stats = best
+        result = dict(parametros=params, metricas=stats, criterio=criterion)
+        if data.get("estrategia"):
+            source = folder / "estrategia.ntsl"
+            if summary["motor"] == "ntsl":
+                result["ntsl"] = parameterized_ntsl(source.read_text(encoding="utf-8"), params)
+            elif (folder / "modelo_parametrizado.ntsl").is_file():
+                result["ntsl"] = NTSLModel(source).patched(params)
+            else:
+                raise ValueError("Este alvo ou ensemble modificado exige o motor Replay NTSL para exportar a estratégia.")
+        return result
+
     def start(self, options, restore=False):
         with self.lock:
             request = options.get("solicitacao")
@@ -131,7 +180,16 @@ class Workspace:
                 return self.job["id"]
             if self.job["estado"] == "executando":
                 raise ValueError("Já existe uma execução em andamento.")
-            if not self.pending_input:
+            selected = None if restore else options.get("serie")
+            quote = None
+            if selected:
+                quote = self.quotes.select(selected, options.get("inicio"), options.get("fim"))
+                meta, _, start, end = quote
+                if meta["formato"] != "negocios" and int(options["segundos"]) != meta["segundos"]:
+                    raise ValueError("Use a periodicidade cadastrada para candles prontos.")
+                options = options | {"formato": meta["formato"], "csv": meta["arquivo"],
+                                     "cotacao": meta | {"inicio_selecionado": start, "fim_selecionado": end}}
+            if not self.pending_input and not quote:
                 raise ValueError("O arquivo ainda não foi carregado.")
             transfer = options.get("transferencia")
             if transfer and (not self.upload_transfer or
@@ -145,16 +203,21 @@ class Workspace:
             source = options["ntsl"]
             if not isinstance(source, str) or not source.strip():
                 raise ValueError("Carregue ou cole uma estratégia NTSL.")
-            self.session = Session(self.output, name, path, options, state, self.saved_session)
-            self.pending_input = None
+            session = Session(self.output, name, path, options, state, self.saved_session)
+            if quote:
+                path = self.output / (name + "-entrada.csv")
+                session.csv = path
+            else:
+                self.pending_input = None
+            self.session = session
             if self.upload_transfer and self.upload_transfer[1] == path:
                 self.upload_transfer = None
             self.control = ProcessingControl()
             self.started_at = monotonic()
             self.job = {"estado": "executando", "id": name, "parcial": {"etapa":"preparacao"},
-                        "salvar_minutos": self.session.interval // 60}
+                        "salvar_minutos": self.session.interval // 60, "modo": options["modo"]}
             self.last_request = request
-            Thread(target=self.run, args=(path, name, options, restore), daemon=True).start()
+            Thread(target=self.run, args=(path, name, options, restore, quote), daemon=True).start()
             return name
 
     def saved_session(self, status):
@@ -175,20 +238,33 @@ class Workspace:
                 self.job = self.job | {"sessao": self.job.get("sessao", {}) |
                                        {"mensagem": "Salvamento solicitado. Aguardando um ponto seguro."}}
                 self.session.requested.set()
+            elif command == "finalizar":
+                if (self.job["modo"] != "otimizar" or self.control.cancelled.is_set()
+                        or self.job["parcial"]["etapa"] not in {"preparacao", "busca"}):
+                    raise ValueError("A busca já terminou ou não está em andamento.")
+                self.control.finish_requested.set()
+                self.control.resume()
             elif command == "cancelar":
                 self.control.cancel()
-            elif not self.control.cancelled.is_set():
+            elif not (self.control.cancelled.is_set() or self.control.finish_requested.is_set()):
                 if command == "pausar":
                     self.control.pause()
                 else:
                     self.control.resume()
 
-    def run(self, path, name, options, restore):
+    def run(self, path, name, options, restore, quote=None):
         destination = self.output/name
         control, session = self.control, self.session
         csv = None if restore else path
         resume_archive = path if restore else None
         try:
+            if quote:
+                meta, original, start, end = quote
+                if start == meta["inicio"] and end == meta["fim"]:
+                    csv = original
+                    session.csv = original
+                else:
+                    slice_csv(original, csv, meta["formato"], start, end, control.checkpoint)
             if restore:
                 csv = extract_csv(path, self.output)
                 session.csv = csv
@@ -196,7 +272,7 @@ class Workspace:
                 control.checkpoint()
             if options["modo"] == "estrategia":
                 def replay_progress(snapshot):
-                    self.publish(parcial=snapshot)
+                    self.publish(parcial=snapshot | {"valor_ponto": float(options.get("valor_ponto", 1))})
                 run_strategy(csv,options["ntsl"], destination,int(options["segundos"]),
                              options["formato"],float(options["tick"]),options["opcoes"],float(options.get("valor_ponto",1)), on_progress=replay_progress, checkpoint=control.checkpoint,
                              session=session, resume_archive=resume_archive, safe_point=lambda: session.checkpoint(control))
@@ -205,6 +281,8 @@ class Workspace:
                 config = options["opcoes"]
                 config["segundos_por_candle"] = int(options["segundos"])
                 config["versao"] = VERSION
+                if options.get("cotacao"):
+                    config["cotacao"] = options["cotacao"]
                 seconds = config["segundos_por_candle"]
                 if config.get("motor") == "ntsl":
                     replay = strategy_replay(csv, options["ntsl"], seconds, requested, config,
@@ -236,13 +314,18 @@ class Workspace:
                 raise ValueError("Modo de execução desconhecido.")
             session.checkpoint(control)
             outcome = {"estado":"concluido", "pasta":str(destination)}
+            if options["modo"] == "otimizar":
+                summary = json.loads((destination / "metricas.json").read_text(encoding="utf-8"))
+                outcome |= {"parada":summary["parada"], "exportavel":(destination/"modelo_parametrizado.ntsl").is_file(),
+                            "tem_candidatos":summary["atende_min_sinais"], "motor":summary["motor"],
+                            "financeiro":summary["alvo"].get("modo") == "resultado"}
         except ProcessingCancelled:
             outcome = {"estado":"cancelado"}
         except Exception as error:
             outcome = {"estado":"erro", "mensagem":str(error)}
         finally:
             try:
-                if csv:
+                if csv and (not quote or csv != quote[1]):
                     csv.unlink(missing_ok=True)
                 if resume_archive:
                     resume_archive.unlink(missing_ok=True)
@@ -294,8 +377,11 @@ def build_handler(workspace):
                         control = workspace.control
                         job = job | {"segundos": round(control.elapsed(workspace.started_at)),
                                      "pausado": control.paused_at is not None,
-                                     "cancelando": control.cancelled.is_set()}
+                                     "cancelando": control.cancelled.is_set(),
+                                     "finalizando": control.finish_requested.is_set()}
                 self.json(job)
+            elif path == "/cotacoes":
+                self.json(workspace.quotes.list())
             elif path == "/modelo-exemplo":
                 self.send_bytes((APP/"modelo_profit.ntsl").read_bytes(),"text/plain; charset=utf-8")
             elif path == "/config-exemplo":
@@ -333,7 +419,7 @@ def build_handler(workspace):
 
         def do_POST(self):
             path = self.route()
-            if path not in {"/csv","/csv-bloco","/executar","/encerrar","/carregar-sessao","/pausar","/retomar","/cancelar","/salvar-sessao"}:
+            if path not in {"/csv","/csv-bloco","/executar","/encerrar","/carregar-sessao","/pausar","/retomar","/cancelar","/salvar-sessao","/finalizar","/cotacoes","/selecionar-parametros"}:
                 self.send_error(HTTPStatus.NOT_FOUND)
                 return
             try:
@@ -344,13 +430,24 @@ def build_handler(workspace):
                     Thread(target=self.server.shutdown, daemon=True).start()
                     return
                 length = int(self.headers.get("Content-Length","0"))
-                if path in {"/pausar","/retomar","/cancelar","/salvar-sessao"}:
+                if path in {"/pausar","/retomar","/cancelar","/salvar-sessao","/finalizar"}:
                     if not 0 < length <= 512:
                         raise ValueError("Identificação da execução inválida.")
                     data = json.loads(self.rfile.read(length))
                     if not isinstance(data, dict):
                         raise ValueError("Identificação da execução inválida.")
                     workspace.control_job(data.get("id"), path[1:])
+                elif path in {"/cotacoes", "/selecionar-parametros"}:
+                    if not 0 < length <= 16*1024:
+                        raise ValueError("Dados da solicitação inválidos.")
+                    data = json.loads(self.rfile.read(length))
+                    if not isinstance(data, dict):
+                        raise ValueError("Dados da solicitação inválidos.")
+                    if path == "/cotacoes":
+                        self.json({"id": workspace.save_quotes(data)})
+                    else:
+                        self.json(workspace.choose_parameters(data))
+                    return
                 elif path == "/csv":
                     workspace.upload(self.rfile,length)
                 elif path == "/csv-bloco":

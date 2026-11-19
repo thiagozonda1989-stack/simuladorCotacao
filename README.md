@@ -120,7 +120,7 @@ Em Linux, use Python 3.11+ e um toolchain MinGW-w64 x64. Baixe a distribuição 
 
 ```bash
 python -m pip download --only-binary=:all: --platform win_amd64 --python-version 312 -r windows/requirements.lock -d wheels
-python windows/package.py --python-win python-3.12.10-embed-amd64.zip --wheels wheels --saida simuladorCotacao-v0.6.0-win64.zip
+python windows/package.py --python-win python-3.12.10-embed-amd64.zip --wheels wheels --saida simuladorCotacao-v0.7.0-win64.zip
 ```
 
 Para desenvolver ou testar com o seu Python local, instale `requirements.txt` e rode `python app.py`. Para um comando de terminal no código-fonte, use `python app.py --cli estrategia --help`.
@@ -138,3 +138,19 @@ Na busca genética, acompanhe a geração, os candidatos concluídos e os melhor
 Durante a busca ou o replay, os controles ficam junto ao progresso. A pausa mantém a execução e os resultados parciais na memória e não conta para o limite de tempo da busca. Cancelar interrompe a execução e mantém as métricas parciais na tela. As ações são aplicadas no próximo ponto de parada do motor. Leitura de arquivos, cálculos vetorizados e escrita de relatórios podem levar alguns instantes para responder.
 
 Em **Usar recursos máximos**, cada processo NTSL reaproveita as séries numéricas do CSV e a matriz de histórico entre candidatos. O Ensemble destina a RAM restante ao cache de scores, depois de calcular a reserva do sistema e a memória estimada dos trabalhadores. A RAM ocupada depende do tamanho do CSV, do modelo e da quantidade de avaliações úteis.
+
+### Base de cotações
+
+Em **Dados**, abra **Cadastrar CSV na base de cotações**. Informe o papel, a periodicidade e, se desejar, as datas e a observação. O simulador reconhece os formatos já aceitos pelo replay e detecta as datas do arquivo. A base SQLite e as cópias dos CSVs ficam na pasta `cotacoes`, ao lado de `resultados`. Faça backup dessa pasta inteira para levar a base a outro computador.
+
+Selecione a série em **Origem dos dados** e ajuste o intervalo de pregões, se necessário. Os dois limites são inclusivos. A periodicidade de candles prontos é mantida. Para negócios com timestamp, você pode ajustar o intervalo de agregação dos candles no teste.
+
+### Finalizar a busca e exportar
+
+**Finalizar busca agora** deixa as avaliações em andamento terminarem, encerra a busca e valida o melhor candidato encontrado pelo objetivo original. O relatório indica quando a parada foi antecipada. No painel **Parâmetros otimizados**, escolha um critério, receba os parâmetros em JSON ou baixe o código NTSL com os valores aplicados às declarações de inputs. A escolha usa os candidatos já avaliados na amostra de busca que cumpriram o mínimo de sinais. A troca de critério não executa uma nova busca. O replay completo NTSL exporta o código parametrizado. No Ensemble, a exportação segue as condições indicadas no relatório.
+
+### Classificação e resultado em reais
+
+Em uma otimização de compra, escolha como alvo a classe positiva de compra ou uma regra de alta por barras ou pontos. A sensibilidade mede **VP ÷ (VP + FN)**. A especificidade mede **VN ÷ (VN + FP)**. O valor preditivo negativo mede **VN ÷ (VN + FN)**. A tela mostra as contagens e taxas durante a busca classificatória.
+
+Informe o valor em reais por ponto e contrato. Para o WIN, o campo começa em R$ 0,20. No replay NTSL, o resultado bruto em reais é a soma realizada de pontos × contratos multiplicada por esse valor. O cálculo usa as quantidades executadas pela estratégia e aparece no progresso e no relatório. Custos operacionais ficam fora desse total. O Ensemble mede classificação. Use o motor Replay NTSL para obter resultado financeiro simulado.

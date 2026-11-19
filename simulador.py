@@ -279,6 +279,7 @@ def metrics(y, prediction):
         return numerator / denominator if denominator else 0.0
     return dict(barras=len(y), sinais=tp+fp, positivos=tp+fn, tp=tp, fp=fp, fn=fn, tn=tn,
                 precision=rate(tp, tp+fp), recall=rate(tp, tp+fn),
+                specificity=rate(tn, tn+fp), npv=rate(tn, tn+fn),
                 f1=rate(2*tp, 2*tp+fp+fn),
                 balanced_accuracy=(rate(tp, tp+fn)+rate(tn, tn+fp))/2,
                 accuracy=rate(tp+tn, len(y)), cobertura=rate(tp+fp, len(y)))
@@ -318,17 +319,18 @@ def cpu_count():
     return len(os.sched_getaffinity(0)) if hasattr(os, 'sched_getaffinity') else os.cpu_count() or 1
 
 
-def strategy_metrics(ys, score, side, financial, trade_score=None):
+def strategy_metrics(ys, score, side, financial, trade_score=None, point_value=1):
     pred = score[:, side] > 0
     result = metrics(ys, pred)
     if financial:
-        result['sinais'] = int(np.count_nonzero(score[:,0] + score[:,1]))
+        result["sinais"] = int(np.count_nonzero(score[:,0] + score[:,1]))
     trade_score = score if trade_score is None else trade_score
     equity = np.r_[0, np.cumsum(trade_score[:,2])]
     pnl = float(equity[-1])
     drawdown = float((np.maximum.accumulate(equity)-equity).max())
     return result | dict(resultado=pnl, drawdown=drawdown,
-                         resultado_menos_drawdown=pnl-drawdown, saidas=int(trade_score[:,3].sum()))
+                         resultado_menos_drawdown=pnl-drawdown, resultado_reais=pnl*point_value,
+                         drawdown_reais=drawdown*point_value, saidas=int(trade_score[:,3].sum()))
 
 def init_replay_worker(replay, mask, side, financial, control):
     global worker_replay, worker_mask, worker_side, worker_financial, worker_control
@@ -341,7 +343,7 @@ def evaluate_replay_worker(parameters):
     try:
         score = worker_replay.score(parameters, worker_control.checkpoint if worker_control else None)
         return strategy_metrics(worker_replay.label[worker_mask], score[worker_mask],
-                                worker_side, worker_financial, score)
+                                worker_side, worker_financial, score, worker_replay.point_value)
     except (ValueError, TypeError, ArithmeticError) as error:
         return {"erro": str(error)}
 
@@ -409,7 +411,7 @@ def optimize(replay, config, out, on_progress=None, on_resources=None, on_partia
             or not 0 <= mutation <= 1 or not math.isfinite(stop_score)
             or (not financial and not 0 <= stop_score <= 1)
             or (financial and not generic)
-            or metric not in {'f1', 'balanced_accuracy', 'precision', 'recall', 'accuracy', 'resultado', 'resultado_menos_drawdown'}):
+            or metric not in {'f1', 'balanced_accuracy', 'precision', 'recall', 'specificity', 'npv', 'accuracy', 'resultado', 'resultado_menos_drawdown'}):
         raise ValueError('Configuração genética inválida.')
     days = np.unique(replay.day)
     n_test = int(config['pregoes_teste'])
@@ -494,10 +496,13 @@ def optimize(replay, config, out, on_progress=None, on_resources=None, on_partia
             return restored.get("segundos",0) + control.elapsed(clock, prior_paused)
         return restored.get("segundos",0) + time.monotonic()-clock
 
+    def finishing():
+        return control is not None and control.finish_requested.is_set()
+
     def time_limit_reached():
         if checkpoint:
             checkpoint()
-        return bool(seconds and elapsed_search() >= seconds)
+        return finishing() or bool(seconds and elapsed_search() >= seconds)
 
     def parameters(genome):
         return defaults | dict(zip(keys, genome))
@@ -521,7 +526,7 @@ def optimize(replay, config, out, on_progress=None, on_resources=None, on_partia
         for genome in genomes:
             p = parameters(genome)
             if generic:
-                stats = strategy_metrics(labels, local_score, side, financial, score)
+                stats = strategy_metrics(labels, local_score, side, financial, score, replay.point_value)
             else:
                 pred = (local_score >= p['p_CorteScoreModelo']) & (local_age >= p['p_BarrasAquecimento'])
                 stats = metrics(labels, pred)
@@ -568,12 +573,22 @@ def optimize(replay, config, out, on_progress=None, on_resources=None, on_partia
     generation_start = 1
     phase = 'busca'
     reason = 'limite de gerações'
+    def update_metrics(stats):
+        if 'tn' in stats:
+            tn, fp, fn = stats['tn'], stats['fp'], stats['fn']
+            stats.setdefault('specificity', tn/(tn+fp) if tn+fp else 0.0)
+            stats.setdefault('npv', tn/(tn+fn) if tn+fn else 0.0)
+        if generic and 'resultado' in stats:
+            stats.setdefault('resultado_reais', stats['resultado']*replay.point_value)
+            stats.setdefault('drawdown_reais', stats['drawdown']*replay.point_value)
+        return stats
+
     if restored:
         generation_start = restored["geracao"]
         candidates = [tuple(item) for item in restored["candidatos"]]
-        history = restored["historico"]
+        history = [update_metrics(row) for row in restored["historico"]]
         for genome, fitness, stats in restored["avaliados"]:
-            seen[tuple(genome)] = (-math.inf if fitness is None else fitness, stats)
+            seen[tuple(genome)] = (-math.inf if fitness is None else fitness, update_metrics(stats))
         best = tuple(restored["melhor"]) if restored["melhor"] is not None else None
         best_value = seen[best][0] if best is not None else -math.inf
         unchanged = restored["sem_melhora"]
@@ -605,7 +620,7 @@ def optimize(replay, config, out, on_progress=None, on_resources=None, on_partia
         on_partial(dict(etapa=stage, geracao= generation, geracoes_limite=generations,
                         concluidos_geracao=completed, candidatos_geracao=len(candidates),
                         avaliados=len(seen), erros=failed_candidates, objetivo=metric,
-                        financeiro=financial, melhor=leader))
+                        financeiro=financial, valor_ponto=replay.point_value if generic else None, melhor=leader))
 
     def record(results):
         nonlocal partial_best, failed_candidates, completed
@@ -686,6 +701,9 @@ def optimize(replay, config, out, on_progress=None, on_resources=None, on_partia
             if on_progress:
                 on_progress(history, names)
             print(f'Geração {generation} | {metric}={best_value:.4f} | {len(seen)} candidatos | {elapsed}s', flush=True)
+            if finishing():
+                reason = 'finalização solicitada pelo usuário'
+                break
             if stop_score and best_value >= stop_score:
                 reason = 'meta de desempenho'
                 break
@@ -701,6 +719,10 @@ def optimize(replay, config, out, on_progress=None, on_resources=None, on_partia
             parents = ranked[:max(2, population//3)]
             candidates = populate([best], parents)
 
+    if finishing() and phase == 'busca':
+        reason = 'finalização solicitada pelo usuário'
+    if best is None:
+        raise ValueError('A busca terminou sem candidatos executáveis.')
     phase = 'validacao'
     if checkpoint:
         checkpoint()
@@ -720,8 +742,13 @@ def optimize(replay, config, out, on_progress=None, on_resources=None, on_partia
     report_partial('relatorio')
     pred = predictions(fitted, best_score)
     baseline = predictions(defaults, original_score)
+    def split_stats(mask, score, prediction, rows):
+        return (strategy_metrics(replay.label[mask], score[mask], side, financial, score[rows], replay.point_value)
+                if generic else metrics(replay.label[mask], prediction[mask]))
+
     summary = dict(
         classe_alvo=config.get('classe_alvo', '1C'), alvo=replay.specification, segundos_por_candle=replay.seconds,
+        valor_por_ponto=replay.point_value if generic else None,
         entradas_na_abertura=not generic, motor='ntsl' if generic else 'ensemble', configuracao=config,
         arvores=None if generic else len(replay.trees),
         arvores_removidas=None if generic else len(replay.model.trees)-len(replay.trees),
@@ -733,8 +760,8 @@ def optimize(replay, config, out, on_progress=None, on_resources=None, on_partia
         resultados={name: dict(
             pregoes=np.unique(replay.day[mask]).tolist(),
             barras_com_score=int(np.count_nonzero(mask)) if generic else int(np.count_nonzero(np.isfinite(best_score[mask]))),
-            original=strategy_metrics(replay.label[mask], original_score[mask], side, financial, original_score[search_rows if name=='busca' else ~search_rows]) if generic else metrics(replay.label[mask], baseline[mask]),
-            otimizado=strategy_metrics(replay.label[mask], best_score[mask], side, financial, best_score[search_rows if name=='busca' else ~search_rows]) if generic else metrics(replay.label[mask], pred[mask]),
+            original=split_stats(mask, original_score, baseline, search_rows if name=='busca' else ~search_rows),
+            otimizado=split_stats(mask, best_score, pred, search_rows if name=='busca' else ~search_rows),
         ) for name, mask in splits.items()},
     )
     (out/'metricas.json').write_text(json.dumps(summary, indent=2, ensure_ascii=False, allow_nan=False), encoding='utf-8')
@@ -754,9 +781,17 @@ def optimize(replay, config, out, on_progress=None, on_resources=None, on_partia
         predictions_csv = predictions_csv.assign(resultado_original=original_score[:,2],
                                                   resultado_otimizado=best_score[:,2])
     predictions_csv.loc[base_mask].to_csv(out/'predicoes.csv', index=False)
+    with (out/'selecionaveis.jsonl').open('w', encoding='utf-8') as stream:
+        for genome, (fitness, stats) in seen.items():
+            if math.isfinite(fitness):
+                stream.write(json.dumps([dict(zip(names, genome)), stats], ensure_ascii=False, allow_nan=False)+'\n')
+    source = replay.program.source if generic else replay.model.source
+    (out/'estrategia.ntsl').write_text(source, encoding='utf-8')
     warning = ''
     if generic and math.isfinite(best_value):
         (out/'inputs_otimizados.json').write_text(json.dumps(optimized, indent=2, ensure_ascii=False), encoding='utf-8')
+        from ntsl import parameterized_ntsl
+        (out/'modelo_parametrizado.ntsl').write_text(parameterized_ntsl(source, optimized), encoding='utf-8')
     elif (not generic and math.isfinite(best_value) and config.get('classe_alvo', '1C') == '1C'
             and replay.specification.get('modo', 'classe') == 'classe' and len(replay.trees) == len(replay.model.trees)):
         (out/'modelo_parametrizado.ntsl').write_text(replay.model.patched(optimized), encoding='utf-8')
@@ -777,7 +812,7 @@ def write_html(out, summary, warning, history, names):
             m = result[version]
             rows.append(f'<tr><td>{split}</td><td>{version}</td><td>{m["barras"]}</td>'
                         f'<td>{m["sinais"]}</td><td>{m["accuracy"]:.2%}</td><td>{m["precision"]:.2%}</td>'
-                        f'<td>{m["recall"]:.2%}</td><td>{m["f1"]:.4f}</td>'
+                        f'<td>{m["recall"]:.2%}</td><td>{m["specificity"]:.2%}</td><td>{m["npv"]:.2%}</td><td>{m["f1"]:.4f}</td>'
                         f'<td>{m["balanced_accuracy"]:.4f}</td>'
                         f'<td>{m["tp"]} / {m["fp"]} / {m["fn"]} / {m["tn"]}</td></tr>')
     detail = html.escape(json.dumps(summary, indent=2, ensure_ascii=False))
@@ -800,8 +835,8 @@ def write_html(out, summary, warning, history, names):
         for split, result in summary['resultados'].items():
             for version in ('original', 'otimizado'):
                 m = result[version]
-                details.append(f"<li>{split} · {version} · {m['saidas']} saídas · resultado {m['resultado']:.2f} · drawdown {m['drawdown']:.2f}</li>")
-        trade_stats = '<h2>Execução em pontos × contratos</h2><ul>'+''.join(details)+'</ul>'
+                details.append(f"<li>{split} · {version} · {m['saidas']} saídas · resultado bruto R$ {m['resultado_reais']:.2f} ({m['resultado']:.2f} pontos × contratos) · drawdown R$ {m['drawdown_reais']:.2f}</li>")
+        trade_stats = '<h2>Resultado financeiro simulado</h2><ul>'+''.join(details)+'</ul>'
     else:
         trade_stats = ''
     classification_style = 'hidden' if mode == 'resultado' else '' 
@@ -823,10 +858,12 @@ figure{{margin:14px 0;padding:14px;background:white}} svg{{width:100%;max-height
 <p>O teste usa pregões posteriores aos da busca. A matriz está na ordem VP, FP, FN, VN.
 No classificador, barras sem score ou em aquecimento contam como ausência de sinal.</p>
 <div class="table" {classification_style}><table><thead><tr><th>Amostra</th><th>Versão</th><th>Barras</th><th>Sinais</th>
-<th>Acurácia</th><th>Precisão</th><th>Recall</th><th>F1</th><th>Acurácia balanceada</th><th>VP / FP / FN / VN</th></tr></thead>
+<th>Acurácia</th><th>Precisão</th><th>Taxa de VP</th><th>Taxa de VN</th><th>Valor preditivo negativo</th><th>F1</th><th>Acurácia balanceada</th><th>VP / FP / FN / VN</th></tr></thead>
 <tbody>{''.join(rows)}</tbody></table></div>
 <h2>Evolução por geração</h2>{graphs}
 {trade_stats}<p>{tree_note}</p>
+{('<p>Conversão por ponto e contrato em reais: ' + str(summary['valor_por_ponto']) + '.</p>') if summary['valor_por_ponto'] is not None else ''}
+{'<p><a href="modelo_parametrizado.ntsl">Baixar estratégia Profit parametrizada</a></p>' if (out/'modelo_parametrizado.ntsl').is_file() else ''}
 {'<a href="inputs_otimizados.json">Inputs otimizados para o Replay</a>' if summary["motor"]=="ntsl" and summary["atende_min_sinais"] else ""}
 <p><a href="candles.csv">Candles</a> · <a href="predicoes.csv">Predições</a> · <a href="candidatos.csv">Candidatos</a> ·
 <a href="evolucao.csv">Evolução</a> · <a href="metricas.json">Métricas completas</a></p>

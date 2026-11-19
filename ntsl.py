@@ -74,6 +74,8 @@ class Symbol:
 class Compiler:
     def __init__(self, source):
         self.tokens = []
+        self.token_offsets = []
+        self.input_offsets = {}
         source = source.lstrip('\ufeff')
         self.source = source
         pos, line = 0, 1
@@ -83,6 +85,7 @@ class Compiler:
                 raise NTSLError(f"Linha {line}: caractere ou comentário inválido {source[pos:pos+16]!r}.")
             if match.lastgroup != "skip":
                 token = match.group()
+                self.token_offsets.append(match.span())
                 self.tokens.append((token if match.lastgroup == "string" else token.lower(), line))
             pos = match.end()
             line += match.group().count('\n')
@@ -158,7 +161,9 @@ class Compiler:
                 name = self.identifier()
                 if section == "input":
                     self.expect("(")
+                    start = self.token_offsets[self.pos][0]
                     self.declare(name, section, self.literal())
+                    self.input_offsets[name] = (start, self.token_offsets[self.pos-1][1])
                     self.expect(")")
                 elif section == "const":
                     self.expect("=")
@@ -510,3 +515,24 @@ class Rolling:
         else:
             self.value = (max if kind == "highest" else min)(self.window)
         return self.value
+
+
+def parameterized_ntsl(source, parameters):
+    compiler = Compiler(source)
+    compiler.compile()
+    replacements = []
+    for name, value in parameters.items():
+        start, end = compiler.input_offsets[name.lower()]
+        if isinstance(value, str):
+            literal = '"' + value.replace('"', '""') + '"'
+        elif isinstance(value, bool):
+            literal = str(value).lower()
+        elif re.fullmatch(r"-?\d+", compiler.source[start:end]) and int(value) == value:
+            literal = str(int(value))
+        else:
+            literal = str(value)
+        replacements.append((start, end, literal))
+    result = compiler.source
+    for start, end, literal in sorted(replacements, reverse=True):
+        result = result[:start] + literal + result[end:]
+    return result

@@ -13,6 +13,7 @@ class ProcessingControl:
         self.ready = context.Event()
         self.ready.set()
         self.cancelled = context.Event()
+        self.finish_requested = context.Event()
         self.paused_at = None
         self.paused_seconds = 0.0
 

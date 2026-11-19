@@ -1,5 +1,12 @@
 # Histórico de versões
 
+## 0.7.0
+
+- Base local de cotações com importação de CSV, catálogo SQLite e recorte inclusivo por pregão.
+- Finalização antecipada da busca genética com validação do melhor candidato disponível.
+- Seleção pós-busca por critério e exportação de inputs JSON ou estratégia NTSL parametrizada.
+- Taxas e contagens de verdadeiros positivos e negativos e resultado bruto em reais durante o replay NTSL.
+
 
 ## 0.6.0
 

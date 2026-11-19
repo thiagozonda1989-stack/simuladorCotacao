@@ -38,13 +38,38 @@ progress{display:block;width:100%;height:12px;accent-color:var(--accent);margin:
 <form id="form">
 <section class="panel">
 <h2>Dados</h2>
-<div class="field"><label for="csv">CSV de entrada</label><input id="csv" type="file" accept=".csv,text/csv" required></div>
+<div class="field"><label for="serie">Origem dos dados</label><select id="serie"><option value="">Arquivo CSV avulso</option></select><small id="serie-detalhes"></small></div>
+<div class="field" id="csv-wrap"><label for="csv">CSV de entrada</label><input id="csv" type="file" accept=".csv,text/csv" required></div>
+<div id="recorte" class="split" hidden>
+<div><label for="inicio-serie">Usar a partir de</label><input type="date" id="inicio-serie"></div>
+<div><label for="fim-serie">Usar até</label><input type="date" id="fim-serie"></div>
+</div>
+<details id="cadastro-cotacao"><summary>Cadastrar CSV na base de cotações</summary>
+<div class="field"><label for="csv-base">Arquivo CSV</label><input type="file" id="csv-base" accept=".csv,text/csv"></div>
+<div class="split">
+<div><label for="papel-base">Papel</label><input id="papel-base" placeholder="WINZ26" maxlength="40"></div>
+<div><label for="periodo-base">Periodicidade da captura</label><select id="periodo-base">
+<option value="1">1 segundo</option><option value="5">5 segundos</option><option value="10">10 segundos</option>
+<option value="60">1 minuto</option><option value="300">5 minutos</option><option value="600">10 minutos</option>
+<option value="3600">1 hora</option><option value="86400">1 dia</option><option value="custom">Outro intervalo</option>
+</select></div>
+</div>
+<div class="field" id="outro-periodo-wrap" hidden><label for="outro-periodo">Intervalo em segundos</label><input type="number" min="1" step="1" id="outro-periodo"></div>
+<div class="split">
+<div><label for="inicio-base">Data inicial (opcional)</label><input type="date" id="inicio-base"></div>
+<div><label for="fim-base">Data final (opcional)</label><input type="date" id="fim-base"></div>
+</div>
+<small>Datas em branco são detectadas no CSV. Se for um único dia, preencha somente a data inicial.</small>
+<div class="field"><label for="obs-base">Observação (opcional)</label><input id="obs-base" maxlength="2000" placeholder="Fonte, sessão ou detalhes da captura"></div>
+<button type="button" id="cadastrar-cotacao">Salvar cotação na base</button>
+<p id="status-cotacao" role="status"></p>
+</details>
 <div class="field"><label for="formato">Formato</label><select id="formato"><option value="auto">Detectar automaticamente</option><option value="profit">Indicador exportado do Profit</option><option value="negocios">Negócios com timestamp</option><option value="ohlc">Candles OHLC com timestamp</option></select></div>
 <div class="split">
 <div><label for="segundos">Candle em segundos</label><input type="number" id="segundos" value="5" min="1" required></div>
 <div><label for="tick">Incremento de preço</label><input type="number" id="tick" value="5" min="0.000001" step="any" required></div>
 </div>
-<div class="field" style="margin-top:13px"><label for="valor-ponto">Valor por ponto e contrato</label><input id="valor-ponto" type="number" value="1" step="any" min="0.000001" required><small>Multiplicador usado por DailyResult no replay.</small></div>
+<div class="field" style="margin-top:13px"><label for="valor-ponto">Valor em R$ por ponto e por contrato</label><input id="valor-ponto" type="number" value="0.20" step="any" min="0.000001" required><small>Mini-índice (WIN) · R$ 0,20 por ponto por contrato. Ajuste para outros ativos. O resultado exibido é bruto.</small></div>
 <small>Nos CSVs enviados, a v6 usa 1 segundo e a v7 usa 5 segundos.</small>
 </section>
 <section class="panel">
@@ -63,7 +88,7 @@ progress{display:block;width:100%;height:12px;accent-color:var(--accent);margin:
 </div>
 <div class="split">
 <div><label for="motor">Motor da busca</label><select id="motor"><option value="ntsl">Replay NTSL · todos os inputs</option><option value="ensemble">Ensemble · avaliação na abertura</option></select></div>
-<div><label for="metrica">Objetivo da busca</label><select id="metrica"><option value="f1">F1</option><option value="accuracy">Acurácia</option><option value="balanced_accuracy">Acurácia balanceada</option><option value="precision">Precisão</option><option value="recall">Recall</option><option value="resultado">Resultado em pontos × contratos</option><option value="resultado_menos_drawdown">Resultado menos drawdown</option></select></div>
+<div><label for="metrica">Objetivo da busca</label><select id="metrica"><option value="f1">F1</option><option value="accuracy">Acurácia</option><option value="balanced_accuracy">Acurácia balanceada</option><option value="precision">Precisão</option><option value="recall">Taxa de verdadeiros positivos (sensibilidade)</option><option value="specificity">Taxa de verdadeiros negativos (especificidade)</option><option value="npv">Valor preditivo negativo</option><option value="resultado">Resultado em pontos × contratos</option><option value="resultado_menos_drawdown">Resultado menos drawdown</option></select></div>
 </div>
 <div class="split">
 <div><label for="alvo">Alvo</label><select id="alvo"><option value="classe">Classe do CSV</option><option value="barras">Direção após N barras</option><option value="pontos">Toque de pontos em N barras</option></select></div>
@@ -89,6 +114,7 @@ progress{display:block;width:100%;height:12px;accent-color:var(--accent);margin:
 <section class="panel result"><h2>Resultado</h2><p id="situacao" role="status" aria-live="polite">Aguardando dados e estratégia.</p><div id="controle-execucao" class="acoes" hidden>
 <button type="button" id="pausar-processamento">Pausar</button>
 <button type="button" id="salvar-sessao">Salvar sessão</button>
+<button type="button" id="finalizar-processamento" hidden>Finalizar busca agora</button>
 <button type="button" id="cancelar-processamento">Cancelar processamento</button>
 </div><p id="status-sessao" aria-live="polite" hidden></p>
 <a id="baixar-sessao" hidden download>Baixar última sessão salva</a>
@@ -97,7 +123,14 @@ progress{display:block;width:100%;height:12px;accent-color:var(--accent);margin:
 <p id="contagem-execucao"></p>
 <dl id="metricas-parciais"></dl>
 <details id="detalhes-parciais" hidden><summary>Parâmetros da combinação líder</summary><dl id="parametros-parciais"></dl></details>
-</section><div id="andamento"></div><a id="relatorio" hidden target="_blank" rel="noopener">Abrir relatório</a></section>
+</section><div id="andamento"></div><a id="relatorio" hidden target="_blank" rel="noopener">Abrir relatório</a>
+<section id="receber" hidden><h3>Parâmetros otimizados</h3>
+<div class="field"><label for="criterio-final">Escolher pelo resultado na amostra de busca</label><select id="criterio-final"></select></div>
+<button type="button" id="receber-parametros">Receber parâmetros otimizados</button>
+<button type="button" id="salvar-profit">Salvar estratégia Profit (.ntsl)</button>
+<p id="status-parametros" role="status"></p><dl id="parametros-finais"></dl>
+<a id="json-parametros" download="inputs_otimizados.json" hidden>Baixar parâmetros (.json)</a>
+</section></section>
 </form>
 </main>
 <script>
@@ -271,6 +304,8 @@ const busy = active => {
     $("executar").disabled = active;
     $("encerrar").disabled = active;
     $("carregar-sessao").disabled = active;
+    $("cadastrar-cotacao").disabled = active;
+    $("serie").disabled = active;
 };
 async function localFetch(name, options = {}, retries = 0) {
     for (let attempt = 0; ; attempt++) {
@@ -313,6 +348,69 @@ async function uploadCsv(file, label = "CSV") {
     }
     return transfer;
 }
+let series = [];
+function selectSeries() {
+    const item = series.find(row => row.id === $("serie").value);
+    $("csv-wrap").hidden = Boolean(item);
+    $("csv").required = !item;
+    $("recorte").hidden = !item;
+    $("formato").disabled = Boolean(item);
+    $("segundos").readOnly = Boolean(item && item.formato !== "negocios");
+    $("serie-detalhes").textContent = item ? [item.arquivo, item.formato, item.linhas + " registros", item.observacao].filter(Boolean).join(" · ") : "";
+    if (item) {
+        $("formato").value = item.formato;
+        $("segundos").value = item.segundos;
+        for (const [input, value] of [[ "inicio-serie",item.inicio ],[ "fim-serie",item.fim ]]) {
+            $(input).min = item.inicio;
+            $(input).max = item.fim;
+            $(input).value = value;
+        }
+        columns = item.colunas;
+    } else {
+        $("csv").dispatchEvent(new Event("change"));
+    }
+    renderGenetic();
+}
+async function refreshSeries(selected = "") {
+    const response = await localFetch("cotacoes", {}, 1);
+    if (!response.ok) throw Error("Falha ao consultar a base de cotações.");
+    series = await response.json();
+    $("serie").replaceChildren(new Option("Arquivo CSV avulso", ""), ...series.map(item =>
+        new Option([item.papel, item.inicio + " a " + item.fim, item.segundos + " s", item.arquivo].join(" · "), item.id)));
+    $("serie").value = selected;
+    selectSeries();
+}
+$("serie").addEventListener("change", selectSeries);
+$("periodo-base").addEventListener("change", () => {
+    $("outro-periodo-wrap").hidden = $("periodo-base").value !== "custom";
+});
+$("cadastrar-cotacao").addEventListener("click", async () => {
+    if (running) return;
+    const file = $("csv-base").files[0];
+    const papel = $("papel-base").value.trim();
+    const periodo = $("periodo-base").value;
+    const segundos = Number(periodo === "custom" ? $("outro-periodo").value : periodo);
+    if (!file || !papel || !Number.isInteger(segundos) || segundos < 1) {
+        $("status-cotacao").textContent = "Informe o CSV, o papel e a periodicidade.";
+        return;
+    }
+    busy(true);
+    $("status-cotacao").textContent = "Importando cotação…";
+    try {
+        const transferencia = await uploadCsv(file, "cotação");
+        const result = await post("cotacoes", JSON.stringify({transferencia, papel, segundos, arquivo:file.name,
+            inicio:$("inicio-base").value, fim:$("fim-base").value,
+            observacao:$("obs-base").value}), "application/json");
+        await refreshSeries(result.id);
+        $("status-cotacao").textContent = "Cotação cadastrada e selecionada para o próximo teste.";
+        show("Cotação cadastrada.");
+    } catch (error) {
+        $("status-cotacao").textContent = error.message;
+        show(error.message);
+    } finally {
+        busy(false);
+    }
+});
 $("arquivo").addEventListener("change", async () => {
     const file = $("arquivo").files[0];
     if (!file) return;
@@ -354,13 +452,18 @@ $("modo").addEventListener("change", async () => {
         : "Use {} para aplicar os valores do código. Exemplo de ajuste: {\"p_Lote\": 2}.";
 });
 const metricLabels = {accuracy:"Acurácia",balanced_accuracy:"Acurácia balanceada",
-    precision:"Precisão dos sinais",recall:"Recall",f1:"F1",sinais:"Sinais",
+    precision:"Precisão dos sinais",recall:"Taxa de VP (sensibilidade)",
+    specificity:"Taxa de VN (especificidade)",npv:"Valor preditivo negativo",tp:"Verdadeiros positivos",
+    tn:"Verdadeiros negativos",fp:"Falsos positivos",fn:"Falsos negativos",
+    resultado_reais:"Resultado bruto em reais",drawdown_reais:"Drawdown em reais",f1:"F1",sinais:"Sinais",
     resultado:"Resultado bruto (pontos × contratos)",drawdown:"Drawdown (pontos × contratos)",
     resultado_menos_drawdown:"Resultado menos drawdown",saidas:"Saídas"};
-const percentageMetrics = new Set(["accuracy","balanced_accuracy","precision","recall","f1"]);
+const percentageMetrics = new Set(["accuracy","balanced_accuracy","precision","recall","specificity","npv","f1"]);
 const formattedNumber = (value, percent = false) => new Intl.NumberFormat("pt-BR", {
     maximumFractionDigits:2, style:percent ? "percent" : "decimal"
 }).format(value);
+const money = value => new Intl.NumberFormat("pt-BR", {style:"currency",currency:"BRL"}).format(value);
+const metricText = (key, value) => key.endsWith("_reais") ? money(value) : formattedNumber(value, percentageMetrics.has(key));
 function writePairs(id, pairs) {
     const list = $(id);
     list.replaceChildren();
@@ -403,17 +506,19 @@ function showPartial(state) {
     }
     const leader = partial.melhor;
     const metrics = leader?.metricas ?? {};
-    const keys = partial.financeiro ? ["resultado","drawdown","saidas","sinais"]
-        : ["accuracy","balanced_accuracy","precision","recall","f1","sinais","resultado","drawdown"];
+    const keys = ["resultado_reais","drawdown_reais","resultado","saidas","sinais"];
+    if (!partial.financeiro) keys.push("tp","tn","fp","fn","precision","recall","specificity","npv","accuracy","balanced_accuracy","f1");
     const values = leader ? [
         ["Melhor " + (metricLabels[partial.objetivo] ?? partial.objetivo) + " na busca",
             formattedNumber(leader.aptidao, percentageMetrics.has(partial.objetivo))],
         ...keys.filter(key => key !== partial.objetivo && Number.isFinite(metrics[key]))
-            .map(key => [metricLabels[key],formattedNumber(metrics[key],percentageMetrics.has(key))])
+            .map(key => [metricLabels[key],metricText(key,metrics[key])])
     ] : partial.barras_total ? [
         [metricLabels.resultado,formattedNumber(partial.resultado)],
+        [metricLabels.resultado_reais,money(partial.resultado * partial.valor_ponto)],
         ["Ordens executadas",formattedNumber(partial.preenchimentos)]
     ] : [];
+    if (partial.valor_ponto) values.unshift(["R$ por ponto e por contrato", new Intl.NumberFormat("pt-BR",{minimumFractionDigits:2,maximumFractionDigits:8}).format(partial.valor_ponto)]);
     writePairs("metricas-parciais",values);
     $("detalhes-parciais").hidden = !leader;
     if (leader) writePairs("parametros-parciais", Object.entries(leader.parametros)
@@ -428,6 +533,11 @@ function updateControls(state) {
     for (const id of ["pausar-processamento","cancelar-processamento","salvar-sessao"]) {
         $(id).disabled = !currentExecution || Boolean(state.cancelando) || controlPending;
     }
+    const canFinish = currentExecution && state.modo === "otimizar" &&
+        ["preparacao","busca"].includes(state.parcial?.etapa);
+    $("finalizar-processamento").hidden = !canFinish;
+    $("finalizar-processamento").disabled = !canFinish || state.finalizando || state.cancelando || controlPending;
+    if (state.finalizando) $("pausar-processamento").disabled = true;
     const saved = state.sessao;
     $("status-sessao").hidden = !saved?.mensagem;
     $("status-sessao").textContent = (saved?.mensagem ?? "") + (saved?.horario ? " Última gravação às " + saved.horario + "." : "");
@@ -441,6 +551,7 @@ async function controlExecution(command) {
     updateControls(state);
     try {
         await post(command, JSON.stringify({id:state.id}), "application/json", {}, 1);
+        if (command === "finalizar") state.finalizando = true;
         if (command === "cancelar") state.cancelando = true;
         else if (command === "pausar" || command === "retomar") state.pausado = command === "pausar";
     } catch (error) {
@@ -453,8 +564,63 @@ async function controlExecution(command) {
 $("pausar-processamento").addEventListener("click", () =>
     controlExecution(currentExecution?.pausado ? "retomar" : "pausar"));
 $("salvar-sessao").addEventListener("click", () => controlExecution("salvar-sessao"));
+$("finalizar-processamento").addEventListener("click", () => controlExecution("finalizar"));
 $("cancelar-processamento").addEventListener("click", () => controlExecution("cancelar"));
 
+let completedJob = null;
+let parametersUrl = null;
+function showExports(state) {
+    completedJob = state;
+    $("receber").hidden = !state.tem_candidatos;
+    $("salvar-profit").hidden = !state.exportavel;
+    $("status-parametros").textContent = "";
+    $("parametros-finais").replaceChildren();
+    $("json-parametros").hidden = true;
+    if (parametersUrl) URL.revokeObjectURL(parametersUrl);
+    parametersUrl = null;
+    const keys = ["objetivo"];
+    if (!state.financeiro) keys.push("precision","recall","specificity","npv","f1","balanced_accuracy","accuracy");
+    if (state.motor === "ntsl") keys.push("resultado","resultado_menos_drawdown");
+    $("criterio-final").replaceChildren(...keys.map(key =>
+        new Option(metricLabels[key] ?? "Objetivo original da busca", key)));
+}
+async function receiveParameters(strategy) {
+    const state = completedJob;
+    if (!state?.tem_candidatos) return;
+    const criterio = $("criterio-final").value;
+    $("status-parametros").textContent = "Selecionando entre os candidatos avaliados…";
+    try {
+        const result = await post("selecionar-parametros", JSON.stringify({id:state.id, criterio, estrategia:strategy}),
+                                  "application/json");
+        if (completedJob !== state || $("criterio-final").value !== criterio) return;
+        const stats = result.metricas;
+        writePairs("parametros-finais", [
+            ...(state.financeiro ? ["resultado_reais"] : ["resultado_reais","tp","tn","precision","recall","specificity","npv"])
+                .filter(key => Number.isFinite(stats[key])).map(key => [metricLabels[key],metricText(key,stats[key])]),
+            ...Object.entries(result.parametros).map(([key,value]) => [key,String(value)])
+        ]);
+        $("status-parametros").textContent = "Candidato selecionado por " + metricLabels[result.criterio] + " na amostra de busca.";
+        if (parametersUrl) URL.revokeObjectURL(parametersUrl);
+        parametersUrl = URL.createObjectURL(new Blob([JSON.stringify(result.parametros,null,2)], {type:"application/json"}));
+        $("json-parametros").href = parametersUrl;
+        $("json-parametros").hidden = false;
+        if (strategy) {
+            const link = document.createElement("a");
+            link.href = URL.createObjectURL(new Blob([result.ntsl],{type:"text/plain;charset=utf-8"}));
+            link.download = "modelo_parametrizado.ntsl";
+            link.click();
+            setTimeout(() => URL.revokeObjectURL(link.href), 30000);
+        }
+    } catch (error) { $("status-parametros").textContent = error.message; }
+}
+$("receber-parametros").addEventListener("click", () => receiveParameters(false));
+$("salvar-profit").addEventListener("click", () => receiveParameters(true));
+$("criterio-final").addEventListener("change", () => {
+    $("json-parametros").hidden = true;
+    $("parametros-finais").replaceChildren();
+    $("status-parametros").textContent = "";
+});
+refreshSeries().catch(error => { $("status-cotacao").textContent = error.message; });
 async function poll(failures = 0) {
     try {
         const response = await localFetch("estado");
@@ -463,6 +629,8 @@ async function poll(failures = 0) {
         showPartial(state);
         updateControls(state);
         if (state.cancelando) show("Cancelando o processamento…");
+        else if (state.finalizando && ["preparacao","busca"].includes(state.parcial?.etapa))
+            show("Finalizando a busca · aguardando as avaliações em andamento");
         else if (state.pausado) show("Pausa solicitada · retome para continuar");
         if (state.graficos) $("andamento").innerHTML = state.graficos;
         if (state.estado === "executando") {
@@ -470,7 +638,8 @@ async function poll(failures = 0) {
         } else {
             busy(false);
             if (state.estado === "concluido") {
-                show("Execução concluída.\n" + state.pasta);
+                show((state.parada?.startsWith("finalização solicitada") ? "Busca finalizada antecipadamente." : "Execução concluída.") + "\n" + state.pasta);
+                showExports(state);
                 $("relatorio").href = endpoint("resultados/"+state.id+"/relatorio.html");
                 $("relatorio").hidden = false;
             } else if (state.estado === "cancelado") {
@@ -494,12 +663,13 @@ $("form").addEventListener("submit", async event => {
     if (running) return;
     busy(true);
     $("relatorio").hidden = true;
+    showExports({});
     $("andamento").replaceChildren();
     $("execucao-parcial").hidden = true;
     updateControls({});
     try {
         const options = {
-            modo:$("modo").value, csv:$("csv").files[0].name, ntsl:$("ntsl").value,
+            modo:$("modo").value, csv:$("csv").files[0]?.name, ntsl:$("ntsl").value,
             formato:$("formato").value, segundos:Number($("segundos").value),
             tick:Number($("tick").value), valor_ponto:Number($("valor-ponto").value),
             salvar_minutos:Number($("salvar-minutos").value), opcoes:JSON.parse($("opcoes").value || "{}")
@@ -511,7 +681,11 @@ $("form").addEventListener("submit", async event => {
                 throw Error("O JSON contém faixas para inputs ausentes neste NTSL. Revise a seleção na tabela ou o JSON.");
             }
         }
-        options.transferencia = await uploadCsv($("csv").files[0]);
+        if ($("serie").value) {
+            Object.assign(options, {serie:$("serie").value, inicio:$("inicio-serie").value, fim:$("fim-serie").value});
+        } else {
+            options.transferencia = await uploadCsv($("csv").files[0]);
+        }
         options.solicitacao = crypto.randomUUID();
         await post("executar",JSON.stringify(options),"application/json", {}, 1);
         show("Executando…");
@@ -526,6 +700,7 @@ $("arquivo-sessao").addEventListener("change", async () => {
     if (running || !file) return;
     busy(true);
     $("relatorio").hidden = true;
+    showExports({});
     $("andamento").replaceChildren();
     $("execucao-parcial").hidden = true;
     updateControls({});
