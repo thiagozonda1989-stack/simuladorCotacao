@@ -214,8 +214,13 @@ class Workspace:
                      else options.get("opcoes", {}).get("regras_execucao")) or {}
             options["regras_execucao"] = dict(ordem_so_proxima_barra=not restore,
                                               historico_continuo=not restore) | rules
-            if options.get("modo") not in {"estrategia", "otimizar"}:
+            if options.get("modo") not in {"estrategia", "otimizar", "validar"}:
                 raise ValueError("Modo de execução desconhecido.")
+            if options["modo"] == "validar":
+                asset = str(options.get("ativo") or (options.get("cotacao") or {}).get("papel") or "").strip().upper()
+                if asset and asset != "NÃO INFORMADO" and not re.fullmatch(r"[A-Z0-9][A-Z0-9._ -]{0,39}", asset):
+                    raise ValueError("Informe um código de ativo de até 40 caracteres.")
+                options["ativo"] = asset or "NÃO INFORMADO"
             source = options["ntsl"]
             if not isinstance(source, str) or not source.strip():
                 raise ValueError("Carregue ou cole uma estratégia NTSL.")
@@ -316,12 +321,14 @@ class Workspace:
             input_ready = True
             if control.cancelled.is_set():
                 control.checkpoint()
-            if options["modo"] == "estrategia":
+            if options["modo"] in {"estrategia", "validar"}:
                 def replay_progress(snapshot):
                     track(snapshot | {"valor_ponto": float(options.get("valor_ponto", 1))})
                 run_strategy(csv,options["ntsl"], destination,int(options["segundos"]),
                              options["formato"],float(options["tick"]),options["opcoes"],float(options.get("valor_ponto",1)), on_progress=replay_progress, checkpoint=control.checkpoint,
-                             session=session, resume_archive=resume_archive, safe_point=lambda: session.checkpoint(control), regras=options.get("regras_execucao"))
+                             session=session, resume_archive=resume_archive, safe_point=lambda: session.checkpoint(control), regras=options.get("regras_execucao"),
+                             validacao=options.get("ativo", "NÃO INFORMADO") if options["modo"] == "validar" else None,
+                             on_validation=lambda stats, graphs: self.publish(graficos=graphs, validacao=stats))
             elif options["modo"] == "otimizar":
                 requested = options["formato"]
                 config = options["opcoes"]
@@ -378,7 +385,8 @@ class Workspace:
             if outcome["estado"] != "concluido" and destination.is_dir():
                 shutil.rmtree(destination, ignore_errors=True)
             seconds = round(control.elapsed(self.started_at))
-            indicators = {key: summary[key] for key in ("candidatos_avaliados", "metrica", "resultado_bruto_convertido", "resultado_liquido_reais", "custos_reais",
+            indicators = {key: summary[key] for key in ("candidatos_avaliados", "metrica", "resultado_bruto_convertido", "resultado_liquido_reais", "custos_reais", "drawdown_liquido_reais",
+                                                         "taxa_acerto", "fator_lucro", "operacoes", "ativo",
                                                          "parametros_otimizados", "resultados") if key in summary}
             finished = initial | {"fim":utc_now(), "segundos":seconds, "estado":outcome["estado"],
                                   "parada":outcome["parada"], "indicadores":indicators,

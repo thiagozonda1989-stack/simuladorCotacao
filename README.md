@@ -1,4 +1,4 @@
-# simuladorCotacao 0.11.0
+# simuladorCotacao 0.12.0
 
 [Histórico de alterações](CHANGELOG.md) · [Manutenção e hashes dos pacotes](MANUTENCAO.md)
 
@@ -120,7 +120,7 @@ Em Linux, use Python 3.11+ e um toolchain MinGW-w64 x64. Baixe a distribuição 
 
 ```bash
 python -m pip download --only-binary=:all: --platform win_amd64 --python-version 312 -r windows/requirements.lock -d wheels
-python windows/package.py --python-win python-3.12.10-embed-amd64.zip --wheels wheels --saida simuladorCotacao-v0.11.0-win64.zip
+python windows/package.py --python-win python-3.12.10-embed-amd64.zip --wheels wheels --saida simuladorCotacao-v0.12.0-win64.zip
 ```
 
 Para desenvolver ou testar com o seu Python local, instale `requirements.txt` e rode `python app.py`. Para um comando de terminal no código-fonte, use `python app.py --cli estrategia --help`.
@@ -188,3 +188,11 @@ O subconjunto NTSL aceita arrays unidimensionais e rotinas com parâmetros escal
 - `VWAP(0..3)` calcula VWAP por barra, pregão, semana ou mês. Com negócios e quantidade, usa preço × quantidade. Em OHLC, usa `v_vwap_barra` se fornecido ou aproxima cada barra pelo preço típico (máxima + mínima + fechamento) ÷ 3, ponderado por `volume_contratos` ou `volume`.
 - `StdDevs(Serie, Periodo)` usa desvio padrão populacional na janela de barras disponíveis. `AgressionVolBalance()` lê `v_agressao_saldo_acumulado` ou acumula, por pregão, a diferença entre `v_agressao_compra` e `v_agressao_venda`. Sem os dados exigidos, o replay informa quais colunas faltam.
 - Para comparar o v5.8 no replay local, use `p_Exec_Tick = 0`. Mesmo com o CSV de negócios, a estratégia executa no fechamento dos candles agregados.
+
+### Validar um modelo parametrizado
+
+Selecione **Validar modelo**, carregue o NTSL com os parâmetros finais e escolha o CSV ou um recorte da base de cotações. Também é possível usar **Validar estratégia otimizada** no histórico para carregar o NTSL exportado e, em seguida, trocar os dados de entrada. Informe o ativo no demonstrativo, se desejado. O modo executa o modelo com os parâmetros informados, sem busca.
+
+O resultado mostra operações, volume em contratos, acerto, fator de lucro, bruto, taxas, líquido, drawdown e gráficos da curva líquida, drawdown e resultado por pregão. Uma operação vai da primeira entrada até a zeragem. Aumentos de posição e saídas parciais ficam vinculados à mesma operação. O acerto e o fator de lucro são calculados por operação líquida, incluindo as taxas da entrada e da saída. O fator fica indefinido se não há perdas.
+
+O **CSV de conferência** registra cada execução, com data e hora de referência, identificação da operação, lado, volume, preço, preço médio de entrada, posição, resultado, taxas e saldo acumulado. A **nota de corretagem simulada em PDF** traz o balanço por pregão e as execuções detalhadas. É um demonstrativo da simulação, sem validade fiscal. Os horários são do candle de referência, não de negócios reais. Se a origem Profit só contém a hora até o minuto, o exportador deixa a precisão em minutos. O ZIP do histórico inclui ambos os arquivos.

@@ -1,5 +1,10 @@
 # Histórico de versões
 
+## 0.12.0
+
+- Modo Validar modelo para estratégias parametrizadas com dados de entrada selecionáveis, indicadores e gráficos de performance.
+- CSV de conferência por execução e demonstrativo simulado em PDF com balanço por pregão.
+
 ## 0.11.0
 
 - Vigência de ordens por barra com renovação no fechamento, e histórico contínuo entre pregões no Replay NTSL. Os modos anteriores continuam disponíveis.

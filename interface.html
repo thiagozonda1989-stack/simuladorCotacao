@@ -98,7 +98,8 @@ progress{display:block;width:100%;height:12px;accent-color:var(--accent);margin:
 </section>
 <section class="panel options">
 <h2>Execução</h2>
-<div class="field"><label for="modo">Modo</label><select id="modo"><option value="estrategia">Replay da estratégia</option><option value="otimizar">Otimização</option></select></div>
+<div class="field"><label for="modo">Modo</label><select id="modo"><option value="estrategia">Replay da estratégia</option><option value="otimizar">Otimização</option><option value="validar">Validar modelo</option></select></div>
+<div id="validar-opcoes" hidden><label for="ativo-validacao">Ativo no demonstrativo (opcional)</label><input id="ativo-validacao" placeholder="WINZ26" maxlength="40"><small>Carregue o NTSL parametrizado e selecione os dados do período que deseja validar. O modelo roda com os parâmetros informados, sem pesquisa de novos valores.</small></div>
 <div id="genetica" hidden>
 <div class="field"><label for="metodo-busca">Método de busca</label><select id="metodo-busca">
 <option value="genetica">Genética</option><option value="aleatoria">Aleatória adaptativa</option>
@@ -151,6 +152,8 @@ progress{display:block;width:100%;height:12px;accent-color:var(--accent);margin:
 <dl id="metricas-parciais"></dl>
 <details id="detalhes-parciais" hidden><summary>Parâmetros da combinação líder</summary><dl id="parametros-parciais"></dl></details>
 </section><div id="andamento"></div><a id="relatorio" hidden target="_blank" rel="noopener">Abrir relatório</a>
+<section id="validacao-resultados" hidden><h3>Resultado da validação</h3><dl id="validacao-indicadores"></dl>
+<a id="nota-pdf" download>Baixar nota simulada em PDF</a> · <a id="validacao-csv" download>Baixar CSV de conferência</a></section>
 <section id="receber" hidden><h3>Parâmetros otimizados</h3>
 <div class="field"><label for="criterio-final">Escolher pelo resultado na amostra de busca</label><select id="criterio-final"></select></div>
 <button type="button" id="receber-parametros">Receber parâmetros otimizados</button>
@@ -174,6 +177,7 @@ progress{display:block;width:100%;height:12px;accent-color:var(--accent);margin:
 </main>
 <script>
 const $ = id => document.getElementById(id);
+let previousMode = "estrategia";
 let running = false, timer = null, optimizationTemplate = null, replaySettings = "{}";
 let reusedInput = null, githubPage = 0;
 const protectedFields = ["classe","tipo_ordem","pts_maior_30"];
@@ -525,7 +529,11 @@ $("modelo").addEventListener("click", async () => {
     } catch (error) { show(error.message); }
 });
 $("modo").addEventListener("change", async () => {
-    const optimize = $("modo").value === "otimizar";
+    const mode = $("modo").value;
+    const optimize = mode === "otimizar";
+    const wasOptimization = previousMode === "otimizar";
+    previousMode = mode;
+    $("validar-opcoes").hidden = mode !== "validar";
     if (optimize) {
         replaySettings = $("opcoes").value;
         try {
@@ -535,7 +543,7 @@ $("modo").addEventListener("change", async () => {
             }
             if ($("modo").value === "otimizar") $("opcoes").value = optimizationTemplate;
         } catch (error) { show(error.message); }
-    } else {
+    } else if (wasOptimization) {
         optimizationTemplate = $("opcoes").value;
         $("opcoes").value = replaySettings;
     }
@@ -739,12 +747,15 @@ async function reuseExecution(item, optimized) {
     if (running) throw Error("Aguarde a execução atual.");
     const data = await historyData("historico/" + item.id + "/" + (optimized ? "otimizada" : "configuracao"));
     if (running) throw Error("Aguarde a execução atual.");
-    $("modo").value = data.modo;
-    $("genetica").hidden = data.modo !== "otimizar";
-    $("meta-vp").disabled = $("meta-vn").disabled = data.modo !== "otimizar";
-    $("titulo-opcoes").textContent = data.modo === "otimizar" ? "Configuração da busca (JSON)" : "Substituição de inputs (JSON)";
+    const mode = optimized ? "validar" : data.modo;
+    $("modo").value = previousMode = mode;
+    $("validar-opcoes").hidden = mode !== "validar";
+    $("ativo-validacao").value = data.ativo === "NÃO INFORMADO" ? "" : (data.ativo || data.cotacao?.papel || "");
+    $("genetica").hidden = mode !== "otimizar";
+    $("meta-vp").disabled = $("meta-vn").disabled = mode !== "otimizar";
+    $("titulo-opcoes").textContent = mode === "otimizar" ? "Configuração da busca (JSON)" : "Substituição de inputs (JSON)";
     $("ajuda-opcoes").textContent = "Ajuste o código, a configuração ou a fonte dos dados antes de executar.";
-    $("opcoes").value = JSON.stringify(data.opcoes ?? {}, null, 2);
+    $("opcoes").value = JSON.stringify(optimized ? {} : (data.opcoes ?? {}), null, 2);
     $("ntsl").value = data.ntsl;
     $("formato").value = data.formato;
     $("segundos").value = data.segundos;
@@ -789,7 +800,7 @@ function renderHistory(items, remote = false, append = false) {
             if (item.pacote) historyLink(actions, "Baixar ZIP", endpoint("historico/" + item.id + "/execucao.zip"));
             if (!item.importado) historyLink(actions, "Log", endpoint("historico/" + item.id + "/execucao.jsonl"));
             if (item.reutilizavel) addButton("Usar dados e estratégia", () => reuseExecution(item, false));
-            if (item.reutilizavel && item.otimizada) addButton("Usar estratégia otimizada", () => reuseExecution(item, true));
+            if (item.reutilizavel && item.otimizada) addButton("Validar estratégia otimizada", () => reuseExecution(item, true));
         }
         addButton("Ver indicadores", () => {
             $("historico-detalhes").hidden = false;
@@ -860,6 +871,21 @@ async function poll(failures = 0) {
             if (state.estado === "concluido") {
                 show((state.parada?.startsWith("finalização solicitada") ? "Busca finalizada antecipadamente." : "Execução concluída.") + "\n" + state.pasta);
                 showExports(state);
+                if (state.validacao) {
+                    const metrics = state.historico.indicadores ?? {};
+                    const format = value => value == null ? "—" : Number(value).toLocaleString("pt-BR", {maximumFractionDigits:2});
+                    writePairs("validacao-indicadores", [
+                        ["Operações", format(state.validacao.operacoes)],
+                        ["Contratos negociados", format(state.validacao.volume_contratos)],
+                        ["Taxa de acerto", state.validacao.taxa_acerto == null ? "—" : formattedNumber(state.validacao.taxa_acerto,true)],
+                        ["Fator de lucro", format(state.validacao.fator_lucro)],
+                        ["Bruto (R$)",format(metrics.resultado_bruto_convertido)], ["Taxas (R$)",format(metrics.custos_reais)],
+                        ["Líquido (R$)",format(metrics.resultado_liquido_reais)], ["Drawdown (R$)",format(metrics.drawdown_liquido_reais)]
+                    ]);
+                    $("nota-pdf").href = endpoint("resultados/"+state.id+"/nota_corretagem_simulada.pdf");
+                    $("validacao-csv").href = endpoint("resultados/"+state.id+"/validacao.csv");
+                    $("validacao-resultados").hidden = false;
+                }
                 $("relatorio").href = endpoint("resultados/"+state.id+"/relatorio.html");
                 $("relatorio").hidden = false;
             } else if (state.estado === "cancelado") {
@@ -883,6 +909,7 @@ $("form").addEventListener("submit", async event => {
     if (running) return;
     busy(true);
     $("relatorio").hidden = true;
+    $("validacao-resultados").hidden = true;
     $("status-publicacao").textContent = "";
     showExports({});
     $("andamento").replaceChildren();
@@ -890,7 +917,7 @@ $("form").addEventListener("submit", async event => {
     updateControls({});
     try {
         const options = {
-            modo:$("modo").value, csv:$("csv").files[0]?.name, ntsl:$("ntsl").value,
+            modo:$("modo").value, ativo:$("ativo-validacao").value, csv:$("csv").files[0]?.name, ntsl:$("ntsl").value,
             formato:$("formato").value, segundos:Number($("segundos").value),
             tick:Number($("tick").value), valor_ponto:Number($("valor-ponto").value),
             regras_execucao:{custo_por_contrato_lado:Number($("custo-lado").value),
@@ -931,6 +958,7 @@ $("arquivo-sessao").addEventListener("change", async () => {
     if (running || !file) return;
     busy(true);
     $("relatorio").hidden = true;
+    $("validacao-resultados").hidden = true;
     $("status-publicacao").textContent = "";
     showExports({});
     $("andamento").replaceChildren();

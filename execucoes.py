@@ -14,7 +14,7 @@ ID = r"[0-9a-f]{32}|\d{8}-\d{6}-\d{6}"
 SCHEMA = "simuladorCotacao.execucao/1"
 REPORTS = {"relatorio.html", "execucoes.csv", "candles.csv", "console.csv", "metricas.json",
            "inputs_otimizados.json", "estrategia.ntsl", "predicoes.csv", "evolucao.csv",
-           "candidatos.csv", "modelo_parametrizado.ntsl"}
+           "candidatos.csv", "modelo_parametrizado.ntsl", "validacao.csv", "nota_corretagem_simulada.pdf"}
 
 
 def utc_now():
@@ -54,7 +54,7 @@ class ExecutionArchive:
                 package.writestr("resumo.json", to_json(summary))
                 package.writestr("configuracao.json", to_json({
                     key: options[key] for key in ("modo", "csv", "formato", "segundos", "tick",
-                                                  "valor_ponto", "opcoes", "cotacao", "regras_execucao") if key in options
+                                                  "valor_ponto", "opcoes", "cotacao", "ativo", "regras_execucao") if key in options
                 }))
                 package.writestr("estrategia_original.ntsl", options["ntsl"].encode("utf-8"))
                 if entry and entry.is_file():
@@ -89,7 +89,7 @@ class ExecutionArchive:
             source = "modelo_parametrizado.ntsl" if optimized else "estrategia_original.ntsl"
             if source not in package.namelist():
                 raise ValueError("A estratégia otimizada não está disponível nesta execução.")
-            if not isinstance(options, dict) or options.get("modo") not in {"estrategia", "otimizar"}:
+            if not isinstance(options, dict) or options.get("modo") not in {"estrategia", "otimizar", "validar"}:
                 raise ValueError("Configuração de execução inválida.")
             options["ntsl"] = read_small(package, source, 8*1024**2)
             rules = (options.get("regras_execucao") or options.get("opcoes", {}).get("regras_execucao") or {})

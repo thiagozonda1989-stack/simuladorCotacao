@@ -110,12 +110,12 @@ def load_session(package):
                 raise ValueError("Versão de sessão incompatível.")
             options = metadata["opcoes"]
             state = metadata.get("estado")
-            if (not isinstance(options,dict) or options.get("modo") not in {"otimizar","estrategia"}
+            if (not isinstance(options,dict) or options.get("modo") not in {"otimizar","estrategia","validar"}
                     or not isinstance(options.get("ntsl"),str) or not isinstance(options.get("opcoes"),dict)):
                 raise ValueError("Configuração da sessão inválida.")
             if state is not None and not isinstance(state,dict):
                 raise ValueError("Estado da sessão inválido.")
-            if ("historico.npy" in names) != (options["modo"]=="estrategia" and state is not None):
+            if ("historico.npy" in names) != (options["modo"] in {"estrategia","validar"} and state is not None):
                 raise ValueError("Histórico da sessão ausente ou incompatível.")
             return options, state
     except (BadZipFile, KeyError, TypeError) as error:

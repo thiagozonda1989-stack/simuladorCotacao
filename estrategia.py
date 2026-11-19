@@ -656,7 +656,7 @@ class Engine:
 
 
 def run_strategy(csv, source, output, seconds, format_name, tick, overrides=None, point_value=1,
-                 on_progress=None, checkpoint=None, session=None, resume_archive=None, safe_point=None, regras=None):
+                 on_progress=None, checkpoint=None, session=None, resume_archive=None, safe_point=None, regras=None, validacao=None, on_validation=None):
     program = compile_ntsl(source)
     format_name = csv_format(csv, format_name)
     frame = load_bars(csv,seconds,format_name)
@@ -703,6 +703,16 @@ def run_strategy(csv, source, output, seconds, format_name, tick, overrides=None
                    regras_execucao=asdict(engine.rules),
                    inputs=program.inputs|{k.lower():v for k,v in (overrides or {}).items()},
                    usa_asset_snapshot=engine.ignored_asset)
+    validation_graphs = ""
+    validation_links = ""
+    if validacao is not None:
+        from validacao import export_validation
+        stats, validation_graphs = export_validation(output, frame, engine.fills, summary, validacao)
+        summary.update(stats)
+        validation_links = (' · <a href="validacao.csv">CSV para conferência</a>'
+                            ' · <a href="nota_corretagem_simulada.pdf">Nota simulada em PDF</a>')
+        if on_validation:
+            on_validation(stats, validation_graphs)
     (output/"metricas.json").write_text(json.dumps(summary,indent=2,ensure_ascii=False),encoding="utf-8")
     (output/"estrategia.ntsl").write_text(source,encoding="utf-8")
     table = "".join(f"<tr><th>{html.escape(k.replace('_',' '))}</th><td>{html.escape(str(v))}</td></tr>"
@@ -710,19 +720,20 @@ def run_strategy(csv, source, output, seconds, format_name, tick, overrides=None
     sample = sorted(set(np.linspace(0, len(liquid_equity)-1, min(len(liquid_equity), 350), dtype=int)))
     payoff = [{"geracao": int(i), "resultado": float(liquid_equity[i])} for i in sample]
     performance = chart(payoff, [("resultado", "R$ líquido")], "Resultado líquido realizado", axis="Execução")
+    report_title = "Validação do modelo" if validacao is not None else "Replay NTSL"
     items = '<a href="execucoes.csv">Execuções</a> · <a href="candles.csv">Candles e sinais</a> · <a href="console.csv">Console</a> · <a href="metricas.json">Métricas e inputs</a>'
     (output/"relatorio.html").write_text(f"""<!doctype html><html lang="pt-BR"><meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1"><title>Replay NTSL</title>
+<meta name="viewport" content="width=device-width, initial-scale=1"><title>{report_title}</title>
 <style>
 body{{font:16px system-ui;max-width:850px;margin:3rem auto;padding:0 1.1rem;background:#f2f7f6;color:#172e2b}}
 h1{{font-size:2.3rem}}table{{border-collapse:collapse;width:100%;background:white}}
 th,td{{text-align:left;padding:.6rem 1rem;border-bottom:1px solid #d9e4e1}}a{{color:#146253}}
 figure{{margin:1rem 0;background:white;padding:1rem}} svg{{width:100%;max-height:245px;font-size:11px}}
-</style><h1>Replay NTSL</h1><p>{items}</p>
+</style><h1>{report_title}</h1><p>{items}{validation_links}</p>
 <p>O código roda no fechamento de cada candle. Ordens novas só são elegíveis na barra seguinte.
 O bruto usa os preços simulados após slippage. O líquido deduz as taxas configuradas por contrato e lado.
 A sequência intrabar e a fila do livro permanecem indeterminadas.</p>
-{performance}<table>{table}</table></html>""",encoding="utf-8")
+{validation_graphs or performance}<table>{table}</table></html>""",encoding="utf-8")
     return summary
 
 
