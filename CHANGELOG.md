@@ -1,5 +1,13 @@
 # Histórico de versões
 
+## 0.13.0
+
+- Incorpora o catálogo publicado do ProfitRTD com seus 23 NTSL intactos.
+- Cancela ordens e reinicia indicadores após lacunas intradiárias, com rastreio de posição exposta.
+- Integra Negócios, Preços e Ofertas normalizados em ordem causal, com idade dos snapshots e manifesto.
+- Adiciona latência em barras, CalcTime, métricas de estabilidade, processos para replay paralelo e walk-forward pela CLI.
+- Inclui testes de lacuna, causalidade, stop-limit, posição parcial, reversão, integridade e matriz de paridade.
+
 ## 0.12.0
 
 - Modo Validar modelo para estratégias parametrizadas com dados de entrada selecionáveis, indicadores e gráficos de performance.

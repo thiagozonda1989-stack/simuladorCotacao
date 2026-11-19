@@ -1,4 +1,4 @@
-# simuladorCotacao 0.12.0
+# simuladorCotacao 0.13.0
 
 [Histórico de alterações](CHANGELOG.md) · [Manutenção e hashes dos pacotes](MANUTENCAO.md)
 
@@ -120,7 +120,7 @@ Em Linux, use Python 3.11+ e um toolchain MinGW-w64 x64. Baixe a distribuição 
 
 ```bash
 python -m pip download --only-binary=:all: --platform win_amd64 --python-version 312 -r windows/requirements.lock -d wheels
-python windows/package.py --python-win python-3.12.10-embed-amd64.zip --wheels wheels --saida simuladorCotacao-v0.12.0-win64.zip
+python windows/package.py --python-win python-3.12.10-embed-amd64.zip --wheels wheels --saida simuladorCotacao-v0.13.0-win64.zip
 ```
 
 Para desenvolver ou testar com o seu Python local, instale `requirements.txt` e rode `python app.py`. Para um comando de terminal no código-fonte, use `python app.py --cli estrategia --help`.
@@ -203,3 +203,27 @@ Consulte o [catálogo de estratégias NTSL](estrategias/catalogo_estrategias.csv
 o [contrato de dados](docs/DADOS_ENTRADA_PROFITRTD.md) e a
 [arquitetura de unificação](docs/ARQUITETURA_UNIFICACAO.md).
 O catálogo tem metadados e versionamento próprios em `estrategias/VERSION`.
+
+### Lacunas, latência e validação cronológica
+
+Em um buraco intradiário, o Replay NTSL cancela ordens pendentes antes da primeira barra disponível e reinicia as janelas e referências históricas.
+Posições abertas continuam expostas e são registradas em `lacunas_com_posicao`. A simulação não cria negócios no trecho ausente.
+`candles.csv` registra segmento, flag de lacuna, idade em barras e intervalo em segundos entre timestamps de referência. Para dados Profit sem
+timestamp por segundo, o intervalo usa os minutos de origem e pode ser zero entre barras do mesmo minuto.
+`BarrasNoSegmento`, `IntervaloBarraSegundos` e `SegundosDoDiaBarra` são extensões locais.
+A última exige candles cuja fonte tenha horário por segundo. `CalcTime(HHMM, minutos)` está disponível.
+
+A latência adicional em barras começa em zero. Com valor 1, uma ordem enviada no fechamento da barra 1 fica elegível na barra 3.
+Ordens idênticas renovadas preservam o prazo já contado e ordens alteradas ganham novo prazo.
+A latência é uma aproximação por barra. O replay já calcula resultado líquido com taxas por contrato/lado e slippage configuráveis.
+O objetivo **Resultado menos drawdown e instabilidade diária** desconta do resultado líquido o drawdown e um desvio padrão populacional
+do resultado líquido por pregão. Paralelismo NTSL com mais de um trabalhador usa processos persistentes; `threads=0` continua em um por padrão.
+A opção de recursos máximos continua dimensionando processos e memória.
+
+Para walk-forward pela CLI, inclua no JSON de otimização `"walk_forward": {"pregoes_busca": 5, "pregoes_teste": 2, "pregoes_reservados": 2}`.
+O motor reajusta parâmetros em cada janela e usa blocos de teste cronológicos disjuntos. A soma dos testes e os pregões reservados constam de
+`walk_forward.json`. Os dias reservados ficam para validação final posterior e não entram nessa soma. A GUI continua usando a divisão cronológica de uma janela.
+
+Para comparar um replay já exportado pelo Profit, normalize os dois arquivos com `timestamp;sequencia;etapa` e os mesmos campos comparáveis.
+Use as etapas `sinal`, `ordem`, `execucao` e `posicao`. O utilitário `python tools/comparar_paridade.py --profit profit.csv --simulador local.csv --saida paridade`
+gera uma matriz por etapa e a lista de divergências. A comparação exige os dois rastros normalizados e não assume paridade de execução.

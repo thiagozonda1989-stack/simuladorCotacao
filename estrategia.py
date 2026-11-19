@@ -30,6 +30,7 @@ def source_text(path):
 FORMATS = {
     "profit": ("Indicador exportado do Profit", {"data_minuto_origem", "v_barra_id", *OHLC}),
     "ohlc": ("Candles OHLC com timestamp", {"timestamp", *OHLC}),
+    "integrado": ("Eventos ProfitRTD integrados", {"timestamp_evento", "sequencia_fonte", "ativo_origem", "preco_ultimo", "quantidade_negocio", "segmento"}),
     "negocios": ("Negócios com timestamp", {"timestamp", "preco"}),
 }
 
@@ -57,8 +58,8 @@ def load_bars(path, seconds, format_name):
     if format_name == "profit":
         frame = read_export(path, seconds)
         stamp = frame["minuto"]
-    elif format_name == "negocios":
-        frame = read_ticks(path, seconds)
+    elif format_name in {"negocios", "integrado"}:
+        frame = read_ticks(path, seconds, integrated=format_name == "integrado")
         stamp = frame["inicio"]
         frame["v_trades_atual"] = frame["negocios"]
     elif format_name == "ohlc":
@@ -76,8 +77,19 @@ def load_bars(path, seconds, format_name):
     for column in OHLC:
         frame[column] = pd.to_numeric(frame[column])
     frame["pregao"] = stamp.dt.strftime("%Y-%m-%d")
+    delta = stamp.diff().dt.total_seconds().fillna(0)
+    day_change = frame["pregao"].ne(frame["pregao"].shift())
+    boundary = frame["segmento"].ne(frame["segmento"].shift()) if "segmento" in frame else delta.ne(seconds) | day_change
+    if format_name == "integrado":
+        boundary |= delta.gt(seconds)
+    frame["segmento"] = (boundary | day_change).cumsum()
+    frame["lacuna_intradiaria"] = boundary & ~day_change
+    frame["intervalo_barra_segundos"] = delta
+    frame["barras_no_segmento"] = frame.groupby("segmento", sort=False).cumcount()+1
     frame["data_ntsl"] = (stamp.dt.year-1900)*10000 + stamp.dt.month*100 + stamp.dt.day
     frame["hora_ntsl"] = stamp.dt.hour*100 + stamp.dt.minute
+    if format_name != "profit":
+        frame["segundos_do_dia_barra"] = stamp.dt.hour*3600 + stamp.dt.minute*60 + stamp.dt.second
     frame["barra_ntsl"] = np.arange(1,len(frame)+1)
     return frame
 
@@ -92,6 +104,7 @@ class Order:
     limit: float | None = None
     triggered: bool = False
     sent_at: int = -1
+    eligible_at: int = -1
 
 
 @dataclass(frozen=True)
@@ -101,8 +114,11 @@ class ExecutionRules:
     limite_exige_ultrapassar: bool = False
     ordem_so_proxima_barra: bool = True
     historico_continuo: bool = True
+    latencia_barras: int = 0
 
     def __post_init__(self):
+        if type(self.latencia_barras) is not int or self.latencia_barras < 0:
+            raise ValueError("A latência adicional deve ser um inteiro não negativo em barras.")
         for value in (self.custo_por_contrato_lado, self.slippage_ticks):
             if type(value) not in {int, float} or not math.isfinite(value) or value < 0:
                 raise ValueError("Custo e slippage devem ser números finitos e não negativos.")
@@ -128,6 +144,11 @@ class Engine:
         self.loop_budget = 0
         self.series_data = (self.prepare_series(program, frame) if series_data is None else series_data)
         self.days = frame["pregao"].to_numpy() if days is None else days
+        self.gap = (frame["lacuna_intradiaria"].to_numpy(dtype=bool) if "lacuna_intradiaria" in frame
+                    else np.r_[False, (frame["segmento"].to_numpy()[1:] != frame["segmento"].to_numpy()[:-1])
+                                    & (self.days[1:] == self.days[:-1])] if "segmento" in frame else np.zeros(len(frame), bool))
+        self.segment_starts = np.maximum.accumulate(np.where(self.gap, np.arange(len(frame)), 0))
+        self.orders_cancelled_at_gaps = self.gaps_with_exposure = 0
         self.checkpoint = None
         for name, value in overrides.items():
             name = name.lower()
@@ -182,11 +203,12 @@ class Engine:
             if not np.isfinite(volume).all() or (volume < 0).any() or not np.isfinite(price).all():
                 raise ValueError("VWAP recebeu preço ou volume inválido.")
             dates = pd.to_datetime(frame["pregao"])
+            gap_epoch = frame.get("lacuna_intradiaria", pd.Series(False, index=frame.index)).cumsum()
             turnover = volume * price
             series_data["vwap_0"] = np.where(volume > 0, price, 0.0)
             for period, group in enumerate((dates, dates.dt.to_period("W-SUN"), dates.dt.to_period("M")), 1):
-                total = volume.groupby(group, sort=False).cumsum()
-                weighted = turnover.groupby(group, sort=False).cumsum()
+                total = volume.groupby([group, gap_epoch], sort=False).cumsum()
+                weighted = turnover.groupby([group, gap_epoch], sort=False).cumsum()
                 series_data[f"vwap_{period}"] = weighted.div(total.where(total > 0)).fillna(0).to_numpy()
         if "agressionvolbalance" in program.used:
             if "v_agressao_saldo_acumulado" in frame:
@@ -198,7 +220,8 @@ class Engine:
                 buy, sell = (pd.to_numeric(frame[c]) for c in ("v_agressao_compra", "v_agressao_venda"))
                 if (buy < 0).any() or (sell < 0).any():
                     raise ValueError("Informe volumes de agressão compradora e vendedora não negativos.")
-                balance = (buy-sell).groupby(frame["pregao"], sort=False).cumsum()
+                gap_epoch = frame.get("lacuna_intradiaria", pd.Series(False, index=frame.index)).cumsum()
+                balance = (buy-sell).groupby([frame["pregao"], gap_epoch], sort=False).cumsum()
             if not np.isfinite(balance).all():
                 raise ValueError("AgressionVolBalance recebeu dados inválidos.")
             series_data["agressionvolbalance"] = balance.to_numpy(dtype=float)
@@ -206,7 +229,7 @@ class Engine:
 
     @property
     def history_start(self):
-        return 0 if self.rules.historico_continuo else self.session_start
+        return max(int(self.segment_starts[self.cursor]), 0 if self.rules.historico_continuo else self.session_start)
 
     def series(self, name, offset=0):
         index = self.cursor - self.integer(offset,0)
@@ -339,6 +362,13 @@ class Engine:
                       "log": math.log, "exp": math.exp}
         if name in math_calls:
             return math_calls[name](*args)
+        if name == "calctime":
+            hhmm, delta = self.integer(args[0], 0), int(args[1])
+            hour, minute = divmod(hhmm, 100)
+            if hour > 23 or minute > 59:
+                raise NTSLError("CalcTime exige horário HHMM válido.")
+            hour, minute = divmod((hour*60 + minute + delta) % 1440, 60)
+            return hour*100 + minute
         if name == "truerangecustom":
             high, low, previous = args
             return max(high,previous)-min(low,previous)
@@ -452,6 +482,8 @@ class Engine:
         old = self.orders.get(key)
         if old and old.triggered and (old.price,old.limit,old.quantity)==(order.price,order.limit,order.quantity):
             order.triggered = True
+        same_order = old and (old.price, old.limit, old.quantity) == (order.price, order.limit, order.quantity)
+        order.eligible_at = old.eligible_at if same_order else self.row+1+self.rules.latencia_barras
         order.sent_at = self.row
         self.orders[key] = order
 
@@ -529,6 +561,8 @@ class Engine:
         o,h,l = (self.series(name) for name in ("open","high","low"))
         matched = []
         for key,order in self.orders.items():
+            if self.row < order.eligible_at:
+                continue
             fill = self.match(order,o,h,l)
             if fill is not None:
                 matched.append((key,order,fill))
@@ -552,7 +586,8 @@ class Engine:
         state = dict(barras=self.completed, inicio_pregao=self.session_start,
                      valores=[self.values[slot] for slot in self.variable_slots],
                      arrays=self.arrays, posicao=self.position, preco_medio=self.basis,
-                     diario=self.daily, realizado=self.realized, custos=self.costs, custos_diarios=self.daily_costs, ambiguidades=self.ambiguities,
+                     diario=self.daily, realizado=self.realized, ordens_canceladas_lacuna=self.orders_cancelled_at_gaps,
+                     lacunas_com_posicao=self.gaps_with_exposure, custos=self.costs, custos_diarios=self.daily_costs, ambiguidades=self.ambiguities,
                      ordens=[(key, asdict(order)) for key, order in self.orders.items()],
                      execucoes=self.fills, candles=self.trace, console=self.logs,
                      indicadores=[(key, value.window.maxlen, list(value.window),
@@ -591,6 +626,8 @@ class Engine:
         self.position, self.basis = state["posicao"], state["preco_medio"]
         self.daily, self.realized = state["diario"], state["realizado"]
         self.costs, self.daily_costs = state.get("custos",0.0), state.get("custos_diarios",0.0)
+        self.orders_cancelled_at_gaps = state.get("ordens_canceladas_lacuna", 0)
+        self.gaps_with_exposure = state.get("lacunas_com_posicao", 0)
         self.ambiguities = state["ambiguidades"]
         self.orders = {key: Order(**order) for key, order in state["ordens"]}
         self.fills, self.trace, self.logs = state["execucoes"], state["candles"], state["console"]
@@ -622,6 +659,13 @@ class Engine:
                 self.daily = self.daily_costs = 0.0
                 if not self.rules.historico_continuo:
                     self.rolling.clear()
+            if self.gap[row]:
+                self.orders_cancelled_at_gaps += len(self.orders)
+                self.gaps_with_exposure += bool(self.position)
+                self.orders.clear()
+                self.rolling.clear()
+                if record_trace:
+                    self.logs.append((row+1, f"Lacuna de dados. Ordens canceladas; posição anterior: {self.position}."))
             self.process_orders()
             self.plots = {}
             self.entry_intentions = set()
@@ -631,7 +675,7 @@ class Engine:
             except (ValueError,TypeError,OverflowError,ZeroDivisionError,RecursionError) as error:
                 raise NTSLError(f"Barra {row+1}, pregão {days[row]}: {error}") from error
             if self.rules.ordem_so_proxima_barra:
-                self.orders = {key: order for key, order in self.orders.items() if order.sent_at == row}
+                self.orders = {key: order for key, order in self.orders.items() if order.sent_at == row or order.eligible_at > row}
             for slot in var_slots:
                 self.history[row,slot] = self.values[slot]
             for slot,val in numeric_constants:
@@ -680,7 +724,7 @@ def run_strategy(csv, source, output, seconds, format_name, tick, overrides=None
         "barra","pregao","ordem","acao","preco","quantidade","pontos_contrato","posicao","tipo","custo_reais","liquido_reais"])
     fills.to_csv(output/"execucoes.csv",index=False)
     columns = [key for key in ("timestamp","inicio","minuto","ordem_no_minuto","v_barra_id",
-                               "pregao",*OHLC,"classe") if key in frame]
+                               "pregao","segmento","lacuna_intradiaria","intervalo_barra_segundos","barras_no_segmento",*OHLC,"classe") if key in frame]
     trace = pd.concat([frame[columns],pd.DataFrame(engine.trace)],axis=1)
     trace.to_csv(output/"candles.csv",index_label="indice")
     pd.DataFrame(engine.logs,columns=["barra","mensagem"]).to_csv(output/"console.csv",index=False)
@@ -695,7 +739,8 @@ def run_strategy(csv, source, output, seconds, format_name, tick, overrides=None
                    preenchimentos=len(fills),saidas=len(exits),saidas_positivas=int((pnl>0).sum()),
                    saidas_negativas=int((pnl<0).sum()),pontos_contrato=engine.realized,
                    drawdown_pontos_contrato=float((np.maximum.accumulate(equity)-equity).max()),
-                   barras_ambiguas=engine.ambiguities,formato_csv=FORMATS[format_name][0],
+                   barras_ambiguas=engine.ambiguities, lacunas_intradiarias=int(engine.gap.sum()),
+                   lacunas_com_posicao=engine.gaps_with_exposure, ordens_canceladas_lacuna=engine.orders_cancelled_at_gaps, formato_csv=FORMATS[format_name][0],
                    intervalo_segundos=seconds,tick=tick,
                    valor_por_ponto=point_value,resultado_bruto_convertido=engine.realized*point_value,
                    custos_reais=engine.costs, resultado_liquido_reais=engine.realized*point_value-engine.costs,
@@ -743,13 +788,14 @@ def main():
     p.add_argument("--ntsl",required=True)
     p.add_argument("--saida",required=True)
     p.add_argument("--segundos",type=int,required=True)
-    p.add_argument("--formato",choices=["auto", "profit", "negocios", "ohlc"],default="auto")
+    p.add_argument("--formato",choices=["auto", "profit", "negocios", "ohlc", "integrado"],default="auto")
     p.add_argument("--tick",type=float,default=5)
     p.add_argument("--valor-ponto",type=float,default=1,help="Multiplicador de DailyResult e do resultado bruto")
     p.add_argument("--custo-por-contrato-lado", type=float, default=0)
     p.add_argument("--slippage-ticks", type=float, default=0)
     p.add_argument("--limite-exige-ultrapassar", action="store_true")
     p.add_argument("--ordem-so-proxima-barra", action=argparse.BooleanOptionalAction, default=True)
+    p.add_argument("--latencia-barras", type=int, default=0)
     p.add_argument("--historico-continuo", action=argparse.BooleanOptionalAction, default=True)
     p.add_argument("--inputs",help="Arquivo JSON com valores de inputs a substituir")
     args=p.parse_args()
@@ -829,12 +875,8 @@ class StrategyReplay:
 def strategy_replay(path, source, seconds, format_name, config, tick, point_value):
     format_name = csv_format(path, format_name)
     frame = load_bars(path, seconds, format_name)
-    if "segmento" not in frame:
-        stamp = frame["inicio" if format_name == "negocios" else "timestamp"]
-        boundary = frame["pregao"].ne(frame["pregao"].shift()) | stamp.diff().ne(pd.Timedelta(seconds=seconds))
-        frame["segmento"] = boundary.cumsum()
     specification = search_target(config)
-    if config.get("busca") != "aleatoria" and config["genetico"].get("metrica") in {"resultado", "resultado_menos_drawdown"}:
+    if config.get("busca") != "aleatoria" and config["genetico"].get("metrica") in {"resultado", "resultado_menos_drawdown", "resultado_estavel"}:
         specification = specification | {"modo": "resultado"}
     return StrategyReplay(frame, compile_ntsl(source), seconds, config.get("classe_alvo", "1C"),
                           specification, config.get("campos_excluidos", ()), tick, point_value, config.get("regras_execucao"))

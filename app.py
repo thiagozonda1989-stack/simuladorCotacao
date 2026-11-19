@@ -38,10 +38,15 @@ def launcher_cli(args):
         return
     if not args or args[0] in {"-h", "--help"}:
         print("simuladorCotacao", VERSION)
-        print("Comandos: estrategia | otimizar | candles")
+        print("Comandos: estrategia | otimizar | candles | integrar")
         print("Use <comando> --help para consultar os argumentos.")
         return
     command = args[0]
+    if command == "integrar":
+        from integrar_profitrtd import main as integrate_cli
+        sys.argv = [sys.argv[0], *args[1:]]
+        integrate_cli()
+        return
     sys.argv = [sys.argv[0], *args[1:]] if command == "estrategia" else [sys.argv[0], *args]
     (strategy_cli if command == "estrategia" else simulator_cli)()
 
@@ -150,7 +155,7 @@ class Workspace:
         summary = json.loads((folder / "metricas.json").read_text(encoding="utf-8"))
         criterion = summary["metrica"] if criterion == "objetivo" else criterion
         if criterion not in {"f1", "accuracy", "balanced_accuracy", "precision", "recall",
-                             "specificity", "npv", "resultado", "resultado_menos_drawdown", "metas_classes"}:
+                             "specificity", "npv", "resultado", "resultado_menos_drawdown", "resultado_estavel", "metas_classes"}:
             raise ValueError("Critério indisponível.")
         best = None
         with (folder / "selecionaveis.jsonl").open(encoding="utf-8") as stream:
@@ -336,6 +341,8 @@ class Workspace:
                 config["versao"] = VERSION
                 config["regras_execucao"] = options.get("regras_execucao") or config.get("regras_execucao", {})
                 config.pop("cotacao", None)
+                if config.get("walk_forward"):
+                    raise ValueError("Execute walk_forward na CLI com o arquivo de configuração.")
                 if options.get("cotacao"):
                     config["cotacao"] = options["cotacao"]
                 seconds = config["segundos_por_candle"]
@@ -386,7 +393,8 @@ class Workspace:
                 shutil.rmtree(destination, ignore_errors=True)
             seconds = round(control.elapsed(self.started_at))
             indicators = {key: summary[key] for key in ("candidatos_avaliados", "metrica", "resultado_bruto_convertido", "resultado_liquido_reais", "custos_reais", "drawdown_liquido_reais",
-                                                         "taxa_acerto", "fator_lucro", "operacoes", "ativo",
+                                                         "taxa_acerto", "fator_lucro", "operacoes", "ativo", "lacunas_intradiarias",
+                                                         "lacunas_com_posicao", "ordens_canceladas_lacuna",
                                                          "parametros_otimizados", "resultados") if key in summary}
             finished = initial | {"fim":utc_now(), "segundos":seconds, "estado":outcome["estado"],
                                   "parada":outcome["parada"], "indicadores":indicators,

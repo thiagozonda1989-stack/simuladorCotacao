@@ -18,7 +18,8 @@ SERIES = {
     "volume": "volume", "quantity": "volume_contratos", "trades": "v_trades_atual",
     "bidprice": "v_bid", "askprice": "v_ask", "bidsize": "v_qtd_bid", "asksize": "v_qtd_ask",
     "agressionvolbuy": "v_agressao_compra", "agressionvolsell": "v_agressao_venda",
-    "date": "data_ntsl", "time": "hora_ntsl", "currentbar": "barra_ntsl",
+    "date": "data_ntsl", "time": "hora_ntsl", "currentbar": "barra_ntsl", "barrasnosegmento": "barras_no_segmento",
+    "intervalobarrasegundos": "intervalo_barra_segundos", "segundosdodiabarra": "segundos_do_dia_barra",
 }
 STATE = {
     "isbought", "issold", "hasposition", "haspendingorders", "buyprice", "sellprice",
@@ -29,7 +30,7 @@ FUNCTIONS = {
     "truerange": (0, 0), "truehigh": (0, 0), "truelow": (0, 0),
     "truerangecustom": (3, 3), "typicalprice": (0, 0), "medianprice": (0, 0),
     "avgprice": (0, 0), "avgtruerange": (2, 2),
-    "vwap": (1, 1), "agressionvolbalance": (0, 0),
+    "calctime": (2, 2), "vwap": (1, 1), "agressionvolbalance": (0, 0),
     "mod": (2, 2), "intportion": (1, 1), "fracportion": (1, 1), "square": (1, 1),
     "sign": (1, 1), "log": (1, 1), "exp": (1, 1),
     "sendorder": (5, 5), "reverseposition": (0, 0),
@@ -49,7 +50,7 @@ FUNCTIONS = {
 PURE_FUNCTIONS = {"abs", "min", "max", "sqrt", "round", "floor", "ceiling", "power",
                   "mod", "intportion", "fracportion", "square", "sign", "log", "exp",
                   "truerange", "truehigh", "truelow", "truerangecustom", "typicalprice", "medianprice",
-                  "avgprice", "avgtruerange", "vwap", "agressionvolbalance"}
+                  "avgprice", "avgtruerange", "calctime", "vwap", "agressionvolbalance"}
 ROLLING = {"media", "mediaexp", "highest", "lowest", "summation", "stddevs"}
 OPERATORS = {"or": 1, "and": 2, "=": 3, "<>": 3, "<": 3, ">": 3, "<=": 3,
              ">=": 3, "+": 4, "-": 4, "*": 5, "/": 5, "mod": 5}

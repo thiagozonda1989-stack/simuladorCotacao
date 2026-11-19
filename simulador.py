@@ -62,10 +62,15 @@ def read_export(path, seconds):
     return frame
 
 
-def read_ticks(path, seconds):
+def read_ticks(path, seconds, integrated=False):
     if seconds < 1:
         raise ValueError('Intervalo deve ser positivo.')
     frame = pd.read_csv(path, sep=';', decimal=',')
+    if integrated:
+        if frame["ativo_origem"].isna().any() or frame["ativo_origem"].nunique() != 1:
+            raise ValueError("Selecione um único ativo para o replay integrado.")
+        frame = frame.rename(columns={"timestamp_evento":"timestamp", "sequencia_fonte":"sequencia",
+                                      "preco_ultimo":"preco", "quantidade_negocio":"quantidade"})
     frame['timestamp'] = pd.to_datetime(frame['timestamp'], format='ISO8601')
     frame['preco'] = pd.to_numeric(frame['preco'])
     if frame['timestamp'].isna().any() or not np.isfinite(frame['preco']).all():
@@ -84,7 +89,18 @@ def read_ticks(path, seconds):
         specs['volume_contratos'] = ('quantidade', 'sum')
         frame['financeiro'] = frame['preco'] * frame['quantidade']
         specs['financeiro'] = ('financeiro', 'sum')
-    bars = frame.groupby('inicio', sort=True).agg(**specs).reset_index()
+    groups = ["inicio"]
+    if integrated:
+        # Se dois segmentos ocorrerem no mesmo candle, preserva as duas partes separadas.
+        groups.append("segmento")
+        for field in ("bid", "ask", "qtd_bid", "qtd_ask", "qtd_compra_book", "qtd_venda_book",
+                      "idade_preco_ms", "idade_oferta_ms", "qualidade_dados"):
+            if field in frame:
+                specs["v_"+field] = (field, lambda values: values.iloc[-1])
+        for field in ("agressao_compra", "agressao_venda"):
+            if field in frame:
+                specs["v_"+field] = (field, "sum")
+    bars = frame.groupby(groups, sort=True).agg(**specs).reset_index()
     if 'volume_contratos' in bars:
         bars['v_vwap_barra'] = bars.pop('financeiro').div(bars['volume_contratos'].replace(0, np.nan)).fillna(0)
     return bars
@@ -326,7 +342,7 @@ def cpu_count():
     return len(os.sched_getaffinity(0)) if hasattr(os, 'sched_getaffinity') else os.cpu_count() or 1
 
 
-def strategy_metrics(ys, score, side, financial, trade_score=None, point_value=1):
+def strategy_metrics(ys, score, side, financial, trade_score=None, point_value=1, days=None):
     pred = score[:, side] > 0
     result = metrics(ys, pred)
     if financial:
@@ -336,7 +352,11 @@ def strategy_metrics(ys, score, side, financial, trade_score=None, point_value=1
     pnl = float(equity[-1])
     drawdown = float((np.maximum.accumulate(equity)-equity).max())
     gross = float(trade_score[:,4].sum()) if trade_score.shape[1] > 4 else pnl
-    return result | dict(resultado_bruto_reais=gross*point_value, custo_reais=(gross-pnl)*point_value, resultado=pnl, drawdown=drawdown,
+    volatility = 0.0
+    if days is not None and len(days):
+        starts = np.flatnonzero(np.r_[True, days[1:] != days[:-1]])
+        volatility = float(np.add.reduceat(trade_score[:,2], starts).std())
+    return result | dict(resultado_estavel=pnl-drawdown-volatility, desvio_diario=volatility, resultado_bruto_reais=gross*point_value, custo_reais=(gross-pnl)*point_value, resultado=pnl, drawdown=drawdown,
                          resultado_menos_drawdown=pnl-drawdown, resultado_reais=pnl*point_value,
                          drawdown_reais=drawdown*point_value, saidas=int(trade_score[:,3].sum()))
 
@@ -351,7 +371,7 @@ def evaluate_replay_worker(parameters):
     try:
         score = worker_replay.score(parameters, worker_control.checkpoint if worker_control else None)
         return strategy_metrics(worker_replay.label[worker_mask], score[worker_mask],
-                                worker_side, worker_financial, score, worker_replay.point_value)
+                                worker_side, worker_financial, score, worker_replay.point_value, worker_replay.day)
     except (ValueError, TypeError, ArithmeticError) as error:
         return {"erro": str(error)}
 
@@ -408,7 +428,7 @@ def optimize(replay, config, out, on_progress=None, on_resources=None, on_partia
     cfg = config['genetico']
     generic = not isinstance(replay, Replay)
     if not generic and any((config.get("regras_execucao") or {}).get(key) for key in
-                           ("custo_por_contrato_lado", "slippage_ticks", "limite_exige_ultrapassar")):
+                           ("custo_por_contrato_lado", "slippage_ticks", "limite_exige_ultrapassar", "latencia_barras")):
         raise ValueError("Custos, slippage e preenchimento conservador exigem o motor Replay NTSL.")
     defaults = replay.defaults if generic else replay.model.defaults
     names = tuple(config['parametros'])
@@ -446,12 +466,12 @@ def optimize(replay, config, out, on_progress=None, on_resources=None, on_partia
     def fitness_for(stats):
         return candidate_fitness(stats, metric, minimum_signals, targets)
 
-    financial = metric in {'resultado','resultado_menos_drawdown'}
+    financial = metric in {'resultado','resultado_menos_drawdown','resultado_estavel'}
     if (min(generations, population) < 1 or min(patience, minimum_signals, seconds) < 0
             or not 0 <= mutation <= 1 or not math.isfinite(stop_score)
             or (not financial and not 0 <= stop_score <= 1)
             or (financial and not generic)
-            or metric not in {'f1', 'balanced_accuracy', 'precision', 'recall', 'specificity', 'npv', 'accuracy', 'resultado', 'resultado_menos_drawdown', 'metas_classes'} or
+            or metric not in {'f1', 'balanced_accuracy', 'precision', 'recall', 'specificity', 'npv', 'accuracy', 'resultado', 'resultado_menos_drawdown', 'resultado_estavel', 'metas_classes'} or
             (metric == 'metas_classes' and not targets)):
         raise ValueError('Configuração genética inválida.')
     days = np.unique(replay.day)
@@ -514,7 +534,7 @@ def optimize(replay, config, out, on_progress=None, on_resources=None, on_partia
                 budget = max(0, usable-workers*worker_estimate)
         if generic:
             replay.in_memory = search_replay.in_memory = True
-    processes = generic and maximize and workers > 1
+    processes = generic and workers > 1
     resources = dict(recursos_maximos=maximize, modo_paralelo='processos' if processes else 'threads',
                      trabalhadores=workers, nucleos_logicos=cores,
                      ram_disponivel_mb=round(available/1024**2) if available is not None else None,
@@ -568,7 +588,7 @@ def optimize(replay, config, out, on_progress=None, on_resources=None, on_partia
         for genome in genomes:
             p = parameters(genome)
             if generic:
-                stats = strategy_metrics(labels, local_score, side, financial, score, replay.point_value)
+                stats = strategy_metrics(labels, local_score, side, financial, score, replay.point_value, search_replay.day)
             else:
                 pred = (local_score >= p['p_CorteScoreModelo']) & (local_age >= p['p_BarrasAquecimento'])
                 stats = metrics(labels, pred)
@@ -805,7 +825,7 @@ def optimize(replay, config, out, on_progress=None, on_resources=None, on_partia
     pred = predictions(fitted, best_score)
     baseline = predictions(defaults, original_score)
     def split_stats(mask, score, prediction, rows):
-        return (strategy_metrics(replay.label[mask], score[mask], side, financial, score[rows], replay.point_value)
+        return (strategy_metrics(replay.label[mask], score[mask], side, financial, score[rows], replay.point_value, replay.day[rows])
                 if generic else metrics(replay.label[mask], prediction[mask]))
 
     summary = dict(
@@ -953,6 +973,33 @@ def validate_ohlc(frame):
         raise ValueError('Máxima/mínima incompatível com abertura/fechamento.')
 
 
+def walk_forward(replay, config, output):
+    """Reotimiza em janelas móveis e agrega somente testes cronológicos disjuntos."""
+    settings = config["walk_forward"]
+    train, test = (int(settings[key]) for key in ("pregoes_busca", "pregoes_teste"))
+    reserve = int(settings.get("pregoes_reservados", 0))
+    days = np.unique(replay.day)
+    if min(train, test) < 1 or reserve < 0 or train+test+reserve > len(days):
+        raise ValueError("Pregões insuficientes para as janelas walk-forward configuradas.")
+    settings_fold = config | {"pregoes_teste":test}
+    results = []
+    for start in range(train, len(days)-reserve-test+1, test):
+        first, last = days[start-train], days[start+test-1]
+        frame_mask = (replay.day >= first) & (replay.day <= last)
+        fold = replay.subset(frame_mask)
+        destination = output/f"janela_{len(results)+1:03d}"
+        destination.mkdir()
+        summary = optimize(fold, settings_fold, destination)
+        results.append(dict(pregoes_busca=days[start-train:start].tolist(),
+                            pregoes_teste=days[start:start+test].tolist(),
+                            parametros=summary["parametros_otimizados"],
+                            teste=summary["resultados"]["teste"]["otimizado"]))
+    report = dict(janelas=results, pregoes_reservados=days[len(days)-reserve:].tolist(),
+                  liquido_teste_somado_reais=sum(row["teste"]["resultado_reais"] for row in results))
+    (output/"walk_forward.json").write_text(json.dumps(report, indent=2, ensure_ascii=False), encoding="utf-8")
+    return report
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     commands = parser.add_subparsers(dest='command', required=True)
@@ -992,7 +1039,14 @@ def main():
                     replay = Replay(frame, model, seconds, config.get('classe_alvo', '1C'),
                                     search_target(config), config.get('campos_excluidos', ()))
                 args.saida.mkdir(parents=True, exist_ok=False)
-                audit["motivo"] = optimize(replay, config, args.saida)["parada"]
+                if config.get("walk_forward"):
+                    if isinstance(replay, Replay):
+                        raise ValueError("Walk-forward pela CLI exige o motor Replay NTSL.")
+                    # Os pregões reservados ficam fora do ajuste e das métricas de cada janela.
+                    walk_forward(replay, config, args.saida)
+                    audit["motivo"] = "janelas walk-forward concluídas"
+                else:
+                    audit["motivo"] = optimize(replay, config, args.saida)["parada"]
     except (OSError, ValueError, KeyError, TypeError, AttributeError, ArithmeticError) as error:
         parser.exit(2, f'Erro: {error}\n')
 

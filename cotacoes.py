@@ -14,7 +14,7 @@ def dated_rows(path, format_name):
     with path.open(encoding="utf-8-sig", newline="") as stream:
         reader = csv.reader(stream, delimiter=";")
         header = next(reader)
-        index = header.index("data_minuto_origem" if format_name == "profit" else "timestamp")
+        index = header.index({"profit":"data_minuto_origem", "integrado":"timestamp_evento"}.get(format_name,"timestamp"))
         yield header
         for row in reader:
             if not any(row):

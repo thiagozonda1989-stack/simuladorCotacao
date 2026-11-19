@@ -51,3 +51,15 @@ Walk-forward → Profit Replay → conta simulada
 - explicação explícita para divergências intrabar;
 - nenhuma ordem atravessando lacuna sem política configurada;
 - resultado líquido com custos separado do resultado bruto.
+
+## Fronteira entre o replay por candle e o motor por evento
+
+A v0.13.0 integra as fontes antes da agregação e usa os segmentos também na execução NTSL por candle.
+A fila de ordens, a prioridade, a capacidade de execução por nível e a mudança de stop dentro da barra ainda exigem um motor separado.
+
+Para um futuro replay por evento, o contrato de entrada deve distinguir atualização de livro, negócio e atualização de preço.
+Um relógio monotônico precisa ordenar cada evento por timestamp e sequência comprovadamente compartilhada.
+O motor deve manter um estado de livro por ativo e pregão, despertar ordens somente após sua latência configurada e publicar o rastro
+de sinal, ordem, execução e posição, incluindo ordens pendentes, canceladas e preenchidas parcialmente.
+Snapshots agregados servem para testar hipóteses de liquidez. Prioridade e posição real na fila exigem mensagens por ordem ou
+regras explícitas de aproximação, com a hipótese registrada em cada execução.
