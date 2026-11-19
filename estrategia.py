@@ -15,7 +15,7 @@ import pandas as pd
 
 from diagnostico import chart
 from ntsl import ORDER_CONSTANTS, NTSLError, Rolling, SERIES, compile_ntsl
-from simulador import OHLC, read_export, read_ticks, validate_ohlc
+from simulador import OHLC, read_export, read_ticks, search_target, validate_ohlc
 
 
 def source_text(path):
@@ -712,8 +712,8 @@ def strategy_replay(path, source, seconds, format_name, config, tick, point_valu
         stamp = frame["inicio" if format_name == "negocios" else "timestamp"]
         boundary = frame["pregao"].ne(frame["pregao"].shift()) | stamp.diff().ne(pd.Timedelta(seconds=seconds))
         frame["segmento"] = boundary.cumsum()
-    specification = config.get("alvo", {})
-    if config["genetico"].get("metrica") in {"resultado", "resultado_menos_drawdown"}:
+    specification = search_target(config)
+    if config.get("busca") != "aleatoria" and config["genetico"].get("metrica") in {"resultado", "resultado_menos_drawdown"}:
         specification = specification | {"modo": "resultado"}
     return StrategyReplay(frame, compile_ntsl(source), seconds, config.get("classe_alvo", "1C"),
                           specification, config.get("campos_excluidos", ()), tick, point_value)

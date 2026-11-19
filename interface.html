@@ -77,11 +77,26 @@ progress{display:block;width:100%;height:12px;accent-color:var(--accent);margin:
 <div class="field"><label for="arquivo">Carregar arquivo</label><input id="arquivo" type="file" accept=".ntsl,.txt,.pas"></div>
 <div class="field"><label for="ntsl">Código</label><textarea id="ntsl" spellcheck="false" required></textarea></div>
 <button type="button" id="modelo">Usar estratégia do pacote</button>
+<details><summary>Base de estratégias NTSL</summary>
+<div class="field"><label for="estrategia-base">Estratégias cadastradas</label><select id="estrategia-base"></select></div>
+<button type="button" id="carregar-estrategia">Carregar no editor</button>
+<div class="field"><label for="nome-estrategia">Nome para salvar o código do editor</label><input id="nome-estrategia" maxlength="120"></div>
+<div class="field"><label for="obs-estrategia">Observação (opcional)</label><input id="obs-estrategia" maxlength="2000"></div>
+<button type="button" id="salvar-estrategia">Salvar estratégia na base</button>
+<p id="status-estrategia" role="status"></p>
+</details>
 </section>
 <section class="panel options">
 <h2>Execução</h2>
-<div class="field"><label for="modo">Modo</label><select id="modo"><option value="estrategia">Replay da estratégia</option><option value="otimizar">Otimização genética</option></select></div>
+<div class="field"><label for="modo">Modo</label><select id="modo"><option value="estrategia">Replay da estratégia</option><option value="otimizar">Otimização</option></select></div>
 <div id="genetica" hidden>
+<div class="field"><label for="metodo-busca">Método de busca</label><select id="metodo-busca">
+<option value="genetica">Genética</option><option value="aleatoria">Aleatória adaptativa</option>
+</select></div>
+<div id="metas-classes" hidden><div class="split">
+<div><label for="meta-vp">Meta da classe positiva (%)</label><input id="meta-vp" type="number" min="0.01" max="100" step="any" value="95"></div>
+<div><label for="meta-vn">Meta das demais classes (%)</label><input id="meta-vn" type="number" min="0.01" max="100" step="any" value="90"></div>
+</div><small>Metas de sensibilidade e especificidade. A busca para ao atingir ambas na amostra de busca e avalia os pregões de teste em seguida. O CSV precisa ter a coluna classe.</small></div>
 <div class="field">
 <label><input id="recursos-maximos" type="checkbox"> Usar recursos máximos</label>
 <small>Usa os núcleos disponíveis e dimensiona a execução pela RAM livre, com reserva para o sistema.</small>
@@ -231,12 +246,19 @@ function renderGenetic() {
     $("motor").value = settings.motor ?? "ensemble";
     $("metrica").value = settings.genetico?.metrica ?? "f1";
     $("recursos-maximos").checked = settings.recursos_maximos === true;
-    const financial = ["resultado","resultado_menos_drawdown"].includes($("metrica").value);
-    $("alvo").disabled = financial;
+    const random = settings.busca === "aleatoria";
+    $("metodo-busca").value = random ? "aleatoria" : "genetica";
+    $("metas-classes").hidden = !random;
+    $("meta-vp").disabled = $("meta-vn").disabled = !random;
+    $("meta-vp").value = settings.metas_classes?.recall ?? 95;
+    $("meta-vn").value = settings.metas_classes?.specificity ?? 90;
+    $("metrica").disabled = random;
+    const financial = !random && ["resultado","resultado_menos_drawdown"].includes($("metrica").value);
+    $("alvo").disabled = financial || random;
     for (const option of $("metrica").options) {
         option.disabled = $("motor").value !== "ntsl" && option.value.startsWith("resultado");
     }
-    $("alvo").value = settings.alvo?.modo ?? "classe";
+    $("alvo").value = random ? "classe" : (settings.alvo?.modo ?? "classe");
     $("classe").value = settings.classe_alvo ?? "1C";
     $("lado").value = settings.alvo?.lado ?? "compra";
     $("barras").value = settings.alvo?.barras ?? 5;
@@ -277,6 +299,13 @@ $("motor").addEventListener("change",() => {
 $("recursos-maximos").addEventListener("change",() => {
     updateConfig(s => { s.recursos_maximos = $("recursos-maximos").checked; });
 });
+$("metodo-busca").addEventListener("change", () => {
+    updateConfig(s => { s.busca = $("metodo-busca").value; });
+    renderGenetic();
+});
+for (const id of ["meta-vp","meta-vn"]) $(id).addEventListener("change", () => {
+    updateConfig(s => { s.metas_classes = {recall:Number($("meta-vp").value),specificity:Number($("meta-vn").value)}; });
+});
 $("metrica").addEventListener("change",() => {
     updateConfig(s => { s.genetico.metrica = $("metrica").value; });
     renderGenetic();
@@ -284,7 +313,7 @@ $("metrica").addEventListener("change",() => {
 for (const id of ["alvo","classe","lado","barras","pontos"]) $(id).addEventListener("change",() => {
     updateConfig(s => {
         s.classe_alvo = $("classe").value;
-        s.alvo = {modo:$("alvo").value,lado:$("lado").value,barras:Number($("barras").value),pontos:Number($("pontos").value)};
+        if (s.busca !== "aleatoria") s.alvo = {modo:$("alvo").value,lado:$("lado").value,barras:Number($("barras").value),pontos:Number($("pontos").value)};
     });
     renderGenetic();
 });
@@ -411,6 +440,40 @@ $("cadastrar-cotacao").addEventListener("click", async () => {
         busy(false);
     }
 });
+async function refreshStrategies(key = "") {
+    const response = await localFetch("estrategias", {}, 1);
+    if (!response.ok) throw Error("Falha ao consultar as estratégias cadastradas.");
+    const items = await response.json();
+    $("estrategia-base").replaceChildren(new Option("Selecione uma estratégia", ""), ...items.map(item =>
+        new Option(item.nome + " · " + item.salvo_em.replace("T"," "), item.id)));
+    $("estrategia-base").value = key;
+}
+$("salvar-estrategia").addEventListener("click", async () => {
+    const button = $("salvar-estrategia");
+    button.disabled = true;
+    try {
+        const item = await post("estrategias", JSON.stringify({nome:$("nome-estrategia").value,
+            observacao:$("obs-estrategia").value,ntsl:$("ntsl").value}), "application/json");
+        await refreshStrategies(item.id);
+        $("status-estrategia").textContent = "Estratégia salva.";
+    } catch (error) { $("status-estrategia").textContent = error.message; }
+    finally { button.disabled = false; }
+});
+$("carregar-estrategia").addEventListener("click", async () => {
+    const key = $("estrategia-base").value;
+    if (!key) return;
+    try {
+        const response = await localFetch("estrategias/" + key);
+        if (!response.ok) throw Error("Falha ao carregar a estratégia.");
+        const item = await response.json();
+        $("ntsl").value = item.ntsl;
+        $("nome-estrategia").value = item.nome;
+        $("obs-estrategia").value = item.observacao;
+        $("status-estrategia").textContent = "Estratégia carregada no editor.";
+        renderGenetic();
+    } catch (error) { $("status-estrategia").textContent = error.message; }
+});
+refreshStrategies().catch(error => { $("status-estrategia").textContent = error.message; });
 $("arquivo").addEventListener("change", async () => {
     const file = $("arquivo").files[0];
     if (!file) return;
@@ -445,20 +508,21 @@ $("modo").addEventListener("change", async () => {
         $("opcoes").value = replaySettings;
     }
     $("genetica").hidden = !optimize;
+    if (!optimize) $("meta-vp").disabled = $("meta-vn").disabled = true;
     renderGenetic();
-    $("titulo-opcoes").textContent = optimize ? "Configuração genética (JSON)" : "Substituição de inputs (JSON)";
+    $("titulo-opcoes").textContent = optimize ? "Configuração da busca (JSON)" : "Substituição de inputs (JSON)";
     $("ajuda-opcoes").textContent = optimize
         ? "Edite os inputs pela tabela e os limites da busca no JSON."
         : "Use {} para aplicar os valores do código. Exemplo de ajuste: {\"p_Lote\": 2}.";
 });
-const metricLabels = {accuracy:"Acurácia",balanced_accuracy:"Acurácia balanceada",
+const metricLabels = {metas_classes:"Avanço da meta mais distante",accuracy:"Acurácia",balanced_accuracy:"Acurácia balanceada",
     precision:"Precisão dos sinais",recall:"Taxa de VP (sensibilidade)",
     specificity:"Taxa de VN (especificidade)",npv:"Valor preditivo negativo",tp:"Verdadeiros positivos",
     tn:"Verdadeiros negativos",fp:"Falsos positivos",fn:"Falsos negativos",
     resultado_reais:"Resultado bruto em reais",drawdown_reais:"Drawdown em reais",f1:"F1",sinais:"Sinais",
     resultado:"Resultado bruto (pontos × contratos)",drawdown:"Drawdown (pontos × contratos)",
     resultado_menos_drawdown:"Resultado menos drawdown",saidas:"Saídas"};
-const percentageMetrics = new Set(["accuracy","balanced_accuracy","precision","recall","specificity","npv","f1"]);
+const percentageMetrics = new Set(["metas_classes","accuracy","balanced_accuracy","precision","recall","specificity","npv","f1"]);
 const formattedNumber = (value, percent = false) => new Intl.NumberFormat("pt-BR", {
     maximumFractionDigits:2, style:percent ? "percent" : "decimal"
 }).format(value);
@@ -488,8 +552,8 @@ function showPartial(state) {
     const duration = Math.floor(elapsed/60) + " min " + (elapsed%60) + " s";
     let counters = ["Tempo decorrido " + duration];
     if (partial.geracao) counters.push(
-        "Geração " + partial.geracao + " de até " + partial.geracoes_limite,
-        partial.concluidos_geracao + " de " + partial.candidatos_geracao + " nesta geração",
+        (partial.busca === "aleatoria" ? "Lote " : "Geração ") + partial.geracao + " de até " + partial.geracoes_limite,
+        partial.concluidos_geracao + " de " + partial.candidatos_geracao + " neste lote",
         partial.avaliados + " avaliações únicas");
     if (partial.barras_total) counters.push(partial.barras + " de " + partial.barras_total + " barras");
     if (partial.erros) counters.push(partial.erros + " avaliações com erro");
@@ -518,6 +582,9 @@ function showPartial(state) {
         [metricLabels.resultado_reais,money(partial.resultado * partial.valor_ponto)],
         ["Ordens executadas",formattedNumber(partial.preenchimentos)]
     ] : [];
+    if (partial.busca === "aleatoria") values.unshift(
+        ["Meta da classe positiva",formattedNumber(partial.metas_classes.recall,true)],
+        ["Meta das demais classes",formattedNumber(partial.metas_classes.specificity,true)]);
     if (partial.valor_ponto) values.unshift(["R$ por ponto e por contrato", new Intl.NumberFormat("pt-BR",{minimumFractionDigits:2,maximumFractionDigits:8}).format(partial.valor_ponto)]);
     writePairs("metricas-parciais",values);
     $("detalhes-parciais").hidden = !leader;
@@ -675,6 +742,9 @@ $("form").addEventListener("submit", async event => {
             salvar_minutos:Number($("salvar-minutos").value), opcoes:JSON.parse($("opcoes").value || "{}")
         };
         if (options.modo === "otimizar") {
+            if (options.opcoes.busca === "aleatoria" && !["meta-vp","meta-vn"].every(id => $(id).validity.valid && $(id).value)) {
+                throw Error("Informe as duas metas, de 0,01% a 100%.");
+            }
             const declared = new Set([...$("parametros").rows].map(row => row.cells[0].textContent.toLowerCase()));
             const selected = Object.keys(options.opcoes.parametros ?? {});
             if (selected.some(name => !declared.has(name.toLowerCase()))) {

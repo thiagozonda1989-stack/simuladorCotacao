@@ -7,6 +7,7 @@ from decimal import Decimal
 import html
 from itertools import product
 import json
+from heapq import nlargest
 import math
 from multiprocessing import get_context
 import os
@@ -348,7 +349,19 @@ def evaluate_replay_worker(parameters):
         return {"erro": str(error)}
 
 
-def parallel_replays(executor, entries, parameters, workers, deadline, record, metric, minimum_signals, checkpoint):
+def search_target(config):
+    return {"modo": "classe"} if config.get("busca") == "aleatoria" else config.get("alvo") or {}
+
+
+def candidate_fitness(stats, metric, minimum_signals, targets):
+    if stats.get('sinais', -1) < minimum_signals:
+        return -math.inf
+    if targets:
+        stats[metric] = min(stats[key]/goal for key, goal in targets.items())
+    return stats[metric]
+
+
+def parallel_replays(executor, entries, parameters, workers, deadline, record, fitness_for, checkpoint):
     remaining = iter(entries)
     active = {}
 
@@ -371,7 +384,7 @@ def parallel_replays(executor, entries, parameters, workers, deadline, record, m
         for future in finished:
             genome = active.pop(future)
             stats = future.result()
-            fitness = stats[metric] if stats.get('sinais', -1) >= minimum_signals else -math.inf
+            fitness = fitness_for(stats)
             record({genome: (fitness, stats)})
             if deadline():
                 deadline_hit = True
@@ -406,12 +419,30 @@ def optimize(replay, config, out, on_progress=None, on_resources=None, on_partia
     seconds = float(cfg.get('limite_segundos') or 0)
     mutation = float(cfg.get('mutacao', .25))
     metric = cfg.get('metrica', 'f1')
+    method = config.get('busca', 'genetica')
+    if method not in {'genetica', 'aleatoria'}:
+        raise ValueError('Método de busca desconhecido.')
+    targets = {}
+    if method == 'aleatoria':
+        if replay.specification.get('modo', 'classe') != 'classe':
+            raise ValueError('A busca aleatória exige os rótulos da coluna classe.')
+        raw = config.get('metas_classes', {})
+        targets = {key: float(raw.get(key, default)) / 100
+                   for key, default in [('recall', 95), ('specificity', 90)]}
+        if not all(0 < goal <= 1 for goal in targets.values()):
+            raise ValueError('Informe metas de classe maiores que 0% e de até 100%.')
+        metric, stop_score = 'metas_classes', 1.0
+
+    def fitness_for(stats):
+        return candidate_fitness(stats, metric, minimum_signals, targets)
+
     financial = metric in {'resultado','resultado_menos_drawdown'}
     if (min(generations, population) < 1 or min(patience, minimum_signals, seconds) < 0
             or not 0 <= mutation <= 1 or not math.isfinite(stop_score)
             or (not financial and not 0 <= stop_score <= 1)
             or (financial and not generic)
-            or metric not in {'f1', 'balanced_accuracy', 'precision', 'recall', 'specificity', 'npv', 'accuracy', 'resultado', 'resultado_menos_drawdown'}):
+            or metric not in {'f1', 'balanced_accuracy', 'precision', 'recall', 'specificity', 'npv', 'accuracy', 'resultado', 'resultado_menos_drawdown', 'metas_classes'} or
+            (metric == 'metas_classes' and not targets)):
         raise ValueError('Configuração genética inválida.')
     days = np.unique(replay.day)
     n_test = int(config['pregoes_teste'])
@@ -502,7 +533,8 @@ def optimize(replay, config, out, on_progress=None, on_resources=None, on_partia
     def time_limit_reached():
         if checkpoint:
             checkpoint()
-        return finishing() or bool(seconds and elapsed_search() >= seconds)
+        return (finishing() or bool(seconds and elapsed_search() >= seconds)
+                or bool(targets and partial_best is not None and seen[partial_best][0] >= 1))
 
     def parameters(genome):
         return defaults | dict(zip(keys, genome))
@@ -530,7 +562,7 @@ def optimize(replay, config, out, on_progress=None, on_resources=None, on_partia
             else:
                 pred = (local_score >= p['p_CorteScoreModelo']) & (local_age >= p['p_BarrasAquecimento'])
                 stats = metrics(labels, pred)
-            fitness = stats[metric] if stats['sinais'] >= minimum_signals else -math.inf
+            fitness = fitness_for(stats)
             results[genome] = (fitness, stats)
         return results
 
@@ -548,20 +580,29 @@ def optimize(replay, config, out, on_progress=None, on_resources=None, on_partia
 
     def populate(seed, parents=()):
         candidates = dict.fromkeys(seed)
+        limit = min(population, total-len(seen)) if targets else population
         for _ in range(population*20):
-            if len(candidates) == population:
+            if len(candidates) == limit:
                 break
             if not parents or rng.random() < .2:
                 genome = random_genome()
+            elif targets:
+                anchor = rng.choice(parents)
+                changed = rng.randrange(len(pools))
+                genome = tuple(rng.choice(pool) if i == changed or rng.random() < mutation else value
+                               for i, (pool, value) in enumerate(zip(pools, anchor)))
             else:
                 first, second = rng.choices(parents, k=2)
                 genome = tuple(rng.choice(pool) if rng.random() < mutation else rng.choice(pair)
                                for pool, pair in zip(pools, zip(first, second)))
-            candidates[genome] = None
-        if len(candidates) < population:
-            for genome in product(*pools):
+            if not targets or genome not in seen:
                 candidates[genome] = None
-                if len(candidates) == population:
+        if len(candidates) < limit:
+            for genome in product(*pools):
+                if targets and genome in seen:
+                    continue
+                candidates[genome] = None
+                if len(candidates) == limit:
                     break
         return list(candidates)
 
@@ -620,18 +661,17 @@ def optimize(replay, config, out, on_progress=None, on_resources=None, on_partia
         on_partial(dict(etapa=stage, geracao= generation, geracoes_limite=generations,
                         concluidos_geracao=completed, candidatos_geracao=len(candidates),
                         avaliados=len(seen), erros=failed_candidates, objetivo=metric,
-                        financeiro=financial, valor_ponto=replay.point_value if generic else None, melhor=leader))
+                        financeiro=financial, busca=method, metas_classes=targets, valor_ponto=replay.point_value if generic else None, melhor=leader))
 
     def record(results):
         nonlocal partial_best, failed_candidates, completed
         seen.update(results)
         completed += len(results)
-        if on_partial:
-            for genome, (fitness, stats) in results.items():
-                failed_candidates += int('erro' in stats)
-                if math.isfinite(fitness) and (partial_best is None or fitness > seen[partial_best][0]):
-                    partial_best = genome
-            report_partial('busca')
+        for genome, (fitness, stats) in results.items():
+            failed_candidates += int('erro' in stats)
+            if math.isfinite(fitness) and (partial_best is None or fitness > seen[partial_best][0]):
+                partial_best = genome
+        report_partial('busca')
         if session:
             session.service()
     pool = (ProcessPoolExecutor(max_workers=workers, mp_context=get_context('spawn'),
@@ -656,7 +696,7 @@ def optimize(replay, config, out, on_progress=None, on_resources=None, on_partia
                 else:
                     deadline_hit = parallel_replays(executor, entries, parameters, workers,
                                                     time_limit_reached,
-                                                    record, metric, minimum_signals, checkpoint)
+                                                    record, fitness_for, checkpoint)
             for start in range(0, 0 if processes else len(entries), workers):
                 if seen and time_limit_reached():
                     deadline_hit = True
@@ -682,8 +722,13 @@ def optimize(replay, config, out, on_progress=None, on_resources=None, on_partia
                             while len(scores)*score.nbytes > budget:
                                 scores.popitem(last=False)
             available_candidates = [g for g in candidates if g in seen and "erro" not in seen[g][1]]
-            ranked = sorted(available_candidates, key=lambda g: seen[g][0], reverse=True)
+            scope = (g for g in seen if "erro" not in seen[g][1]) if targets else available_candidates
+            ranked = (nlargest(max(2, population//3), scope, key=lambda g: seen[g][0]) if targets
+                      else sorted(scope, key=lambda g: seen[g][0], reverse=True))
             if not ranked:
+                if targets and len(seen) < total and generation < generations and not (deadline_hit or time_limit_reached()):
+                    candidates = populate([])
+                    continue
                 sample_error = next((seen[g][1]['erro'] for g in candidates
                                      if g in seen and 'erro' in seen[g][1]), None)
                 if best is None and sample_error:
@@ -705,7 +750,7 @@ def optimize(replay, config, out, on_progress=None, on_resources=None, on_partia
                 reason = 'finalização solicitada pelo usuário'
                 break
             if stop_score and best_value >= stop_score:
-                reason = 'meta de desempenho'
+                reason = 'metas das duas classes atingidas na busca' if targets else 'meta de desempenho'
                 break
             if len(seen) == total:
                 reason = 'espaço de busca avaliado'
@@ -713,11 +758,13 @@ def optimize(replay, config, out, on_progress=None, on_resources=None, on_partia
             if deadline_hit or (seconds and elapsed >= seconds):
                 reason = 'limite de tempo'
                 break
-            if patience and unchanged >= patience:
+            if not targets and patience and unchanged >= patience:
                 reason = 'gerações sem melhora'
                 break
             parents = ranked[:max(2, population//3)]
-            candidates = populate([best], parents)
+            if targets:
+                parents = [g for g in parents if math.isfinite(seen[g][0])]
+            candidates = populate([] if targets else [best], parents)
 
     if finishing() and phase == 'busca':
         reason = 'finalização solicitada pelo usuário'
@@ -753,7 +800,7 @@ def optimize(replay, config, out, on_progress=None, on_resources=None, on_partia
         arvores=None if generic else len(replay.trees),
         arvores_removidas=None if generic else len(replay.model.trees)-len(replay.trees),
         campos_excluidos=sorted(replay.excluded), threads=workers, **resources,
-        metrica=metric, parada=reason, candidatos_avaliados=len(seen), espaco_busca=total,
+        busca=method, metas_classes=targets, metrica=metric, parada=reason, candidatos_avaliados=len(seen), espaco_busca=total,
         segundos_busca=history[-1]['segundos'], atende_min_sinais=math.isfinite(best_value),
         parametros_otimizados=optimized,
         parametros_originais={name: defaults[key] for name,key in zip(names,keys)},
@@ -764,6 +811,10 @@ def optimize(replay, config, out, on_progress=None, on_resources=None, on_partia
             otimizado=split_stats(mask, best_score, pred, search_rows if name=='busca' else ~search_rows),
         ) for name, mask in splits.items()},
     )
+    if targets:
+        for split in summary['resultados'].values():
+            stats = split['otimizado']
+            split['atingiu_metas'] = all(stats[key] >= goal for key, goal in targets.items())
     (out/'metricas.json').write_text(json.dumps(summary, indent=2, ensure_ascii=False, allow_nan=False), encoding='utf-8')
     pd.DataFrame(history).to_csv(out/'evolucao.csv', index=False)
     ranking = [dict(zip((f"input:{name}" for name in names), g)) | {'aptidao': fitness} | stats for g, (fitness, stats) in seen.items()]
@@ -841,6 +892,13 @@ def write_html(out, summary, warning, history, names):
         trade_stats = ''
     classification_style = 'hidden' if mode == 'resultado' else '' 
     note = html.escape(warning)
+    goals_note = ''
+    if summary['metas_classes']:
+        goals = summary['metas_classes']
+        status = {name: 'atingidas' if item['atingiu_metas'] else 'não atingidas'
+                  for name, item in summary['resultados'].items()}
+        goals_note = (f"<p>Metas de sensibilidade {goals['recall']:.1%} e especificidade {goals['specificity']:.1%}. "
+                      f"Busca: {status['busca']}. Teste cronológico: {status['teste']}.</p>")
     content = f"""<!doctype html>
 <html lang="pt-BR"><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Simulador de Cotação</title>
@@ -854,7 +912,7 @@ figure{{margin:14px 0;padding:14px;background:white}} svg{{width:100%;max-height
 </style>
 <h1>Simulador de Cotação</h1>
 <p><strong>{target}</strong> · candles de {summary['segundos_por_candle']} s · {summary['candidatos_avaliados']} candidatos</p>
-<p>Parada por {html.escape(summary['parada'])}. {note}</p>
+<p>Parada por {html.escape(summary['parada'])}. {note}</p>{goals_note}
 <p>O teste usa pregões posteriores aos da busca. A matriz está na ordem VP, FP, FN, VN.
 No classificador, barras sem score ou em aquecimento contam como ausência de sinal.</p>
 <div class="table" {classification_style}><table><thead><tr><th>Amostra</th><th>Versão</th><th>Barras</th><th>Sinais</th>
@@ -915,7 +973,7 @@ def main():
                 frame = read_export(args.csv, seconds)
                 validate_ohlc(frame)
                 replay = Replay(frame, model, seconds, config.get('classe_alvo', '1C'),
-                                config.get('alvo'), config.get('campos_excluidos', ()))
+                                search_target(config), config.get('campos_excluidos', ()))
             args.saida.mkdir(parents=True, exist_ok=False)
             optimize(replay, config, args.saida)
     except (OSError, ValueError, KeyError, TypeError, AttributeError, ArithmeticError) as error:

@@ -40,6 +40,35 @@ class Quotes:
                 arquivo TEXT NOT NULL, linhas INTEGER NOT NULL, colunas TEXT NOT NULL
             )""")
 
+            connection.execute("""CREATE TABLE IF NOT EXISTS estrategias (
+                id TEXT PRIMARY KEY, nome TEXT NOT NULL, observacao TEXT NOT NULL, ntsl TEXT NOT NULL,
+                salvo_em TEXT NOT NULL, UNIQUE (nome, ntsl)
+            )""")
+
+    def list_strategies(self):
+        with closing(self.connect()) as connection:
+            return [dict(row) for row in connection.execute(
+                "SELECT id, nome, observacao, salvo_em FROM estrategias ORDER BY nome COLLATE NOCASE, salvo_em DESC")]
+
+    def save_strategy(self, data):
+        name, source, note = (data.get(key, "") for key in ("nome", "ntsl", "observacao"))
+        if not all(isinstance(value, str) for value in (name, source, note)):
+            raise ValueError("Nome, código e observação precisam ser texto.")
+        name = name.strip()
+        if not 1 <= len(name) <= 120 or not source.strip() or len(note) > 2000:
+            raise ValueError("Informe um nome de até 120 caracteres, o código NTSL e uma observação de até 2.000 caracteres.")
+        with closing(self.connect()) as connection, connection:
+            connection.execute("""INSERT INTO estrategias VALUES (?,?,?,?,?)
+                ON CONFLICT(nome, ntsl) DO UPDATE SET observacao=excluded.observacao, salvo_em=excluded.salvo_em""",
+                (uuid4().hex, name, note, source, datetime.now().isoformat(timespec="seconds")))
+            row = connection.execute("SELECT id FROM estrategias WHERE nome = ? AND ntsl = ?", (name, source)).fetchone()
+        return row["id"]
+
+    def get_strategy(self, key):
+        with closing(self.connect()) as connection:
+            row = connection.execute("SELECT * FROM estrategias WHERE id = ?", (key,)).fetchone()
+        return dict(row) if row else None
+
     def connect(self):
         connection = sqlite3.connect(self.database)
         connection.row_factory = sqlite3.Row

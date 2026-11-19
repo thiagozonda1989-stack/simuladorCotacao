@@ -120,7 +120,7 @@ Em Linux, use Python 3.11+ e um toolchain MinGW-w64 x64. Baixe a distribuição 
 
 ```bash
 python -m pip download --only-binary=:all: --platform win_amd64 --python-version 312 -r windows/requirements.lock -d wheels
-python windows/package.py --python-win python-3.12.10-embed-amd64.zip --wheels wheels --saida simuladorCotacao-v0.7.0-win64.zip
+python windows/package.py --python-win python-3.12.10-embed-amd64.zip --wheels wheels --saida simuladorCotacao-v0.8.0-win64.zip
 ```
 
 Para desenvolver ou testar com o seu Python local, instale `requirements.txt` e rode `python app.py`. Para um comando de terminal no código-fonte, use `python app.py --cli estrategia --help`.
@@ -154,3 +154,11 @@ Selecione a série em **Origem dos dados** e ajuste o intervalo de pregões, se 
 Em uma otimização de compra, escolha como alvo a classe positiva de compra ou uma regra de alta por barras ou pontos. A sensibilidade mede **VP ÷ (VP + FN)**. A especificidade mede **VN ÷ (VN + FP)**. O valor preditivo negativo mede **VN ÷ (VN + FN)**. A tela mostra as contagens e taxas durante a busca classificatória.
 
 Informe o valor em reais por ponto e contrato. Para o WIN, o campo começa em R$ 0,20. No replay NTSL, o resultado bruto em reais é a soma realizada de pontos × contratos multiplicada por esse valor. O cálculo usa as quantidades executadas pela estratégia e aparece no progresso e no relatório. Custos operacionais ficam fora desse total. O Ensemble mede classificação. Use o motor Replay NTSL para obter resultado financeiro simulado.
+
+### Busca aleatória adaptativa
+
+Em **Otimização**, selecione **Aleatória adaptativa**. O CSV deve ter uma coluna `classe`. Informe a classe positiva, por exemplo `1C`, e as metas de sensibilidade e especificidade. O programa começa com combinações da faixa de inputs, sorteia novas combinações e explora variações próximas às que mais se aproximaram das duas metas. Cada combinação é avaliada uma vez. A busca termina ao cumprir simultaneamente as duas metas na amostra de busca, ao esgotar o espaço, ao atingir os limites de lotes ou tempo, ou por solicitação do usuário. O relatório mostra separadamente se as metas também foram atingidas nos pregões cronológicos reservados para teste.
+
+### Base de estratégias
+
+Carregue um arquivo NTSL ou cole o código no editor. Em **Base de estratégias NTSL**, informe o nome e clique em **Salvar estratégia na base**. Selecione uma estratégia cadastrada e clique em **Carregar no editor** para reutilizá-la. O mesmo nome com código diferente salva uma versão adicional. O mesmo nome com código idêntico atualiza a observação. A pasta de backup da base de cotações também contém o cadastro das estratégias.

@@ -1,5 +1,10 @@
 # Histórico de versões
 
+## 0.8.0
+
+- Busca aleatória adaptativa com metas independentes de sensibilidade e especificidade e confirmação cronológica.
+- Cadastro local de estratégias NTSL, com nome, observação, versões e carregamento no editor.
+
 ## 0.7.0
 
 - Base local de cotações com importação de CSV, catálogo SQLite e recorte inclusivo por pregão.

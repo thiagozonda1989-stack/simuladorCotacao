@@ -22,7 +22,7 @@ from sessao import Session, extract_csv, load_session
 from controle import ProcessingCancelled, ProcessingControl
 from diagnostico import charts
 from estrategia import csv_format, main as strategy_cli, run_strategy, strategy_replay
-from simulador import NTSLModel, Replay, main as simulator_cli, optimize, read_export, validate_ohlc
+from simulador import NTSLModel, Replay, main as simulator_cli, optimize, read_export, search_target, validate_ohlc
 
 APP = Path(__file__).resolve().parent
 VERSION = (APP/"VERSION").read_text().strip()
@@ -148,7 +148,7 @@ class Workspace:
         summary = json.loads((folder / "metricas.json").read_text(encoding="utf-8"))
         criterion = summary["metrica"] if criterion == "objetivo" else criterion
         if criterion not in {"f1", "accuracy", "balanced_accuracy", "precision", "recall",
-                             "specificity", "npv", "resultado", "resultado_menos_drawdown"}:
+                             "specificity", "npv", "resultado", "resultado_menos_drawdown", "metas_classes"}:
             raise ValueError("Critério indisponível.")
         best = None
         with (folder / "selecionaveis.jsonl").open(encoding="utf-8") as stream:
@@ -297,7 +297,7 @@ class Workspace:
                     frame = read_export(csv,seconds)
                     validate_ohlc(frame)
                     replay = Replay(frame, model, seconds, config.get("classe_alvo", "1C"),
-                                    config.get("alvo"), config.get("campos_excluidos", ()))
+                                    search_target(config), config.get("campos_excluidos", ()))
                 destination.mkdir()
                 def resources(plan):
                     self.publish(recursos=plan)
@@ -382,6 +382,14 @@ def build_handler(workspace):
                 self.json(job)
             elif path == "/cotacoes":
                 self.json(workspace.quotes.list())
+            elif path == "/estrategias":
+                self.json(workspace.quotes.list_strategies())
+            elif path and re.fullmatch(r"/estrategias/[0-9a-f]{32}", path):
+                item = workspace.quotes.get_strategy(path.rsplit("/",1)[1])
+                if item is None:
+                    self.json({"erro":"Estratégia não encontrada."}, 404)
+                else:
+                    self.json(item)
             elif path == "/modelo-exemplo":
                 self.send_bytes((APP/"modelo_profit.ntsl").read_bytes(),"text/plain; charset=utf-8")
             elif path == "/config-exemplo":
@@ -419,7 +427,7 @@ def build_handler(workspace):
 
         def do_POST(self):
             path = self.route()
-            if path not in {"/csv","/csv-bloco","/executar","/encerrar","/carregar-sessao","/pausar","/retomar","/cancelar","/salvar-sessao","/finalizar","/cotacoes","/selecionar-parametros"}:
+            if path not in {"/csv","/csv-bloco","/executar","/encerrar","/carregar-sessao","/pausar","/retomar","/cancelar","/salvar-sessao","/finalizar","/cotacoes","/selecionar-parametros","/estrategias"}:
                 self.send_error(HTTPStatus.NOT_FOUND)
                 return
             try:
@@ -437,6 +445,14 @@ def build_handler(workspace):
                     if not isinstance(data, dict):
                         raise ValueError("Identificação da execução inválida.")
                     workspace.control_job(data.get("id"), path[1:])
+                elif path == "/estrategias":
+                    if not 0 < length <= 8*MIB:
+                        raise ValueError("O cadastro excede 8 MiB ou está vazio.")
+                    data = json.loads(self.rfile.read(length))
+                    if not isinstance(data, dict):
+                        raise ValueError("Dados da estratégia inválidos.")
+                    self.json({"id": workspace.quotes.save_strategy(data)})
+                    return
                 elif path in {"/cotacoes", "/selecionar-parametros"}:
                     if not 0 < length <= 16*1024:
                         raise ValueError("Dados da solicitação inválidos.")
