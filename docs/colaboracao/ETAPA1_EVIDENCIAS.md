@@ -113,6 +113,6 @@ Logo, “avaliar em cada negócio” e “manter histórico por candle” são d
 - Falta uma sequência de bolsa para resolver empates no mesmo milissegundo.
 - Falta timestamp causal de snapshot completo para Preços/Ofertas e cobertura verificável do book.
 - WDO não tem dados locais próprios.
-- A leitura do HTML no teste foi corrigida para UTF-8 explícito na Etapa 2A e deve ser revalidada no SHA funcional publicado sem `PYTHONUTF8=1`.
+- A leitura do HTML no teste foi corrigida para UTF-8 explícito na Etapa 2A. No SHA funcional `c534b575a027bc196743391a9674b7a9ed8c824d`, a suíte passou sem `PYTHONUTF8=1`: `27 passed, 12 warnings`.
 - Os avisos de timezone do pandas devem ser corrigidos antes de uma atualização maior da biblioteca.
 - A paridade NTSL por candle versus avaliação por negócio ainda precisa de uma matriz de evidências na Etapa 2.

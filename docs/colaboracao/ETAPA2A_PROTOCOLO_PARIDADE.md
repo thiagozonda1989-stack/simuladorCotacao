@@ -2,6 +2,10 @@
 
 Data da primeira execução: 2026-11-19. Este protocolo não otimiza parâmetros, não usa book e não abre a reserva final. O pregão de 26/10/2026 fica reservado para repetição somente depois de estabilizar o procedimento de 21/10/2026.
 
+## Evidência de testes no Windows
+
+O SHA funcional `c534b575a027bc196743391a9674b7a9ed8c824d` foi executado com Python 3.11.3 após remover `PYTHONUTF8` do ambiente. O comando `py -3.11 -m pytest -q` resultou em **27 passed, 12 warnings**. A falha CP1252 anterior foi eliminada com `read_text(encoding="utf-8")`; os avisos restantes são os `Pandas4Warning` de timezone já conhecidos em `integrar_profitrtd.py:30` e `replay_ticks.py:30`.
+
 ## Escopo congelado
 
 | Item | Configuração |
