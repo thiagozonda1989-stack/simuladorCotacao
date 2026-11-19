@@ -91,6 +91,7 @@ class Order:
     price: float = 0
     limit: float | None = None
     triggered: bool = False
+    sent_at: int = -1
 
 
 @dataclass(frozen=True)
@@ -98,13 +99,16 @@ class ExecutionRules:
     custo_por_contrato_lado: float = 0.0
     slippage_ticks: float = 0.0
     limite_exige_ultrapassar: bool = False
+    ordem_so_proxima_barra: bool = True
+    historico_continuo: bool = True
 
     def __post_init__(self):
         for value in (self.custo_por_contrato_lado, self.slippage_ticks):
             if type(value) not in {int, float} or not math.isfinite(value) or value < 0:
                 raise ValueError("Custo e slippage devem ser números finitos e não negativos.")
-        if type(self.limite_exige_ultrapassar) is not bool:
-            raise ValueError("A regra de ultrapassagem do limite deve ser booleana.")
+        for value in (self.limite_exige_ultrapassar, self.ordem_so_proxima_barra, self.historico_continuo):
+            if type(value) is not bool:
+                raise ValueError("As regras de execução devem ser booleanas.")
 
 
 class Engine:
@@ -135,6 +139,9 @@ class Engine:
         self.ignored_asset = any(symbol.kind == "asset" for symbol in program.symbols.values())
         self.seconds = seconds
         self.history = np.empty((len(frame),len(self.values)), dtype=float) if history is None else history
+        tick_input = program.symbols.get("p_exec_tick")
+        if "p_exec_tick" in program.inputs and self.values[tick_input.slot] != 0:
+            raise ValueError("O replay roda por candle. Ajuste p_Exec_Tick para 0.")
         self.variable_slots = [s.slot for s in program.symbols.values()
                                if s.kind in {"float","real","boolean","integer"}]
         self.row = self.cursor = self.session_start = self.completed = 0
@@ -165,11 +172,45 @@ class Engine:
             if not np.isfinite(values).all():
                 raise ValueError(f"A coluna {column} contém dados ausentes ou inválidos.")
             series_data[name] = values
+        if "vwap" in program.used:
+            volume_col = "volume_contratos" if "volume_contratos" in frame else "volume"
+            if volume_col not in frame:
+                raise ValueError("VWAP exige volume_contratos ou volume no CSV.")
+            volume = pd.to_numeric(frame[volume_col]).astype(float)
+            price = (pd.to_numeric(frame["v_vwap_barra"]) if "v_vwap_barra" in frame else
+                     (series_data["high"] + series_data["low"] + series_data["close"])/3)
+            if not np.isfinite(volume).all() or (volume < 0).any() or not np.isfinite(price).all():
+                raise ValueError("VWAP recebeu preço ou volume inválido.")
+            dates = pd.to_datetime(frame["pregao"])
+            turnover = volume * price
+            series_data["vwap_0"] = np.where(volume > 0, price, 0.0)
+            for period, group in enumerate((dates, dates.dt.to_period("W-SUN"), dates.dt.to_period("M")), 1):
+                total = volume.groupby(group, sort=False).cumsum()
+                weighted = turnover.groupby(group, sort=False).cumsum()
+                series_data[f"vwap_{period}"] = weighted.div(total.where(total > 0)).fillna(0).to_numpy()
+        if "agressionvolbalance" in program.used:
+            if "v_agressao_saldo_acumulado" in frame:
+                balance = pd.to_numeric(frame["v_agressao_saldo_acumulado"])
+            else:
+                cols = {"v_agressao_compra", "v_agressao_venda"}
+                if not cols <= set(frame.columns):
+                    raise ValueError("AgressionVolBalance exige o saldo acumulado ou as duas colunas de agressão do CSV.")
+                buy, sell = (pd.to_numeric(frame[c]) for c in ("v_agressao_compra", "v_agressao_venda"))
+                if (buy < 0).any() or (sell < 0).any():
+                    raise ValueError("Informe volumes de agressão compradora e vendedora não negativos.")
+                balance = (buy-sell).groupby(frame["pregao"], sort=False).cumsum()
+            if not np.isfinite(balance).all():
+                raise ValueError("AgressionVolBalance recebeu dados inválidos.")
+            series_data["agressionvolbalance"] = balance.to_numpy(dtype=float)
         return series_data
+
+    @property
+    def history_start(self):
+        return 0 if self.rules.historico_continuo else self.session_start
 
     def series(self, name, offset=0):
         index = self.cursor - self.integer(offset,0)
-        return float(self.series_data[name][index]) if index >= self.session_start else 0.0
+        return float(self.series_data[name][index]) if index >= self.history_start else 0.0
 
     def read(self, slot):
         if self.cursor == self.row or isinstance(self.values[slot], (tuple,str)):
@@ -178,7 +219,7 @@ class Engine:
 
     def lag(self, slot, offset):
         index = self.cursor - self.integer(offset,0)
-        if index < self.session_start:
+        if index < self.history_start:
             return self.program.defaults[slot]
         return self.read(slot) if index == self.cursor else float(self.history[index,slot])
 
@@ -240,8 +281,8 @@ class Engine:
             state = self.rolling[key] = Rolling(period)
         if saved_row == state.row:
             return state.value
-        first = max(self.session_start,state.row+1)
-        if kind != "mediaexp":
+        first = max(self.history_start,state.row+1)
+        if kind not in {"mediaexp", "wilder"}:
             first = max(first,saved_row-period+1)
         try:
             for index in range(first,saved_row+1):
@@ -253,7 +294,7 @@ class Engine:
 
     def shift_call(self, offset, callback):
         index = self.cursor-self.integer(offset,0)
-        if index < self.session_start:
+        if index < self.history_start:
             return 0.0
         original = self.cursor
         self.cursor = index
@@ -281,10 +322,18 @@ class Engine:
             "buypositionqty": max(0,self.position), "sellpositionqty": max(0,-self.position),
         }[name]
 
+    @staticmethod
+    def remainder(dividend, divisor):
+        dividend, divisor = int(dividend), int(divisor)
+        if not divisor:
+            raise NTSLError("divisão por zero em Mod.")
+        result = abs(dividend) % abs(divisor)
+        return -result if dividend < 0 else result
+
     def call(self, name, *args):
         math_calls = {"abs": abs, "max": max, "min": min, "sqrt": math.sqrt, "round": round,
                       "floor": math.floor, "ceiling": math.ceil, "power": pow,
-                      "mod": lambda x,y: int(math.fmod(int(x),int(y))),
+                      "mod": self.remainder,
                       "intportion": math.trunc, "fracportion": lambda x: math.modf(x)[0],
                       "square": lambda x: x*x, "sign": lambda x: int(x>0)-int(x<0),
                       "log": math.log, "exp": math.exp}
@@ -301,9 +350,16 @@ class Engine:
                 return (high+low+self.series("close"))/3
             if name == "avgprice":
                 return (high+low+self.series("open")+self.series("close"))/4
-            prev = self.series("close",1) if self.cursor>self.session_start else self.series("open")
+            prev = self.series("close",1) if self.cursor>self.history_start else self.series("open")
             upper, lower = max(high,prev), min(low,prev)
             return upper if name=="truehigh" else lower if name=="truelow" else upper-lower
+        if name == "vwap":
+            period = self.integer(args[0],0)
+            if period > 3:
+                raise NTSLError("VWAP exige período entre 0 e 3.")
+            return self.series(f"vwap_{period}")
+        if name == "agressionvolbalance":
+            return self.series(name)
         if name == "dailyresult":
             unrealized = (self.series("close")-self.basis)*self.position if args and args[0] else 0
             return (self.daily + unrealized) * self.point_value - self.daily_costs
@@ -326,7 +382,7 @@ class Engine:
                 raise NTSLError("limite inválido em SendOrder stop-limit.")
             quantity = self.integer(qty,1)
             key = f"sendorder_{side}_{kind}"
-            self.orders[key] = Order(name, side_map[side], kind, quantity, price, limit)
+            self.place(key, Order(name, side_map[side], kind, quantity, price, limit))
             if side_map[side] == "net_long" and quantity > -self.position:
                 self.entry_intentions.add("long")
             if side_map[side] == "net_short" and quantity > self.position:
@@ -335,7 +391,7 @@ class Engine:
             if self.position:
                 self.orders.clear()
                 action = "net_short" if self.position>0 else "net_long"
-                self.orders[name] = Order(name,action,"market",2*abs(self.position))
+                self.place(name, Order(name,action,"market",2*abs(self.position)))
                 self.entry_intentions.add("short" if self.position>0 else "long")
         elif name == "cancelpendingorders":
             self.orders.clear()
@@ -354,7 +410,7 @@ class Engine:
                 return
             action = "exit_long" if self.position>0 else "exit_short"
             self.orders.clear()
-            self.orders[name] = Order(name,action,"market",abs(self.position))
+            self.place(name, Order(name,action,"market",abs(self.position)))
             return
         prefix = next(prefix for prefix in ("selltocover","buytocover","sellshort","buyat")
                       if name.startswith(prefix))
@@ -388,13 +444,16 @@ class Engine:
             if not math.isfinite(price) or price <= 0 or (limit is not None and
                                                          (not math.isfinite(limit) or limit<=0)):
                 raise NTSLError("preço inválido na ordem.")
-        order = Order(name,action,kind,quantity,price,limit)
-        old = self.orders.get(name)
-        if old and old.triggered and (old.price,old.limit,old.quantity)==(price,limit,quantity):
-            order.triggered = True
-        self.orders[name] = order
+        self.place(name, Order(name,action,kind,quantity,price,limit))
         if not exit_order:
             self.entry_intentions.add(action)
+
+    def place(self, key, order):
+        old = self.orders.get(key)
+        if old and old.triggered and (old.price,old.limit,old.quantity)==(order.price,order.limit,order.quantity):
+            order.triggered = True
+        order.sent_at = self.row
+        self.orders[key] = order
 
     def slipped(self, price, buying):
         return price + (1 if buying else -1) * self.rules.slippage_ticks * self.tick
@@ -561,7 +620,8 @@ class Engine:
             if row==0 or days[row]!=days[row-1]:
                 self.session_start = row
                 self.daily = self.daily_costs = 0.0
-                self.rolling.clear()
+                if not self.rules.historico_continuo:
+                    self.rolling.clear()
             self.process_orders()
             self.plots = {}
             self.entry_intentions = set()
@@ -570,6 +630,8 @@ class Engine:
                 self.program.strategy(self)
             except (ValueError,TypeError,OverflowError,ZeroDivisionError,RecursionError) as error:
                 raise NTSLError(f"Barra {row+1}, pregão {days[row]}: {error}") from error
+            if self.rules.ordem_so_proxima_barra:
+                self.orders = {key: order for key, order in self.orders.items() if order.sent_at == row}
             for slot in var_slots:
                 self.history[row,slot] = self.values[slot]
             for slot,val in numeric_constants:
@@ -676,6 +738,8 @@ def main():
     p.add_argument("--custo-por-contrato-lado", type=float, default=0)
     p.add_argument("--slippage-ticks", type=float, default=0)
     p.add_argument("--limite-exige-ultrapassar", action="store_true")
+    p.add_argument("--ordem-so-proxima-barra", action=argparse.BooleanOptionalAction, default=True)
+    p.add_argument("--historico-continuo", action=argparse.BooleanOptionalAction, default=True)
     p.add_argument("--inputs",help="Arquivo JSON com valores de inputs a substituir")
     args=p.parse_args()
     try:
@@ -703,6 +767,12 @@ class StrategyReplay:
             inputs.add("fechamento")
         inputs |= {column for name, column in (("totalbuyqtd", "v_qtd_compra_book"),
                                                ("totalsellqtd", "v_qtd_venda_book")) if name in program.used}
+        if "vwap" in program.used:
+            inputs |= {"v_vwap_barra"} if "v_vwap_barra" in frame else {"maxima", "minima", "fechamento"}
+            inputs.add("volume_contratos" if "volume_contratos" in frame else "volume")
+        if "agressionvolbalance" in program.used:
+            inputs |= ({"v_agressao_saldo_acumulado"} if "v_agressao_saldo_acumulado" in frame
+                       else {"v_agressao_compra", "v_agressao_venda"})
         conflicts = inputs & self.excluded
         if conflicts:
             raise ValueError("O NTSL lê campos excluídos: " + ", ".join(sorted(conflicts))

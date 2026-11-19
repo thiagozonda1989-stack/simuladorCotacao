@@ -29,6 +29,7 @@ FUNCTIONS = {
     "truerange": (0, 0), "truehigh": (0, 0), "truelow": (0, 0),
     "truerangecustom": (3, 3), "typicalprice": (0, 0), "medianprice": (0, 0),
     "avgprice": (0, 0), "avgtruerange": (2, 2),
+    "vwap": (1, 1), "agressionvolbalance": (0, 0),
     "mod": (2, 2), "intportion": (1, 1), "fracportion": (1, 1), "square": (1, 1),
     "sign": (1, 1), "log": (1, 1), "exp": (1, 1),
     "sendorder": (5, 5), "reverseposition": (0, 0),
@@ -48,8 +49,8 @@ FUNCTIONS = {
 PURE_FUNCTIONS = {"abs", "min", "max", "sqrt", "round", "floor", "ceiling", "power",
                   "mod", "intportion", "fracportion", "square", "sign", "log", "exp",
                   "truerange", "truehigh", "truelow", "truerangecustom", "typicalprice", "medianprice",
-                  "avgprice", "avgtruerange"}
-ROLLING = {"media", "mediaexp", "highest", "lowest", "summation"}
+                  "avgprice", "avgtruerange", "vwap", "agressionvolbalance"}
+ROLLING = {"media", "mediaexp", "highest", "lowest", "summation", "stddevs"}
 OPERATORS = {"or": 1, "and": 2, "=": 3, "<>": 3, "<": 3, ">": 3, "<=": 3,
              ">=": 3, "+": 4, "-": 4, "*": 5, "/": 5, "mod": 5}
 COLORS = {"clgreen": 32768, "cllime": 65280, "clred": 255, "clblue": 16711680,
@@ -397,8 +398,10 @@ class Compiler:
             right = self.expression(OPERATORS[op] + 1)
             if op in {"+", "/"}:
                 result = f"ctx.{('add' if op == '+' else 'divide')}({result},{right})"
+            elif op == "mod":
+                result = f"ctx.call('mod',{result},{right})"
             else:
-                python_op = {"=": "==", "<>": "!=", "mod": "%"}.get(op, op)
+                python_op = {"=": "==", "<>": "!="}.get(op, op)
                 result = f"({result} {python_op} {right})"
         return result
 
@@ -514,6 +517,9 @@ class Rolling:
             self.value = self.sum / len(self.window)
         elif kind == "mediaexp":
             self.value = self.ema
+        elif kind == "stddevs":
+            mean = self.sum / len(self.window)
+            self.value = (sum((x-mean)**2 for x in self.window) / len(self.window))**0.5
         elif kind == "summation":
             self.value = self.sum
         else:

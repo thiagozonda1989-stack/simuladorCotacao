@@ -210,6 +210,10 @@ class Workspace:
                 share = options.get("publicar_github") is True
                 options, state = load_session(path)
                 options["publicar_github"] = share
+            rules = (options.get("regras_execucao") if "regras_execucao" in options
+                     else options.get("opcoes", {}).get("regras_execucao")) or {}
+            options["regras_execucao"] = dict(ordem_so_proxima_barra=not restore,
+                                              historico_continuo=not restore) | rules
             if options.get("modo") not in {"estrategia", "otimizar"}:
                 raise ValueError("Modo de execução desconhecido.")
             source = options["ntsl"]

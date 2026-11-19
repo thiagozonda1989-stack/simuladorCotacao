@@ -1,4 +1,4 @@
-# simuladorCotacao 0.10.0
+# simuladorCotacao 0.11.0
 
 [Histórico de alterações](CHANGELOG.md) · [Manutenção e hashes dos pacotes](MANUTENCAO.md)
 
@@ -50,12 +50,12 @@ Compila `input`, `const`, `var`, `begin/end`, `if/then/else`, `for to/downto`, `
 
 - Rotinas aceitam parâmetros escalares por valor, variáveis locais escalares e retorno via `Result`. Histórico de séries locais em rotinas, múltiplos ativos, parâmetros por referência, arrays multidimensionais e o catálogo integral de indicadores permanecem fora do subconjunto. Identificadores incompatíveis geram erro com a linha do código. Laços compartilham um limite de 100 mil iterações por barra.
 - A declaração `Asset(GetAsset, ...)` é reconhecida pelo compilador. As funções de book leem as colunas exportadas do CSV, como `v_bid`, `v_ask`, `v_qtd_compra_book` e `v_qtd_venda_book`. O replay usa os agregados fornecidos, sem reconstruir a profundidade ou carregar séries independentes por ativo e intervalo.
-- As séries históricas se restringem ao pregão. No início do pregão, referências sem histórico acessível retornam zero para dados de mercado e o valor padrão para variáveis. As médias usam o histórico disponível no pregão. A estratégia pode definir aquecimento próprio.
+- No Replay NTSL, médias e referências históricas usam candles disponíveis de pregões anteriores por padrão, enquanto o saldo diário e as ordens encerram no pregão. Referências anteriores ao primeiro candle retornam zero para dados de mercado e o valor padrão para variáveis. Desmarque **Carregar histórico de candles entre pregões** para reproduzir o comportamento anterior. Nesse modo, implemente o aquecimento por pregão no código se necessário, pois `CurrentBar` conta desde o início da série.
 - `Date` e `Time` usam a data do candle e a hora HHMM. O intervalo da interface organiza os dados e fica registrado no relatório. Altere explicitamente os inputs temporais do seu código quando forem diferentes do intervalo analisado.
 
 ## Preenchimentos e limitações do replay
 
-O código é avaliado uma vez, no **fechamento**. Ordens emitidas no fechamento podem executar a partir da próxima barra disponível. Ordens a mercado usam a abertura seguinte. Limites e stops usam os extremos da barra com ajuste de gap. Um stop com limite que sofre gap além do limite pode permanecer pendente para a barra seguinte.
+O código é avaliado uma vez, no **fechamento**. Ordens emitidas no fechamento podem executar a partir da próxima barra disponível. Ordens a mercado usam a abertura seguinte. Limites e stops usam os extremos da barra com ajuste de gap. Por padrão, limites e stops não executados expiram no fim da barra seguinte ao envio, salvo se reenviados ou editados naquele fechamento. Desmarque **Expirar ordens** para manter a ordem até execução, cancelamento ou fim do pregão.
 
 Se alvo e stop forem tocados na mesma barra, o relatório registra ambiguidade e aplica o preenchimento menos favorável entre as saídas tocadas. Uma ordem a mercado já pendente tem prioridade na abertura. O replay mantém uma posição líquida, substitui ordens pendentes da mesma função e limita saídas ao saldo da posição. Ao fim de cada pregão, cancela ordens pendentes e encerra a posição restante no último fechamento disponível.
 
@@ -120,7 +120,7 @@ Em Linux, use Python 3.11+ e um toolchain MinGW-w64 x64. Baixe a distribuição 
 
 ```bash
 python -m pip download --only-binary=:all: --platform win_amd64 --python-version 312 -r windows/requirements.lock -d wheels
-python windows/package.py --python-win python-3.12.10-embed-amd64.zip --wheels wheels --saida simuladorCotacao-v0.10.0-win64.zip
+python windows/package.py --python-win python-3.12.10-embed-amd64.zip --wheels wheels --saida simuladorCotacao-v0.11.0-win64.zip
 ```
 
 Para desenvolver ou testar com o seu Python local, instale `requirements.txt` e rode `python app.py`. Para um comando de terminal no código-fonte, use `python app.py --cli estrategia --help`.
@@ -178,6 +178,13 @@ Para compartilhar um teste, configure a variável de ambiente `SIMULADOR_GITHUB_
 
 Em **Custos e preenchimento no Replay NTSL**, informe a soma das taxas em reais por contrato e lado e o slippage adverso em ticks. Por exemplo, R$ 0,25 por lado resulta em R$ 0,50 por contrato para uma entrada e uma saída completas. O preço de ordens a mercado, stops recém-disparados e da zeragem de fim de pregão incorpora o slippage. Um stop com preço limite aguarda se o preço simulado violar esse limite. Ordens limite passivas podem exigir que o candle negocie pelo menos um tick além do limite. Essa regra reduz preenchimentos por simples toque e permanece uma aproximação sem posição de fila.
 
-O replay apresenta bruto, taxas, líquido e drawdown líquido. A otimização financeira usa o líquido. Com os controles zerados e desmarcados, o comportamento padrão permanece o das versões anteriores. Para configurar pela CLI de replay, use `--custo-por-contrato-lado`, `--slippage-ticks` e `--limite-exige-ultrapassar`. Na CLI de otimização NTSL, configure os campos correspondentes em `regras_execucao` no JSON.
+O replay apresenta bruto, taxas, líquido e drawdown líquido. A otimização financeira usa o líquido. Taxas e slippage vêm zerados. A ultrapassagem de limite começa desmarcada. Para configurar pela CLI de replay, use `--custo-por-contrato-lado`, `--slippage-ticks` e `--limite-exige-ultrapassar`. Na CLI de otimização NTSL, configure os campos correspondentes em `regras_execucao` no JSON.
 
 O subconjunto NTSL aceita arrays unidimensionais e rotinas com parâmetros escalares por valor. Arrays multidimensionais, parâmetros por referência, histórico de variáveis locais e funções ausentes no compilador geram diagnóstico com a linha do código.
+
+
+### Indicadores do Replay NTSL
+
+- `VWAP(0..3)` calcula VWAP por barra, pregão, semana ou mês. Com negócios e quantidade, usa preço × quantidade. Em OHLC, usa `v_vwap_barra` se fornecido ou aproxima cada barra pelo preço típico (máxima + mínima + fechamento) ÷ 3, ponderado por `volume_contratos` ou `volume`.
+- `StdDevs(Serie, Periodo)` usa desvio padrão populacional na janela de barras disponíveis. `AgressionVolBalance()` lê `v_agressao_saldo_acumulado` ou acumula, por pregão, a diferença entre `v_agressao_compra` e `v_agressao_venda`. Sem os dados exigidos, o replay informa quais colunas faltam.
+- Para comparar o v5.8 no replay local, use `p_Exec_Tick = 0`. Mesmo com o CSV de negócios, a estratégia executa no fechamento dos candles agregados.

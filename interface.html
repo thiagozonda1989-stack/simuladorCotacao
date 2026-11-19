@@ -76,6 +76,8 @@ progress{display:block;width:100%;height:12px;accent-color:var(--accent);margin:
 <div><label for="slippage-ticks">Slippage adverso em ticks</label><input id="slippage-ticks" type="number" min="0" step="any" value="0" required></div>
 </div>
 <label><input id="ultrapassar-limite" type="checkbox"> Exigir ultrapassagem de um tick para ordens limite</label>
+<label><input id="ordem-proxima-barra" type="checkbox" checked> Expirar ordens que não forem reenviadas no fechamento da barra seguinte</label>
+<label><input id="historico-continuo" type="checkbox" checked> Carregar histórico de candles entre pregões</label>
 <small>As taxas são cobradas na entrada e na saída. O slippage se aplica a mercado e no disparo de stops, respeitando o limite cadastrado.</small>
 </details>
 <small>Nos CSVs enviados, a v6 usa 1 segundo e a v7 usa 5 segundos.</small>
@@ -752,6 +754,8 @@ async function reuseExecution(item, optimized) {
     $("custo-lado").value = rules.custo_por_contrato_lado ?? 0;
     $("slippage-ticks").value = rules.slippage_ticks ?? 0;
     $("ultrapassar-limite").checked = rules.limite_exige_ultrapassar === true;
+    $("ordem-proxima-barra").checked = rules.ordem_so_proxima_barra !== false;
+    $("historico-continuo").checked = rules.historico_continuo !== false;
     $("publicar-github").checked = false;
     $("csv").value = "";
     $("serie").value = "";
@@ -890,7 +894,8 @@ $("form").addEventListener("submit", async event => {
             formato:$("formato").value, segundos:Number($("segundos").value),
             tick:Number($("tick").value), valor_ponto:Number($("valor-ponto").value),
             regras_execucao:{custo_por_contrato_lado:Number($("custo-lado").value),
-                slippage_ticks:Number($("slippage-ticks").value), limite_exige_ultrapassar:$("ultrapassar-limite").checked},
+                slippage_ticks:Number($("slippage-ticks").value), limite_exige_ultrapassar:$("ultrapassar-limite").checked,
+                ordem_so_proxima_barra:$("ordem-proxima-barra").checked, historico_continuo:$("historico-continuo").checked},
             salvar_minutos:Number($("salvar-minutos").value), publicar_github:$("publicar-github").checked, opcoes:JSON.parse($("opcoes").value || "{}")
         };
         if (options.modo === "otimizar") {

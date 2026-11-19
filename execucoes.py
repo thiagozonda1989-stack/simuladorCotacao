@@ -92,6 +92,8 @@ class ExecutionArchive:
             if not isinstance(options, dict) or options.get("modo") not in {"estrategia", "otimizar"}:
                 raise ValueError("Configuração de execução inválida.")
             options["ntsl"] = read_small(package, source, 8*1024**2)
+            rules = (options.get("regras_execucao") or options.get("opcoes", {}).get("regras_execucao") or {})
+            options["regras_execucao"] = dict(ordem_so_proxima_barra=False, historico_continuo=False) | rules
             return options
 
     def extract_csv(self, destination, root):

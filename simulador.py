@@ -82,7 +82,12 @@ def read_ticks(path, seconds):
                  negocios=('preco', 'size'))
     if 'quantidade' in frame:
         specs['volume_contratos'] = ('quantidade', 'sum')
-    return frame.groupby('inicio', sort=True).agg(**specs).reset_index()
+        frame['financeiro'] = frame['preco'] * frame['quantidade']
+        specs['financeiro'] = ('financeiro', 'sum')
+    bars = frame.groupby('inicio', sort=True).agg(**specs).reset_index()
+    if 'volume_contratos' in bars:
+        bars['v_vwap_barra'] = bars.pop('financeiro').div(bars['volume_contratos'].replace(0, np.nan)).fillna(0)
+    return bars
 
 
 class NTSLModel:
@@ -402,7 +407,8 @@ def optimize(replay, config, out, on_progress=None, on_resources=None, on_partia
         control.checkpoint()
     cfg = config['genetico']
     generic = not isinstance(replay, Replay)
-    if not generic and any((config.get("regras_execucao") or {}).values()):
+    if not generic and any((config.get("regras_execucao") or {}).get(key) for key in
+                           ("custo_por_contrato_lado", "slippage_ticks", "limite_exige_ultrapassar")):
         raise ValueError("Custos, slippage e preenchimento conservador exigem o motor Replay NTSL.")
     defaults = replay.defaults if generic else replay.model.defaults
     names = tuple(config['parametros'])

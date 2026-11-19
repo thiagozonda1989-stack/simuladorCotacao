@@ -1,5 +1,11 @@
 # Histórico de versões
 
+## 0.11.0
+
+- Vigência de ordens por barra com renovação no fechamento, e histórico contínuo entre pregões no Replay NTSL. Os modos anteriores continuam disponíveis.
+- Resto com o mesmo sinal em `mod` e `Mod()`, suporte a `VWAP`, `StdDevs` e `AgressionVolBalance`, e diagnóstico para modo tick a tick.
+- Testes pytest com o exemplo de replay e GitHub Actions para push e pull request.
+
 ## 0.10.0
 
 - Taxa configurável por contrato e lado, slippage adverso em ticks e métricas financeiras líquidas no Replay NTSL.
