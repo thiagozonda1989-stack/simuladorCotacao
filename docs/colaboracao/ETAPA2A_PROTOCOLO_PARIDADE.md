@@ -20,7 +20,7 @@ O SHA funcional `c534b575a027bc196743391a9674b7a9ed8c824d` foi executado com Pyt
 | Grade/valor | 5 pontos; R$ 0,20 por ponto por contrato |
 | Cenário mecânico | custo R$ 0,00 e slippage 0 tick; não representa desempenho econômico |
 | Janela nominal | carregar 09:00–18:31; entradas da estratégia 09:15–17:00, exceto 10:25–10:35 e 14:25–14:35 |
-| Aquecimento | mínimo de 50 candles válidos após início/reinício, maior janela da candidata; nenhuma ordem do aquecimento entra na comparação |
+| Aquecimento | mínimo de 63 candles válidos após início/reinício: 14 barras do ATR encadeadas na média de 50 barras (`14 + 50 - 1`); nenhuma ordem do aquecimento entra na comparação |
 
 No Profit, a rodada deve ser feita em **Backtest/Replay**, nunca em automação de conta real: WINZ26, 21/10/2026, período 1 Min, execução OHLC/fechamento do candle, quantidade e quantidade máxima 1, slippage 0, custos 0 e “Executar nos Limites” habilitado. O código da candidata não é alterado; `indicador_paridade_modelo_unificado_v5_7_v1_0.ntsl` é uma instrumentação separada e não envia ordens.
 
@@ -40,7 +40,7 @@ Na janela 09:15–17:45 existem 511 timestamps de candle e 506 candles não marc
 | Posição aberta | preservada; a lacuna é registrada | trecho fica não comparável até evidência equivalente no Profit |
 | VWAP diário | reinicia no segmento pós-lacuna | não comparar com VWAP contínuo do Profit |
 | Saldo de agressão | reinicia no segmento pós-lacuna | não comparar com saldo contínuo; RLP agrava a limitação |
-| Médias e desvios | janelas móveis são limpas | exigir novo aquecimento de 50 candles |
+| Médias e desvios | janelas móveis são limpas | exigir novo aquecimento de 63 candles |
 
 Se a série do Profit for contínua onde a captura local tem lacuna, o trecho afetado é marcado **não comparável**; não se preenche o passado e não se carrega VWAP/agressão através da lacuna. A posição não é zerada artificialmente só porque faltaram dados.
 
@@ -58,7 +58,7 @@ Se a série do Profit for contínua onde a captura local tem lacuna, o trecho af
 A comparação é estritamente: **barras → indicadores → sinais → ordens → preenchimentos → posição**. Não se interpreta camada posterior enquanto uma anterior relevante divergir.
 
 1. Barras: timestamp exato, OHLC com tolerância 0 ponto, volume e negócios exatos.
-2. Indicadores: VWAP, desvio, ATR, média do ATR, saldo de agressão e z-score com tolerância absoluta 0,01; regime exato. Só após 50 candles válidos.
+2. Indicadores: VWAP, desvio, ATR, média do ATR, saldo de agressão e z-score com tolerância absoluta 0,01; regime exato. Só após 63 candles válidos.
 3. Sinais: compra/venda booleanos exatos no mesmo fechamento.
 4. Ordens: lado, tipo, quantidade, gatilho, limite, instante de criação/cancelamento exatos.
 5. Preenchimentos: lado/quantidade exatos, timestamp dentro do candle correspondente e preço com tolerância 0 ponto no cenário mecânico.
