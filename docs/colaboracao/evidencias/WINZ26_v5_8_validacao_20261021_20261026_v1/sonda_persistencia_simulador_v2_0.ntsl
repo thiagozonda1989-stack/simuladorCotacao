@@ -1,0 +1,53 @@
+{ Teste de estado na avaliacao extra. Somente backtest OHLC. }
+input
+  p_Data(1261026);
+  p_HoraEntrada(1303);
+  p_FimLog(1305);
+  p_Stop(5);
+  p_Offset(5);
+
+var
+  v_Seq, v_Estado, v_Historico, v_AntesArray : Integer;
+  v_Array : array[1..2] of Integer;
+  v_Boolean, v_AntesBoolean : Boolean;
+function q_Flag(p_Valor : Boolean): Integer;
+begin
+  if p_Valor then Result := 1
+  else Result := 0;
+end;
+
+begin
+  if (Date = p_Data) and (Time >= p_HoraEntrada) and (Time <= p_FimLog) then
+  begin
+    v_Seq := v_Seq + 1;
+    v_AntesBoolean := v_Boolean;
+    v_AntesArray := v_Array[1];
+    v_Historico := v_Estado[1];
+    if IsBought then
+    begin
+      v_Boolean := True;
+      v_Array[1] := 17;
+      v_Estado := 23;
+      SellToCoverStop(BuyPrice-p_Stop, BuyPrice-p_Stop-p_Offset,1);
+    end
+    else
+    begin
+      v_Boolean := False;
+      v_Array[1] := 0;
+      v_Estado := 0;
+      if (Time = p_HoraEntrada) and not HasPendingOrders then BuyAtMarket(1);
+    end;
+    ConsoleLog("PERSISTENCIA_V2;ESTADO"
+               + ";data=" + (Date)
+               + ";hora=" + (Time)
+               + ";barra=" + (CurrentBar)
+               + ";seq=" + (v_Seq)
+               + ";posicao=" + (PositionQty)
+               + ";boolean_antes=" + (q_Flag(v_AntesBoolean))
+               + ";boolean_depois=" + (q_Flag(v_Boolean))
+               + ";array_antes=" + (v_AntesArray)
+               + ";array_depois=" + (v_Array[1])
+               + ";estado_1=" + (v_Historico)
+               + ";estado_depois=" + (v_Estado));
+  end;
+end;

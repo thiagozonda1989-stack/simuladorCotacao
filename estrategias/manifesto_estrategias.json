@@ -151,6 +151,12 @@
       "sha256": "53d165350fd66902df9d0e7e340f8dc07335c47d8d47413a3cf1057aec18f018",
       "bytes": 8810,
       "origem_relativa": "Modelo_Unificado_Refatorado_v5_7_Captura_Paridade.ntsl"
+    },
+    {
+      "arquivo": "execucao/Modelo_Unificado_v5_8.ntsl",
+      "sha256": "16ee74d277add73798e26cd9d2653d26b7b375eac37c9d23455dd64b3662b20a",
+      "bytes": 7891,
+      "origem_relativa": "Modelo_Unificado_v5_8.txt"
     }
   ]
 }
