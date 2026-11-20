@@ -6,7 +6,7 @@ import pytest
 
 from estrategia import Engine, Order, run_strategy, source_text
 from ntsl import compile_ntsl
-from tools.comparar_v5_8 import audit_by_label, compare_audit, compare_fills
+from tools.comparar_v5_8 import audit_by_label, compare_audit, compare_bar_inputs, compare_fills, unique_native_capture
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -175,3 +175,24 @@ def test_comparador_v5_8_aponta_saida_como_primeiro_preenchimento_divergente():
     first = compare_fills(profit, fills, candles)["primeira_divergencia"]
     assert first["ordem"] == 2
     assert first["profit"] == ("2026-10-26T13:05:00-03:00", "exit_long", 1, 95)
+
+
+def test_comparador_v5_8_aceita_somente_blocos_nativos_identicos():
+    original = ["V58;AVALIACAO;seq=1", "V58;ENTRADA_COMPRA;seq=1", "V58;AVALIACAO;seq=2"]
+    capture, copies = unique_native_capture(["Modo de Debug", *original, *original])
+    assert capture == original
+    assert copies == 2
+    with pytest.raises(ValueError, match="execuções distintas"):
+        unique_native_capture(original + [original[0], original[2]])
+
+
+def test_comparador_v5_8_marca_campos_ausentes_na_exportacao_ohlc():
+    raw = pd.DataFrame({"timestamp": pd.to_datetime(["2026-10-21 09:00", "2026-10-21 09:01"]),
+                        "abertura": [100, 101], "maxima": [103, 104],
+                        "minima": [98, 99], "fechamento": [101, 102]})
+    prepared = raw.assign(v_trades_atual=10, volume_contratos=15, volume_financeiro=300)
+    prepared.loc[1, "fechamento"] = 103
+    result = compare_bar_inputs(raw, prepared)
+    assert result["comuns"] == 2
+    assert result["campos_ausentes_exportacao_profit"] == ["quantity", "trades", "volume_financeiro"]
+    assert result["campos"]["fechamento"]["primeira_divergencia"]["timestamp"] == "2026-10-21T09:01:00"

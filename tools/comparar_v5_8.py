@@ -13,13 +13,13 @@ import pandas as pd
 try:
     from tools.comparar_paridade_mesmas_barras import compare_same_bars
     from tools.comparar_paridade_profit_win import (
-        compare_operations, local_round_trips, normalize_bars, profit_round_trips,
+        compare_operations, first_difference, inventory, local_round_trips, normalize_bars, profit_round_trips,
         read_local_bars, read_profit, read_profit_operations, sha256, target_day,
     )
 except ModuleNotFoundError:
     from comparar_paridade_mesmas_barras import compare_same_bars
     from comparar_paridade_profit_win import (
-        compare_operations, local_round_trips, normalize_bars, profit_round_trips,
+        compare_operations, first_difference, inventory, local_round_trips, normalize_bars, profit_round_trips,
         read_local_bars, read_profit, read_profit_operations, sha256, target_day,
     )
 
@@ -33,6 +33,50 @@ def console_lines(path, native):
             return content.decode("cp1252").splitlines()
     with path.open(encoding="utf-8-sig", newline="") as stream:
         return [row["mensagem"] for row in csv.DictReader(stream)]
+
+
+def unique_native_capture(lines, prefix="V58", marker="AVALIACAO"):
+    blocks = [[]]
+    last = None
+    for line in lines:
+        message = line.strip()
+        if not message.startswith(prefix + ";"):
+            continue
+        if message.startswith(f"{prefix};{marker};"):
+            seq = int(next(part[4:] for part in message.split(";") if part.startswith("seq="))
+                      .replace(".", ""))
+            if last is not None and seq <= last:
+                blocks.append([])
+            last = seq
+        blocks[-1].append(message)
+    if any(block != blocks[0] for block in blocks[1:]):
+        raise ValueError("O console contém múltiplas execuções distintas. Selecione uma execução.")
+    return blocks[0], len(blocks)
+
+
+def compare_bar_inputs(profit, prepared):
+    supplemental = {"trades": "v_trades_atual", "quantity": "volume_contratos",
+                    "volume_financeiro": "volume_financeiro"}
+    if supplemental.keys() <= set(profit.columns):
+        return compare_same_bars(profit, prepared)
+    available = {name: source for name, source in supplemental.items() if name in profit}
+    prepared = prepared.rename(columns={source: name for name, source in available.items()})
+    common = profit.merge(prepared, on="timestamp", suffixes=("_profit", "_local"))
+    fields = {}
+    for name in ("abertura", "maxima", "minima", "fechamento", *available):
+        left, right = f"{name}_profit", f"{name}_local"
+        delta = (common[left] - common[right]).abs()
+        fields[name] = {
+            "iguais": int((delta == 0).sum()), "diferentes": int((delta != 0).sum()),
+            "max_diferenca_absoluta": None if delta.empty else float(delta.max()),
+            "primeira_divergencia": first_difference(common, left, right),
+        }
+    return {
+        "profit": inventory(profit), "local": inventory(prepared), "comuns": len(common),
+        "exclusivos_profit": [stamp.isoformat() for stamp in profit.loc[~profit.timestamp.isin(prepared.timestamp), "timestamp"]],
+        "exclusivos_local": [stamp.isoformat() for stamp in prepared.loc[~prepared.timestamp.isin(profit.timestamp), "timestamp"]],
+        "campos": fields, "campos_ausentes_exportacao_profit": sorted(set(supplemental) - set(available)),
+    }
 
 
 def audit_by_label(lines, day, native):
@@ -123,36 +167,43 @@ def main():
     args = parser.parse_args()
     if args.saida.exists():
         parser.error("A saída já existe.")
-    profit = audit_by_label(console_lines(args.console_profit, True), args.data, True)
+    capture, copies = unique_native_capture(console_lines(args.console_profit, True))
+    profit = audit_by_label(capture, args.data, True)
     motor = audit_by_label(console_lines(args.console_simulador, False), args.data, False)
     if args.aquecimento < 0:
         parser.error("Aquecimento deve ser não negativo.")
     candles = pd.read_csv(args.candles_simulador)
-    eligible = candles.loc[candles["barras_no_segmento"] > args.aquecimento]
-    labels = {stamp[11:16] for stamp in eligible["timestamp"].astype(str) if stamp.startswith(args.data)}
+    target = candles.loc[candles["timestamp"].astype(str).str.startswith(args.data)]
+    eligible = target.loc[target["barras_no_segmento"] > args.aquecimento]
+    labels = set(eligible["timestamp"].astype(str).str[11:16])
     if not labels:
         parser.error("Nenhuma barra elegível.")
     original = target_day(normalize_bars(read_profit(args.barras_profit), "Data"), args.data)
     prepared = target_day(normalize_bars(read_local_bars(args.barras_preparadas), "timestamp"), args.data)
-    bars = compare_same_bars(original, prepared)
+    bars = compare_bar_inputs(original, prepared)
     layers = {
-        "sinais": dict.fromkeys(("compra", "venda", "regime", "densidade", "aquecido"), 0),
+        "sinais": dict.fromkeys(("compra", "venda"), 0),
+        "filtros": dict.fromkeys(("regime", "densidade", "aquecido"), 0),
         "indicadores": dict.fromkeys(("vwap", "atr", "media_atr", "desvio_banda", "zvolume",
                                      "media_volume_1", "desvio_volume_1"), Decimal("0.01")),
-        "posicao_estado": dict.fromkeys(("posicao", "preco_medio", "anterior", "pode", "entradas",
-                                        "pendentes", "zerar"), 0),
+        "posicao": dict.fromkeys(("posicao", "preco_medio"), 0),
+        "estado": dict.fromkeys(("anterior", "pode", "entradas", "pendentes", "zerar"), 0),
         "solicitacoes": dict.fromkeys(("qtd", "gatilho", "limite"), 0),
     }
     profit_fills = profit_round_trips(read_profit_operations(args.operacoes_profit, args.data))
     fills = pd.read_csv(args.execucoes_simulador)
+    fills = fills.loc[fills["pregao"] == args.data]
     motor_fills = local_round_trips(fills, candles)
     report = {
         "data": args.data,
         "barras": bars,
+        "copias_identicas_console_profit": copies,
         "aquecimento_por_segmento": args.aquecimento,
         "rotulos_elegiveis": len(labels),
         "criterio": "Ordem de emissão da camada no mesmo rótulo de contexto. Execuções usam horários da exportação.",
         "camadas": {layer: compare_audit(profit, motor, labels, layer, fields) for layer, fields in layers.items()},
+        "solicitacoes_pregao": compare_audit(profit, motor, set(target["timestamp"].astype(str).str[11:16]),
+                                            "solicitacoes", layers["solicitacoes"]),
         "preenchimentos": compare_fills(profit_fills, fills, candles),
         "operacoes": compare_operations(profit_fills, motor_fills),
         "sha256_fontes": {key: sha256(path) for key, path in vars(args).items()
