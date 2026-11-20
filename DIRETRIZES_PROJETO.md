@@ -32,6 +32,16 @@ Em cada etapa, Codex reproduz as evidências locais e implementa testes, Claude 
 - Medir lucro líquido, drawdown, perda média, pior perda, concentração do resultado e estabilidade entre pregões.
 - O melhor parâmetro histórico não é evidência suficiente de desempenho futuro.
 
+## Publicação de dados e logs do Profit
+
+Para cada captura nova usada em teste, diagnóstico ou revisão, publique no GitHub, no PR da etapa, os CSVs, logs e recortes compartilháveis, acompanhados de um README. Use uma pasta por captura em `docs/colaboracao/evidencias`, com ativo, data e versão no nome ou no README. Preserve a ordem original dos eventos e mantenha separados o rótulo da barra e o horário da execução.
+
+O README registra origem, ativo, pregão, janela, fuso, granularidade, parâmetros do Profit, versão da estratégia, SHA do simulador, comandos, contagens, lacunas, duplicatas, transformações e SHA-256 dos arquivos publicados. Quando houver sanitização ou recorte, descreva o que foi removido e quais verificações dependem do original. Publique uma nova versão quando os dados ou parâmetros mudarem.
+
+Remova identificação de conta, titular, credenciais e caminhos privados. Dados de mercado sujeitos a restrição de redistribuição e a reserva final permanecem fora do GitHub. Para essas fontes, publique os recortes permitidos ou agregados, o manifesto e, quando útil, um caso sintético reproduzível. Identifique no README os resultados cuja reprodução exige acesso ao original.
+
+Antes de encaminhar a revisão, confira se os arquivos abrem no SHA publicado e use links fixos no PR. Se o ambiente de revisão estiver dessincronizado, importe os arquivos publicados como fontes. Cada parecer informa o SHA e o que efetivamente leu ou reproduziu.
+
 ## Versionamento
 
 - Estratégias de execução ficam em `estrategias/execucao`.

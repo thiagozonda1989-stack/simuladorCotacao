@@ -9,6 +9,10 @@ O `AGENTS.md` e as diretrizes do projeto definem as regras comuns. A Issue conce
 3. Compartilhe o link do PR e o SHA de revisão. Claude verifica lógica e implicações para o replay. Gemini verifica qualidade e interpretação das amostras. ChatGPT verifica método e rastreabilidade. Codex registra o que executou localmente.
 4. Thiago decide se fecha a etapa. Se o código, os dados agregados ou a conclusão mudarem, renove os pareceres afetados no SHA novo.
 
+## Evidências compartilhadas
+
+Antes de solicitar parecer, siga a [diretriz de publicação de dados e logs do Profit](../../DIRETRIZES_PROJETO.md#publicação-de-dados-e-logs-do-profit). Forneça no PR os caminhos dos arquivos e o SHA de cada execução. Envie links fixos para os arquivos compartilháveis e confira que eles abrem antes do repasse.
+
 ## Parecer de revisão
 
 ```text
