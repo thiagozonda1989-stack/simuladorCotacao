@@ -1,0 +1,5 @@
+ordem;hora_barra_contexto;barra_contexto;seq;posicao;boolean_antes;boolean_depois;array_antes;array_depois;estado_1;estado_depois
+1;13:03;2;1;0;0;0;0;0;0;0
+2;13:03;2;2;1;0;1;0;17;0;23
+3;13:04;3;3;0;1;0;0;0;0;0
+4;13:05;4;4;0;0;0;0;0;0;0

@@ -1,0 +1,3 @@
+pregao;stops_na_barra_de_entrada;solicitacoes_duplicadas_mesma_barra;max_contador_diario;cancelamentos_solicitados;stops_disparados;stops_sem_saida_na_barra_do_gatilho;candidatos_zerado_com_limite_alcancado_no_horario;tipos_saida
+2026-10-21;0;0;6;0;2;0;0;buytocoverlimit=3,selltocoveratmarket=1,selltocoverstop=2
+2026-10-26;2;0;10;0;5;0;2;buytocoverlimit=3,buytocoverstop=1,selltocoverlimit=2,selltocoverstop=4
