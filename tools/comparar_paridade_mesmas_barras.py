@@ -54,11 +54,29 @@ def compare_same_bars(profit: pd.DataFrame, prepared: pd.DataFrame) -> dict:
 
 
 def compare_engine_indicators(profit: pd.DataFrame, engine: pd.DataFrame,
-                              warmup: int) -> tuple[dict, pd.DataFrame]:
+                              warmup: int, *, by_segment: bool = False) -> tuple[dict, pd.DataFrame]:
+    if warmup < 0:
+        raise ValueError("O aquecimento deve ser nao negativo.")
     joined = profit.merge(engine, on="timestamp", how="inner", suffixes=("_profit", "_motor"))
-    # Aquecimento significa excluir as primeiras N barras; a primeira barra
-    # comparada e N+1. Isso evita tratar a ultima barra de warmup como evidencia.
-    comparable = joined.iloc[warmup:].copy()
+    segments = []
+    if by_segment:
+        if not {"segmento", "barras_no_segmento"} <= set(engine.columns):
+            raise ValueError("O aquecimento por segmento exige segmento e barras_no_segmento do replay.")
+        # O contador vem do replay para que uma barra faltando apenas no
+        # cruzamento com o Profit nao reinicie nem encurte o aquecimento.
+        comparable = joined.loc[joined["barras_no_segmento"] > warmup].copy()
+        for segment, group in engine.groupby("segmento", sort=False):
+            compared = comparable.loc[comparable["segmento"] == segment]
+            segments.append({
+                "segmento": int(segment),
+                "inicio": group.timestamp.min().isoformat(),
+                "barras_replay": len(group),
+                "barras_excluidas_aquecimento": int((group["barras_no_segmento"] <= warmup).sum()),
+                "barras_comparadas": len(compared),
+                "primeira_barra_comparada": None if compared.empty else compared.timestamp.min().isoformat(),
+            })
+    else:
+        comparable = joined.iloc[warmup:].copy()
     fields = {}
     for source, (plot, label, tolerance) in PLOTS.items():
         delta = (pd.to_numeric(comparable[source]) - pd.to_numeric(comparable[plot])).abs()
@@ -66,20 +84,23 @@ def compare_engine_indicators(profit: pd.DataFrame, engine: pd.DataFrame,
             "tolerancia": tolerance, "comparados": int(len(comparable)),
             "dentro_tolerancia": int((delta <= tolerance).sum()),
             "fora_tolerancia": int((delta > tolerance).sum()),
-            "mediana_diferenca_absoluta": float(delta.median()),
-            "max_diferenca_absoluta": float(delta.max()),
+            "mediana_diferenca_absoluta": None if delta.empty else float(delta.median()),
+            "max_diferenca_absoluta": None if delta.empty else float(delta.max()),
             "primeira_divergencia": first_difference(comparable, source, plot, tolerance),
         }
-    return {
+    result = {
         "aquecimento_excluido_barras": warmup,
-        "primeira_barra_comparada": comparable.timestamp.min().isoformat(),
+        "primeira_barra_comparada": None if comparable.empty else comparable.timestamp.min().isoformat(),
         "barras_comparadas": int(len(comparable)),
         "rolling_local": "nao usado; permanece apenas diagnostico auxiliar",
         "campos": fields,
         "vwap": "aproximada a partir de Volume/(Quantity*0,20)",
         "agressao": "referencia do plot Profit injetada; rodada diagnostica",
         "volume_zscore": "Volume financeiro exportado pelo Profit",
-    }, comparable
+    }
+    if by_segment:
+        result["aquecimento_segmentos"] = segments
+    return result, comparable
 
 
 def signal_and_order_summary(comparable: pd.DataFrame, execution: pd.DataFrame) -> dict:
@@ -124,7 +145,8 @@ def build(args: argparse.Namespace) -> dict:
         pd.read_csv(args.motor_candles), "timestamp", "motor execucao"), args.data)
     bars = compare_same_bars(profit_bars, prepared)
     indicators, comparable = compare_engine_indicators(
-        profit_indicators, engine_indicators, args.aquecimento)
+        profit_indicators, engine_indicators, args.aquecimento,
+        by_segment=getattr(args, "aquecimento_por_segmento", False))
 
     profit_operations = profit_round_trips(read_profit_operations(args.profit_operacoes, args.data))
     fills = pd.read_csv(args.motor_execucoes)
@@ -159,7 +181,8 @@ def build(args: argparse.Namespace) -> dict:
         "preenchimentos_e_posicao": operations,
         "conclusao_primeira_divergencia": (
             "nenhuma divergencia verificavel apos o aquecimento; camada de ordens Profit indisponivel"
-            if all(value["primeira_divergencia"] is None
+            if not comparable.empty
+               and all(value["primeira_divergencia"] is None
                    for value in indicators["campos"].values()) and
                operations["sem_correspondencia_profit"] == 0 and
                operations["sem_correspondencia_local"] == 0
@@ -176,6 +199,8 @@ def main() -> None:
         parser.add_argument("--" + name.replace("_", "-"), type=Path, required=True)
     parser.add_argument("--data", default="2026-10-21")
     parser.add_argument("--aquecimento", type=int, default=63)
+    parser.add_argument("--aquecimento-por-segmento", action="store_true",
+                        help="Exclui as primeiras N barras de cada segmento do replay.")
     parser.add_argument("--saida", type=Path, required=True)
     args = parser.parse_args()
     if args.saida.exists():

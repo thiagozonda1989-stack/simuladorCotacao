@@ -169,12 +169,13 @@ def test_stop_limit_ja_ativo_nao_depende_da_nova_regra():
     assert standard.fills[-1]["barra"] == same_candle.fills[-1]["barra"] == 3
 
 
-def test_saida_a_mercado_decidida_no_fechamento_nao_retroage_para_abertura():
+@pytest.mark.parametrize("mode", ["protecao_no_candle_entrada", "avaliacao_pos_preenchimento"])
+def test_saida_a_mercado_decidida_no_fechamento_nao_retroage_para_abertura(mode):
     source = ("begin if CurrentBar=1 then BuyAtMarket(1); "
               "if IsBought and (Close < BuyPrice) then SellToCoverAtMarket(1); end;")
     engine = run_ohlc(source, [100, 100, 80], [100, 105, 85],
                       [100, 90, 75], [100, 90, 80],
-                      rules={"protecao_no_candle_entrada": True})
+                      rules={mode: True})
     assert [(fill["barra"], fill["acao"], fill["preco"]) for fill in engine.fills[:2]] == [
         (2, "long", 100), (3, "exit_long", 80),
     ]
@@ -240,3 +241,162 @@ def test_alvo_e_stop_tocados_na_barra_da_entrada_escolhem_saida_adversa():
         ("long", 100), ("exit_long", 95),
     ]
     assert engine.ambiguities == 1
+
+
+def test_avaliacao_pos_preenchimento_reentrada_em_quatro_barras():
+    source = """
+    begin
+      if IsBought then begin
+        SellToCoverLimit(BuyPrice+20,1);
+        SellToCoverStop(BuyPrice-5,BuyPrice-10,1);
+      end
+      else if Close >= 90 then BuyAtMarket(1);
+    end;
+    """
+    candles = ([100, 100, 92, 88], [102, 101, 93, 89],
+               [99, 94, 86, 87], [101, 97, 88, 88])
+
+    standard = run_ohlc(source, *candles)
+    legacy = run_ohlc(source, *candles, rules={"protecao_no_candle_entrada": True})
+    assert [(f["barra"], f["acao"], f["preco"]) for f in standard.fills] == [
+        (2, "long", 100), (3, "exit_long", 92),
+    ]
+    assert [(f["barra"], f["acao"], f["preco"]) for f in legacy.fills] == [
+        (2, "long", 100), (2, "exit_long", 95),
+    ]
+
+    experimental = run_ohlc(source, *candles, rules={
+        "avaliacao_pos_preenchimento": True, "rastrear_ordens": True,
+    })
+    assert [(f["barra"], f["acao"], f["preco"]) for f in experimental.fills] == [
+        (2, "long", 100), (2, "exit_long", 95),
+        (3, "long", 92), (3, "exit_long", 87),
+    ]
+    events = experimental.order_events
+    assert [(e["barra"], e["posicao"]) for e in events if e["evento"] == "avaliacao_ntsl"] == [
+        (1, 0), (2, 0), (3, 0), (4, 0),
+    ]
+    assert [(e["barra"], e["chave"]) for e in events if e["evento"] == "solicitacao"] == [
+        (1, "buyatmarket"),
+        (2, "selltocoverlimit"), (2, "selltocoverstop"), (2, "buyatmarket"),
+        (3, "selltocoverlimit"), (3, "selltocoverstop"),
+    ]
+    assert [e["gatilho"] for e in events if e["evento"] == "gatilho_stop"] == [95, 87]
+    assert experimental.ambiguities == standard.ambiguities == legacy.ambiguities == 0
+    assert not experimental.orders
+
+
+def test_protecao_na_abertura_usa_ohlc_e_rotulo_da_barra_anterior():
+    source = """
+    begin
+      if CurrentBar=1 then begin
+        if IsBought then begin
+          SellToCoverLimit(BuyPrice+30+High-Low,1);
+          SellToCoverStop(Close-5,Close-10,1);
+        end
+        else BuyAtMarket(1);
+      end;
+    end;
+    """
+    engine = run_ohlc(source, [100, 100, 120], [103, 130, 125],
+                      [99, 95, 115], [101, 125, 120],
+                      rules={"avaliacao_pos_preenchimento": True, "rastrear_ordens": True})
+    assert [(f["barra"], f["preco"]) for f in engine.fills] == [(2, 100), (2, 96)]
+    requests = [e for e in engine.order_events if e["barra"] == 2 and e["evento"] == "solicitacao"]
+    assert [(e["chave"], e["gatilho"], e["limite"], e["barra_contexto_ntsl"]) for e in requests] == [
+        ("selltocoverlimit", 134, "", 1), ("selltocoverstop", 96, 91, 1),
+    ]
+
+
+def test_avaliacao_na_abertura_isola_estado_e_renova_protecao_sem_duplicar():
+    source = """
+    var n: Integer;
+        visits: array[1..1] of Integer;
+    begin
+      n := n+1;
+      visits[1] := visits[1]+1;
+      Plot(n);
+      Plot2(visits[1]);
+      Plot3(Media(2, Close));
+      Plot4(n[1]);
+      if IsBought then begin
+        if CurrentBar=1 then BuyAtMarket(2);
+        SellToCoverStop(BuyPrice-5,BuyPrice-10,1);
+      end
+      else if CurrentBar=1 then BuyAtMarket(1);
+    end;
+    """
+    engine = run_ohlc(source, [100, 100, 108, 98], [100, 110, 111, 99],
+                      [100, 98, 94, 97], [100, 110, 96, 98],
+                      rules={"avaliacao_pos_preenchimento": True, "rastrear_ordens": True})
+    assert [(r["plot"], r["plot2"], r["plot3"], r["plot4"]) for r in engine.trace] == [
+        (1, 1, 100, 0), (2, 2, 105, 1), (3, 3, 103, 2), (4, 4, 97, 3),
+    ]
+    assert engine.history[:, engine.program.symbols["n"].slot].tolist() == [1, 2, 3, 4]
+    assert [(f["barra"], f["acao"], f["quantidade"]) for f in engine.fills] == [
+        (2, "long", 1), (3, "exit_long", 1),
+    ]
+    assert [(e["barra"], e["evento"], e["primeira_barra_elegivel"]) for e in engine.order_events
+            if e["chave"] == "selltocoverstop" and e["evento"].startswith("solicitacao")] == [
+        (2, "solicitacao", 2), (2, "solicitacao_renovada", 2),
+    ]
+    assert [(e["barra"], e["quantidade"]) for e in engine.order_events
+            if e["chave"] == "buyatmarket" and e["evento"] == "solicitacao"] == [(1, 1)]
+
+
+def test_stop_disparado_na_posicao_anterior_nao_e_reutilizado():
+    source = """
+    begin
+      if IsBought then begin
+        SellToCoverStop(BuyPrice-5,BuyPrice-10,1);
+        if CurrentBar=3 then SellToCoverAtMarket(1);
+      end
+      else if (CurrentBar=1) or (CurrentBar=4) then BuyAtMarket(1);
+    end;
+    """
+    engine = run_ohlc(source, [100, 100, 85, 88, 100, 97], [100, 106, 88, 89, 101, 98],
+                      [100, 98, 80, 86, 94, 96], [100, 102, 86, 87, 96, 97],
+                      rules={"avaliacao_pos_preenchimento": True, "rastrear_ordens": True})
+    assert [(f["barra"], f["ordem"], f["preco"]) for f in engine.fills] == [
+        (2, "buyatmarket", 100), (4, "selltocoveratmarket", 88),
+        (5, "buyatmarket", 100), (5, "selltocoverstop", 95),
+    ]
+    assert [(e["barra"], e["gatilho"]) for e in engine.order_events if e["evento"] == "gatilho_stop"] == [
+        (3, 95), (5, 95),
+    ]
+
+
+@pytest.mark.parametrize("boundary", ["lacuna", "sessao"])
+def test_avaliacao_na_abertura_nao_atravessa_limite_de_historico(boundary):
+    source = """
+    begin
+      if IsBought then SellToCoverStop(BuyPrice-5,BuyPrice-10,1)
+      else if CurrentBar<=2 then BuyAtMarket(1);
+    end;
+    """
+    days = ["2026-10-02", "2026-10-05", "2026-10-05"] if boundary == "sessao" else None
+    engine = run(source, [100, 110, 120], days,
+                 {"avaliacao_pos_preenchimento": True, "rastrear_ordens": True},
+                 lacuna_intradiaria=[False, boundary == "lacuna", False])
+    assert engine.fills[0]["barra"] == 3
+    assert engine.orders_cancelled_at_gaps == (1 if boundary == "lacuna" else 0)
+    assert [(e["barra"], e["barra_contexto_ntsl"]) for e in engine.order_events
+            if e["evento"] == "avaliacao_ntsl_pos_preenchimento"] == [(3, 2)]
+
+
+def test_posicao_com_entrada_mista_nao_recebe_protecao_retroativa():
+    source = """
+    begin
+      if CurrentBar=1 then begin
+        BuyAtMarket(1);
+        BuyAtLimit(90,1);
+      end;
+      if IsBought then SellToCoverLimit(BuyPrice+5,2);
+    end;
+    """
+    engine = run_ohlc(source, [100, 100, 120], [100, 115, 125], [100, 90, 115], [100, 105, 120],
+                      rules={"avaliacao_pos_preenchimento": True, "rastrear_ordens": True})
+    assert [(f["barra"], f["acao"], f["preco"]) for f in engine.fills] == [
+        (2, "long", 100), (2, "long", 90), (3, "exit_long", 120),
+    ]
+    assert not any(e["evento"] == "avaliacao_ntsl_pos_preenchimento" for e in engine.order_events)

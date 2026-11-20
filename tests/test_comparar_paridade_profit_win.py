@@ -4,11 +4,38 @@ from pathlib import Path
 import pandas as pd
 import pytest
 
+from tools.comparar_paridade_mesmas_barras import PLOTS, compare_engine_indicators
+
 
 PATH = Path(__file__).parents[1] / "tools" / "comparar_paridade_profit_win.py"
 SPEC = importlib.util.spec_from_file_location("comparar_paridade_profit_win", PATH)
 MODULE = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(MODULE)
+
+
+def test_aquecimento_por_segmento_usa_contagem_real_do_replay():
+    timestamps = pd.to_datetime([
+        "2026-10-26 09:00", "2026-10-26 09:01", "2026-10-26 09:02",
+        "2026-10-26 09:05", "2026-10-26 09:06", "2026-10-26 09:07", "2026-10-26 09:08",
+    ])
+    engine = pd.DataFrame({
+        "timestamp": timestamps,
+        "segmento": [1, 1, 1, 2, 2, 2, 2],
+        "barras_no_segmento": [1, 2, 3, 1, 2, 3, 4],
+        **{plot: 0 for plot, _, _ in PLOTS.values()},
+    })
+    profit = pd.DataFrame({"timestamp": timestamps, **{field: 0 for field in PLOTS}})
+    profit = profit.drop(index=4)
+    _, daily = compare_engine_indicators(profit, engine, 2)
+    report, segmented = compare_engine_indicators(profit, engine, 2, by_segment=True)
+    assert daily["timestamp"].tolist() == timestamps[[2, 3, 5, 6]].tolist()
+    assert segmented["timestamp"].tolist() == timestamps[[2, 5, 6]].tolist()
+    assert [s["barras_excluidas_aquecimento"] for s in report["aquecimento_segmentos"]] == [2, 2]
+    assert [s["barras_comparadas"] for s in report["aquecimento_segmentos"]] == [1, 2]
+    assert report["campos"]["atr"]["dentro_tolerancia"] == 3
+    empty, _ = compare_engine_indicators(profit, engine, 4, by_segment=True)
+    assert empty["primeira_barra_comparada"] is None
+    assert empty["campos"]["atr"]["max_diferenca_absoluta"] is None
 
 
 def test_compara_cobertura_e_primeira_divergencia():

@@ -1,6 +1,7 @@
 """Replay local de estratégias NTSL por candle."""
 import argparse
 import csv
+from copy import deepcopy
 from dataclasses import asdict, dataclass
 import hashlib
 import html
@@ -126,6 +127,7 @@ class ExecutionRules:
     vwap_continuo_lacunas: bool = False
     protecao_no_candle_entrada: bool = False
     rastrear_ordens: bool = False
+    avaliacao_pos_preenchimento: bool = False
 
     def __post_init__(self):
         for value in (self.latencia_ticks_ms, self.lacuna_ticks_ms):
@@ -137,6 +139,8 @@ class ExecutionRules:
             raise ValueError("Para tick a tick, zere a latência em barras e use a latência em milissegundos.")
         if self.motor_ticks and self.protecao_no_candle_entrada:
             raise ValueError("A proteção no candle da entrada só se aplica ao motor OHLC.")
+        if self.avaliacao_pos_preenchimento and (self.motor_ticks or self.protecao_no_candle_entrada):
+            raise ValueError("A avaliação pós-preenchimento exige OHLC e substitui a proteção no candle da entrada.")
         if type(self.latencia_barras) is not int or self.latencia_barras < 0:
             raise ValueError("A latência adicional deve ser um inteiro não negativo em barras.")
         for value in (self.custo_por_contrato_lado, self.slippage_ticks):
@@ -146,7 +150,7 @@ class ExecutionRules:
                       self.historico_continuo, self.volume_financeiro_ntsl,
                       self.agressao_por_barra, self.agressao_referencia_injetada,
                       self.vwap_continuo_lacunas, self.protecao_no_candle_entrada,
-                      self.rastrear_ordens):
+                      self.rastrear_ordens, self.avaliacao_pos_preenchimento):
             if type(value) is not bool:
                 raise ValueError("As regras de execução devem ser booleanas.")
 
@@ -202,17 +206,19 @@ class Engine:
         self.ambiguities = 0
         self.entry_intentions = set()
         self.order_events = []
+        self.opening_evaluation_row = None
 
     def audit_order(self, event, order=None, key="", execution_price=""):
         if not self.rules.rastrear_ordens:
             return
+        row = self.row if self.opening_evaluation_row is None else self.opening_evaluation_row
         timestamp = ""
         for column in ("timestamp", "inicio", "minuto"):
             if column in self.frame:
-                timestamp = self.frame.iloc[self.row][column]
+                timestamp = self.frame.iloc[row][column]
                 break
-        self.order_events.append(dict(
-            barra=self.row+1, pregao=self.days[self.row], timestamp=timestamp,
+        record = dict(
+            barra=row+1, pregao=self.days[row], timestamp=timestamp,
             evento=event, chave=key,
             ordem="" if order is None else order.function,
             acao="" if order is None else order.action,
@@ -223,7 +229,10 @@ class Engine:
             preco_execucao=execution_price,
             primeira_barra_elegivel="" if order is None else order.eligible_at+1,
             posicao=self.position, preco_medio=self.basis,
-        ))
+        )
+        if self.rules.avaliacao_pos_preenchimento:
+            record["barra_contexto_ntsl"] = self.row+1
+        self.order_events.append(record)
 
     @staticmethod
     def prepare_series(program, frame, regras=None):
@@ -538,6 +547,10 @@ class Engine:
             self.entry_intentions.add(action)
 
     def place(self, key, order):
+        if self.opening_evaluation_row is not None:
+            exit_action = "exit_long" if self.position > 0 else "exit_short"
+            if order.action != exit_action or order.kind not in {"limit", "stop"}:
+                return
         old = self.orders.get(key)
         order.requested_quantity = order.quantity
         same_order = old and (old.price, old.limit, old.requested_quantity or old.quantity) == (
@@ -715,6 +728,40 @@ class Engine:
             indicator.window.extend(window)
             indicator.row, indicator.sum, indicator.ema, indicator.value = row, total, ema, value
 
+    def evaluate_strategy(self, event="avaliacao_ntsl"):
+        self.plots = {}
+        self.entry_intentions = set()
+        self.loop_budget = 100_000
+        self.audit_order(event)
+        try:
+            self.program.strategy(self)
+        except (ValueError,TypeError,OverflowError,ZeroDivisionError,RecursionError) as error:
+            raise NTSLError(f"Barra {self.row+1}, pregão {self.days[self.row]}: {error}") from error
+
+    def protect_at_open(self):
+        row = self.row
+        values, arrays, rolling, orders = self.values, self.arrays, self.rolling, self.orders
+        # A avaliação adicional usa a última barra fechada. Só suas proteções
+        # persistem. Variáveis, arrays e janelas continuam da avaliação regular.
+        self.values = values.copy()
+        self.arrays = {slot: array.copy() for slot, array in arrays.items()}
+        self.rolling = deepcopy(rolling)
+        self.orders = {key: order for key, order in orders.items()
+                       if not order.action.startswith("exit")}
+        self.opening_evaluation_row = row
+        self.row = self.cursor = row-1
+        try:
+            self.evaluate_strategy("avaliacao_ntsl_pos_preenchimento")
+            protections = {key: order for key, order in self.orders.items()
+                           if order.action.startswith("exit")}
+        finally:
+            self.row = self.cursor = row
+            self.opening_evaluation_row = None
+            self.values, self.arrays, self.rolling, self.orders = values, arrays, rolling, orders
+        if protections:
+            self.orders.update(protections)
+            self.process_orders(protections)
+
     def run(self, record_trace=True, on_progress=None, checkpoint=None, safe_point=None):
         self.checkpoint = checkpoint
         days = self.days
@@ -749,14 +796,12 @@ class Engine:
                 and any(fill["acao"] in {"long", "short"} and fill["tipo"] == "market"
                         for fill in opening_fills)
             )
-            self.plots = {}
-            self.entry_intentions = set()
-            self.loop_budget = 100_000
-            self.audit_order("avaliacao_ntsl")
-            try:
-                self.program.strategy(self)
-            except (ValueError,TypeError,OverflowError,ZeroDivisionError,RecursionError) as error:
-                raise NTSLError(f"Barra {row+1}, pregão {days[row]}: {error}") from error
+            if (self.rules.avaliacao_pos_preenchimento and opened_by_market_at_open
+                    and row > self.session_start and not self.gap[row]
+                    and all(fill["acao"] in {"long", "short"} and fill["tipo"] == "market"
+                            for fill in opening_fills)):
+                self.protect_at_open()
+            self.evaluate_strategy()
             if self.rules.protecao_no_candle_entrada and opened_by_market_at_open:
                 exit_action = "exit_long" if self.position > 0 else "exit_short"
                 # A segunda passagem representa somente proteções vinculadas à
@@ -880,13 +925,17 @@ def run_strategy(csv, source, output, seconds, format_name, tick, overrides=None
     report_title = "Validação do modelo" if validacao is not None else "Replay NTSL"
     order_link = ' · <a href="eventos_ordens.csv">Ciclo das ordens</a>' if rules.rastrear_ordens else ''
     items = '<a href="execucoes.csv">Execuções</a> · <a href="candles.csv">Candles e sinais</a> · <a href="console.csv">Console</a>' + order_link + ' · <a href="metricas.json">Métricas e inputs</a>'
-    description = ("O código é executado a cada negócio. Ordens novas ficam elegíveis em evento posterior. "
-                   "O preenchimento usa preço e quantidade observados, sem posição real na fila."
-                   if rules.motor_ticks else
-                   ("O código roda uma vez por candle. Entradas novas são elegíveis na barra seguinte; "
-                    "a proteção criada após uma entrada a mercado também é testada no candle da entrada."
-                    if rules.protecao_no_candle_entrada else
-                    "O código roda no fechamento de cada candle. Ordens novas só são elegíveis na barra seguinte."))
+    if rules.motor_ticks:
+        description = ("O código é executado a cada negócio. Ordens novas ficam elegíveis em evento posterior. "
+                       "O preenchimento usa preço e quantidade observados, sem posição real na fila.")
+    elif rules.avaliacao_pos_preenchimento:
+        description = ("Na abertura, uma entrada a mercado a partir de posição zerada permite criar proteções "
+                       "com a barra anterior. O fechamento avalia a posição resultante.")
+    elif rules.protecao_no_candle_entrada:
+        description = ("O código roda uma vez por candle. Entradas novas são elegíveis na barra seguinte; "
+                       "a proteção criada após uma entrada a mercado também é testada no candle da entrada.")
+    else:
+        description = "O código roda no fechamento de cada candle. Ordens novas só são elegíveis na barra seguinte."
     (output/"relatorio.html").write_text(f"""<!doctype html><html lang="pt-BR"><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1"><title>{report_title}</title>
 <style>
@@ -930,6 +979,8 @@ def main():
                    help="Diagnostico: VWAP diaria nao reinicia em lacuna intradiaria")
     p.add_argument("--protecao-no-candle-entrada", action="store_true",
                    help="OHLC de paridade: testa somente alvo/stop novos no candle da entrada a mercado preenchida na abertura")
+    p.add_argument("--avaliacao-pos-preenchimento", action="store_true",
+                   help="OHLC experimental: cria proteções na abertura com o contexto da barra anterior")
     p.add_argument("--rastrear-ordens", action="store_true",
                    help="Grava solicitacoes, elegibilidade, gatilhos, preenchimentos e posicao vista pelo NTSL")
     p.add_argument("--inputs",help="Arquivo JSON com valores de inputs a substituir")

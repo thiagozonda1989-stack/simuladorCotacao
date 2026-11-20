@@ -55,17 +55,20 @@ Compila `input`, `const`, `var`, `begin/end`, `if/then/else`, `for to/downto`, `
 
 ## Preenchimentos e limitações do replay
 
-O código é avaliado uma vez, no **fechamento**. Ordens emitidas no fechamento podem executar a partir da próxima barra disponível. Ordens a mercado usam a abertura seguinte. Limites e stops usam os extremos da barra com ajuste de gap. Por padrão, limites e stops não executados expiram no fim da barra seguinte ao envio, salvo se reenviados ou editados naquele fechamento. Desmarque **Expirar ordens** para manter a ordem até execução, cancelamento ou fim do pregão.
+Por padrão, o código é avaliado uma vez, no **fechamento**. Ordens emitidas no fechamento podem executar a partir da próxima barra disponível. Ordens a mercado usam a abertura seguinte. Limites e stops usam os extremos da barra com ajuste de gap. Limites e stops não executados expiram no fim da barra seguinte ao envio, salvo se reenviados ou editados naquele fechamento. Desmarque **Expirar ordens** para manter a ordem até execução, cancelamento ou fim do pregão.
 
 Se alvo e stop forem tocados na mesma barra, o relatório registra ambiguidade e aplica o preenchimento menos favorável entre as saídas tocadas. Uma ordem a mercado já pendente tem prioridade na abertura. O replay mantém uma posição líquida, substitui ordens pendentes da mesma função e limita saídas ao saldo da posição. Ao fim de cada pregão, cancela ordens pendentes e encerra a posição restante no último fechamento disponível.
 
-O simulador usa hipóteses de preenchimento por OHLC, sem reconstruir posição na fila, latência ou a sequência intrabar. O código roda uma vez por candle, no fechamento. Ordens de saída geradas após a entrada ficam elegíveis na barra seguinte. As novas funções de ordens usam essas regras locais. A caixa de ferramentas foi conferida com o [manual NTSL da Nelogica](https://www.nelogica.com.br/manualntsl). A estratégia das 150 árvores pode ser analisada pelo classificador na abertura via modo **Otimização genética**, ou executada no fechamento via **Replay da estratégia**. Os dois modos têm unidades de avaliação e regras de execução próprias.
+O simulador usa hipóteses de preenchimento por OHLC, sem reconstruir posição na fila, latência ou a sequência intrabar. A caixa de ferramentas foi conferida com o [manual NTSL da Nelogica](https://www.nelogica.com.br/manualntsl). A estratégia das 150 árvores pode ser analisada pelo classificador na abertura via modo **Otimização genética**, ou executada no fechamento via **Replay da estratégia**. Os dois modos têm unidades de avaliação e regras de execução próprias.
+
+Na CLI de replay OHLC, `--avaliacao-pos-preenchimento` experimenta uma avaliação adicional após entrada a mercado na abertura a partir de posição zerada. Ela usa a barra fechada anterior do mesmo segmento e pode criar alvo ou stop para a nova posição. Variáveis, arrays e histórico persistem apenas pela avaliação regular. O motor testa as novas proteções elegíveis na barra de entrada e avalia o fechamento com a posição resultante. Use a opção por si só. O modo legado `--protecao-no-candle-entrada` avalia o fechamento antes de testar as proteções e é incompatível com o experimento.
 
 ### Relatórios
 
 - `relatorio.html` e `metricas.json` resumem preenchimentos, saídas, pontos × contratos, drawdown realizado, inputs, hash do código e ambiguidades.
 - `execucoes.csv` lista preenchimentos. `candles.csv` contém OHLC, intenções de entrada, posição, pontos acumulados e chamadas de plot.
 - `console.csv` contém as primeiras 10 mil mensagens de `ConsoleLog`.
+- `--rastrear-ordens` gera `eventos_ordens.csv`. No experimento, `barra` refere-se à barra do evento no simulador e `barra_contexto_ntsl` indica a barra lida na avaliação.
 - `estrategia.ntsl` guarda o código efetivamente executado. Os inputs aplicados ficam em `metricas.json`.
 
 ## Otimizador genético
