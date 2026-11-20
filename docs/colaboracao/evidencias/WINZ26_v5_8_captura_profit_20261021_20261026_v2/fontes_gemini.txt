@@ -81,7 +81,7 @@ py -3.11 tools/comparar_v5_8.py --data $dia --aquecimento 63 `
 py -3.11 -m pytest -q
 ```
 
-A suíte passou com **68 testes** e 12 avisos de timezone já conhecidos. O comparador só remove cópias de console integralmente idênticas, aceita o CSV OHLC e registra os campos ausentes. O teste de continuidade não altera o motor em produção. A regressão v5.7 da rodada anterior permanece a referência porque o motor e a estratégia mantiveram os mesmos bytes. A paridade se restringe aos pregões observados e ao trecho elegível. [Regressão v5.7 anterior](../WINZ26_v5_8_validacao_20261021_20261026_v1/regressao_v5_7.csv)
+A suíte passou com **68 testes** e 12 avisos de timezone já conhecidos. O comparador só remove cópias de console integralmente idênticas, aceita o CSV OHLC e registra os campos ausentes. O teste de continuidade não altera o motor em produção. A regressão da v5.7 foi reexecutada nos seis cenários com VWAP contínua e os mesmos insumos. A comparação usou o corte de 63 barras por segmento. Os 24 arquivos de operações, candles, console e ordens e os dois CSVs de plots coincidiram byte a byte com a rodada anterior. Em 21/10, os três modos mantiveram 10/10. Em 26/10, padrão, proteção legada e pós-preenchimento mantiveram respectivamente 8/12, 11/12 e 12/12. A operação #182 continua exata no pós-preenchimento. Os oito indicadores mantiveram 502/502 e 463/463 barras elegíveis. [Comandos da regressão](../WINZ26_v5_7_persistencia_escalar_20261026_v2/README.md#comandos) A paridade se restringe aos pregões observados e ao trecho elegível. [Matriz v5.7 revalidada](../WINZ26_v5_8_validacao_20261021_20261026_v1/regressao_v5_7.csv)
 
 [TXT completo para o Gemini](fontes_gemini.txt) · [Manifesto de SHA-256](SHA256SUMS.txt)
 
@@ -284,7 +284,7 @@ simulador;4;13:05;4;4;0;0;0;0;0;0;0
 
 === docs/colaboracao/evidencias/WINZ26_v5_8_captura_profit_20261021_20261026_v2/SHA256SUMS.txt ===
 
-dce9c7334c0d147e41ea0fd8314962786d207fa317edf275f636fe34651e76c1  README.md
+05ca3808ed31f3ca397acad9953a0faff07d3761d582cd2a514959c6111e32ee  README.md
 a201a7341b5771abde5d22f8b2c37db687f7dc6d2382c0e00717af97c8dcbbb1  ambiguidade_10h15.csv
 bcfa686c11fbf8a0a6d72c2d42e4129d9951b815884dd14efd898e748f486bbc  inventario_fontes.csv
 de7dad045ae988b495b0dfdb891a9db09c3451d0c3e921f2293d54fd112820d1  matriz_camadas_v5_8.csv
