@@ -23,13 +23,24 @@ No simulador, uma compra abriu a 100 e o stop preencheu a 95 dentro da barra sin
 | 3 | Regular, depois do stop | 13:04 | 2 | 0 | 0 | 0 |
 | 4 | Regular | 13:05 | 3 | 0 | 0 | 0 |
 
-### Executar no Profit
+### Resultado no Profit
+
+O usuário executou a sonda no Profit em modo Debug e forneceu as quatro linhas do console. O CSV conserva a ordem original e normaliza os separadores de milhar, a data e a hora. Os horários são rótulos da barra da avaliação NTSL.
+
+| Ordem do log | Hora da barra | `CurrentBar` | `seq` | Posição | Antes | Depois |
+|---:|---:|---:|---:|---:|---:|---:|
+| 1 | 13:03 | 27005 | 1 | 0 | 0 | 0 |
+| 2 | 13:03 | 27005 | 2 | +1 | 0 | 1 |
+| 3 | 13:04 | 27006 | 3 | 0 | 1 | 0 |
+| 4 | 13:05 | 27007 | 4 | 0 | 0 | 0 |
+
+A avaliação extra comprada, de sequência 2, gravou `depois=1`. A avaliação regular zerada das 13:04, de sequência 3, leu `antes=1`. Isso confirma a persistência da variável escalar entre as duas avaliações neste Backtest. O simulador leu `antes=0` na passagem correspondente do caso sintético. A evidência se refere à sonda escalar. Uma alteração no motor requer teste de decisão dependente do estado e regressões de histórico, médias e ordens. [Log da sonda no Profit](profit_sonda_log.csv)
+
+### Reproduzir no Profit
 
 1. Abra a [sonda NTSL do Profit](sonda_persistencia_profit_v1_0.ntsl) como nova estratégia de execução no Editor. Compile e execute no **Backtest OHLC**, ativo **WINZ26**, período **1 minuto**, com histórico incluindo **26/10/2026**. Use quantidade e quantidade máxima 1, slippage zero e execução nos limites. A sonda tem a data, a janela 13:03–13:05, o stop de 350 pontos e o offset de 5 nos inputs.
 2. Copie somente as linhas iniciadas em `PERSISTENCIA;` do console, na ordem em que aparecem. Cada linha registra data e hora da barra, `CurrentBar`, `seq`, posição, valor antes e valor depois. Preserve a repetição de rótulos ou de `seq`. Use a ordem do console para distinguir as passagens.
-3. Verifique se ocorreram os três estados: avaliação regular zerada que solicita a compra, avaliação extra com posição +1 que grava `depois=1`, e avaliação regular depois da saída com posição 0. A hipótese é `antes=1` na última passagem. `antes=0` indica descarte nesse cenário. Se faltar a avaliação extra ou a saída anteceder a passagem comprada, o teste não decide a questão.
-
-**Estado da sonda nativa: pendente.** O Profit estava aberto na versão 5.0.4.33. O usuário interrompeu o controle da interface e escolheu executar o Backtest manualmente. A sonda foi preparada para essa confirmação independente. A captura histórica sustenta a hipótese, mas o resultado da sonda controlada no Profit fica como condição para alterar o isolamento no modo experimental. O teste de regressão novo caracteriza o comportamento atual. Uma eventual alteração precisa de uma estratégia que tome uma decisão com o valor persistido e verificação separada de variáveis históricas, janelas móveis e unicidade de ordens.
+3. Verifique se a passagem extra comprada grava `depois=1` e se a passagem regular zerada seguinte lê `antes=1`. As duas passagens precisam aparecer na ordem do console para decidir a questão.
 
 ## Regressões com configuração única
 
@@ -86,6 +97,7 @@ A suíte passou com **57 testes** e 12 avisos conhecidos de timezone do pandas. 
 | [Sonda para o Profit](sonda_persistencia_profit_v1_0.ntsl) | Código |
 | [Sonda para o simulador](sonda_persistencia_simulador_v1_0.ntsl) | Código |
 | [Log sintético normalizado](simulador_sonda_log.csv) | 4 |
+| [Log da sonda executada no Profit](profit_sonda_log.csv) | 4 |
 | [Recorte histórico derivado do console Profit](profit_captura_historica_recorte.csv) | 5 |
 | [Matriz integrada](matriz_vwap_continua_segmento.csv) | 6 |
 
