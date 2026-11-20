@@ -16,7 +16,7 @@ HEADER = "timestamp_evento;sequencia_fonte;pregao;ativo_origem"
 
 def test_hashes_dos_ntsl_publicados():
     manifest = json.loads((ROOT/"estrategias/manifesto_estrategias.json").read_text())
-    assert len(manifest["arquivos"]) == 24
+    assert len(manifest["arquivos"]) == 25
     for file in manifest["arquivos"]:
         content = (ROOT/"estrategias"/file["arquivo"]).read_bytes()
         assert len(content) == file["bytes"]

@@ -1,0 +1,39 @@
+{ Sonda de persistencia NTSL. Executar exclusivamente no backtest OHLC. }
+
+input
+  p_Data(1261026);
+  p_HoraEntrada(1303);
+  p_FimLog(1305);
+  p_Stop(350);
+  p_Offset(5);
+
+var
+  v_Anterior : Integer;
+  v_Antes    : Integer;
+  v_Seq      : Integer;
+
+begin
+  if (Date = p_Data) and (Time >= p_HoraEntrada) and (Time <= p_FimLog) then
+  begin
+    v_Seq := v_Seq + 1;
+    v_Antes := v_Anterior;
+
+    if IsBought then
+      SellToCoverStop(BuyPrice - p_Stop, BuyPrice - p_Stop - p_Offset, 1)
+    else if (Time = p_HoraEntrada) and not HasPendingOrders then
+      BuyAtMarket(1);
+
+    if IsBought then
+      v_Anterior := 1
+    else
+      v_Anterior := 0;
+
+    ConsoleLog("PERSISTENCIA;data=" + FloatToString(Date, 0)
+               + ";hora=" + FloatToString(Time, 0)
+               + ";barra=" + FloatToString(CurrentBar, 0)
+               + ";seq=" + FloatToString(v_Seq, 0)
+               + ";posicao=" + FloatToString(PositionQty, 0)
+               + ";antes=" + FloatToString(v_Antes, 0)
+               + ";depois=" + FloatToString(v_Anterior, 0), clYellow);
+  end;
+end;

@@ -1,3 +1,4 @@
+import csv
 import json
 from pathlib import Path
 
@@ -400,3 +401,25 @@ def test_posicao_com_entrada_mista_nao_recebe_protecao_retroativa():
         (2, "long", 100), (2, "long", 90), (3, "exit_long", 120),
     ]
     assert not any(e["evento"] == "avaliacao_ntsl_pos_preenchimento" for e in engine.order_events)
+
+
+def test_sonda_persistencia_caracteriza_isolamento_do_modo_atual(tmp_path):
+    fixture = ROOT / "docs/colaboracao/evidencias/WINZ26_v5_7_persistencia_20261026_v1"
+    source = (fixture / "sonda_persistencia_simulador_v1_0.ntsl").read_text(encoding="utf-8")
+    output = tmp_path / "sonda"
+    run_strategy(fixture / "candles_sinteticos.csv", source, output, 60, "ohlc", 5,
+                 regras={"avaliacao_pos_preenchimento": True, "rastrear_ordens": True})
+    with (output / "console.csv").open(newline="", encoding="utf-8") as stream:
+        log = list(csv.DictReader(stream))
+    states = []
+    for row in log:
+        fields = dict(part.split("=", 1) for part in row["mensagem"].split(";")[1:])
+        states.append((int(row["barra"]), *(int(fields[k]) for k in ("seq", "posicao", "antes", "depois"))))
+    assert states == [(2, 1, 0, 0, 0), (2, 2, 1, 0, 1), (3, 2, 0, 0, 0), (4, 3, 0, 0, 0)]
+    audit = pd.read_csv(output / "eventos_ordens.csv")
+    opening = audit.loc[audit.evento == "avaliacao_ntsl_pos_preenchimento"]
+    assert opening[["barra", "barra_contexto_ntsl", "posicao"]].values.tolist() == [[3, 2, 1]]
+    fills = pd.read_csv(output / "execucoes.csv")
+    assert fills[["barra", "acao", "preco"]].values.tolist() == [
+        [3, "long", 100], [3, "exit_long", 95],
+    ]

@@ -145,6 +145,12 @@
       "sha256": "e3202af01dc10ea46a3bcb895c0d1042c929cc51639f2a918de2300e9cee6c29",
       "bytes": 2225,
       "origem_relativa": "instrumentacao_etapa2a_20261021"
+    },
+    {
+      "arquivo": "execucao/Modelo_Unificado_Refatorado_v5_7_Captura_Paridade.ntsl",
+      "sha256": "53d165350fd66902df9d0e7e340f8dc07335c47d8d47413a3cf1057aec18f018",
+      "bytes": 8810,
+      "origem_relativa": "Modelo_Unificado_Refatorado_v5_7_Captura_Paridade.ntsl"
     }
   ]
 }
