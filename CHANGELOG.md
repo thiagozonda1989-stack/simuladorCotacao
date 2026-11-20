@@ -6,6 +6,7 @@
 - Adiciona modo opt-in para avaliar somente alvo e stop novos no candle em que uma entrada a mercado foi preenchida na abertura, sem antecipar saídas a mercado, entradas limite/stop ou ordens antigas e sem alterar o comportamento padrão.
 - Cobre com regressão a elegibilidade da proteção no candle da entrada e a regra stop-limit quando a proteção já estava ativa.
 - Experimenta a avaliação pós-preenchimento na abertura com dados da barra anterior e avaliação regular após o processamento das proteções.
+- Preserva as atribuições escalares da avaliação pós-preenchimento até o fechamento no modo experimental, mantendo isolados arrays e janelas móveis.
 - Permite comparar indicadores com aquecimento contado a partir de cada reinício do replay.
 
 ## 0.14.0

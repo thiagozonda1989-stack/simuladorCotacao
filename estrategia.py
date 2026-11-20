@@ -741,8 +741,8 @@ class Engine:
     def protect_at_open(self):
         row = self.row
         values, arrays, rolling, orders = self.values, self.arrays, self.rolling, self.orders
-        # A avaliação adicional usa a última barra fechada. Só suas proteções
-        # persistem. Variáveis, arrays e janelas continuam da avaliação regular.
+        # A avaliação adicional lê a última barra fechada. Seus escalares
+        # passam ao fechamento sem alterar o histórico dessa barra.
         self.values = values.copy()
         self.arrays = {slot: array.copy() for slot, array in arrays.items()}
         self.rolling = deepcopy(rolling)
@@ -754,6 +754,8 @@ class Engine:
             self.evaluate_strategy("avaliacao_ntsl_pos_preenchimento")
             protections = {key: order for key, order in self.orders.items()
                            if order.action.startswith("exit")}
+            for slot in self.variable_slots:
+                values[slot] = self.values[slot]
         finally:
             self.row = self.cursor = row
             self.opening_evaluation_row = None

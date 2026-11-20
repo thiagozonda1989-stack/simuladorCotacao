@@ -309,7 +309,7 @@ def test_protecao_na_abertura_usa_ohlc_e_rotulo_da_barra_anterior():
     ]
 
 
-def test_avaliacao_na_abertura_isola_estado_e_renova_protecao_sem_duplicar():
+def test_avaliacao_na_abertura_preserva_escalares_e_isola_arrays_historico_e_medias():
     source = """
     var n: Integer;
         visits: array[1..1] of Integer;
@@ -320,6 +320,7 @@ def test_avaliacao_na_abertura_isola_estado_e_renova_protecao_sem_duplicar():
       Plot2(visits[1]);
       Plot3(Media(2, Close));
       Plot4(n[1]);
+      Plot5(Media(2, n));
       if IsBought then begin
         if CurrentBar=1 then BuyAtMarket(2);
         SellToCoverStop(BuyPrice-5,BuyPrice-10,1);
@@ -330,10 +331,10 @@ def test_avaliacao_na_abertura_isola_estado_e_renova_protecao_sem_duplicar():
     engine = run_ohlc(source, [100, 100, 108, 98], [100, 110, 111, 99],
                       [100, 98, 94, 97], [100, 110, 96, 98],
                       rules={"avaliacao_pos_preenchimento": True, "rastrear_ordens": True})
-    assert [(r["plot"], r["plot2"], r["plot3"], r["plot4"]) for r in engine.trace] == [
-        (1, 1, 100, 0), (2, 2, 105, 1), (3, 3, 103, 2), (4, 4, 97, 3),
+    assert [(r["plot"], r["plot2"], r["plot3"], r["plot4"], r["plot5"]) for r in engine.trace] == [
+        (1, 1, 100, 0, 1), (3, 2, 105, 1, 2), (4, 3, 103, 3, 3.5), (5, 4, 97, 4, 4.5),
     ]
-    assert engine.history[:, engine.program.symbols["n"].slot].tolist() == [1, 2, 3, 4]
+    assert engine.history[:, engine.program.symbols["n"].slot].tolist() == [1, 3, 4, 5]
     assert [(f["barra"], f["acao"], f["quantidade"]) for f in engine.fills] == [
         (2, "long", 1), (3, "exit_long", 1),
     ]
@@ -403,7 +404,7 @@ def test_posicao_com_entrada_mista_nao_recebe_protecao_retroativa():
     assert not any(e["evento"] == "avaliacao_ntsl_pos_preenchimento" for e in engine.order_events)
 
 
-def test_sonda_persistencia_caracteriza_isolamento_do_modo_atual(tmp_path):
+def test_sonda_persistencia_escalar_reproduz_estado_do_profit(tmp_path):
     fixture = ROOT / "docs/colaboracao/evidencias/WINZ26_v5_7_persistencia_20261026_v1"
     source = (fixture / "sonda_persistencia_simulador_v1_0.ntsl").read_text(encoding="utf-8")
     output = tmp_path / "sonda"
@@ -411,15 +412,42 @@ def test_sonda_persistencia_caracteriza_isolamento_do_modo_atual(tmp_path):
                  regras={"avaliacao_pos_preenchimento": True, "rastrear_ordens": True})
     with (output / "console.csv").open(newline="", encoding="utf-8") as stream:
         log = list(csv.DictReader(stream))
+    columns = ("seq", "posicao", "antes", "depois")
     states = []
     for row in log:
         fields = dict(part.split("=", 1) for part in row["mensagem"].split(";")[1:])
-        states.append((int(row["barra"]), *(int(fields[k]) for k in ("seq", "posicao", "antes", "depois"))))
-    assert states == [(2, 1, 0, 0, 0), (2, 2, 1, 0, 1), (3, 2, 0, 0, 0), (4, 3, 0, 0, 0)]
+        states.append(tuple(int(fields[k]) for k in columns))
+    assert states[1] == (2, 1, 0, 1)
+    assert states[2][2] == 1, f"Fechamento zerado leu antes={states[2][2]} após a gravação de 1."
+    with (fixture / "profit_sonda_log.csv").open(newline="", encoding="utf-8") as stream:
+        profit = csv.DictReader(stream, delimiter=";")
+        expected = [tuple(int(row[k]) for k in ("seq_ntsl", *columns[1:])) for row in profit]
+    assert states == expected
+    assert [int(row["barra"]) for row in log] == [2, 2, 3, 4]
     audit = pd.read_csv(output / "eventos_ordens.csv")
     opening = audit.loc[audit.evento == "avaliacao_ntsl_pos_preenchimento"]
     assert opening[["barra", "barra_contexto_ntsl", "posicao"]].values.tolist() == [[3, 2, 1]]
     fills = pd.read_csv(output / "execucoes.csv")
     assert fills[["barra", "acao", "preco"]].values.tolist() == [
         [3, "long", 100], [3, "exit_long", 95],
+    ]
+
+
+def test_espera_sintetica_v5_8_reconhece_zeragem_no_candle_da_entrada(tmp_path):
+    fixture = ROOT / "docs/colaboracao/evidencias/WINZ26_v5_7_persistencia_escalar_20261026_v2"
+    source = (fixture / "sonda_espera_v5_8_sintetica_v1_0.ntsl").read_text(encoding="utf-8")
+    output = tmp_path / "espera"
+    run_strategy(fixture / "candles_espera_sinteticos.csv", source, output, 60, "ohlc", 5,
+                 regras={"avaliacao_pos_preenchimento": True, "rastrear_ordens": True})
+    candles = pd.read_csv(output / "candles.csv")
+    exit_bar = candles.iloc[3]
+    assert exit_bar[["posicao", "plot", "plot2"]].tolist() == [0, 4, 1]
+    assert not candles.iloc[3:6]["sinal_compra"].any()
+    assert candles.iloc[6]["sinal_compra"]
+    events = pd.read_csv(output / "eventos_ordens.csv")
+    entries = events.loc[(events.evento == "solicitacao") & (events.acao == "long")]
+    assert entries.barra.tolist() == [3, 7]
+    fills = pd.read_csv(output / "execucoes.csv")
+    assert fills[["barra", "acao", "preco"]].values.tolist() == [
+        [4, "long", 100], [4, "exit_long", 95], [8, "long", 102], [9, "exit_long", 97],
     ]
