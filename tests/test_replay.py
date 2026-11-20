@@ -4,7 +4,7 @@ from pathlib import Path
 import pandas as pd
 import pytest
 
-from estrategia import Engine, run_strategy
+from estrategia import Engine, Order, run_strategy
 from ntsl import compile_ntsl
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -167,3 +167,76 @@ def test_stop_limit_ja_ativo_nao_depende_da_nova_regra():
                            rules={"protecao_no_candle_entrada": True})
     assert standard.fills[-1]["preco"] == same_candle.fills[-1]["preco"] == 95
     assert standard.fills[-1]["barra"] == same_candle.fills[-1]["barra"] == 3
+
+
+def test_saida_a_mercado_decidida_no_fechamento_nao_retroage_para_abertura():
+    source = ("begin if CurrentBar=1 then BuyAtMarket(1); "
+              "if IsBought and (Close < BuyPrice) then SellToCoverAtMarket(1); end;")
+    engine = run_ohlc(source, [100, 100, 80], [100, 105, 85],
+                      [100, 90, 75], [100, 90, 80],
+                      rules={"protecao_no_candle_entrada": True})
+    assert [(fill["barra"], fill["acao"], fill["preco"]) for fill in engine.fills[:2]] == [
+        (2, "long", 100), (3, "exit_long", 80),
+    ]
+
+
+@pytest.mark.parametrize(
+    "entry,opening,high,low,entry_price",
+    [
+        ("BuyAtLimit(90)", 100, 110, 90, 90),
+        ("BuyAtStop(105)", 100, 115, 100, 105),
+    ],
+)
+def test_protecao_nao_retroage_quando_entrada_nao_e_a_mercado(
+        entry, opening, high, low, entry_price):
+    source = (f"begin if CurrentBar=1 then {entry}; "
+              "if IsBought then SellToCoverLimit(BuyPrice+5,1); end;")
+    engine = run_ohlc(source, [100, opening, 100], [100, high, 100],
+                      [100, low, 100], [100, 100, 100],
+                      rules={"protecao_no_candle_entrada": True})
+    assert engine.fills[0]["barra"] == 2
+    assert engine.fills[0]["preco"] == entry_price
+    assert not any(fill["acao"] == "exit_long" and fill["barra"] == 2
+                   for fill in engine.fills)
+
+
+def test_segunda_passagem_nao_reprocessa_ordem_antiga_disparada():
+    frame = pd.DataFrame(dict(
+        pregao=["2026-10-02"], abertura=[100], maxima=[120],
+        minima=[80], fechamento=[100], barra_ntsl=[1],
+    ))
+    engine = Engine(compile_ntsl("begin end;"), frame, 5, {}, 60, 1)
+    engine.row = engine.cursor = 0
+    engine.position = 1
+    engine.basis = 100
+    old = Order("buyatstop", "long", "stop", 1, 105, 110,
+                triggered=True, eligible_at=0, sent_at=-1)
+    protection = Order("selltocoverlimit", "exit_long", "limit", 1, 130,
+                       eligible_at=0, sent_at=0)
+    engine.orders = {"old": old, "protection": protection}
+    engine.process_orders({"protection"})
+    assert engine.orders["old"] is old
+    assert old.triggered
+    assert not engine.fills
+
+
+def test_gap_pelo_limite_na_protecao_nova_nao_presume_retorno_na_mesma_barra():
+    source = ("begin if CurrentBar=1 then BuyAtMarket(1); if IsBought then "
+              "SellToCoverStop(Close-5,Close-10,1); end;")
+    engine = run_ohlc(source, [100, 100, 100], [100, 125, 112],
+                      [100, 95, 100], [100, 120, 105],
+                      rules={"protecao_no_candle_entrada": True})
+    exits = [fill for fill in engine.fills if fill["acao"] == "exit_long"]
+    assert (exits[0]["barra"], exits[0]["preco"]) == (3, 110)
+
+
+def test_alvo_e_stop_tocados_na_barra_da_entrada_escolhem_saida_adversa():
+    source = ("begin if CurrentBar=1 then BuyAtMarket(1); if IsBought then begin "
+              "SellToCoverLimit(BuyPrice+20,1); "
+              "SellToCoverStop(BuyPrice-5,BuyPrice-10,1); end; end;")
+    engine = run_ohlc(source, [100, 100], [100, 125], [100, 94], [100, 110],
+                      rules={"protecao_no_candle_entrada": True})
+    assert [(fill["acao"], fill["preco"]) for fill in engine.fills] == [
+        ("long", 100), ("exit_long", 95),
+    ]
+    assert engine.ambiguities == 1

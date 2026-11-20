@@ -9,3 +9,6 @@ WINZ26_20261026_1258_1407;segunda_compra;"13:05: 176815 para 176465";ausente;aus
 WINZ26_20261026_1258_1407;controle_1404_1406;"177775 para 178225";coincidente;coincidente;coincidente;protecao nao tocada no candle da entrada
 WINZ26_20261021_dia_completo;operacoes_exatas;10_de_10;10_de_10;10_de_10;coincidente;sem regressao observada
 WINZ26_20261026_dia_completo;operacoes_exatas;12_total;8_de_10;11_de_11;parcial;resta somente a segunda compra de 13:05
+REGRESSAO_ESCOPO;saida_mercado_fechamento;barra_seguinte;nao_coberto;barra_seguinte;preservado;nenhum preenchimento retroativo na abertura
+REGRESSAO_ESCOPO;entrada_limite_ou_stop;protecao_sem_retroacao;nao_coberto;protecao_sem_retroacao;preservado;hipotese especial exige entrada market na abertura
+REGRESSAO_ESCOPO;ordem_antiga_disparada;nao_reprocessar;nao_coberto;nao_reprocessada;preservado;segunda passagem recebe somente chaves das protecoes novas

@@ -624,10 +624,12 @@ class Engine:
                                custo_reais=cost, liquido_reais=pnl*self.point_value-cost))
         self.audit_order("preenchimento", order, order.function, price)
 
-    def process_orders(self):
+    def process_orders(self, only_keys=None):
         o,h,l = (self.series(name) for name in ("open","high","low"))
         matched = []
         for key,order in self.orders.items():
+            if only_keys is not None and key not in only_keys:
+                continue
             if self.row < order.eligible_at:
                 continue
             triggered = order.triggered
@@ -739,8 +741,14 @@ class Engine:
                 if record_trace:
                     self.logs.append((row+1, f"Lacuna de dados. Ordens canceladas; posição anterior: {self.position}."))
             position_before_orders = self.position
+            fills_before_orders = len(self.fills)
             self.process_orders()
-            opened_on_this_candle = position_before_orders == 0 and self.position != 0
+            opening_fills = self.fills[fills_before_orders:]
+            opened_by_market_at_open = (
+                position_before_orders == 0 and self.position != 0
+                and any(fill["acao"] in {"long", "short"} and fill["tipo"] == "market"
+                        for fill in opening_fills)
+            )
             self.plots = {}
             self.entry_intentions = set()
             self.loop_budget = 100_000
@@ -749,14 +757,20 @@ class Engine:
                 self.program.strategy(self)
             except (ValueError,TypeError,OverflowError,ZeroDivisionError,RecursionError) as error:
                 raise NTSLError(f"Barra {row+1}, pregão {days[row]}: {error}") from error
-            if self.rules.protecao_no_candle_entrada and opened_on_this_candle:
+            if self.rules.protecao_no_candle_entrada and opened_by_market_at_open:
+                exit_action = "exit_long" if self.position > 0 else "exit_short"
+                # A segunda passagem representa somente proteções vinculadas à
+                # entrada a mercado preenchida na abertura. Uma saída a mercado
+                # decidida no fechamento nunca pode retroagir para essa abertura.
                 protections = [(key, order) for key, order in self.orders.items()
-                               if order.sent_at == row and order.action.startswith("exit")]
+                               if order.sent_at == row
+                               and order.action == exit_action
+                               and order.kind in {"limit", "stop"}]
                 for key, order in protections:
                     order.eligible_at = row
                     self.audit_order("protecao_elegivel_candle_entrada", order, key)
                 if protections:
-                    self.process_orders()
+                    self.process_orders({key for key, _ in protections})
             if self.rules.ordem_so_proxima_barra and not self.rules.motor_ticks:
                 self.orders = {key: order for key, order in self.orders.items() if order.sent_at == row or order.eligible_at > row}
             for slot in var_slots:
@@ -915,7 +929,7 @@ def main():
     p.add_argument("--vwap-continuo-lacunas", action="store_true",
                    help="Diagnostico: VWAP diaria nao reinicia em lacuna intradiaria")
     p.add_argument("--protecao-no-candle-entrada", action="store_true",
-                   help="OHLC de paridade: torna alvo e stop elegiveis no candle em que a entrada a mercado foi preenchida")
+                   help="OHLC de paridade: testa somente alvo/stop novos no candle da entrada a mercado preenchida na abertura")
     p.add_argument("--rastrear-ordens", action="store_true",
                    help="Grava solicitacoes, elegibilidade, gatilhos, preenchimentos e posicao vista pelo NTSL")
     p.add_argument("--inputs",help="Arquivo JSON com valores de inputs a substituir")

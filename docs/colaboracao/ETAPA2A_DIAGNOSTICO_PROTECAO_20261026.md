@@ -36,12 +36,24 @@ O teste independente `test_stop_limit_ja_ativo_nao_depende_da_nova_regra` deixa 
 
 A menor alteração foi uma regra de execução OHLC **opt-in**, `protecao_no_candle_entrada`, desativada por padrão. Ela não altera a v5.7 nem o comportamento dos demais usuários. Quando uma entrada a mercado é preenchida no início da barra e a avaliação posicionada envia alvo/stop, somente essas proteções são reavaliadas no OHLC da barra. Como essa avaliação reutiliza o OHLC inteiro, o resultado continua indeterminado quando alvo e stop, ou eventos anteriores e posteriores à entrada, não podem ser ordenados sem negócios intrabar.
 
+### Correção de escopo após revisão
+
+A revisão do SHA `ef66db0c2365602273e9c4e27fd05deb077bf44a` mostrou que a primeira implementação selecionava qualquer saída nova e chamava a segunda passagem para todas as ordens elegíveis. Isso poderia preencher retroativamente na abertura uma saída a mercado decidida com o fechamento, aplicar a hipótese a uma entrada limite/stop ocorrida no meio da barra ou reprocessar uma ordem antiga já disparada.
+
+O escopo corrigido exige simultaneamente: posição anterior igual a zero; abertura da posição por preenchimento de entrada `market` na passagem inicial; proteção enviada nessa mesma avaliação; lado de saída compatível com a posição; e tipo `limit` ou `stop`. A segunda passagem recebe somente as chaves dessas proteções. Saídas a mercado, entradas limite/stop, ordens antigas e quaisquer outras ordens preservam sua elegibilidade original.
+
+As regressões cobrem: saída a mercado motivada pelo fechamento; entrada limite e entrada stop; ordem antiga já disparada; gap através do limite; e alvo e stop tocados na mesma barra. Uma decisão baseada no fechamento não é preenchida retroativamente na abertura.
+
+A hipótese OHLC continua restrita. Para uma entrada a mercado preenchida na abertura, alvo e stop calculados imediatamente a partir do preço de entrada podem usar a máxima e a mínima posteriores. Se o nível da proteção usar `Close`, máxima, mínima ou outro dado que só fique definitivo no fechamento, testar esse nível contra toda a barra incorpora informação futura e o resultado deve ser marcado como indeterminado. Quando alvo e stop são tocados na mesma barra, o motor mantém o desfecho adverso e registra uma ambiguidade; o caminho real exige negócios intrabar.
+
 ## Resultados antes e depois
 
 | Pregão | Profit | Motor antes | Exatas antes | Motor depois | Exatas depois | Primeira pendência depois |
 |---|---:|---:|---:|---:|---:|---|
 | 21/10 | 10 | 10 | 10 | 10 | 10 | nenhuma operação divergente |
 | 26/10 | 12 | 10 | 8 | 11 | 11 | segunda compra 13:05, 176.815 → 176.465 |
+
+Após a correção de escopo, a repetição com a v5.7 original manteve exatamente esses resultados: 10/10 em 21/10 e 11 correspondências entre as 11 operações do motor e as 12 do Profit em 26/10. O primeiro stop permaneceu 177.215 às 13:04. Portanto, a correção eliminou os efeitos retroativos possíveis sem mudar os dois cenários controlados.
 
 Em 26/10, a compra 177.565 → 177.215 passa a coincidir exatamente. A operação de controle 14:04–14:06, 177.775 → 178.225, continua idêntica antes e depois porque nem alvo nem stop foram tocados na barra de entrada.
 
