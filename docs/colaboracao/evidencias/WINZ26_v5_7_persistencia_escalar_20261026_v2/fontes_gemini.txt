@@ -1,0 +1,370 @@
+FONTES PUBLICAVEIS PARA REVISAO NO GEMINI
+SimuladorCotacao PR #2 - persistencia escalar pos-preenchimento
+Codigo executado: 68f1025526be87c52a5fa8cb8f9368dad06062ca
+PR: https://github.com/thiagozonda1989-stack/simuladorCotacao/pull/2
+Compare a sonda nativa, o simulador anterior e o simulador corrigido.
+A espera da v5.8 e evidenciada somente pelo caso sintetico.
+
+=== docs/colaboracao/evidencias/WINZ26_v5_7_persistencia_escalar_20261026_v2/README.md ===
+
+# Correção experimental de persistência escalar pós-preenchimento
+
+O código executado no Windows foi `68f1025526be87c52a5fa8cb8f9368dad06062ca`. O comparativo antes/depois usa o head da evidência do Profit, `bcb09c9d68b672f0121327142235710497d1c8d9`, cujo motor era idêntico a `6aeb1f95d8642f7057b04a0dba9bd1612b6ee5fe`. As sondas da rodada anterior foram introduzidas em `e7921ef9759ffa783c4aba18cc51b81109a17c58`. [Evidência nativa do Profit](../WINZ26_v5_7_persistencia_20261026_v1/profit_sonda_log.csv)
+
+## Regressão da sonda escalar
+
+| Origem | Avaliação extra comprada | Avaliação regular zerada das 13:04 |
+|---|---|---|
+| Profit, sonda executada pelo usuário | `seq=2`, `depois=1` | `seq=3`, `antes=1` |
+| Simulador antes | `seq=2`, `depois=1` | `seq=2`, `antes=0` |
+| Simulador corrigido | `seq=2`, `depois=1` | `seq=3`, `antes=1` |
+
+O teste foi executado primeiro com o motor de referência. Falhou com `Fechamento zerado leu antes=0 após a gravação de 1.` O teste da espera sintética também falhou, com a última saída em 0, quando deveria ser 4. Depois da correção, ambos passaram. A sonda do simulador reproduziu os quatro estados de posição e da variável registrados pelo Profit. A hora e o rótulo continuam sendo os do contexto NTSL. Os números absolutos de `CurrentBar` são próprios de cada série de entrada. [Log completo antes/depois](sonda_persistencia_antes_depois.csv)
+
+## Escopo da correção
+
+Em `--avaliacao-pos-preenchimento`, uma entrada a mercado na abertura a partir de posição zerada pode executar a estratégia com a barra fechada anterior como contexto e a posição nova. Após uma avaliação bem-sucedida, o motor conserva as atribuições às variáveis escalares do subconjunto NTSL suportado. As cópias de arrays e janelas móveis são descartadas. As referências históricas continuam lendo o histórico gravado no fechamento de cada barra. Só as novas proteções elegíveis são avaliadas no OHLC da barra de entrada. A avaliação regular recebe a posição resultante.
+
+A regressão de histórico verificou que a primeira barra continuou com o valor escalar `1`, apesar da atribuição adicional na abertura da segunda. O segundo fechamento guardou `3`; o valor de `n[1]` continuou `1`. A média de duas barras sobre `n` foi `2`, e a média sobre `Close` foi `105`. O contador de array avançou uma vez por fechamento. A proteção viva foi renovada pela mesma chave, sem segundo preenchimento. O teste do stop disparado da posição anterior, o teste de níveis calculados pela barra anterior e os casos de sessão, lacuna e entrada mista passaram.
+
+## Caso sintético inspirado na v5.8
+
+A sonda reproduz a transição `v_Estava_Posicionado → v_Barra_Ult_Saida`, com `p_Barras_Espera=3` e o critério `CurrentBar >= v_Barra_Ult_Saida + p_Barras_Espera`. Na barra 4, a avaliação extra, com contexto da barra 3, vê a compra aberta a 100. A proteção zera a 95 ainda na barra 4. O fechamento da barra 4 observa zero com `v_Estava_Posicionado=True` e grava a saída na barra 4. Os fechamentos das barras 4, 5 e 6 impedem a nova solicitação. O fechamento da barra 7 libera a compra, preenchida na abertura da barra 8.
+
+No motor de referência, o fechamento da barra 4 via o estado anterior apagado, deixava a última saída em 0 e reabria na barra 5. O caso usa dados e regras de entrada sintéticos. A v5.8 completa ainda depende de replay no Profit. [Estado por barra](v5_8_espera_sintetica.csv) · [Preenchimentos sintéticos](v5_8_preenchimentos_sinteticos.csv) · [NTSL da sonda](sonda_espera_v5_8_sintetica_v1_0.ntsl) · [Candles sintéticos](candles_espera_sinteticos.csv)
+
+## Seis replays da v5.7
+
+| Pregão | Padrão antes → depois | Proteção legada antes → depois | Pós-preenchimento antes → depois | Cada um dos 8 indicadores |
+|---|---:|---:|---:|---:|
+| 21/10/2026 | 10/10 → 10/10 | 10/10 → 10/10 | 10/10 → **10/10** | 502/502 |
+| 26/10/2026 | 8/12 → 8/12 | 11/12 → 11/12 | 12/12 → **12/12** | 463/463 |
+
+Os denominadores de operações são do Profit. Os arquivos `execucoes.csv`, `candles.csv`, `eventos_ordens.csv` e `console.csv` ficaram idênticos byte a byte aos da rodada anterior em todos os seis replays, incluindo os modos padrão e legado. A #182 coincide no pós-preenchimento em 26/10, com compra de um contrato a 176.815 e saída a 176.465, ambas às 13:05 na exportação. [Matriz de operações](matriz_operacoes.csv) · [Matriz de indicadores](matriz_indicadores.csv)
+
+WINZ26 em OHLC de 1 minuto, barra rotulada na abertura em `America/Sao_Paulo`, v5.7 original, lote 1, tick 5, R$ 0,20/ponto e custo, slippage e latência adicional zero. Volume financeiro e agressão publicada pelo Profit como referência explícita. Estratégia e plots rodaram com `--vwap-continuo-lacunas`. A comparação de indicadores usou `--aquecimento 63 --aquecimento-por-segmento`. Em 21/10, 565 barras de 09:00–18:24, zero duplicatas e 502 elegíveis a partir de 10:03. Em 26/10, 553 barras de 09:03–18:24, zero duplicatas e uma lacuna de 09:30–09:38; 463 elegíveis a partir de 10:42. As entradas preparadas e o CSV privado de operações foram conferidos contra os hashes da rodada anterior. [Configuração e fontes da rodada anterior](../WINZ26_v5_7_persistencia_20261026_v1/README.md)
+
+A matriz de indicadores compara os plots da sonda instrumentada uma vez por pregão, compartilhados pelos três cenários de execução. A agressão injetada e as barras ausentes limitam a validação do pregão inteiro. Os CSVs compartilháveis preservam sequência e rótulos de contexto nas sondas e publicam resultados agregados nos dois replays reais. As exportações privadas e timestamps nativos de ordens continuam sendo as fontes necessárias para reproduzir a matriz ou confirmar a ativação e o cancelamento intrabar.
+
+## Comandos
+
+Windows 10, Python 3.11.3, pandas 3.1.1. O recorte de testes novos teve **2 falhas** antes e **2 aprovados** depois. A suíte no código corrigido teve **58 aprovados** e 12 avisos conhecidos de timezone do pandas.
+
+```powershell
+$testes = @(
+  'tests/test_replay.py::test_sonda_persistencia_escalar_reproduz_estado_do_profit',
+  'tests/test_replay.py::test_espera_sintetica_v5_8_reconhece_zeragem_no_candle_da_entrada'
+)
+py -3.11 -m pytest -q --tb=short @testes
+py -3.11 -m pytest -q
+
+# Para reproduzir as falhas em uma cópia separada da árvore corrigida:
+git worktree add --detach $checkoutAnterior 68f1025526be87c52a5fa8cb8f9368dad06062ca
+git -C $checkoutAnterior restore --source bcb09c9d68b672f0121327142235710497d1c8d9 --worktree -- estrategia.py
+Push-Location $checkoutAnterior
+try { py -3.11 -m pytest -q --tb=short @testes } finally { Pop-Location }
+
+$evid = 'docs/colaboracao/evidencias/WINZ26_v5_7_persistencia_escalar_20261026_v2'
+$anterior = 'docs/colaboracao/evidencias/WINZ26_v5_7_persistencia_20261026_v1'
+py -3.11 estrategia.py --csv "$anterior/candles_sinteticos.csv" `
+  --ntsl "$anterior/sonda_persistencia_simulador_v1_0.ntsl" --saida $saidaSonda `
+  --segundos 60 --formato ohlc --avaliacao-pos-preenchimento --rastrear-ordens
+py -3.11 estrategia.py --csv "$evid/candles_espera_sinteticos.csv" `
+  --ntsl "$evid/sonda_espera_v5_8_sintetica_v1_0.ntsl" --saida $saidaEspera `
+  --segundos 60 --formato ohlc --avaliacao-pos-preenchimento --rastrear-ordens
+
+# Para cada dia e modo, usar o histórico completo e um destino novo.
+# $modo recebe @(), @('--protecao-no-candle-entrada') ou
+# @('--avaliacao-pos-preenchimento'). $inputs contém {"p_Lote":1}.
+$comum = @('--segundos','60','--formato','ohlc','--tick','5','--valor-ponto','0.2',
+           '--volume-financeiro-ntsl','--agressao-referencia-injetada','--vwap-continuo-lacunas')
+py -3.11 estrategia.py --csv $barrasPreparadas `
+  --ntsl estrategias/execucao/Modelo_Unificado_Refatorado_v5_7.ntsl `
+  --inputs $inputs --saida $replay @comum @modo --rastrear-ordens
+py -3.11 estrategia.py --csv $barrasPreparadas `
+  --ntsl estrategias/indicadores/indicador_paridade_modelo_unificado_v5_7_v1_0.ntsl `
+  --saida $plotsMotor @comum
+py -3.11 tools/comparar_paridade_mesmas_barras.py --profit-barras $barrasProfit `
+  --profit-indicadores $plotsProfit --profit-operacoes $operacoesProfit `
+  --barras-preparadas $barrasPreparadas --motor-indicadores "$plotsMotor/candles.csv" `
+  --motor-candles "$replay/candles.csv" --motor-execucoes "$replay/execucoes.csv" `
+  --data $dia --aquecimento 63 --aquecimento-por-segmento --saida $comparacao
+```
+
+O [TXT para o Gemini](fontes_gemini.txt) contém este README, os CSVs compartilháveis completos, as sondas usadas e a regressão relevante. [SHA-256 dos arquivos publicados](SHA256SUMS.txt)
+
+=== docs/colaboracao/evidencias/WINZ26_v5_7_persistencia_escalar_20261026_v2/candles_espera_sinteticos.csv ===
+
+timestamp;abertura;maxima;minima;fechamento
+2026-10-26T09:00:00-03:00;100;101;99;100
+2026-10-26T09:01:00-03:00;100;101;99;100
+2026-10-26T09:02:00-03:00;100;101;99;100
+2026-10-26T09:03:00-03:00;100;101;94;96
+2026-10-26T09:04:00-03:00;98;100;97;99
+2026-10-26T09:05:00-03:00;99;101;98;100
+2026-10-26T09:06:00-03:00;100;102;99;101
+2026-10-26T09:07:00-03:00;102;104;100;103
+2026-10-26T09:08:00-03:00;103;104;96;101
+
+=== docs/colaboracao/evidencias/WINZ26_v5_7_persistencia_escalar_20261026_v2/matriz_indicadores.csv ===
+
+pregao;indicador;primeira_barra_elegivel;tolerancia;barras_comparadas;dentro_antes;dentro_depois;fora_depois;erro_absoluto_maximo_depois
+2026-10-21;vwap;2026-10-21T10:03:00-03:00;0.01;502;502;502;0;0.004996672
+2026-10-21;desvio;2026-10-21T10:03:00-03:00;0.01;502;502;502;0;0.004985628
+2026-10-21;atr;2026-10-21T10:03:00-03:00;0.01;502;502;502;0;0.004285714
+2026-10-21;media_atr;2026-10-21T10:03:00-03:00;0.01;502;502;502;0;0.004285714
+2026-10-21;agressao;2026-10-21T10:03:00-03:00;0.0;502;502;502;0;0.000000000
+2026-10-21;zscore_volume;2026-10-21T10:03:00-03:00;0.01;502;502;502;0;0.004979727
+2026-10-21;regime;2026-10-21T10:03:00-03:00;0.0;502;502;502;0;0.000000000
+2026-10-21;sinal_candidato;2026-10-21T10:03:00-03:00;0.0;502;502;502;0;0.000000000
+2026-10-26;vwap;2026-10-26T10:42:00-03:00;0.01;463;463;463;0;0.004998048
+2026-10-26;desvio;2026-10-26T10:42:00-03:00;0.01;463;463;463;0;0.004989425
+2026-10-26;atr;2026-10-26T10:42:00-03:00;0.01;463;463;463;0;0.004285714
+2026-10-26;media_atr;2026-10-26T10:42:00-03:00;0.01;463;463;463;0;0.004285714
+2026-10-26;agressao;2026-10-26T10:42:00-03:00;0.0;463;463;463;0;0.000000000
+2026-10-26;zscore_volume;2026-10-26T10:42:00-03:00;0.01;463;463;463;0;0.004997941
+2026-10-26;regime;2026-10-26T10:42:00-03:00;0.0;463;463;463;0;0.000000000
+2026-10-26;sinal_candidato;2026-10-26T10:42:00-03:00;0.0;463;463;463;0;0.000000000
+
+=== docs/colaboracao/evidencias/WINZ26_v5_7_persistencia_escalar_20261026_v2/matriz_operacoes.csv ===
+
+pregao;modo;operacoes_profit;operacoes_motor_antes;operacoes_motor_depois;exatas_antes;exatas_depois;sem_par_profit_depois;sem_par_motor_depois;execucoes_identicas;candles_identicos;eventos_ordens_identicos;console_identico;operacao_182_exata_depois
+2026-10-21;padrao;10;10;10;10;10;0;0;1;1;1;1;
+2026-10-21;protecao-legada;10;10;10;10;10;0;0;1;1;1;1;
+2026-10-21;pos-preenchimento;10;10;10;10;10;0;0;1;1;1;1;
+2026-10-26;padrao;12;10;10;8;8;4;2;1;1;1;1;0
+2026-10-26;protecao-legada;12;11;11;11;11;1;0;1;1;1;1;0
+2026-10-26;pos-preenchimento;12;12;12;12;12;0;0;1;1;1;1;1
+
+=== docs/colaboracao/evidencias/WINZ26_v5_7_persistencia_escalar_20261026_v2/sonda_persistencia_antes_depois.csv ===
+
+origem;ordem_console;data;hora_barra_contexto;rotulo_barra_contexto;seq_ntsl;posicao;antes;depois
+profit;1;2026-10-26;13:03;27005;1;0;0;0
+profit;2;2026-10-26;13:03;27005;2;1;0;1
+profit;3;2026-10-26;13:04;27006;3;0;1;0
+profit;4;2026-10-26;13:05;27007;4;0;0;0
+simulador_antes;1;2026-10-26;13:03;2;1;0;0;0
+simulador_antes;2;2026-10-26;13:03;2;2;1;0;1
+simulador_antes;3;2026-10-26;13:04;3;2;0;0;0
+simulador_antes;4;2026-10-26;13:05;4;3;0;0;0
+simulador_depois;1;2026-10-26;13:03;2;1;0;0;0
+simulador_depois;2;2026-10-26;13:03;2;2;1;0;1
+simulador_depois;3;2026-10-26;13:04;3;3;0;1;0
+simulador_depois;4;2026-10-26;13:05;4;4;0;0;0
+
+=== docs/colaboracao/evidencias/WINZ26_v5_7_persistencia_escalar_20261026_v2/v5_8_espera_sintetica.csv ===
+
+versao_motor;barra;hora_barra;barra_contexto_avaliacao_extra;posicao_na_avaliacao_extra;posicao_fechamento;ultima_saida;estava_posicionado;entrada_elegivel;solicitou_compra
+antes;1;09:00;;;0;0;0;0;0
+antes;2;09:01;;;0;0;0;0;0
+antes;3;09:02;;;0;0;0;1;1
+antes;4;09:03;3;1;0;0;0;1;1
+antes;5;09:04;4;1;1;0;0;1;0
+antes;6;09:05;;;1;0;1;1;0
+antes;7;09:06;;;1;0;1;1;0
+antes;8;09:07;;;1;0;1;0;0
+antes;9;09:08;;;0;0;1;0;0
+depois;1;09:00;;;0;0;0;0;0
+depois;2;09:01;;;0;0;0;0;0
+depois;3;09:02;;;0;0;0;1;1
+depois;4;09:03;3;1;0;4;1;0;0
+depois;5;09:04;;;0;4;0;0;0
+depois;6;09:05;;;0;4;0;0;0
+depois;7;09:06;;;0;4;0;1;1
+depois;8;09:07;7;1;1;4;1;0;0
+depois;9;09:08;;;0;9;1;0;0
+
+=== docs/colaboracao/evidencias/WINZ26_v5_7_persistencia_escalar_20261026_v2/v5_8_preenchimentos_sinteticos.csv ===
+
+versao_motor;ordem_execucao;barra;ordem_ntsl;acao;preco_sintetico;quantidade;posicao_apos
+antes;1;4;buyatmarket;long;100.0;1;1
+antes;2;4;selltocoverstop;exit_long;95.0;1;0
+antes;3;5;buyatmarket;long;98.0;1;1
+antes;4;9;fim_pregao;exit_long;101.0;1;0
+depois;1;4;buyatmarket;long;100.0;1;1
+depois;2;4;selltocoverstop;exit_long;95.0;1;0
+depois;3;8;buyatmarket;long;102.0;1;1
+depois;4;9;selltocoverstop;exit_long;97.0;1;0
+
+=== docs/colaboracao/evidencias/WINZ26_v5_7_persistencia_escalar_20261026_v2/sonda_espera_v5_8_sintetica_v1_0.ntsl ===
+
+{ Teste sintetico da detecao de saida e da espera da v5.8. }
+
+input
+  p_Barras_Espera(3);
+
+var
+  v_Posicionado, v_Estava_Posicionado, v_Pode_Entrar : Boolean;
+  v_Barra_Ult_Saida : Integer;
+
+begin
+  v_Posicionado := IsBought or IsSold;
+  if v_Estava_Posicionado and (not v_Posicionado) then
+    v_Barra_Ult_Saida := CurrentBar;
+
+  v_Pode_Entrar := (CurrentBar >= 3) and (CurrentBar <= 7)
+                   and (CurrentBar >= v_Barra_Ult_Saida + p_Barras_Espera);
+  if IsBought then
+    SellToCoverStop(BuyPrice-5, BuyPrice-10, 1)
+  else if v_Pode_Entrar and not HasPendingOrders then
+    BuyAtMarket(1);
+
+  Plot(v_Barra_Ult_Saida);
+  Plot2(v_Estava_Posicionado);
+  Plot3(v_Pode_Entrar);
+  v_Estava_Posicionado := v_Posicionado;
+end;
+
+=== docs/colaboracao/evidencias/WINZ26_v5_7_persistencia_20261026_v1/profit_sonda_log.csv ===
+
+ordem_console;data;hora_barra_profit;rotulo_barra_profit;seq_ntsl;posicao;antes;depois
+1;2026-10-26;13:03;27005;1;0;0;0
+2;2026-10-26;13:03;27005;2;1;0;1
+3;2026-10-26;13:04;27006;3;0;1;0
+4;2026-10-26;13:05;27007;4;0;0;0
+
+=== docs/colaboracao/evidencias/WINZ26_v5_7_persistencia_20261026_v1/simulador_sonda_log.csv ===
+
+ordem_console;fase;rotulo_barra_contexto;hora_barra_contexto;seq_ntsl;posicao;antes;depois
+1;regular;2;13:03;1;0;0;0
+2;pos_preenchimento;2;13:03;2;1;0;1
+3;regular;3;13:04;2;0;0;0
+4;regular;4;13:05;3;0;0;0
+
+=== docs/colaboracao/evidencias/WINZ26_v5_7_persistencia_20261026_v1/candles_sinteticos.csv ===
+
+timestamp;abertura;maxima;minima;fechamento
+2026-10-26T13:02:00-03:00;100;102;99;101
+2026-10-26T13:03:00-03:00;100;102;99;101
+2026-10-26T13:04:00-03:00;100;101;94;97
+2026-10-26T13:05:00-03:00;92;93;86;88
+
+=== docs/colaboracao/evidencias/WINZ26_v5_7_persistencia_20261026_v1/sonda_persistencia_simulador_v1_0.ntsl ===
+
+{ Sonda de persistencia NTSL. Fixture sintetica para o simulador OHLC. }
+
+input
+  p_Data(1261026);
+  p_HoraEntrada(1303);
+  p_FimLog(1305);
+  p_Stop(5);
+  p_Offset(5);
+
+var
+  v_Anterior : Integer;
+  v_Antes    : Integer;
+  v_Seq      : Integer;
+
+begin
+  if (Date = p_Data) and (Time >= p_HoraEntrada) and (Time <= p_FimLog) then
+  begin
+    v_Seq := v_Seq + 1;
+    v_Antes := v_Anterior;
+
+    if IsBought then
+      SellToCoverStop(BuyPrice - p_Stop, BuyPrice - p_Stop - p_Offset, 1)
+    else if (Time = p_HoraEntrada) and not HasPendingOrders then
+      BuyAtMarket(1);
+
+    if IsBought then
+      v_Anterior := 1
+    else
+      v_Anterior := 0;
+
+    ConsoleLog("PERSISTENCIA;data=" + Date
+               + ";hora=" + Time
+               + ";barra=" + CurrentBar
+               + ";seq=" + v_Seq
+               + ";posicao=" + PositionQty
+               + ";antes=" + v_Antes
+               + ";depois=" + v_Anterior);
+  end;
+end;
+
+=== docs/colaboracao/evidencias/WINZ26_v5_7_persistencia_20261026_v1/matriz_vwap_continua_segmento.csv ===
+
+pregao;modo;operacoes_profit;operacoes_motor;exatas;sem_par_profit;sem_par_motor;barras_elegiveis;primeira_barra_elegivel;vwap_dentro;atr_dentro;media_atr_dentro;regime_exato;plots_sem_divergencia
+2026-10-21;padrao;10;10;10;0;0;502;2026-10-21T10:03:00-03:00;502;502;502;502;8
+2026-10-21;protecao-legada;10;10;10;0;0;502;2026-10-21T10:03:00-03:00;502;502;502;502;8
+2026-10-21;pos-preenchimento;10;10;10;0;0;502;2026-10-21T10:03:00-03:00;502;502;502;502;8
+2026-10-26;padrao;12;10;8;4;2;463;2026-10-26T10:42:00-03:00;463;463;463;463;8
+2026-10-26;protecao-legada;12;11;11;1;0;463;2026-10-26T10:42:00-03:00;463;463;463;463;8
+2026-10-26;pos-preenchimento;12;12;12;0;0;463;2026-10-26T10:42:00-03:00;463;463;463;463;8
+
+=== estrategia.py (trecho) ===
+
+    def protect_at_open(self):
+        row = self.row
+        values, arrays, rolling, orders = self.values, self.arrays, self.rolling, self.orders
+        # A avaliação adicional lê a última barra fechada. Seus escalares
+        # passam ao fechamento sem alterar o histórico dessa barra.
+        self.values = values.copy()
+        self.arrays = {slot: array.copy() for slot, array in arrays.items()}
+        self.rolling = deepcopy(rolling)
+        self.orders = {key: order for key, order in orders.items()
+                       if not order.action.startswith("exit")}
+        self.opening_evaluation_row = row
+        self.row = self.cursor = row-1
+        try:
+            self.evaluate_strategy("avaliacao_ntsl_pos_preenchimento")
+            protections = {key: order for key, order in self.orders.items()
+                           if order.action.startswith("exit")}
+            for slot in self.variable_slots:
+                values[slot] = self.values[slot]
+        finally:
+            self.row = self.cursor = row
+            self.opening_evaluation_row = None
+            self.values, self.arrays, self.rolling, self.orders = values, arrays, rolling, orders
+        if protections:
+            self.orders.update(protections)
+            self.process_orders(protections)
+
+=== tests/test_replay.py (trecho) ===
+
+def test_sonda_persistencia_escalar_reproduz_estado_do_profit(tmp_path):
+    fixture = ROOT / "docs/colaboracao/evidencias/WINZ26_v5_7_persistencia_20261026_v1"
+    source = (fixture / "sonda_persistencia_simulador_v1_0.ntsl").read_text(encoding="utf-8")
+    output = tmp_path / "sonda"
+    run_strategy(fixture / "candles_sinteticos.csv", source, output, 60, "ohlc", 5,
+                 regras={"avaliacao_pos_preenchimento": True, "rastrear_ordens": True})
+    with (output / "console.csv").open(newline="", encoding="utf-8") as stream:
+        log = list(csv.DictReader(stream))
+    columns = ("seq", "posicao", "antes", "depois")
+    states = []
+    for row in log:
+        fields = dict(part.split("=", 1) for part in row["mensagem"].split(";")[1:])
+        states.append(tuple(int(fields[k]) for k in columns))
+    assert states[1] == (2, 1, 0, 1)
+    assert states[2][2] == 1, f"Fechamento zerado leu antes={states[2][2]} após a gravação de 1."
+    with (fixture / "profit_sonda_log.csv").open(newline="", encoding="utf-8") as stream:
+        profit = csv.DictReader(stream, delimiter=";")
+        expected = [tuple(int(row[k]) for k in ("seq_ntsl", *columns[1:])) for row in profit]
+    assert states == expected
+    assert [int(row["barra"]) for row in log] == [2, 2, 3, 4]
+    audit = pd.read_csv(output / "eventos_ordens.csv")
+    opening = audit.loc[audit.evento == "avaliacao_ntsl_pos_preenchimento"]
+    assert opening[["barra", "barra_contexto_ntsl", "posicao"]].values.tolist() == [[3, 2, 1]]
+    fills = pd.read_csv(output / "execucoes.csv")
+    assert fills[["barra", "acao", "preco"]].values.tolist() == [
+        [3, "long", 100], [3, "exit_long", 95],
+    ]
+
+
+def test_espera_sintetica_v5_8_reconhece_zeragem_no_candle_da_entrada(tmp_path):
+    fixture = ROOT / "docs/colaboracao/evidencias/WINZ26_v5_7_persistencia_escalar_20261026_v2"
+    source = (fixture / "sonda_espera_v5_8_sintetica_v1_0.ntsl").read_text(encoding="utf-8")
+    output = tmp_path / "espera"
+    run_strategy(fixture / "candles_espera_sinteticos.csv", source, output, 60, "ohlc", 5,
+                 regras={"avaliacao_pos_preenchimento": True, "rastrear_ordens": True})
+    candles = pd.read_csv(output / "candles.csv")
+    exit_bar = candles.iloc[3]
+    assert exit_bar[["posicao", "plot", "plot2"]].tolist() == [0, 4, 1]
+    assert not candles.iloc[3:6]["sinal_compra"].any()
+    assert candles.iloc[6]["sinal_compra"]
+    events = pd.read_csv(output / "eventos_ordens.csv")
+    entries = events.loc[(events.evento == "solicitacao") & (events.acao == "long")]
+    assert entries.barra.tolist() == [3, 7]
+    fills = pd.read_csv(output / "execucoes.csv")
+    assert fills[["barra", "acao", "preco"]].values.tolist() == [
+        [4, "long", 100], [4, "exit_long", 95], [8, "long", 102], [9, "exit_long", 97],
+    ]
