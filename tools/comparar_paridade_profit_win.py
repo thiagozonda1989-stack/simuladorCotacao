@@ -323,12 +323,33 @@ def compare_operations(profit: pd.DataFrame, local: pd.DataFrame) -> dict:
         row = missing.sort_values("entrada").iloc[0]
         first = {key: (row[key].isoformat() if key in {"entrada", "saida"} else
                        row[key].item() if hasattr(row[key], "item") else row[key]) for key in keys}
+    first_extra = None
+    if len(extra):
+        row = extra.sort_values("entrada").iloc[0]
+        first_extra = {
+            key: (row[key].isoformat() if key in {"entrada", "saida"} else
+                  row[key].item() if hasattr(row[key], "item") else row[key])
+            for key in keys
+        }
+    exact = []
+    for index in sorted(matched_profit, key=lambda item: profit.loc[item, "entrada"]):
+        row = profit.loc[index]
+        exact.append({
+            "entrada": row["entrada"].isoformat(),
+            "saida": row["saida"].isoformat(),
+            "lado": row["lado"],
+            "quantidade": int(row["quantidade"]),
+            "preco_entrada": float(row["preco_entrada"]),
+            "preco_saida": float(row["preco_saida"]),
+        })
     return {
         "operacoes_profit": int(len(profit)), "operacoes_local": int(len(local)),
         "correspondencias_exatas": int(len(matched_profit)),
         "sem_correspondencia_profit": int(len(missing)),
         "sem_correspondencia_local": int(len(extra)),
         "primeira_operacao_profit_sem_correspondencia": first,
+        "primeira_operacao_local_sem_correspondencia": first_extra,
+        "correspondencias_exatas_detalhe": exact,
         "eventos_ordens_profit": "indisponiveis",
         "posicao_profit": "derivada das operacoes executadas; nao observada por candle",
     }

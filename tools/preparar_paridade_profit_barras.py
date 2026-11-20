@@ -56,6 +56,14 @@ def prepare(bars: pd.DataFrame, day: str, indicators: pd.DataFrame | None = None
     data[numeric] = data[numeric].apply(pd.to_numeric, errors="raise")
     if not np.isfinite(data[numeric]).all().all() or (data["volume_contratos"] <= 0).any():
         raise ValueError("Profit barras contem numero invalido ou Quantity nao positiva.")
+    for name in ("v_trades_atual", "volume_contratos"):
+        if (data[name] < 0).any() or not np.equal(data[name], np.floor(data[name])).all():
+            raise ValueError(f"Profit barras contem {name} negativa ou fracionaria.")
+    if (data["volume_financeiro"] < 0).any():
+        raise ValueError("Profit barras contem Volume financeiro negativo.")
+
+    expected = pd.date_range(data.timestamp.min(), data.timestamp.max(), freq="min")
+    missing_minutes = expected.difference(pd.DatetimeIndex(data.timestamp))
 
     # O WIN vale R$ 0,20 por ponto e contrato. Esta inversao recupera apenas
     # um preco medio aproximado, pois o Volume exportado ja vem arredondado.
@@ -98,6 +106,15 @@ def prepare(bars: pd.DataFrame, day: str, indicators: pd.DataFrame | None = None
         "timestamp_barra": "abertura_do_minuto",
         "barras": int(len(data)), "inicio": data.timestamp.min().isoformat(),
         "fim": data.timestamp.max().isoformat(),
+        "timestamps_duplicados": 0,
+        "minutos_ausentes_entre_inicio_fim": int(len(missing_minutes)),
+        "primeiros_minutos_ausentes": [stamp.isoformat() for stamp in missing_minutes[:20]],
+        "ativo_no_conteudo": None,
+        "validacao_ativo": "indisponivel no CSV; identificacao depende do arquivo/exportacao",
+        "unidades": {
+            "OHLC": "pontos WIN", "Trades": "negocios inteiros",
+            "Quantity": "contratos inteiros", "Volume": "R$ financeiro",
+        },
         "volume_ntsl_padrao": "volume_contratos",
         "volume_ntsl_modo_paridade": "volume_financeiro",
         "vwap_barra": "Volume_financeiro/(Quantity_contratos*R$0,20); aproximada",

@@ -30,6 +30,8 @@ def test_separa_volume_e_calcula_vwap_aproximada_com_referencia():
     assert result.v_vwap_barra.tolist() == [100, 102]
     assert result.v_agressao_saldo_referencia.tolist() == [3, -4]
     assert metrics["agressao_referencia_injetada_disponivel"] is True
+    assert metrics["minutos_ausentes_entre_inicio_fim"] == 0
+    assert metrics["unidades"]["Quantity"] == "contratos inteiros"
 
 
 def test_rejeita_horario_duplicado():
@@ -38,4 +40,16 @@ def test_rejeita_horario_duplicado():
         ["21/10/2026 09:00", 100, 100, 100, 100, 1, 1, 20],
     ])
     with pytest.raises(ValueError, match="Profit barras possui horario duplicado"):
+        MODULE.prepare(bars, "2026-10-21")
+
+
+def test_registra_minutos_ausentes_e_rejeita_contagem_fracionaria():
+    bars = pd.DataFrame([
+        ["21/10/2026 09:00", 100, 100, 100, 100, 1, 1, 20],
+        ["21/10/2026 09:02", 100, 100, 100, 100, 1, 1, 20],
+    ])
+    _, metrics = MODULE.prepare(bars, "2026-10-21")
+    assert metrics["primeiros_minutos_ausentes"] == ["2026-10-21T09:01:00-03:00"]
+    bars[5] = [1.0, 1.5]
+    with pytest.raises(ValueError, match="v_trades_atual negativa ou fracionaria"):
         MODULE.prepare(bars, "2026-10-21")

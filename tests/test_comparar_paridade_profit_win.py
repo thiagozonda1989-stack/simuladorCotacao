@@ -40,6 +40,25 @@ def test_execucoes_usam_numero_de_barra_a_partir_de_um():
     assert result.iloc[0].saida == pd.Timestamp("2026-10-21 10:10")
 
 
+def test_comparacao_operacoes_lista_pares_e_primeiro_excedente_de_cada_fonte():
+    profit = pd.DataFrame([
+        {"entrada": pd.Timestamp("2026-10-21 10:00"), "saida": pd.Timestamp("2026-10-21 10:01"),
+         "lado": "C", "quantidade": 1, "preco_entrada": 100.0, "preco_saida": 110.0},
+        {"entrada": pd.Timestamp("2026-10-21 10:02"), "saida": pd.Timestamp("2026-10-21 10:03"),
+         "lado": "V", "quantidade": 1, "preco_entrada": 120.0, "preco_saida": 115.0},
+    ])
+    local = pd.DataFrame([
+        profit.iloc[0].to_dict(),
+        {"entrada": pd.Timestamp("2026-10-21 10:04"), "saida": pd.Timestamp("2026-10-21 10:05"),
+         "lado": "C", "quantidade": 1, "preco_entrada": 130.0, "preco_saida": 135.0},
+    ])
+    result = MODULE.compare_operations(profit, local)
+    assert result["correspondencias_exatas"] == 1
+    assert result["correspondencias_exatas_detalhe"][0]["entrada"].endswith("10:00:00")
+    assert result["primeira_operacao_profit_sem_correspondencia"]["entrada"].endswith("10:02:00")
+    assert result["primeira_operacao_local_sem_correspondencia"]["entrada"].endswith("10:04:00")
+
+
 def test_normaliza_fusos_para_abertura_em_sao_paulo():
     naive = pd.DataFrame({"Data": ["21/10/2026 09:00"]})
     utc = pd.DataFrame({"timestamp": ["2026-10-21T12:00:00Z"]})
