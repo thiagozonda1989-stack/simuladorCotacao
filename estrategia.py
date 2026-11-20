@@ -120,6 +120,10 @@ class ExecutionRules:
     motor_ticks: bool = False
     latencia_ticks_ms: int = 0
     lacuna_ticks_ms: int = 5000
+    volume_financeiro_ntsl: bool = False
+    agressao_por_barra: bool = False
+    agressao_referencia_injetada: bool = False
+    vwap_continuo_lacunas: bool = False
 
     def __post_init__(self):
         for value in (self.latencia_ticks_ms, self.lacuna_ticks_ms):
@@ -134,7 +138,10 @@ class ExecutionRules:
         for value in (self.custo_por_contrato_lado, self.slippage_ticks):
             if type(value) not in {int, float} or not math.isfinite(value) or value < 0:
                 raise ValueError("Custo e slippage devem ser números finitos e não negativos.")
-        for value in (self.limite_exige_ultrapassar, self.ordem_so_proxima_barra, self.historico_continuo):
+        for value in (self.limite_exige_ultrapassar, self.ordem_so_proxima_barra,
+                      self.historico_continuo, self.volume_financeiro_ntsl,
+                      self.agressao_por_barra, self.agressao_referencia_injetada,
+                      self.vwap_continuo_lacunas):
             if type(value) is not bool:
                 raise ValueError("As regras de execução devem ser booleanas.")
 
@@ -154,7 +161,8 @@ class Engine:
         self.arrays = {symbol.slot: [0.0]*(program.defaults[symbol.slot][1]-program.defaults[symbol.slot][0]+1)
                        for symbol in program.symbols.values() if symbol.kind == "array"}
         self.loop_budget = 0
-        self.series_data = (self.prepare_series(program, frame) if series_data is None else series_data)
+        self.series_data = (self.prepare_series(program, frame, self.rules)
+                            if series_data is None else series_data)
         self.days = frame["pregao"].to_numpy() if days is None else days
         self.gap = (frame["lacuna_intradiaria"].to_numpy(dtype=bool) if "lacuna_intradiaria" in frame
                     else np.r_[False, (frame["segmento"].to_numpy()[1:] != frame["segmento"].to_numpy()[:-1])
@@ -190,9 +198,12 @@ class Engine:
         self.entry_intentions = set()
 
     @staticmethod
-    def prepare_series(program, frame):
+    def prepare_series(program, frame, regras=None):
+        rules = regras if isinstance(regras, ExecutionRules) else ExecutionRules(**(regras or {}))
         series_data = {}
         required = {name: SERIES[name] for name in program.used & SERIES.keys()}
+        if "volume" in required and rules.volume_financeiro_ntsl:
+            required["volume"] = "volume_financeiro"
         for name, column in (("totalbuyqtd","v_qtd_compra_book"),
                              ("totalsellqtd","v_qtd_venda_book")):
             if name in program.used:
@@ -215,7 +226,8 @@ class Engine:
             if not np.isfinite(volume).all() or (volume < 0).any() or not np.isfinite(price).all():
                 raise ValueError("VWAP recebeu preço ou volume inválido.")
             dates = pd.to_datetime(frame["pregao"])
-            gap_epoch = frame.get("lacuna_intradiaria", pd.Series(False, index=frame.index)).cumsum()
+            gap_epoch = (pd.Series(0, index=frame.index) if rules.vwap_continuo_lacunas else
+                         frame.get("lacuna_intradiaria", pd.Series(False, index=frame.index)).cumsum())
             turnover = volume * price
             series_data["vwap_0"] = np.where(volume > 0, price, 0.0)
             for period, group in enumerate((dates, dates.dt.to_period("W-SUN"), dates.dt.to_period("M")), 1):
@@ -223,7 +235,11 @@ class Engine:
                 weighted = turnover.groupby([group, gap_epoch], sort=False).cumsum()
                 series_data[f"vwap_{period}"] = weighted.div(total.where(total > 0)).fillna(0).to_numpy()
         if "agressionvolbalance" in program.used:
-            if "v_agressao_saldo_acumulado" in frame:
+            if rules.agressao_referencia_injetada:
+                if "v_agressao_saldo_referencia" not in frame:
+                    raise ValueError("Agressao de referencia exige v_agressao_saldo_referencia no CSV.")
+                balance = pd.to_numeric(frame["v_agressao_saldo_referencia"])
+            elif "v_agressao_saldo_acumulado" in frame:
                 balance = pd.to_numeric(frame["v_agressao_saldo_acumulado"])
             else:
                 cols = {"v_agressao_compra", "v_agressao_venda"}
@@ -232,8 +248,11 @@ class Engine:
                 buy, sell = (pd.to_numeric(frame[c]) for c in ("v_agressao_compra", "v_agressao_venda"))
                 if (buy < 0).any() or (sell < 0).any():
                     raise ValueError("Informe volumes de agressão compradora e vendedora não negativos.")
-                gap_epoch = frame.get("lacuna_intradiaria", pd.Series(False, index=frame.index)).cumsum()
-                balance = (buy-sell).groupby([frame["pregao"], gap_epoch], sort=False).cumsum()
+                if rules.agressao_por_barra:
+                    balance = buy-sell
+                else:
+                    gap_epoch = frame.get("lacuna_intradiaria", pd.Series(False, index=frame.index)).cumsum()
+                    balance = (buy-sell).groupby([frame["pregao"], gap_epoch], sort=False).cumsum()
             if not np.isfinite(balance).all():
                 raise ValueError("AgressionVolBalance recebeu dados inválidos.")
             series_data["agressionvolbalance"] = balance.to_numpy(dtype=float)
@@ -835,6 +854,14 @@ def main():
     p.add_argument("--motor-ticks", action="store_true")
     p.add_argument("--latencia-ticks-ms", type=int, default=0)
     p.add_argument("--lacuna-ticks-ms", type=int, default=5000)
+    p.add_argument("--volume-financeiro-ntsl", action="store_true",
+                   help="Modo de paridade: Volume NTSL usa volume_financeiro")
+    p.add_argument("--agressao-por-barra", action="store_true",
+                   help="Diagnostico: AgressionVolBalance nao acumula por segmento")
+    p.add_argument("--agressao-referencia-injetada", action="store_true",
+                   help="Diagnostico: usa v_agressao_saldo_referencia exportado do Profit")
+    p.add_argument("--vwap-continuo-lacunas", action="store_true",
+                   help="Diagnostico: VWAP diaria nao reinicia em lacuna intradiaria")
     p.add_argument("--inputs",help="Arquivo JSON com valores de inputs a substituir")
     args=p.parse_args()
     try:
@@ -856,6 +883,10 @@ class StrategyReplay:
         self.target, self.specification = target, specification or {}
         self.excluded = set(excluded) | BLOCKED
         inputs = {SERIES[name] for name in program.used & SERIES.keys()}
+        execution_rules = ExecutionRules(**(regras or {}))
+        if "volume" in program.used and execution_rules.volume_financeiro_ntsl:
+            inputs.discard("volume")
+            inputs.add("volume_financeiro")
         if program.used & {"truerange","truehigh","truelow","typicalprice","medianprice","avgprice","avgtruerange"}:
             inputs |= set(OHLC)
         if "dailyresult" in program.used:
@@ -866,8 +897,11 @@ class StrategyReplay:
             inputs |= {"v_vwap_barra"} if "v_vwap_barra" in frame else {"maxima", "minima", "fechamento"}
             inputs.add("volume_contratos" if "volume_contratos" in frame else "volume")
         if "agressionvolbalance" in program.used:
-            inputs |= ({"v_agressao_saldo_acumulado"} if "v_agressao_saldo_acumulado" in frame
-                       else {"v_agressao_compra", "v_agressao_venda"})
+            if execution_rules.agressao_referencia_injetada:
+                inputs.add("v_agressao_saldo_referencia")
+            else:
+                inputs |= ({"v_agressao_saldo_acumulado"} if "v_agressao_saldo_acumulado" in frame
+                           else {"v_agressao_compra", "v_agressao_venda"})
         conflicts = inputs & self.excluded
         if conflicts:
             raise ValueError("O NTSL lê campos excluídos: " + ", ".join(sorted(conflicts))
@@ -889,7 +923,7 @@ class StrategyReplay:
 
     def score(self, parameters, checkpoint=None):
         if self.in_memory and self.prepared_series is None:
-            self.prepared_series = Engine.prepare_series(self.program, self.frame)
+            self.prepared_series = Engine.prepare_series(self.program, self.frame, self.rules)
             self.history_buffer = np.empty((len(self.frame), len(self.program.defaults)), dtype=float)
         engine_type = Engine
         if (self.rules or {}).get("motor_ticks"):

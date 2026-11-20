@@ -84,3 +84,33 @@ def test_vwap_de_negocios_pondera_cada_preco(tmp_path):
 def test_agressao_sem_dados_tem_diagnostico():
     with pytest.raises(ValueError, match="duas colunas de agressão"):
         run("begin Plot(AgressionVolBalance()); end;", [100])
+
+
+def test_modo_paridade_volume_financeiro_agressao_e_vwap_sem_reset():
+    source = ("begin Plot(Volume); Plot2(AgressionVolBalance); "
+              "Plot3(VWAP(1)); Plot5(Close); Plot8(1); end;")
+    columns = dict(
+        volume=[2, 3, 4], volume_financeiro=[2000, 3600, 8000],
+        volume_contratos=[1, 3, 4], v_vwap_barra=[100, 120, 200],
+        v_agressao_compra=[3, 2, 1], v_agressao_venda=[1, 5, 2],
+        v_agressao_saldo_referencia=[9, -7, 4],
+        lacuna_intradiaria=[False, True, False],
+    )
+    result = run(source, [100, 120, 200], rules={
+        "volume_financeiro_ntsl": True,
+        "agressao_referencia_injetada": True,
+        "vwap_continuo_lacunas": True,
+    }, **columns)
+    assert [(row["plot"], row["plot2"], row["plot3"], row["plot5"], row["plot8"])
+            for row in result.trace] == [
+        (2000, 9, 100, 100, 1), (3600, -7, 115, 120, 1),
+        (8000, 4, 157.5, 200, 1),
+    ]
+
+
+def test_agressao_por_barra_e_opt_in_sem_mudar_padrao():
+    source = "begin Plot(AgressionVolBalance); end;"
+    columns = dict(v_agressao_compra=[3, 2], v_agressao_venda=[1, 5])
+    assert [row["plot"] for row in run(source, [100, 101], **columns).trace] == [2, -1]
+    assert [row["plot"] for row in run(
+        source, [100, 101], rules={"agressao_por_barra": True}, **columns).trace] == [2, -3]

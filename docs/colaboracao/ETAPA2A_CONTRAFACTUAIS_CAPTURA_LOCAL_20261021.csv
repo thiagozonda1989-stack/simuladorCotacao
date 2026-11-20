@@ -1,0 +1,6 @@
+rodada;mudanca_sobre_padrao;compras_emitidas;vendas_emitidas;operacoes;pontos_contrato;correspondencias_exatas_profit;interpretacao
+00_padrao;nenhuma;2;3;5;650;3;reproduz a rodada anterior de 5 operacoes
+01_volume_financeiro;somente Volume NTSL financeiro;2;3;5;650;3;nao alterou operacoes isoladamente
+02_agressao_por_barra;somente AgressionVolBalance por candle;5;3;8;-775;5;aproximou contagem mas nao restaurou dados ausentes
+03_vwap_continuo;somente VWAP sem reset nas lacunas;3;3;6;570;3;adicionou uma operacao
+04_tres_mudancas;Volume financeiro,agressao por candle,VWAP continua;7;2;9;-855;6;continua diferente porque as barras e a agressao local parcial nao equivalem ao Profit

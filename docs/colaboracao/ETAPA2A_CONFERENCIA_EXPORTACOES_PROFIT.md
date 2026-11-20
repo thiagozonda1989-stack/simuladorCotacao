@@ -1,104 +1,112 @@
-# Etapa 2A — conferência e comparação de 21/10/2026
+# Etapa 2A — paridade de 21/10/2026 com as mesmas barras
 
-Pregão de referência: WINZ26 em 21/10/2026, candles de 1 minuto, timestamp na abertura da barra em `America/Sao_Paulo`, avaliação da estratégia no fechamento e execução elegível na barra seguinte. O recorte usa somente o dia-alvo. Custos e slippage permanecem zerados para paridade mecânica.
+Recorte congelado: WINZ26, 21/10/2026, candle fechado de 1 minuto, timestamp na abertura em `America/Sao_Paulo`, estratégia v5.7 original, `p_Lote=1`, custos e slippage zerados. Os CSVs originais e os derivados com preços permanecem privados em `C:\Users\thiag\Documents\ProfitRTD`.
 
-Os CSVs de origem e o JSON detalhado da conferência permanecem privados em `C:\Users\thiag\Documents\ProfitRTD`. Este documento e a matriz publicam somente método e agregados.
+## Resultado principal
 
-## Inventário das fontes
+A diferença anterior de **10 operações no Profit contra 5 no simulador** não é uma divergência mecânica da v5.7. Ao alimentar o motor com as mesmas 565 barras exportadas do Profit, separar `Quantity` de `Volume` financeiro e usar o saldo de agressão exportado como referência diagnóstica, o motor reproduziu:
 
-| Fonte | Recorte de 21/10 | Uso |
+- 565 de 565 barras;
+- os oito indicadores dentro das tolerâncias em 502 barras, depois de excluir 63 barras de aquecimento;
+- 14 candidatos de venda, 11 de compra e 477 zeros, exatamente como o Profit;
+- 10 ordens de entrada emitidas pelo motor;
+- as 10 operações e os 20 preenchimentos exatamente em horário, lado, quantidade e preço;
+- a mesma posição quando reconstruída das operações.
+
+Portanto, **não há primeira divergência verificável com as mesmas barras após o aquecimento**. A camada de ordens ainda não pode ser fechada porque o Profit não exportou o histórico nativo de criação, alteração, cancelamento e OCO. A posição do Profit também é derivada das operações, não observada por candle.
+
+## Fontes privadas e integridade
+
+| Fonte | Recorte | SHA-256 |
 |---|---:|---|
-| `profit_WINZ26_20261021_barras_1min.csv` | 565 barras, 09:00–18:24, sem timestamp repetido | OHLC, Trades, Quantity e Volume financeiro do Profit |
-| `profit_WINZ26_20261021_indicadores_v5_7.csv` | 565 barras e oito séries; timestamps/OHLC iguais ao CSV de barras | Indicadores e sinal candidato |
-| `profit_WINZ26_20261021_posicao.csv` | 10 operações completas de um contrato | Execuções; não contém eventos de ordens nem posição observada por candle |
-| `WINZ26_20261021_1min_paridade.csv` | 563 barras, 09:00–18:31, sem timestamp repetido | Derivado privado da captura local |
-| `simulador_v5_7_20261021/execucoes.csv` | 5 operações, 10 preenchimentos | Execuções do replay local |
+| `profit_WINZ26_20261021_barras_1min.csv` | 565 barras, 09:00–18:24 | `3726e7dd9a821a109120765e4115e6eb352079e9402d9370ae7565ac9555bb2a` |
+| `profit_WINZ26_20261021_indicadores_v5_7.csv` | 565 linhas, oito plots | `76b79ef839ab6b142a0976c7c3ef1a6b7bb7dc2d013434551e861c892a56b946` |
+| `profit_WINZ26_20261021_posicao.csv` | 10 operações completas | `549e22dea388e5f4e272bc906ac3309e9e88a1de7f53e6184ded5796dbe64479` |
 
-As sequências temporais dos dois conjuntos de barras estão ordenadas e não têm duplicidades no recorte.
+`tools/preparar_paridade_profit_barras.py` recusa timestamps repetidos, normaliza o fuso, filtra somente 21/10 e cria uma entrada privada nova. `Quantity` permanece em contratos; `Volume` permanece financeiro. O preço médio da barra para VWAP é aproximado por `Volume/(Quantity*R$ 0,20)`. A exportação arredondada limita a precisão, mas o erro máximo observado da VWAP foi **0,004997 ponto**, abaixo da tolerância de 0,01.
 
-## Barras
+O z-score da v5.7 foi alimentado pela série de **Volume financeiro**, como no Profit. O comportamento padrão do simulador continua usando `volume` e só muda com `--volume-financeiro-ntsl`.
 
-- Há 562 horários comuns.
-- Profit exclusivo: 09:02, 09:03 e 09:04. A ausência desses minutos no derivado local está confirmada.
-- Local exclusivo: 18:31. O Profit termina às 18:24; essa borda não é comparável.
-- Na primeira barra comum, 09:00, a abertura coincide em 212.900, mas já divergem máxima (213.015 vs 212.900), mínima (212.365 vs 212.380), fechamento (212.380 vs 212.440), Trades (6.172 vs 902) e Quantity (69.378 vs 3.137). A primeira diferença de abertura ocorre às 09:01 (212.400 vs 212.440).
-- Das 562 barras comuns, abertura coincide em 410, máxima em 556, mínima em 555 e fechamento em 534. Trades e Quantity não coincidem em nenhuma barra.
-- `Volume` do Profit é financeiro e foi mantido separado de `Quantity`; seu total no recorte é 773.308.875.044. Não foi comparado como se fosse contratos.
+## Comparação por camada
 
-Isso distingue a ausência de negócios da falha de captura: 09:02–09:04 têm barras e negócios no Profit, portanto a ausência local é uma descontinuidade de captura, não ausência de negociação.
+### Barras
 
-## Indicadores e sinais candidatos
+Os 565 timestamps foram normalizados para `America/Sao_Paulo` antes do cruzamento. Não houve duplicata. OHLC, Trades, Quantity e Volume financeiro coincidiram integralmente porque esta rodada usa diretamente a exportação Profit, sem alterar o original.
 
-Foi aplicado aquecimento de 63 candles depois de cada lacuna/novo segmento. Restaram 324 barras comparáveis:
+O comparador agora recusa duplicatas com mensagem contendo fonte e horário. Ambiguidade de abertura/fechamento só é marcada quando existem preços distintos no primeiro ou último milissegundo da barra. O inventário da captura local encontrou evidência em 174 barras (161 ocorrências no primeiro milissegundo e 19 no último; algumas barras têm ambas). `Sequencia` ordena a captura, mas não prova a ordem de bolsa. Essa marca não é aplicada ao CSV de barras do Profit, que não contém negócios por milissegundo.
 
-- 10:07–10:30: 24 barras;
-- 11:35–16:00: 266 barras;
-- 17:03–17:36: 34 barras.
+### Indicadores
 
-Mesmo nesses trechos, há divergências. A primeira ocorre às 10:07 em VWAP, desvio, média do ATR, agressão e ZScore. ATR diverge primeiro às 10:14; regime, às 10:20. Em 324 sinais candidatos, 312 coincidem e 12 divergem; a primeira divergência é 12:25, com compra no Profit e zero local.
+As primeiras 63 barras, 09:00–10:02 inclusive, foram excluídas; a primeira barra comparada é 10:03. Em 502 barras:
 
-Duas diferenças semânticas foram confirmadas:
+| Campo | Tolerância | Fora da tolerância | Máximo absoluto |
+|---|---:|---:|---:|
+| VWAP | 0,01 ponto | 0 | 0,004997 |
+| Desvio padrão | 0,01 ponto | 0 | 0,004986 |
+| ATR | 0,01 ponto | 0 | 0,004286 |
+| Média do ATR | 0,01 ponto | 0 | inferior a 0,01 |
+| Saldo de agressão | exata | 0 | 0 |
+| Z-score de Volume | 0,01 | 0 | 0,004980 |
+| Regime | exata | 0 | 0 |
+| Sinal candidato | exata | 0 | 0 |
 
-1. O ZScore exportado pelo Profit é compatível com a série `Volume` financeira. O motor local atualmente usa contratos como `Volume`.
-2. O `AgressionVolBalance` exportado pelo Profit se comporta como saldo da barra: correlação 0,9781 com `agressão_compra - agressão_venda` local e mesmo sinal em 536 de 562 barras comuns. O motor local acumula essa série por segmento. Por isso, chamá-la de “agressão acumulada” entre plataformas é incorreto sem ajustar a semântica.
+`rolling_local()` não fundamenta esta conclusão; ele permanece identificado como diagnóstico auxiliar. Os valores acima foram produzidos pelo próprio compilador/motor NTSL através dos oito plots do indicador instrumentado.
 
-VWAP e agressão foram sinalizados separadamente: o simulador reinicia ambos nas lacunas; o Profit conserva histórico contínuo. O aquecimento torna as janelas móveis novamente avaliáveis, mas não restaura acumuladores intradiários. Logo, VWAP e agressão permanecem divergentes mesmo depois de 63 barras.
+A agressão desta rodada é **dado de referência injetado** (`v_Saldo_Agressao` exportado do Profit). Isso prova que, dadas as mesmas barras e séries semânticas, o cálculo seguinte coincide; não valida a reconstrução independente da agressão local.
 
-O campo `v_Sinal` é candidato do indicador. Ele não inclui sozinho horário permitido, densidade, posição atual, ordens pendentes nem a regra de execução na barra seguinte. Não deve ser contado como entrada executada.
+### Sinais, ordens, preenchimentos e posição
 
-## Operações, ordens e posição
+O `plot8` é o candidato de sinal. A chamada `BuyAtMarket`/`SellShortAtMarket`, registrada em `sinal_compra`/`sinal_venda`, é a ordem de entrada emitida. São eventos diferentes. O primeiro envio ocorreu no fechamento de 10:08 e foi preenchido na abertura de 10:09.
 
-O simulador numera `barra` a partir de 1; a associação correta é `candles.indice = execucoes.barra - 1`. Com essa convenção:
+Todas as 10 viagens de ida e volta coincidiram. Logo, a posição reconstruída também coincide. Eventos nativos de ordens e posição por candle do Profit continuam indisponíveis e não foram inventados a partir das execuções.
 
-- Profit: 10 operações completas;
-- simulador: 5 operações completas;
-- três operações coincidem exatamente em entrada, saída, lado, quantidade e preços: 10:09–10:16, 10:17–10:19 e 12:48–13:06;
-- a primeira operação do Profit sem correspondente local é venda de um contrato às 10:47 por 211.880, encerrada às 11:33 por 211.430.
+## O que explica a rodada de 10 contra 5
 
-Às 10:46, o indicador Profit registra candidato de venda, enquanto o cálculo local registra zero. O trecho local tinha apenas 14 barras desde a lacuna iniciada às 10:33, portanto está fora do aquecimento de 63 barras. Há evidência de divergência anterior na camada de estado/indicador e sinal; não há evidência para atribuir a ausência à execução. Os eventos de envio, alteração e cancelamento de ordens do Profit continuam indisponíveis.
+A captura local possui 563 barras, contra 565 do Profit. Os minutos 09:02–09:04 existem no Profit e faltam localmente; logo é falha de captura, não ausência de negócios. Já na primeira barra comum há diferenças de OHLC, Trades e Quantity.
 
-A posição do Profit foi reconstruída das operações executadas e é explicitamente **derivada**. A primeira divergência reconstruída ocorre às 10:47: Profit vendido e simulador zerado. A reconstrução não substitui uma série nativa de posição/preço médio por candle e não recupera ordens canceladas.
+A venda do Profit às 10:47 permanece fora do trecho local comparável: a captura teve lacuna e ainda não havia completado novo aquecimento. Ela não é usada como primeira divergência válida. A primeira operação Profit sem correspondente dentro de um trecho local aquecido é a **compra de 12:26–12:47**; o candidato nasce às 12:25, quando Profit e cálculo local já divergem.
 
-## Método reproduzível
+Contrafactuais, uma mudança por vez, estão em `ETAPA2A_CONTRAFACTUAIS_CAPTURA_LOCAL_20261021.csv`:
 
-O script `tools/comparar_paridade_profit_win.py`:
+- padrão local: 5 operações, 3 correspondências exatas;
+- apenas Volume financeiro: continua com 5;
+- apenas agressão por candle: 8 operações, 5 correspondências;
+- apenas VWAP contínua nas lacunas: 6 operações, 3 correspondências;
+- as três mudanças: 9 operações, 6 correspondências.
 
-- lê os formatos originais sem modificá-los;
-- filtra explicitamente o dia solicitado;
-- registra nome e SHA-256 de cada entrada;
-- valida ordem temporal e duplicidades;
-- gera apenas agregados e primeiras divergências;
-- recusa sobrescrever a saída, permitindo processar somente um conjunto novo/novo hash.
+Assim, nenhuma troca semântica isolada recupera a paridade sobre a captura local. Faltam negócios e 31,22% dos negócios têm agressor RLP/leilão/direto sem lado utilizável. A evidência aponta primeiro para dados de entrada, não para execução da v5.7.
 
-Execução usada no Windows, com os caminhos privados abreviados:
+## Comandos reproduzíveis
 
 ```powershell
-py -3.11 tools\comparar_paridade_profit_win.py `
-  --profit-barras <ProfitRTD>\profit_WINZ26_20261021_barras_1min.csv `
-  --profit-indicadores <ProfitRTD>\profit_WINZ26_20261021_indicadores_v5_7.csv `
-  --profit-operacoes <ProfitRTD>\profit_WINZ26_20261021_posicao.csv `
-  --local-barras <ProfitRTD>\derivados_etapa2a_20261119\WINZ26_20261021_1min_paridade.csv `
-  --simulador-execucoes <ProfitRTD>\derivados_etapa2a_20261119\simulador_v5_7_20261021\execucoes.csv `
-  --simulador-candles <ProfitRTD>\derivados_etapa2a_20261119\simulador_v5_7_20261021\candles.csv `
-  --saida <ProfitRTD>\derivados_etapa2a_20261119\comparacao_profit_local_20261021_v1.json
+py -3.11 tools\preparar_paridade_profit_barras.py `
+  --barras <privado>\profit_WINZ26_20261021_barras_1min.csv `
+  --indicadores <privado>\profit_WINZ26_20261021_indicadores_v5_7.csv `
+  --data 2026-10-21 `
+  --saida <privado>\WINZ26_20261021_profit_1min_privado.csv `
+  --manifesto <privado>\manifesto_preparacao.json
+
+py -3.11 estrategia.py `
+  --csv <privado>\WINZ26_20261021_profit_1min_privado.csv `
+  --ntsl estrategias\execucao\Modelo_Unificado_Refatorado_v5_7.ntsl `
+  --saida <privado>\execucao_v5_7_referencia `
+  --segundos 60 --formato ohlc --tick 5 --valor-ponto 0.2 `
+  --inputs <privado>\inputs_v5_7_paridade.json `
+  --volume-financeiro-ntsl --agressao-referencia-injetada
+
+py -3.11 estrategia.py `
+  --csv <privado>\WINZ26_20261021_profit_1min_privado.csv `
+  --ntsl estrategias\indicadores\indicador_paridade_modelo_unificado_v5_7_v1_0.ntsl `
+  --saida <privado>\indicadores_motor_referencia `
+  --segundos 60 --formato ohlc --tick 5 --valor-ponto 0.2 `
+  --volume-financeiro-ntsl --agressao-referencia-injetada
+
+py -3.11 tools\comparar_paridade_mesmas_barras.py <argumentos privados> `
+  --aquecimento 63 --saida <privado>\comparacao_mesmas_barras_v1.json
 ```
 
-O JSON privado é o registro do que já foi processado; os hashes impedem confundir uma nova exportação com esta rodada.
+Os scripts recusam sobrescrever saídas. Os manifestos privados guardam hashes do que já foi processado.
 
-## SHA-256 das fontes
+## Repetição em 26/10
 
-- Barras Profit: `3726e7dd9a821a109120765e4115e6eb352079e9402d9370ae7565ac9555bb2a`
-- Indicadores Profit: `76b79ef839ab6b142a0976c7c3ef1a6b7bb7dc2d013434551e861c892a56b946`
-- Operações Profit: `549e22dea388e5f4e272bc906ac3309e9e88a1de7f53e6184ded5796dbe64479`
-- Derivado local: `92b10ff97e9c0ff7b2ce03e4ffef33496b67d1dea8b962d8e7638f3c2cc1cc4c`
-- Execuções locais: `3142a56a17c3afe17d12fd095c325e6bf7d0a9681b4cf2bf32d8d55fd32e2030`
-- Candles do replay: `3b5ad32b5cc67c3bccb0c375a70083bf3d0028eb9ae6512839328b0e26800c1c`
-
-## Pendências
-
-- eventos de ordens do Profit (envio, alteração, cancelamento e OCO);
-- posição e preço médio nativos por candle no Profit;
-- decisão de paridade para `Volume` financeiro versus contratos;
-- correção/parametrização explícita da semântica de `AgressionVolBalance` no simulador;
-- evidência causal de book histórico; permanece fora desta rodada;
-- repetir o procedimento em 26/10 somente depois de estabilizar essas convenções.
+O procedimento está estabilizado para repetir 26/10 nas camadas barras, indicadores, candidatos e preenchimentos. Permanecem dois limites: a agressão será novamente uma referência injetada se não houver reconstrução independente equivalente; ordens e posição nativas do Profit continuarão bloqueadas sem exportação própria. O pregão de 26/10 ainda não foi aberto nesta rodada.

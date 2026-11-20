@@ -6,6 +6,8 @@ Data da primeira execução: 2026-11-19. Este protocolo não otimiza parâmetros
 
 O SHA funcional `c534b575a027bc196743391a9674b7a9ed8c824d` foi executado com Python 3.11.3 após remover `PYTHONUTF8` do ambiente. O comando `py -3.11 -m pytest -q` resultou em **27 passed, 12 warnings**. A falha CP1252 anterior foi eliminada com `read_text(encoding="utf-8")`; os avisos restantes são os `Pandas4Warning` de timezone já conhecidos em `integrar_profitrtd.py:30` e `replay_ticks.py:30`.
 
+O registro acima é histórico. A rodada de mesmas barras adiciona testes de normalização para `America/Sao_Paulo`, rejeição de duplicatas, evidência de ambiguidade no milissegundo-limite, separação de Volume/Quantity e modos de paridade. O resultado e o SHA atuais são registrados no retorno do PR.
+
 ## Escopo congelado
 
 | Item | Configuração |
@@ -20,7 +22,18 @@ O SHA funcional `c534b575a027bc196743391a9674b7a9ed8c824d` foi executado com Pyt
 | Grade/valor | 5 pontos; R$ 0,20 por ponto por contrato |
 | Cenário mecânico | custo R$ 0,00 e slippage 0 tick; não representa desempenho econômico |
 | Janela nominal | carregar 09:00–18:31; entradas da estratégia 09:15–17:00, exceto 10:25–10:35 e 14:25–14:35 |
-| Aquecimento | mínimo de 63 candles válidos após início/reinício: 14 barras do ATR encadeadas na média de 50 barras (`14 + 50 - 1`); nenhuma ordem do aquecimento entra na comparação |
+| Aquecimento | excluir os primeiros 63 candles válidos após início/reinício: 14 barras do ATR encadeadas na média de 50 barras (`14 + 50 - 1`); a primeira comparação ocorre no candle 64 |
+
+## Modo opt-in para paridade
+
+O comportamento padrão dos demais usuários não foi alterado. As diferenças semânticas são ativadas somente por flags registradas em `metricas.json`:
+
+- `--volume-financeiro-ntsl`: a série NTSL `Volume` usa `volume_financeiro`; `Quantity` continua em `volume_contratos`;
+- `--agressao-por-barra`: contrafactual independente que não acumula o saldo por segmento;
+- `--agressao-referencia-injetada`: usa `v_agressao_saldo_referencia` exportado do Profit e marca a rodada como diagnóstica;
+- `--vwap-continuo-lacunas`: contrafactual que não reinicia VWAP em lacuna intradiária, mantendo o reset diário.
+
+O compilador agora aceita `Plot5` a `Plot8`, permitindo que o próprio motor registre todos os indicadores da instrumentação separada. `rolling_local()` não é evidência de paridade do motor.
 
 No Profit, a rodada deve ser feita em **Backtest/Replay**, nunca em automação de conta real: WINZ26, 21/10/2026, período 1 Min, execução OHLC/fechamento do candle, quantidade e quantidade máxima 1, slippage 0, custos 0 e “Executar nos Limites” habilitado. O código da candidata não é alterado; `indicador_paridade_modelo_unificado_v5_7_v1_0.ntsl` é uma instrumentação separada e não envia ordens.
 

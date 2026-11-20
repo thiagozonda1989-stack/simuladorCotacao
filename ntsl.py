@@ -45,6 +45,7 @@ FUNCTIONS = {
     "selltocoverstop": (1, 3), "buytocoverstop": (1, 3),
     "closeposition": (0, 0), "cancelpendingorders": (0, 0),
     "plot": (1, 1), "plot2": (1, 1), "plot3": (1, 1), "plot4": (1, 1),
+    "plot5": (1, 1), "plot6": (1, 1), "plot7": (1, 1), "plot8": (1, 1),
     "paintbar": (1, 1), "consolelog": (1, 2),
 }
 PURE_FUNCTIONS = {"abs", "min", "max", "sqrt", "round", "floor", "ceiling", "power",

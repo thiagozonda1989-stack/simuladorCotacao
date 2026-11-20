@@ -17,9 +17,12 @@ def test_prepara_candles_agressao_e_lacuna(tmp_path: Path):
     assert bars[["abertura", "maxima", "minima", "fechamento"]].iloc[0].tolist() == [100, 110, 100, 110]
     assert bars.iloc[0].volume_contratos == 9
     assert bars.iloc[0].volume == 9
+    assert bars.iloc[0].volume_financeiro == 191
     assert bars.iloc[0].v_agressao_compra == 6
     assert bars.iloc[0].v_agressao_venda == 3
     assert bars.iloc[0].lacuna_na_barra
     assert metrics["lacunas_maiores_limite"] == 2
     assert metrics["lacunas"][0]["anterior"].endswith("09:15:00.100000")
     assert metrics["agressores_nao_reconhecidos"] == 1
+    assert metrics["ambiguidade_limite_barras"] == 1
+    assert metrics["primeira_ambiguidade_limite"]["limite"] == "primeiro_milissegundo"

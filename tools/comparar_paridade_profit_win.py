@@ -15,6 +15,7 @@ import pandas as pd
 
 
 PRICE = ("abertura", "maxima", "minima", "fechamento")
+SAO_PAULO = "America/Sao_Paulo"
 PROFIT_INDICATORS = {
     "v_VWAP_Diaria": "vwap",
     "v_Desvio_Padrao": "desvio",
@@ -46,7 +47,25 @@ def read_local_bars(path: Path) -> pd.DataFrame:
     return pd.read_csv(path, sep=";", encoding="utf-8-sig", decimal=",")
 
 
-def normalize_bars(frame: pd.DataFrame, timestamp: str) -> pd.DataFrame:
+def _timestamp_sao_paulo(value) -> pd.Timestamp:
+    stamp = pd.Timestamp(value)
+    if stamp.tzinfo is None:
+        return stamp.tz_localize(SAO_PAULO, ambiguous="raise", nonexistent="raise")
+    return stamp.tz_convert(SAO_PAULO)
+
+
+def reject_duplicate_timestamps(frame: pd.DataFrame, source: str) -> None:
+    duplicated = frame.loc[frame["timestamp"].duplicated(keep=False), "timestamp"]
+    if not duplicated.empty:
+        first = duplicated.sort_values().iloc[0]
+        count = int((frame["timestamp"] == first).sum())
+        raise ValueError(
+            f"Fonte {source} possui {count} linhas no horario duplicado "
+            f"{first.isoformat()}; cruzamento recusado."
+        )
+
+
+def normalize_bars(frame: pd.DataFrame, timestamp: str, source: str = "desconhecida") -> pd.DataFrame:
     result = frame.copy()
     result.columns = [str(column).strip() for column in result.columns]
     aliases = {
@@ -57,8 +76,13 @@ def normalize_bars(frame: pd.DataFrame, timestamp: str) -> pd.DataFrame:
     result = result.rename(columns=aliases)
     if timestamp != "timestamp":
         result = result.rename(columns={timestamp: "timestamp"})
-    sample = str(result["timestamp"].dropna().iloc[0]) if result["timestamp"].notna().any() else ""
-    result["timestamp"] = pd.to_datetime(result["timestamp"], dayfirst=not sample[:4].isdigit())
+    if result["timestamp"].isna().any():
+        raise ValueError(f"Fonte {source} possui timestamp vazio.")
+    try:
+        result["timestamp"] = result["timestamp"].map(_timestamp_sao_paulo)
+    except (TypeError, ValueError) as error:
+        raise ValueError(f"Fonte {source} possui timestamp invalido: {error}") from error
+    reject_duplicate_timestamps(result, source)
     return result.sort_values("timestamp", kind="stable").reset_index(drop=True)
 
 
@@ -74,6 +98,37 @@ def inventory(frame: pd.DataFrame) -> dict:
         "fim": frame["timestamp"].max().isoformat() if len(frame) else None,
         "timestamps_duplicados": int(frame["timestamp"].duplicated().sum()),
         "ordem_temporal_valida": bool(frame["timestamp"].is_monotonic_increasing),
+    }
+
+
+def boundary_price_evidence(trades: pd.DataFrame, timestamp: str = "timestamp",
+                            price: str = "preco") -> dict:
+    """Detecta ambiguidade somente se o milissegundo-limite tem precos distintos.
+
+    Uma barra pode conter muitos negocios no primeiro ou no ultimo milissegundo sem
+    tornar OHLC ambiguo. A evidencia existe apenas quando esses negocios simultaneos
+    carregam mais de um preco e a ordem de bolsa entre eles nao esta demonstrada.
+    """
+    data = trades[[timestamp, price]].copy()
+    data[timestamp] = data[timestamp].map(_timestamp_sao_paulo)
+    data["minuto"] = data[timestamp].dt.floor("min")
+    records = []
+    for minute, group in data.groupby("minuto", sort=True):
+        first_stamp, last_stamp = group[timestamp].min(), group[timestamp].max()
+        for edge, stamp in (("primeiro_milissegundo", first_stamp),
+                            ("ultimo_milissegundo", last_stamp)):
+            edge_rows = group[group[timestamp] == stamp]
+            distinct = int(pd.to_numeric(edge_rows[price], errors="raise").nunique())
+            if distinct > 1:
+                records.append({
+                    "barra": minute.isoformat(), "limite": edge,
+                    "timestamp": stamp.isoformat(), "negocios": int(len(edge_rows)),
+                    "precos_distintos": distinct,
+                })
+    return {
+        "criterio": "mais de um preco no primeiro ou ultimo milissegundo da barra",
+        "barras_com_evidencia": len({row["barra"] for row in records}),
+        "ocorrencias": records,
     }
 
 
@@ -218,7 +273,7 @@ def compare_indicators(profit: pd.DataFrame, local: pd.DataFrame, warmup: int) -
 def read_profit_operations(path: Path, day: str) -> pd.DataFrame:
     frame = read_profit(path, skiprows=5)
     for name in ("Abertura", "Fechamento"):
-        frame[name] = pd.to_datetime(frame[name], dayfirst=True)
+        frame[name] = pd.to_datetime(frame[name], dayfirst=True).map(_timestamp_sao_paulo)
     target = pd.Timestamp(day).date()
     return frame[frame["Abertura"].dt.date == target].copy().reset_index(drop=True)
 
@@ -280,14 +335,18 @@ def compare_operations(profit: pd.DataFrame, local: pd.DataFrame) -> dict:
 
 
 def build_report(args: argparse.Namespace) -> dict:
-    profit_bars = target_day(normalize_bars(read_profit(args.profit_barras), "timestamp"), args.data)
-    local = target_day(normalize_bars(read_local_bars(args.local_barras), "timestamp"), args.data)
+    profit_bars = target_day(normalize_bars(
+        read_profit(args.profit_barras), "timestamp", "Profit barras"), args.data)
+    local = target_day(normalize_bars(
+        read_local_bars(args.local_barras), "timestamp", "captura local"), args.data)
     local["trades"] = local["v_trades_atual"]
     local["quantity"] = local["volume_contratos"]
-    indicators = target_day(normalize_bars(read_profit(args.profit_indicadores), "timestamp"), args.data)
+    indicators = target_day(normalize_bars(
+        read_profit(args.profit_indicadores), "timestamp", "Profit indicadores"), args.data)
     operations = profit_round_trips(read_profit_operations(args.profit_operacoes, args.data))
     fills = pd.read_csv(args.simulador_execucoes)
-    simulator_candles = pd.read_csv(args.simulador_candles)
+    simulator_candles = target_day(normalize_bars(
+        pd.read_csv(args.simulador_candles), "timestamp", "simulador candles"), args.data)
     local_operations = local_round_trips(fills, simulator_candles)
     bars, _ = compare_bars(profit_bars, local)
     return {

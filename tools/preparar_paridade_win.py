@@ -75,11 +75,28 @@ def prepare(path: Path, gap_ms: int = 5_000) -> tuple[pd.DataFrame, dict]:
         ultima_cotacao=("timestamp", "last"), lacuna_na_barra=("nova_lacuna", "max"),
     ).reset_index().rename(columns={"minuto": "timestamp"})
     bars["v_vwap_barra"] = bars["financeiro"] / bars["volume_contratos"]
+    # O contrato WIN vale R$ 0,20 por ponto. Mantemos a serie financeira
+    # separada da quantidade para o modo de paridade do Volume NTSL.
+    bars["volume_financeiro"] = bars["financeiro"] * 0.20
     bars = bars.drop(columns="financeiro")
     # Volume no NTSL representa a quantidade negociada no candle.
     bars["volume"] = bars["volume_contratos"]
     bars["intervalo_minutos"] = bars["timestamp"].diff().dt.total_seconds().div(60).fillna(0)
     bars["comparavel_barras"] = (~bars["lacuna_na_barra"] & bars["intervalo_minutos"].isin([0, 1])).astype(int)
+
+    edge_keys = pd.concat([
+        bars[["timestamp", "primeira_cotacao"]].rename(
+            columns={"timestamp": "minuto", "primeira_cotacao": "timestamp"}).assign(
+                limite="primeiro_milissegundo"),
+        bars[["timestamp", "ultima_cotacao"]].rename(
+            columns={"timestamp": "minuto", "ultima_cotacao": "timestamp"}).assign(
+                limite="ultimo_milissegundo"),
+    ], ignore_index=True)
+    edge_trades = trades.merge(edge_keys, on=["minuto", "timestamp"], how="inner")
+    edge_counts = edge_trades.groupby(
+        ["minuto", "timestamp", "limite"], sort=True
+    ).agg(negocios=("preco", "size"), precos_distintos=("preco", "nunique")).reset_index()
+    ambiguous_edges = edge_counts[edge_counts["precos_distintos"] > 1]
 
     recognized = sum(count for name, count in aggressors.items() if name in BUY | SELL)
     gap_rows = trades.index[trades["nova_lacuna"]]
@@ -103,6 +120,24 @@ def prepare(path: Path, gap_ms: int = 5_000) -> tuple[pd.DataFrame, dict]:
         "minutos_ausentes": int((bars["intervalo_minutos"] - 1).clip(lower=0).sum()),
         "agressores_reconhecidos": int(recognized),
         "agressores_nao_reconhecidos": int(len(trades) - recognized),
+        "volume_financeiro_unidade": "R$; preco_pontos*contratos*0,20",
+        "ambiguidade_limite_criterio": (
+            "mais de um preco no primeiro ou ultimo milissegundo; Sequencia nao prova ordem de bolsa"
+        ),
+        "ambiguidade_limite_barras": int(ambiguous_edges["minuto"].nunique()),
+        "ambiguidade_primeiro_milissegundo": int(
+            (ambiguous_edges["limite"] == "primeiro_milissegundo").sum()),
+        "ambiguidade_ultimo_milissegundo": int(
+            (ambiguous_edges["limite"] == "ultimo_milissegundo").sum()),
+        "primeira_ambiguidade_limite": (
+            {
+                "barra": ambiguous_edges.iloc[0]["minuto"].isoformat(),
+                "timestamp": ambiguous_edges.iloc[0]["timestamp"].isoformat(),
+                "limite": ambiguous_edges.iloc[0]["limite"],
+                "negocios": int(ambiguous_edges.iloc[0]["negocios"]),
+                "precos_distintos": int(ambiguous_edges.iloc[0]["precos_distintos"]),
+            } if len(ambiguous_edges) else None
+        ),
         "contagem_agressor": aggressors,
         "lacunas": gaps,
     }
