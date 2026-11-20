@@ -1,0 +1,616 @@
+FONTES PUBLICAVEIS PARA O GEMINI - CAPTURA NATIVA V5.8
+PR: https://github.com/thiagozonda1989-stack/simuladorCotacao/pull/2
+Comparador e diagnostico: 3a8d32d3185dfd2686db53df8735e5713667d208
+21/10: 7/7 com historico anterior. 26/10: 9/10 no diagnostico com continuidade.
+Sonda v2: Boolean 1 em ambos; array e estado[1] divergem.
+
+=== docs/colaboracao/evidencias/WINZ26_v5_8_captura_profit_20261021_20261026_v2/README.md ===
+
+# Captura nativa e paridade da v5.8 em WINZ26
+
+Comparador e diagnóstico executados em `3a8d32d3185dfd2686db53df8735e5713667d208`. O motor de replay é o mesmo de `68f1025526be87c52a5fa8cb8f9368dad06062ca`. O replay isolado usa as saídas verificadas da rodada `e54a729150b736173c4fdea16d65579759df6dde`. Windows 10, Python 3.11.3, pandas 3.1.1. [Protocolo, configuração e NTSL da rodada anterior](../WINZ26_v5_8_validacao_20261021_20261026_v1/README.md)
+
+## Resultado
+
+| Pregão | Cenário no simulador | Profit | Simulador | Operações exatas | Primeira solicitação sem par, rótulo NTSL |
+|---|---|---:|---:|---:|---|
+| 21/10 | Pregão isolado | 7 | 6 | 6 | 10:08, no Profit |
+| 21/10 | Com 20/10 no histórico | 7 | 7 | **7** | — |
+| 26/10 | Pregão isolado | 10 | 10 | 9 | 10:14, no Profit |
+| 26/10 | Com 23/10 no histórico | 10 | 10 | 8 | 09:50, no simulador |
+| 26/10 | Histórico + continuidade em 09:39, diagnóstico | 10 | 10 | **9** | — |
+
+Operação exata exige igualdade de horário de entrada e saída, direção, quantidade e preços. Com o histórico adicional de 21/10, os 14 preenchimentos e as 306 solicitações também coincidem. Sinais, filtros, indicadores e posição/estado coincidem nas 509 avaliações do trecho elegível. No diagnóstico final de 26/10, todas as 62 solicitações coincidem no pregão. As 472 avaliações do trecho elegível coincidem em sinais, filtros, indicadores e posição/estado. A única operação diferente tem as mesmas entrada, direção e quantidade, com preço de saída diferente. [Matriz de paridade](matriz_paridade_v5_8.csv) · [Matriz por camada](matriz_camadas_v5_8.csv) · [Operações sanitizadas](operacoes_sanitizadas_por_cenario.csv)
+
+## Inventário e qualidade dos dados
+
+| Captura | Conteúdo conferido |
+|---|---|
+| Console da estratégia | Dois blocos idênticos de 1.503 eventos. Retido o primeiro, com 1.135 avaliações. |
+| Console da sonda v2 | Dois blocos idênticos de 4 eventos. Retido o primeiro. |
+| Barras | 20.001 linhas em 36 pregões, 29/09 a 19/11. Cinco colunas, `Data`, `Abertura`, `Máxima`, `Mínima` e `Fechamento`. Ordem decrescente no original, sem timestamps duplicados ou OHLC ausente. |
+| Operações | 290 operações WINZ26 em 56 pregões, 13/08 a 19/11. Dezenove colunas após cinco linhas de cabeçalho e zero IDs repetidos. |
+| PDF | Uma página, janela configurada de 20/05 a 20/11. O total de 290 operações e a contagem de 151 positivas, 138 negativas e uma zerada coincidem com o CSV completo. Esse é o agregado da janela do relatório. |
+
+O cruzamento por ativo conhecido, pregão e rótulo de minuto encontrou OHLC idêntico nas 565 barras de 21/10 e 553 de 26/10. Em 26/10, faltam 09:30–09:38 nos dois lados. O CSV novo de barras contém apenas OHLC e não identifica o ativo nas linhas. Trades e saldo de agressão do primeiro registro de avaliação de cada barra coincidiram com o insumo do simulador nos dois dias. Quantity e Volume financeiro vieram da exportação histórica já usada no replay. O CSV OHLC atual não permite validá-los de forma independente. Originais, PDF, identificadores de conta e titular, campos brutos de mercado e caminhos privados ficaram no Windows. Foram publicados hashes, contagens, operações sem preços absolutos e recortes de estado. [Inventário e hashes dos originais](inventario_fontes.csv)
+
+WINZ26, barras de 1 minuto, `America/Sao_Paulo`, v5.8 auditada conforme os inputs versionados, `p_Exec_Tick=0`, lote 5, stop 350, alvo 400, offset 50 e máximo diário 10. O lote é confirmado nas operações dos dois dias. O PDF registra custo zero no agregado. Os arquivos recebidos não contêm uma exportação de todos os ajustes da interface. No simulador, tick 5, R$ 0,20 por ponto, custos e slippage zero, Volume financeiro, agressão injetada, VWAP contínua e modo pós-preenchimento. O corte de 63 barras por segmento deixa 502 rótulos elegíveis em 21/10, desde 10:03, e 463 em 26/10, desde 10:42. A v5.8 também aplica `CurrentBar > 86` com os inputs usados.
+
+## Primeiro evento e diagnóstico
+
+**21/10.** No pregão isolado, o Profit já inicia com `aquecido=1`, pois sua série inclui histórico anterior. No primeiro rótulo elegível, 10:03, o simulador ainda tem `aquecido=0`. Às 10:08, ambos registram sinal de compra, mas somente o Profit solicita a entrada. A operação do Profit entra às 10:09 e sai às 10:16. Ao prefixar as 565 barras reais de 20/10, o sinal gera a mesma solicitação e ambas as execuções coincidem.
+
+**26/10, pregão isolado.** A primeira solicitação sem par é a do Profit em 10:14, seq. 635. Há sinal de compra nos dois lados, mas o simulador ainda está abaixo do `CurrentBar` exigido. A ausência dessa compra deixa o contador local uma entrada abaixo durante a sessão. Às 15:26 o Profit já está no limite de 10 e o simulador solicita a compra que preencherá às 15:27. Essas duas operações sem par, uma de cada motor, explicam as nove correspondências do cenário isolado.
+
+**26/10, com histórico e reinício na lacuna.** Prefixar as 563 barras reais de 23/10 faz passar o filtro `CurrentBar`. Na retomada às 09:39, o Profit avança apenas um `CurrentBar` em relação a 09:29. Suas séries de ATR, desvio e Volume histórico mantêm contexto anterior, enquanto o simulador reinicia as janelas e o histórico local na lacuna. Às 09:50, com os dois lados zerados, o Profit registra regime 0 e compra 0. O simulador registra regime 1 e compra 1 e faz a primeira solicitação divergente. O simulador termina com compras sem par às 09:51 e 10:14, enquanto as do Profit às 10:15 e 14:52 ficam sem par. Às 14:51, ambos têm sinal de compra. O Profit tem nove entradas e envia o próximo pedido. O simulador já tem dez.
+
+**26/10, continuidade apenas como diagnóstico.** O teste mantém a janela do simulador através da retomada de 09:39, sem inventar os nove candles ausentes. A execução verifica que nos dois lados as avaliações de 09:29 e 09:39 estão zeradas, sem pendentes ou solicitações. O corte de elegibilidade ainda conta 63 barras após a lacuna. A hipótese elimina as diferenças de solicitação no pregão. O primeiro preenchimento diferente é o segundo, a saída das 10:15. A compra de cinco contratos e os níveis são os mesmos. O rótulo do envio do alvo e stop é 10:14. O OHLC de 10:15 atinge os dois níveis. O Profit registra +400 pontos sobre a entrada e o simulador aplica -350 pontos, seu desfecho adverso para ambas as proteções tocadas na mesma barra. A ordem intrabar dos preços continua indeterminada sem resolução subminuto. O motor distribuído continua aplicando sua regra de lacunas e ambiguidade. [Rastreio do primeiro evento](primeiros_eventos_v5_8.csv) · [Recorte da ambiguidade das 10:15](ambiguidade_10h15.csv)
+
+Os registros preservam dois relógios. O console indica o rótulo da barra de contexto da avaliação. As execuções usam o horário de abertura/fechamento da operação exportada. O comparador conserva a ordem de cada camada no mesmo rótulo, sem deslocar horários. A comparação de preenchimentos usa a precisão da exportação e desempata pelo número da operação. A confirmação de ativação, cancelamento e ordem OCO exige histórico nativo de ordens com resolução subminuto.
+
+## Sonda nativa v2
+
+| Primeira avaliação regular zerada após a extra, 13:04 | Profit | Simulador |
+|---|---:|---:|
+| Boolean antes | **1** | **1** |
+| Array antes | **17** | **0** |
+| `estado[1]` | **23** | **0** |
+
+Na avaliação extra comprada, os dois lados atribuem Boolean 1, array 17 e escalar 23. A primeira separação observada na sonda é a sequência 3, com posição zero. A sonda distingue a persistência de escalares já confirmada do comportamento do array e da leitura `[1]` para estado escrito na avaliação extra. O motor atual mantém isolados o array e o histórico. A v5.8 completa não usa arrays, e os resultados após aquecimento para seus indicadores e sinais são comparados separadamente. [Log completo sanitizado da sonda](sonda_v2_profit_simulador.csv)
+
+## Reprodução e limites
+
+Use a auditoria da v5.8 e os inputs versionados da rodada anterior. No cenário histórico, `tools/preparar_paridade_profit_barras.py` prepara 20/10 e 21/10, ou 23/10 e 26/10, a partir das exportações privadas de barras e indicadores. Concatene as saídas com um único cabeçalho, pregão anterior primeiro. Os hashes das concatenações usadas são `f1d85e4454e8c6c61e47c44832f5d9fc7280d60f44fa7ff49ff1d1bda9ffdf6b` (21/10) e `bd13dfa559bb6c26ff0c253d3414b8b9994fe699af3482a80b9129b66ab1ec13` (26/10). O comparador filtra preenchimentos pelo pregão alvo mesmo quando o replay contém histórico anterior.
+
+```powershell
+py -3.11 estrategia.py --csv $barrasPreparadas --ntsl $auditoria --inputs $inputs `
+  --saida $replay --segundos 60 --formato ohlc --tick 5 --valor-ponto 0.2 `
+  --volume-financeiro-ntsl --agressao-referencia-injetada --vwap-continuo-lacunas `
+  --avaliacao-pos-preenchimento --rastrear-ordens
+
+# Somente no diagnóstico da lacuna; a referência é o replay com 23/10 e 26/10.
+py -3.11 -m tools.diagnosticar_continuidade_v5_8 --barras $barrasComHistorico `
+  --ntsl $auditoria --inputs $inputs --console-profit $consoleProfit `
+  --console-referencia "$referencia/console.csv" --saida $diagnostico
+
+py -3.11 tools/comparar_v5_8.py --data $dia --aquecimento 63 `
+  --console-profit $consoleProfit --operacoes-profit $operacoesProfit `
+  --barras-profit $barrasProfit --barras-preparadas $barrasPreparadas `
+  --console-simulador "$replay/console.csv" --candles-simulador "$replay/candles.csv" `
+  --execucoes-simulador "$replay/execucoes.csv" --saida $comparacao
+py -3.11 -m pytest -q
+```
+
+A suíte passou com **68 testes** e 12 avisos de timezone já conhecidos. O comparador só remove cópias de console integralmente idênticas, aceita o CSV OHLC e registra os campos ausentes. O teste de continuidade não altera o motor em produção. A regressão v5.7 da rodada anterior permanece a referência porque o motor e a estratégia mantiveram os mesmos bytes. A paridade se restringe aos pregões observados e ao trecho elegível. [Regressão v5.7 anterior](../WINZ26_v5_8_validacao_20261021_20261026_v1/regressao_v5_7.csv)
+
+[TXT completo para o Gemini](fontes_gemini.txt) · [Manifesto de SHA-256](SHA256SUMS.txt)
+
+=== docs/colaboracao/evidencias/WINZ26_v5_8_captura_profit_20261021_20261026_v2/ambiguidade_10h15.csv ===
+
+pregao;hora_contexto_protecao;hora_exportacao_entrada_saida;lado;quantidade;alvo_pontos_relativos;gatilho_stop_pontos_relativos;limite_stop_pontos_relativos;alvo_alcancado_ohlc;stop_alcancado_ohlc;saida_profit_pontos_relativos;saida_simulador_pontos_relativos
+2026-10-26;10:14;10:15;C;5;400;-350;-400;1;1;400;-350
+
+=== docs/colaboracao/evidencias/WINZ26_v5_8_captura_profit_20261021_20261026_v2/inventario_fontes.csv ===
+
+arquivo;bytes;sha256;registros;unidade;inicio;fim;observacao
+console_sondav2.txt;1451;1881ebcc21e6dee258155e7cc127b2c315dc43773bef424413eaea9d778d3c07;4;eventos retidos;2026-10-26 13:03;2026-10-26 13:05;"2 blocos identicos de 4; 13 linhas no original"
+console_58.txt;1083641;38624ee2aab7c55ea12287f29736d7bfea3a3f0fce2140d833aeea8633e5bb69;1503;eventos retidos;2026-10-21 09:00;2026-10-26 18:24;"2 blocos identicos de 1503; 3014 linhas no original; 1135 avaliacoes"
+barras_v58.csv;920086;1036ce183e5e0ff371ca10b21b2774e2f8420598c50d71b107cbe6a1eebf6863;20001;barras;2026-09-29T10:15:00;2026-11-19T18:24:00;"36 pregoes; 0 timestamps duplicados; ordem decrescente"
+operacoes_v58.csv;43885;66cece48ff5c3e1aca3d42d4482665451d39195bf0be50fc497d302a77585c7d;290;operacoes;2026-08-13T13:03:00;2026-11-19T16:04:00;"56 pregoes; 0 IDs duplicados; WINZ26"
+relatorio_v58.pdf;11029;dc971ccc22d1d78abca70b07afd1efaaffe630d09e2df08aa9fa04f38ec6d5b3;1;pagina;2026-05-20;2026-11-20;"janela configurada no relatorio; 290 operacoes no agregado"
+
+=== docs/colaboracao/evidencias/WINZ26_v5_8_captura_profit_20261021_20261026_v2/matriz_camadas_v5_8.csv ===
+
+pregao;cenario_simulador;camada;comparados;divergentes;primeira_hora_contexto;primeiro_campo;seq_profit;seq_simulador
+2026-10-21;isolado;sinais;509;1;10:08;evento;70;
+2026-10-21;isolado;filtros;509;24;10:03;aquecido;64;64
+2026-10-21;isolado;indicadores;509;1;10:08;evento;70;
+2026-10-21;isolado;posicao;509;8;10:08;evento;70;
+2026-10-21;isolado;estado;509;509;10:03;pode;64;64
+2026-10-21;isolado;solicitacoes;306;17;10:08;evento;69;
+2026-10-21;isolado;solicitacoes_pregao;306;17;10:08;evento;69;
+2026-10-21;historico;sinais;509;0;;;;
+2026-10-21;historico;filtros;509;0;;;;
+2026-10-21;historico;indicadores;509;0;;;;
+2026-10-21;historico;posicao;509;0;;;;
+2026-10-21;historico;estado;509;0;;;;
+2026-10-21;historico;solicitacoes;306;0;;;;
+2026-10-21;historico;solicitacoes_pregao;306;0;;;;
+2026-10-26;isolado;sinais;473;1;15:26;evento;;385
+2026-10-26;isolado;filtros;473;1;15:26;evento;;385
+2026-10-26;isolado;indicadores;473;1;15:26;evento;;385
+2026-10-26;isolado;posicao;473;1;15:26;evento;;385
+2026-10-26;isolado;estado;473;296;10:42;entradas;664;91
+2026-10-26;isolado;solicitacoes;62;3;15:26;evento;;384
+2026-10-26;isolado;solicitacoes_pregao;65;6;10:14;evento;635;
+2026-10-26;historico;sinais;472;1;14:51;evento;922;
+2026-10-26;historico;filtros;472;1;14:51;evento;922;
+2026-10-26;historico;indicadores;472;1;14:51;evento;922;
+2026-10-26;historico;posicao;472;4;14:51;evento;922;
+2026-10-26;historico;estado;472;263;10:42;entradas;664;93
+2026-10-26;historico;solicitacoes;59;9;14:51;evento;921;
+2026-10-26;historico;solicitacoes_pregao;68;18;09:50;evento;;39
+2026-10-26;continuidade;sinais;472;0;;;;
+2026-10-26;continuidade;filtros;472;0;;;;
+2026-10-26;continuidade;indicadores;472;0;;;;
+2026-10-26;continuidade;posicao;472;0;;;;
+2026-10-26;continuidade;estado;472;0;;;;
+2026-10-26;continuidade;solicitacoes;59;0;;;;
+2026-10-26;continuidade;solicitacoes_pregao;62;0;;;;
+
+=== docs/colaboracao/evidencias/WINZ26_v5_8_captura_profit_20261021_20261026_v2/matriz_paridade_v5_8.csv ===
+
+pregao;cenario_simulador;operacoes_profit;operacoes_simulador;exatas;sem_par_profit;sem_par_simulador;barras_elegiveis;barras_ohlc_comuns;diferencas_ohlc;ordem_primeiro_fill_divergente;primeira_solicitacao_divergente_pregao_hora_contexto
+2026-10-21;isolado;7;6;6;1;0;502;565;0;1;10:08
+2026-10-21;historico;7;7;7;0;0;502;565;0;;
+2026-10-26;isolado;10;10;9;1;1;463;553;0;1;10:14
+2026-10-26;historico;10;10;8;2;2;463;553;0;1;09:50
+2026-10-26;continuidade;10;10;9;1;1;463;553;0;2;
+
+=== docs/colaboracao/evidencias/WINZ26_v5_8_captura_profit_20261021_20261026_v2/operacoes_sanitizadas_por_cenario.csv ===
+
+pregao;cenario;motor;ordem_cronologica;entrada;saida;lado;quantidade;par_exato;resultado_pontos_sinal
+2026-10-21;isolado;profit;1;10:09:00;10:16:00;C;5;0;negativa
+2026-10-21;isolado;profit;2;10:47:00;11:32:00;V;5;1;positiva
+2026-10-21;isolado;profit;3;12:26:00;12:47:00;C;5;1;negativa
+2026-10-21;isolado;profit;4;13:41:00;13:55:00;V;5;1;positiva
+2026-10-21;isolado;profit;5;14:22:00;14:26:00;C;5;1;positiva
+2026-10-21;isolado;profit;6;14:59:00;15:47:00;C;5;1;negativa
+2026-10-21;isolado;profit;7;15:59:00;16:03:00;V;5;1;positiva
+2026-10-21;isolado;simulador;1;10:47:00;11:32:00;V;5;1;positiva
+2026-10-21;isolado;simulador;2;12:26:00;12:47:00;C;5;1;negativa
+2026-10-21;isolado;simulador;3;13:41:00;13:55:00;V;5;1;positiva
+2026-10-21;isolado;simulador;4;14:22:00;14:26:00;C;5;1;positiva
+2026-10-21;isolado;simulador;5;14:59:00;15:47:00;C;5;1;negativa
+2026-10-21;isolado;simulador;6;15:59:00;16:03:00;V;5;1;positiva
+2026-10-21;historico;profit;1;10:09:00;10:16:00;C;5;1;negativa
+2026-10-21;historico;profit;2;10:47:00;11:32:00;V;5;1;positiva
+2026-10-21;historico;profit;3;12:26:00;12:47:00;C;5;1;negativa
+2026-10-21;historico;profit;4;13:41:00;13:55:00;V;5;1;positiva
+2026-10-21;historico;profit;5;14:22:00;14:26:00;C;5;1;positiva
+2026-10-21;historico;profit;6;14:59:00;15:47:00;C;5;1;negativa
+2026-10-21;historico;profit;7;15:59:00;16:03:00;V;5;1;positiva
+2026-10-21;historico;simulador;1;10:09:00;10:16:00;C;5;1;negativa
+2026-10-21;historico;simulador;2;10:47:00;11:32:00;V;5;1;positiva
+2026-10-21;historico;simulador;3;12:26:00;12:47:00;C;5;1;negativa
+2026-10-21;historico;simulador;4;13:41:00;13:55:00;V;5;1;positiva
+2026-10-21;historico;simulador;5;14:22:00;14:26:00;C;5;1;positiva
+2026-10-21;historico;simulador;6;14:59:00;15:47:00;C;5;1;negativa
+2026-10-21;historico;simulador;7;15:59:00;16:03:00;V;5;1;positiva
+2026-10-26;isolado;profit;1;10:15:00;10:15:00;C;5;0;positiva
+2026-10-26;isolado;profit;2;11:27:00;11:27:00;C;5;1;positiva
+2026-10-26;isolado;profit;3;11:51:00;11:51:00;C;5;1;negativa
+2026-10-26;isolado;profit;4;12:38:00;12:40:00;V;5;1;negativa
+2026-10-26;isolado;profit;5;12:59:00;13:03:00;V;5;1;positiva
+2026-10-26;isolado;profit;6;13:39:00;13:42:00;V;5;1;positiva
+2026-10-26;isolado;profit;7;14:04:00;14:06:00;C;5;1;positiva
+2026-10-26;isolado;profit;8;14:41:00;14:42:00;V;5;1;positiva
+2026-10-26;isolado;profit;9;14:47:00;14:48:00;C;5;1;negativa
+2026-10-26;isolado;profit;10;14:52:00;14:55:00;C;5;1;negativa
+2026-10-26;isolado;simulador;1;11:27:00;11:27:00;C;5;1;positiva
+2026-10-26;isolado;simulador;2;11:51:00;11:51:00;C;5;1;negativa
+2026-10-26;isolado;simulador;3;12:38:00;12:40:00;V;5;1;negativa
+2026-10-26;isolado;simulador;4;12:59:00;13:03:00;V;5;1;positiva
+2026-10-26;isolado;simulador;5;13:39:00;13:42:00;V;5;1;positiva
+2026-10-26;isolado;simulador;6;14:04:00;14:06:00;C;5;1;positiva
+2026-10-26;isolado;simulador;7;14:41:00;14:42:00;V;5;1;positiva
+2026-10-26;isolado;simulador;8;14:47:00;14:48:00;C;5;1;negativa
+2026-10-26;isolado;simulador;9;14:52:00;14:55:00;C;5;1;negativa
+2026-10-26;isolado;simulador;10;15:27:00;15:27:00;C;5;0;negativa
+2026-10-26;historico;profit;1;10:15:00;10:15:00;C;5;0;positiva
+2026-10-26;historico;profit;2;11:27:00;11:27:00;C;5;1;positiva
+2026-10-26;historico;profit;3;11:51:00;11:51:00;C;5;1;negativa
+2026-10-26;historico;profit;4;12:38:00;12:40:00;V;5;1;negativa
+2026-10-26;historico;profit;5;12:59:00;13:03:00;V;5;1;positiva
+2026-10-26;historico;profit;6;13:39:00;13:42:00;V;5;1;positiva
+2026-10-26;historico;profit;7;14:04:00;14:06:00;C;5;1;positiva
+2026-10-26;historico;profit;8;14:41:00;14:42:00;V;5;1;positiva
+2026-10-26;historico;profit;9;14:47:00;14:48:00;C;5;1;negativa
+2026-10-26;historico;profit;10;14:52:00;14:55:00;C;5;0;negativa
+2026-10-26;historico;simulador;1;09:51:00;09:51:00;C;5;0;negativa
+2026-10-26;historico;simulador;2;10:14:00;10:14:00;C;5;0;negativa
+2026-10-26;historico;simulador;3;11:27:00;11:27:00;C;5;1;positiva
+2026-10-26;historico;simulador;4;11:51:00;11:51:00;C;5;1;negativa
+2026-10-26;historico;simulador;5;12:38:00;12:40:00;V;5;1;negativa
+2026-10-26;historico;simulador;6;12:59:00;13:03:00;V;5;1;positiva
+2026-10-26;historico;simulador;7;13:39:00;13:42:00;V;5;1;positiva
+2026-10-26;historico;simulador;8;14:04:00;14:06:00;C;5;1;positiva
+2026-10-26;historico;simulador;9;14:41:00;14:42:00;V;5;1;positiva
+2026-10-26;historico;simulador;10;14:47:00;14:48:00;C;5;1;negativa
+2026-10-26;continuidade;profit;1;10:15:00;10:15:00;C;5;0;positiva
+2026-10-26;continuidade;profit;2;11:27:00;11:27:00;C;5;1;positiva
+2026-10-26;continuidade;profit;3;11:51:00;11:51:00;C;5;1;negativa
+2026-10-26;continuidade;profit;4;12:38:00;12:40:00;V;5;1;negativa
+2026-10-26;continuidade;profit;5;12:59:00;13:03:00;V;5;1;positiva
+2026-10-26;continuidade;profit;6;13:39:00;13:42:00;V;5;1;positiva
+2026-10-26;continuidade;profit;7;14:04:00;14:06:00;C;5;1;positiva
+2026-10-26;continuidade;profit;8;14:41:00;14:42:00;V;5;1;positiva
+2026-10-26;continuidade;profit;9;14:47:00;14:48:00;C;5;1;negativa
+2026-10-26;continuidade;profit;10;14:52:00;14:55:00;C;5;1;negativa
+2026-10-26;continuidade;simulador;1;10:15:00;10:15:00;C;5;0;negativa
+2026-10-26;continuidade;simulador;2;11:27:00;11:27:00;C;5;1;positiva
+2026-10-26;continuidade;simulador;3;11:51:00;11:51:00;C;5;1;negativa
+2026-10-26;continuidade;simulador;4;12:38:00;12:40:00;V;5;1;negativa
+2026-10-26;continuidade;simulador;5;12:59:00;13:03:00;V;5;1;positiva
+2026-10-26;continuidade;simulador;6;13:39:00;13:42:00;V;5;1;positiva
+2026-10-26;continuidade;simulador;7;14:04:00;14:06:00;C;5;1;positiva
+2026-10-26;continuidade;simulador;8;14:41:00;14:42:00;V;5;1;positiva
+2026-10-26;continuidade;simulador;9;14:47:00;14:48:00;C;5;1;negativa
+2026-10-26;continuidade;simulador;10;14:52:00;14:55:00;C;5;1;negativa
+
+=== docs/colaboracao/evidencias/WINZ26_v5_8_captura_profit_20261021_20261026_v2/primeiros_eventos_v5_8.csv ===
+
+pregao;cenario;etapa;motor;hora_contexto;seq;barra_contexto;aquecido;compra;regime;pode_entrar;entradas_dia;posicao;solicitacoes_entrada
+2026-10-21;isolado;aquecimento;profit;09:00;1;25081;1;0;1;0;0;0;
+2026-10-21;isolado;aquecimento;simulador;09:00;1;1;0;0;0;0;0;0;
+2026-10-21;isolado;aquecimento;profit;10:03;64;25144;1;0;1;1;0;0;
+2026-10-21;isolado;aquecimento;simulador;10:03;64;64;0;0;1;0;0;0;
+2026-10-21;isolado;aquecimento;profit;10:08;69;25149;1;1;1;1;0;0;ENTRADA_COMPRA
+2026-10-21;isolado;aquecimento;simulador;10:08;69;69;0;1;1;0;0;0;
+2026-10-21;isolado;aquecimento;profit;10:09;71;25150;1;0;1;1;1;5;
+2026-10-21;isolado;aquecimento;simulador;10:09;70;70;0;0;1;0;0;0;
+2026-10-26;isolado;aquecimento_contador;profit;09:03;573;26774;1;0;0;0;0;0;
+2026-10-26;isolado;aquecimento_contador;simulador;09:03;1;1;0;0;0;0;0;0;
+2026-10-26;isolado;aquecimento_contador;profit;10:14;635;26836;1;1;1;1;0;0;ENTRADA_COMPRA
+2026-10-26;isolado;aquecimento_contador;simulador;10:14;63;63;0;1;1;0;0;0;
+2026-10-26;isolado;aquecimento_contador;profit;15:26;957;27148;1;1;1;0;10;0;
+2026-10-26;isolado;aquecimento_contador;simulador;15:26;384;375;1;1;1;1;9;0;ENTRADA_COMPRA
+2026-10-26;historico;reinicio_lacuna_contador;profit;09:29;599;26800;1;0;0;0;0;0;
+2026-10-26;historico;reinicio_lacuna_contador;simulador;09:29;27;590;1;0;0;0;0;0;
+2026-10-26;historico;reinicio_lacuna_contador;profit;09:39;600;26801;1;0;0;1;0;0;
+2026-10-26;historico;reinicio_lacuna_contador;simulador;09:39;28;591;1;0;0;1;0;0;
+2026-10-26;historico;reinicio_lacuna_contador;profit;09:50;611;26812;1;0;0;1;0;0;
+2026-10-26;historico;reinicio_lacuna_contador;simulador;09:50;39;602;1;1;1;1;0;0;ENTRADA_COMPRA
+2026-10-26;historico;reinicio_lacuna_contador;profit;10:14;635;26836;1;1;1;1;0;0;ENTRADA_COMPRA
+2026-10-26;historico;reinicio_lacuna_contador;simulador;10:14;65;626;1;1;1;0;2;0;
+2026-10-26;historico;reinicio_lacuna_contador;profit;14:51;921;27113;1;1;1;1;9;0;ENTRADA_COMPRA
+2026-10-26;historico;reinicio_lacuna_contador;simulador;14:51;350;903;1;1;1;0;10;0;
+2026-10-26;continuidade;saidas_ambiguas;profit;10:14;635;26836;1;1;1;1;0;0;ENTRADA_COMPRA
+2026-10-26;continuidade;saidas_ambiguas;simulador;10:14;63;626;1;1;1;1;0;0;ENTRADA_COMPRA
+2026-10-26;continuidade;saidas_ambiguas;profit;10:15;637;26837;1;0;1;0;1;0;
+2026-10-26;continuidade;saidas_ambiguas;simulador;10:15;65;627;1;0;1;0;1;0;
+
+=== docs/colaboracao/evidencias/WINZ26_v5_8_captura_profit_20261021_20261026_v2/sonda_v2_profit_simulador.csv ===
+
+motor;ordem;hora_barra_contexto;barra_contexto;seq;posicao;boolean_antes;boolean_depois;array_antes;array_depois;estado_1;estado_depois
+profit;1;13:03;27005;1;0;0;0;0;0;0;0
+profit;2;13:03;27005;2;1;0;1;0;17;0;23
+profit;3;13:04;27006;3;0;1;0;17;0;23;0
+profit;4;13:05;27007;4;0;0;0;0;0;0;0
+simulador;1;13:03;2;1;0;0;0;0;0;0;0
+simulador;2;13:03;2;2;1;0;1;0;17;0;23
+simulador;3;13:04;3;3;0;1;0;0;0;0;0
+simulador;4;13:05;4;4;0;0;0;0;0;0;0
+
+=== docs/colaboracao/evidencias/WINZ26_v5_8_captura_profit_20261021_20261026_v2/SHA256SUMS.txt ===
+
+dce9c7334c0d147e41ea0fd8314962786d207fa317edf275f636fe34651e76c1  README.md
+a201a7341b5771abde5d22f8b2c37db687f7dc6d2382c0e00717af97c8dcbbb1  ambiguidade_10h15.csv
+bcfa686c11fbf8a0a6d72c2d42e4129d9951b815884dd14efd898e748f486bbc  inventario_fontes.csv
+de7dad045ae988b495b0dfdb891a9db09c3451d0c3e921f2293d54fd112820d1  matriz_camadas_v5_8.csv
+3007f28bfd3d6ac37a12a9fadf6458f13c65ec1265bd29ee24dc64fd20a1a18e  matriz_paridade_v5_8.csv
+3053b7716b2e7fe60b373f4c860e382a30326a2f694ba823d528496995011ad0  operacoes_sanitizadas_por_cenario.csv
+92cb635da6b8015fa8a36547a870f8b5c32e7c2760386486924e1b2728c615cf  primeiros_eventos_v5_8.csv
+bfa4619152d4be3cfa8decf736143b109a0c39583bdf7eca1428df2b2cefdf0b  sonda_v2_profit_simulador.csv
+
+=== docs/colaboracao/evidencias/WINZ26_v5_8_validacao_20261021_20261026_v1/inputs_v5_8.json ===
+
+{
+  "p_Exec_Tick": 0,
+  "p_Periodo_ATR": 14,
+  "p_Periodo_Regime_ATR": 50,
+  "p_Desvio_VWAP": 2.1,
+  "p_Modo_Banda": 0,
+  "p_Periodo_Desvio": 20,
+  "p_ZScore_Vol": 1.5,
+  "p_Stop_Pontos": 350,
+  "p_Alvo_Pontos": 400,
+  "p_MinimoTrades": 100,
+  "p_Lote": 5,
+  "p_Offset_Limite_Stop": 50,
+  "p_Barras_Espera": 3,
+  "p_Max_Entradas_Dia": 10,
+  "p_Hora_Inicio": 915,
+  "p_Hora_Fim_Entradas": 1645,
+  "p_Hora_Zeragem": 1700,
+  "p_Noticia1_Ini": 1025,
+  "p_Noticia1_Fim": 1035,
+  "p_Noticia2_Ini": 1425,
+  "p_Noticia2_Fim": 1435,
+  "p_Zerar_Na_Noticia": 1
+}
+
+=== docs/colaboracao/evidencias/WINZ26_v5_8_validacao_20261021_20261026_v1/regressao_v5_7.csv ===
+
+pregao;modo;operacoes_profit;operacoes_exatas;barras_elegiveis;plots_sem_divergencia_de_8;artefatos_identicos_rodada_anterior;operacao_182_exata
+2026-10-21;padrao;10;10;502;8;1;
+2026-10-21;protecao-legada;10;10;502;8;1;
+2026-10-21;pos-preenchimento;10;10;502;8;1;
+2026-10-26;padrao;12;8;463;8;1;0
+2026-10-26;protecao-legada;12;11;463;8;1;0
+2026-10-26;pos-preenchimento;12;12;463;8;1;1
+
+=== tools/comparar_v5_8.py ===
+
+"""Compara a auditoria v5.8 no Profit e no simulador pelo contexto NTSL."""
+
+import argparse
+import csv
+import json
+from collections import defaultdict
+from decimal import Decimal
+from itertools import zip_longest
+from pathlib import Path
+
+import pandas as pd
+
+try:
+    from tools.comparar_paridade_mesmas_barras import compare_same_bars
+    from tools.comparar_paridade_profit_win import (
+        compare_operations, first_difference, inventory, local_round_trips, normalize_bars, profit_round_trips,
+        read_local_bars, read_profit, read_profit_operations, sha256, target_day,
+    )
+except ModuleNotFoundError:
+    from comparar_paridade_mesmas_barras import compare_same_bars
+    from comparar_paridade_profit_win import (
+        compare_operations, first_difference, inventory, local_round_trips, normalize_bars, profit_round_trips,
+        read_local_bars, read_profit, read_profit_operations, sha256, target_day,
+    )
+
+
+def console_lines(path, native):
+    if native:
+        content = path.read_bytes()
+        try:
+            return content.decode("utf-8-sig").splitlines()
+        except UnicodeDecodeError:
+            return content.decode("cp1252").splitlines()
+    with path.open(encoding="utf-8-sig", newline="") as stream:
+        return [row["mensagem"] for row in csv.DictReader(stream)]
+
+
+def unique_native_capture(lines, prefix="V58", marker="AVALIACAO"):
+    blocks = [[]]
+    last = None
+    for line in lines:
+        message = line.strip()
+        if not message.startswith(prefix + ";"):
+            continue
+        if message.startswith(f"{prefix};{marker};"):
+            seq = int(next(part[4:] for part in message.split(";") if part.startswith("seq="))
+                      .replace(".", ""))
+            if last is not None and seq <= last:
+                blocks.append([])
+            last = seq
+        blocks[-1].append(message)
+    if any(block != blocks[0] for block in blocks[1:]):
+        raise ValueError("O console contém múltiplas execuções distintas. Selecione uma execução.")
+    return blocks[0], len(blocks)
+
+
+def compare_bar_inputs(profit, prepared):
+    supplemental = {"trades": "v_trades_atual", "quantity": "volume_contratos",
+                    "volume_financeiro": "volume_financeiro"}
+    if supplemental.keys() <= set(profit.columns):
+        return compare_same_bars(profit, prepared)
+    available = {name: source for name, source in supplemental.items() if name in profit}
+    prepared = prepared.rename(columns={source: name for name, source in available.items()})
+    common = profit.merge(prepared, on="timestamp", suffixes=("_profit", "_local"))
+    fields = {}
+    for name in ("abertura", "maxima", "minima", "fechamento", *available):
+        left, right = f"{name}_profit", f"{name}_local"
+        delta = (common[left] - common[right]).abs()
+        fields[name] = {
+            "iguais": int((delta == 0).sum()), "diferentes": int((delta != 0).sum()),
+            "max_diferenca_absoluta": None if delta.empty else float(delta.max()),
+            "primeira_divergencia": first_difference(common, left, right),
+        }
+    return {
+        "profit": inventory(profit), "local": inventory(prepared), "comuns": len(common),
+        "exclusivos_profit": [stamp.isoformat() for stamp in profit.loc[~profit.timestamp.isin(prepared.timestamp), "timestamp"]],
+        "exclusivos_local": [stamp.isoformat() for stamp in prepared.loc[~prepared.timestamp.isin(profit.timestamp), "timestamp"]],
+        "campos": fields, "campos_ausentes_exportacao_profit": sorted(set(supplemental) - set(available)),
+    }
+
+
+def audit_by_label(lines, day, native):
+    grouped = defaultdict(list)
+    day_code = int(day.replace("-", "")) - 19000000
+    last_seq = None
+    for line in lines:
+        if not line.strip().startswith("V58;"):
+            continue
+        _, event, *raw_fields = line.strip().split(";")
+        fields = {}
+        for item in raw_fields:
+            name, value = item.split("=", 1)
+            fields[name] = Decimal(value.replace(".", "").replace(",", ".") if native else value)
+        if fields["data"] != day_code:
+            continue
+        seq = int(fields["seq"])
+        if event == "AVALIACAO":
+            if last_seq is not None and seq <= last_seq:
+                raise ValueError("Sequência reiniciada. Exporte somente uma execução do dia.")
+            last_seq = seq
+        elif seq != last_seq:
+            raise ValueError("Solicitação sem avaliação correspondente em ordem de console.")
+        hhmm = int(fields["hora"])
+        label = f"{hhmm//100:02d}:{hhmm%100:02d}"
+        grouped[label].append((event, fields))
+    if not grouped:
+        raise ValueError(f"Nenhuma mensagem V58 para {day}.")
+    return grouped
+
+
+def compare_audit(profit, simulator, labels, layer, tolerances):
+    is_evaluation = layer != "solicitacoes"
+    first = None
+    compared = differing = 0
+    for label in sorted(labels):
+        left = [event for event in profit.get(label, []) if (event[0] == "AVALIACAO") == is_evaluation]
+        right = [event for event in simulator.get(label, []) if (event[0] == "AVALIACAO") == is_evaluation]
+        for rank, (p, s) in enumerate(zip_longest(left, right), 1):
+            compared += 1
+            field = None
+            if p is None or s is None or p[0] != s[0]:
+                field = "evento"
+            else:
+                field = next((name for name, tolerance in tolerances.items()
+                              if name in p[1] or name in s[1]
+                              if name not in p[1] or name not in s[1]
+                              or abs(p[1][name] - s[1][name]) > tolerance), None)
+            if field:
+                differing += 1
+                if first is None:
+                    def evidence(record):
+                        if record is None:
+                            return None
+                        event, values = record
+                        return {"evento": event, "seq": int(values["seq"]), "barra_contexto": int(values["barra"]),
+                                "valor": str(values[field]) if field in values else None}
+                    first = {"hora_barra_contexto": label, "ordem_na_camada": rank, "campo": field,
+                             "profit": evidence(p), "simulador": evidence(s)}
+    return {"comparados": compared, "divergentes": differing, "primeira_divergencia": first}
+
+
+def compare_fills(operations, fills, candles):
+    profit = []
+    for row in operations.sort_values("numero_operacao").itertuples(index=False):
+        entry_side = "long" if row.lado == "C" else "short"
+        profit.extend([
+            (row.entrada.isoformat(), entry_side, row.quantidade, row.preco_entrada),
+            (row.saida.isoformat(), "exit_" + entry_side, row.quantidade, row.preco_saida),
+        ])
+    profit.sort(key=lambda row: row[0])
+    stamps = pd.Series(pd.to_datetime(candles["timestamp"]).array, index=candles["indice"])
+    simulator = [(stamps.loc[int(row.barra) - 1].isoformat(), row.acao, row.quantidade, row.preco)
+                 for row in fills.itertuples(index=False)]
+    first = next(({"ordem": i, "profit": p, "simulador": s}
+                  for i, (p, s) in enumerate(zip_longest(profit, simulator), 1) if p != s), None)
+    return {"profit": len(profit), "simulador": len(simulator), "primeira_divergencia": first,
+            "criterio_empate_profit": "Número da operação e entrada antes da saída; precisão da exportação."}
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    for name in ("console-profit", "operacoes-profit", "barras-profit", "barras-preparadas",
+                 "console-simulador", "candles-simulador", "execucoes-simulador", "saida"):
+        parser.add_argument("--" + name, type=Path, required=True)
+    parser.add_argument("--data", required=True)
+    parser.add_argument("--aquecimento", type=int, default=63)
+    args = parser.parse_args()
+    if args.saida.exists():
+        parser.error("A saída já existe.")
+    capture, copies = unique_native_capture(console_lines(args.console_profit, True))
+    profit = audit_by_label(capture, args.data, True)
+    motor = audit_by_label(console_lines(args.console_simulador, False), args.data, False)
+    if args.aquecimento < 0:
+        parser.error("Aquecimento deve ser não negativo.")
+    candles = pd.read_csv(args.candles_simulador)
+    target = candles.loc[candles["timestamp"].astype(str).str.startswith(args.data)]
+    eligible = target.loc[target["barras_no_segmento"] > args.aquecimento]
+    labels = set(eligible["timestamp"].astype(str).str[11:16])
+    if not labels:
+        parser.error("Nenhuma barra elegível.")
+    original = target_day(normalize_bars(read_profit(args.barras_profit), "Data"), args.data)
+    prepared = target_day(normalize_bars(read_local_bars(args.barras_preparadas), "timestamp"), args.data)
+    bars = compare_bar_inputs(original, prepared)
+    layers = {
+        "sinais": dict.fromkeys(("compra", "venda"), 0),
+        "filtros": dict.fromkeys(("regime", "densidade", "aquecido"), 0),
+        "indicadores": dict.fromkeys(("vwap", "atr", "media_atr", "desvio_banda", "zvolume",
+                                     "media_volume_1", "desvio_volume_1"), Decimal("0.01")),
+        "posicao": dict.fromkeys(("posicao", "preco_medio"), 0),
+        "estado": dict.fromkeys(("anterior", "pode", "entradas", "pendentes", "zerar"), 0),
+        "solicitacoes": dict.fromkeys(("qtd", "gatilho", "limite"), 0),
+    }
+    profit_fills = profit_round_trips(read_profit_operations(args.operacoes_profit, args.data))
+    fills = pd.read_csv(args.execucoes_simulador)
+    fills = fills.loc[fills["pregao"] == args.data]
+    motor_fills = local_round_trips(fills, candles)
+    report = {
+        "data": args.data,
+        "barras": bars,
+        "copias_identicas_console_profit": copies,
+        "aquecimento_por_segmento": args.aquecimento,
+        "rotulos_elegiveis": len(labels),
+        "criterio": "Ordem de emissão da camada no mesmo rótulo de contexto. Execuções usam horários da exportação.",
+        "camadas": {layer: compare_audit(profit, motor, labels, layer, fields) for layer, fields in layers.items()},
+        "solicitacoes_pregao": compare_audit(profit, motor, set(target["timestamp"].astype(str).str[11:16]),
+                                            "solicitacoes", layers["solicitacoes"]),
+        "preenchimentos": compare_fills(profit_fills, fills, candles),
+        "operacoes": compare_operations(profit_fills, motor_fills),
+        "sha256_fontes": {key: sha256(path) for key, path in vars(args).items()
+                          if isinstance(path, Path) and key != "saida"},
+    }
+    with args.saida.open("x", encoding="utf-8") as stream:
+        json.dump(report, stream, indent=2, ensure_ascii=False)
+        stream.write("\n")
+
+
+if __name__ == "__main__":
+    main()
+
+=== tools/diagnosticar_continuidade_v5_8.py ===
+
+"""Diagnóstico controlado da lacuna de 26/10/2026 às 09:39."""
+
+import argparse
+import json
+from pathlib import Path
+
+import numpy as np
+import pandas as pd
+
+import estrategia
+from tools.comparar_v5_8 import audit_by_label, console_lines, unique_native_capture
+
+
+DAY = "2026-10-26"
+
+
+def require_flat_boundary(group):
+    for label in ("09:29", "09:39"):
+        events = group.get(label, [])
+        if len(events) != 1 or events[0][0] != "AVALIACAO":
+            raise ValueError(f"Limite da lacuna {label}: esperada uma avaliação sem solicitação.")
+        state = events[0][1]
+        if state["posicao"] != 0 or state["pendentes"] != 0:
+            raise ValueError(f"Limite da lacuna {label}: há posição ou ordem pendente.")
+
+
+class DiagnosticEngine(estrategia.Engine):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        stamp = pd.to_datetime(self.frame["timestamp"])
+        index = np.flatnonzero(stamp.dt.strftime("%Y-%m-%d %H:%M").eq(DAY + " 09:39"))
+        if len(index) != 1 or not self.gap[index[0]]:
+            raise ValueError("A barra de retomada precisa ser uma lacuna única em 26/10 às 09:39.")
+        self.gap = self.gap.copy()
+        self.gap[index[0]] = False
+        self.segment_starts = np.maximum.accumulate(np.where(self.gap, np.arange(len(self.frame)), 0))
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    for name in ("barras", "ntsl", "inputs", "console-profit", "console-referencia", "saida"):
+        parser.add_argument("--" + name, type=Path, required=True)
+    args = parser.parse_args()
+    capture, _ = unique_native_capture(console_lines(args.console_profit, True))
+    require_flat_boundary(audit_by_label(capture, DAY, True))
+    require_flat_boundary(audit_by_label(console_lines(args.console_referencia, False), DAY, False))
+    rules = dict(avaliacao_pos_preenchimento=True, rastrear_ordens=True,
+                 volume_financeiro_ntsl=True, agressao_referencia_injetada=True, vwap_continuo_lacunas=True)
+    engine = estrategia.Engine
+    try:
+        estrategia.Engine = DiagnosticEngine
+        stats = estrategia.run_strategy(args.barras, estrategia.source_text(args.ntsl), args.saida,
+                                        60, "ohlc", 5, json.loads(args.inputs.read_text(encoding="utf-8")),
+                                        0.2, regras=rules)
+    finally:
+        estrategia.Engine = engine
+    print(json.dumps(stats, ensure_ascii=False))
+
+
+if __name__ == "__main__":
+    main()

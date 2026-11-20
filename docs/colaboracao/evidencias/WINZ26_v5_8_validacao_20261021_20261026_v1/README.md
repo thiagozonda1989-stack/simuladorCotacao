@@ -1,5 +1,7 @@
 # Validação da v5.8 completa em WINZ26
 
+As exportações nativas chegaram após esta etapa. A [análise da captura Profit](../WINZ26_v5_8_captura_profit_20261021_20261026_v2/README.md) traz a paridade por cenário, a sonda v2 comparada e a divergência residual de 26/10.
+
 Código e testes da rodada `e54a729150b736173c4fdea16d65579759df6dde`. O motor continua no código validado em `68f1025526be87c52a5fa8cb8f9368dad06062ca`. O ponto de partida do PR é `2c080c654e1782727e2ea8bea4ad30c7004e9a96`. Windows 10, Python 3.11.3, pandas 3.1.1. [Parecer Claude](https://github.com/thiagozonda1989-stack/simuladorCotacao/pull/2#issuecomment-7049423271) · [Parecer Gemini](https://github.com/thiagozonda1989-stack/simuladorCotacao/pull/2#issuecomment-7049722151)
 
 ## Resultado medido

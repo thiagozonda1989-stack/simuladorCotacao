@@ -1,0 +1,6 @@
+arquivo;bytes;sha256;registros;unidade;inicio;fim;observacao
+console_sondav2.txt;1451;1881ebcc21e6dee258155e7cc127b2c315dc43773bef424413eaea9d778d3c07;4;eventos retidos;2026-10-26 13:03;2026-10-26 13:05;"2 blocos identicos de 4; 13 linhas no original"
+console_58.txt;1083641;38624ee2aab7c55ea12287f29736d7bfea3a3f0fce2140d833aeea8633e5bb69;1503;eventos retidos;2026-10-21 09:00;2026-10-26 18:24;"2 blocos identicos de 1503; 3014 linhas no original; 1135 avaliacoes"
+barras_v58.csv;920086;1036ce183e5e0ff371ca10b21b2774e2f8420598c50d71b107cbe6a1eebf6863;20001;barras;2026-09-29T10:15:00;2026-11-19T18:24:00;"36 pregoes; 0 timestamps duplicados; ordem decrescente"
+operacoes_v58.csv;43885;66cece48ff5c3e1aca3d42d4482665451d39195bf0be50fc497d302a77585c7d;290;operacoes;2026-08-13T13:03:00;2026-11-19T16:04:00;"56 pregoes; 0 IDs duplicados; WINZ26"
+relatorio_v58.pdf;11029;dc971ccc22d1d78abca70b07afd1efaaffe630d09e2df08aa9fa04f38ec6d5b3;1;pagina;2026-05-20;2026-11-20;"janela configurada no relatorio; 290 operacoes no agregado"
