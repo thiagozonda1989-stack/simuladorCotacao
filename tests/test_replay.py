@@ -21,6 +21,17 @@ def run(source, close, days=None, rules=None, **columns):
     return engine
 
 
+def run_ohlc(source, opening, high, low, close, rules=None):
+    frame = pd.DataFrame(dict(
+        pregao=["2026-10-02"] * len(close),
+        abertura=opening, maxima=high, minima=low, fechamento=close,
+        barra_ntsl=range(1, len(close)+1),
+    ))
+    engine = Engine(compile_ntsl(source), frame, 5, {}, 60, 1, regras=rules)
+    engine.run()
+    return engine
+
+
 def test_replay_minimo(tmp_path):
     example = ROOT / "exemplos/replay_minimo"
     expected = json.loads((example / "metricas_esperadas.json").read_text())
@@ -114,3 +125,45 @@ def test_agressao_por_barra_e_opt_in_sem_mudar_padrao():
     assert [row["plot"] for row in run(source, [100, 101], **columns).trace] == [2, -1]
     assert [row["plot"] for row in run(
         source, [100, 101], rules={"agressao_por_barra": True}, **columns).trace] == [2, -3]
+
+
+def test_protecao_no_candle_da_entrada_e_opt_in():
+    source = ("begin if not HasPosition then BuyAtMarket(1) else begin "
+              "SellToCoverLimit(BuyPrice+20,1); "
+              "SellToCoverStop(BuyPrice-5,BuyPrice-10,1); end; end;")
+    o, h, l, c = [100, 100, 94], [100, 101, 96], [100, 94, 90], [100, 96, 92]
+    standard = run_ohlc(source, o, h, l, c)
+    assert [(fill["barra"], fill["acao"], fill["preco"]) for fill in standard.fills[:2]] == [
+        (2, "long", 100), (3, "exit_long", 94),
+    ]
+    same_candle = run_ohlc(source, o, h, l, c, rules={
+        "protecao_no_candle_entrada": True,
+        "rastrear_ordens": True,
+    })
+    assert [(fill["barra"], fill["acao"], fill["preco"]) for fill in same_candle.fills[:2]] == [
+        (2, "long", 100), (2, "exit_long", 95),
+    ]
+    events = [event["evento"] for event in same_candle.order_events if event["barra"] == 2]
+    assert "avaliacao_ntsl" in events
+    assert "protecao_elegivel_candle_entrada" in events
+    assert "gatilho_stop" in events
+    stop_fill = next(event for event in same_candle.order_events
+                     if event["evento"] == "preenchimento"
+                     and event["ordem"] == "selltocoverstop")
+    assert stop_fill["gatilho"] == 95
+    assert stop_fill["limite"] == 90
+    assert stop_fill["preco_execucao"] == 95
+
+
+def test_stop_limit_ja_ativo_nao_depende_da_nova_regra():
+    source = ("begin if CurrentBar=1 then BuyAtMarket(1); "
+              "if IsBought then SellToCoverStop(BuyPrice-5,BuyPrice-10,1); end;")
+    o = [100, 100, 100, 94]
+    h = [100, 101, 101, 96]
+    l = [100, 99, 94, 90]
+    c = [100, 100, 96, 92]
+    standard = run_ohlc(source, o, h, l, c)
+    same_candle = run_ohlc(source, o, h, l, c,
+                           rules={"protecao_no_candle_entrada": True})
+    assert standard.fills[-1]["preco"] == same_candle.fills[-1]["preco"] == 95
+    assert standard.fills[-1]["barra"] == same_candle.fills[-1]["barra"] == 3

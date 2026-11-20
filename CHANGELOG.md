@@ -1,5 +1,11 @@
 # Histórico de versões
 
+## Não publicado — pesquisa de paridade da Etapa 2A
+
+- Adiciona rastreamento opt-in do ciclo de ordens OHLC em `eventos_ordens.csv`.
+- Adiciona modo opt-in para avaliar alvo e stop no candle em que a entrada a mercado foi preenchida, sem alterar o comportamento padrão.
+- Cobre com regressão a elegibilidade da proteção no candle da entrada e a regra stop-limit quando a proteção já estava ativa.
+
 ## 0.14.0
 
 - Replay, validação e otimização NTSL tick a tick por negócios, com desempate por sequência, latência em milissegundos e cancelamento em lacunas.

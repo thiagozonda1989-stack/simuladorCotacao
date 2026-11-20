@@ -114,3 +114,7 @@ py -3.11 -m pytest -q
 O procedimento de 21/10 foi reproduzido sem otimização. Com as mesmas barras, sinais candidatos continuam equivalentes, mas somente 8 de 12 operações do Profit coincidem exatamente com 8 das 10 do motor. A primeira divergência operacional ocorre no stop da compra das 13:04. Na captura local, zero operações coincidem e a primeira divergência já está nos dados da barra inicial.
 
 A menor evidência capaz de decidir a causa da divergência controlada é o histórico nativo de ordens do Profit para 13:04, contendo criação, tipo, gatilho, limite, horário do disparo, preço e horário do preenchimento, cancelamentos e vínculo OCO. Para fechar posição, falta também a série nativa por candle; até lá ela permanece explicitamente derivada.
+
+## Adendo — proteção no candle da entrada
+
+Os logs de console publicados depois desta matriz permitiram isolar a primeira divergência na elegibilidade da proteção. O contrafactual opt-in passa de 8 para 11 correspondências exatas em 26/10, sem alterar as 10 de 10 de 21/10. O diagnóstico, os testes e a pendência da segunda avaliação intrabar estão em [ETAPA2A_DIAGNOSTICO_PROTECAO_20261026.md](ETAPA2A_DIAGNOSTICO_PROTECAO_20261026.md) e [ETAPA2A_MATRIZ_PROTECAO_20261026.csv](ETAPA2A_MATRIZ_PROTECAO_20261026.csv).

@@ -124,6 +124,8 @@ class ExecutionRules:
     agressao_por_barra: bool = False
     agressao_referencia_injetada: bool = False
     vwap_continuo_lacunas: bool = False
+    protecao_no_candle_entrada: bool = False
+    rastrear_ordens: bool = False
 
     def __post_init__(self):
         for value in (self.latencia_ticks_ms, self.lacuna_ticks_ms):
@@ -133,6 +135,8 @@ class ExecutionRules:
             raise ValueError("motor_ticks deve ser booleano.")
         if self.motor_ticks and self.latencia_barras:
             raise ValueError("Para tick a tick, zere a latência em barras e use a latência em milissegundos.")
+        if self.motor_ticks and self.protecao_no_candle_entrada:
+            raise ValueError("A proteção no candle da entrada só se aplica ao motor OHLC.")
         if type(self.latencia_barras) is not int or self.latencia_barras < 0:
             raise ValueError("A latência adicional deve ser um inteiro não negativo em barras.")
         for value in (self.custo_por_contrato_lado, self.slippage_ticks):
@@ -141,7 +145,8 @@ class ExecutionRules:
         for value in (self.limite_exige_ultrapassar, self.ordem_so_proxima_barra,
                       self.historico_continuo, self.volume_financeiro_ntsl,
                       self.agressao_por_barra, self.agressao_referencia_injetada,
-                      self.vwap_continuo_lacunas):
+                      self.vwap_continuo_lacunas, self.protecao_no_candle_entrada,
+                      self.rastrear_ordens):
             if type(value) is not bool:
                 raise ValueError("As regras de execução devem ser booleanas.")
 
@@ -196,6 +201,29 @@ class Engine:
         self.rolling = {}
         self.ambiguities = 0
         self.entry_intentions = set()
+        self.order_events = []
+
+    def audit_order(self, event, order=None, key="", execution_price=""):
+        if not self.rules.rastrear_ordens:
+            return
+        timestamp = ""
+        for column in ("timestamp", "inicio", "minuto"):
+            if column in self.frame:
+                timestamp = self.frame.iloc[self.row][column]
+                break
+        self.order_events.append(dict(
+            barra=self.row+1, pregao=self.days[self.row], timestamp=timestamp,
+            evento=event, chave=key,
+            ordem="" if order is None else order.function,
+            acao="" if order is None else order.action,
+            tipo="" if order is None else order.kind,
+            quantidade="" if order is None else order.quantity,
+            gatilho="" if order is None else order.price,
+            limite="" if order is None or order.limit is None else order.limit,
+            preco_execucao=execution_price,
+            primeira_barra_elegivel="" if order is None else order.eligible_at+1,
+            posicao=self.position, preco_medio=self.basis,
+        ))
 
     @staticmethod
     def prepare_series(program, frame, regras=None):
@@ -523,6 +551,7 @@ class Engine:
                                  int(self.event_time[self.row])+self.rules.latencia_ticks_ms*1_000_000)
         order.sent_at = self.row
         self.orders[key] = order
+        self.audit_order("solicitacao_renovada" if same_order else "solicitacao", order, key)
 
     def slipped(self, price, buying):
         return price + (1 if buying else -1) * self.rules.slippage_ticks * self.tick
@@ -593,6 +622,7 @@ class Engine:
                                ordem=order.function,acao=action,preco=price,quantidade=quantity,
                                pontos_contrato=pnl,posicao=self.position, tipo=order.kind,
                                custo_reais=cost, liquido_reais=pnl*self.point_value-cost))
+        self.audit_order("preenchimento", order, order.function, price)
 
     def process_orders(self):
         o,h,l = (self.series(name) for name in ("open","high","low"))
@@ -600,7 +630,10 @@ class Engine:
         for key,order in self.orders.items():
             if self.row < order.eligible_at:
                 continue
+            triggered = order.triggered
             fill = self.match(order,o,h,l)
+            if not triggered and order.triggered:
+                self.audit_order("gatilho_stop", order, key)
             if fill is not None:
                 matched.append((key,order,fill))
         exits = [item for item in matched if item[1].action.startswith("exit")]
@@ -627,6 +660,7 @@ class Engine:
                      lacunas_com_posicao=self.gaps_with_exposure, custos=self.costs, custos_diarios=self.daily_costs, ambiguidades=self.ambiguities,
                      ordens=[(key, asdict(order)) for key, order in self.orders.items()],
                      execucoes=self.fills, candles=self.trace, console=self.logs,
+                     eventos_ordens=self.order_events,
                      indicadores=[(key, value.window.maxlen, list(value.window),
                                    value.row, value.sum, value.ema, value.value)
                                   for key, value in self.rolling.items()])
@@ -668,6 +702,7 @@ class Engine:
         self.ambiguities = state["ambiguidades"]
         self.orders = {key: Order(**order) for key, order in state["ordens"]}
         self.fills, self.trace, self.logs = state["execucoes"], state["candles"], state["console"]
+        self.order_events = state.get("eventos_ordens", [])
         for fill in self.fills:
             fill.setdefault("custo_reais", 0.0)
             fill.setdefault("liquido_reais", fill["pontos_contrato"] * self.point_value)
@@ -703,14 +738,25 @@ class Engine:
                 self.rolling.clear()
                 if record_trace:
                     self.logs.append((row+1, f"Lacuna de dados. Ordens canceladas; posição anterior: {self.position}."))
+            position_before_orders = self.position
             self.process_orders()
+            opened_on_this_candle = position_before_orders == 0 and self.position != 0
             self.plots = {}
             self.entry_intentions = set()
             self.loop_budget = 100_000
+            self.audit_order("avaliacao_ntsl")
             try:
                 self.program.strategy(self)
             except (ValueError,TypeError,OverflowError,ZeroDivisionError,RecursionError) as error:
                 raise NTSLError(f"Barra {row+1}, pregão {days[row]}: {error}") from error
+            if self.rules.protecao_no_candle_entrada and opened_on_this_candle:
+                protections = [(key, order) for key, order in self.orders.items()
+                               if order.sent_at == row and order.action.startswith("exit")]
+                for key, order in protections:
+                    order.eligible_at = row
+                    self.audit_order("protecao_elegivel_candle_entrada", order, key)
+                if protections:
+                    self.process_orders()
             if self.rules.ordem_so_proxima_barra and not self.rules.motor_ticks:
                 self.orders = {key: order for key, order in self.orders.items() if order.sent_at == row or order.eligible_at > row}
             for slot in var_slots:
@@ -776,6 +822,8 @@ def run_strategy(csv, source, output, seconds, format_name, tick, overrides=None
     trace = pd.concat([frame[columns],pd.DataFrame(engine.trace)],axis=1)
     trace.to_csv(output/"candles.csv",index_label="indice")
     pd.DataFrame(engine.logs,columns=["barra","mensagem"]).to_csv(output/"console.csv",index=False)
+    if rules.rastrear_ordens:
+        pd.DataFrame(engine.order_events).to_csv(output/"eventos_ordens.csv",index=False)
     exits = fills[fills.acao.str.startswith("exit")] if len(fills) else fills
     pnl = exits["pontos_contrato"].to_numpy(dtype=float)
     equity = np.r_[0,pnl.cumsum()]
@@ -816,11 +864,15 @@ def run_strategy(csv, source, output, seconds, format_name, tick, overrides=None
     payoff = [{"geracao": int(i), "resultado": float(liquid_equity[i])} for i in sample]
     performance = chart(payoff, [("resultado", "R$ líquido")], "Resultado líquido realizado", axis="Execução")
     report_title = "Validação do modelo" if validacao is not None else "Replay NTSL"
-    items = '<a href="execucoes.csv">Execuções</a> · <a href="candles.csv">Candles e sinais</a> · <a href="console.csv">Console</a> · <a href="metricas.json">Métricas e inputs</a>'
+    order_link = ' · <a href="eventos_ordens.csv">Ciclo das ordens</a>' if rules.rastrear_ordens else ''
+    items = '<a href="execucoes.csv">Execuções</a> · <a href="candles.csv">Candles e sinais</a> · <a href="console.csv">Console</a>' + order_link + ' · <a href="metricas.json">Métricas e inputs</a>'
     description = ("O código é executado a cada negócio. Ordens novas ficam elegíveis em evento posterior. "
                    "O preenchimento usa preço e quantidade observados, sem posição real na fila."
                    if rules.motor_ticks else
-                   "O código roda no fechamento de cada candle. Ordens novas só são elegíveis na barra seguinte.")
+                   ("O código roda uma vez por candle. Entradas novas são elegíveis na barra seguinte; "
+                    "a proteção criada após uma entrada a mercado também é testada no candle da entrada."
+                    if rules.protecao_no_candle_entrada else
+                    "O código roda no fechamento de cada candle. Ordens novas só são elegíveis na barra seguinte."))
     (output/"relatorio.html").write_text(f"""<!doctype html><html lang="pt-BR"><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1"><title>{report_title}</title>
 <style>
@@ -862,6 +914,10 @@ def main():
                    help="Diagnostico: usa v_agressao_saldo_referencia exportado do Profit")
     p.add_argument("--vwap-continuo-lacunas", action="store_true",
                    help="Diagnostico: VWAP diaria nao reinicia em lacuna intradiaria")
+    p.add_argument("--protecao-no-candle-entrada", action="store_true",
+                   help="OHLC de paridade: torna alvo e stop elegiveis no candle em que a entrada a mercado foi preenchida")
+    p.add_argument("--rastrear-ordens", action="store_true",
+                   help="Grava solicitacoes, elegibilidade, gatilhos, preenchimentos e posicao vista pelo NTSL")
     p.add_argument("--inputs",help="Arquivo JSON com valores de inputs a substituir")
     args=p.parse_args()
     try:
