@@ -9,6 +9,7 @@
 - Preserva as atribuições escalares da avaliação pós-preenchimento até o fechamento no modo experimental, mantendo isolados arrays e janelas móveis.
 - Permite comparar indicadores com aquecimento contado a partir de cada reinício do replay.
 - Acrescenta `--historico-continuo-lacunas` ao replay OHLC para preservar janelas e referências históricas, mantendo cancelamento de pendentes e registro de lacunas com exposição.
+- Acrescenta `--entrada-mercado-atraves-lacuna` como opção experimental do replay OHLC para entradas elegíveis com posição zerada e histórico contínuo em lacunas.
 
 ## 0.14.0
 

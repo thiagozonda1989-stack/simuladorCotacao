@@ -108,6 +108,7 @@ class Order:
     eligible_at: int = -1
     eligible_ns: int = -1
     requested_quantity: int = 0
+    market_entry: bool = False
 
 
 @dataclass(frozen=True)
@@ -129,6 +130,7 @@ class ExecutionRules:
     rastrear_ordens: bool = False
     avaliacao_pos_preenchimento: bool = False
     historico_continuo_lacunas: bool = False
+    entrada_mercado_atraves_lacuna: bool = False
 
     def __post_init__(self):
         for value in (self.latencia_ticks_ms, self.lacuna_ticks_ms):
@@ -138,6 +140,10 @@ class ExecutionRules:
             raise ValueError("motor_ticks deve ser booleano.")
         if self.motor_ticks and self.latencia_barras:
             raise ValueError("Para tick a tick, zere a latência em barras e use a latência em milissegundos.")
+        if self.entrada_mercado_atraves_lacuna and self.motor_ticks:
+            raise ValueError("A entrada a mercado através de lacuna só se aplica ao motor OHLC.")
+        if self.entrada_mercado_atraves_lacuna and not self.historico_continuo_lacunas:
+            raise ValueError("--entrada-mercado-atraves-lacuna exige --historico-continuo-lacunas.")
         if self.motor_ticks and self.historico_continuo_lacunas:
             raise ValueError("A continuidade histórica em lacunas só se aplica ao motor OHLC.")
         if self.motor_ticks and self.protecao_no_candle_entrada:
@@ -154,7 +160,7 @@ class ExecutionRules:
                       self.agressao_por_barra, self.agressao_referencia_injetada,
                       self.vwap_continuo_lacunas, self.protecao_no_candle_entrada,
                       self.rastrear_ordens, self.avaliacao_pos_preenchimento,
-                      self.historico_continuo_lacunas):
+                      self.historico_continuo_lacunas, self.entrada_mercado_atraves_lacuna):
             if type(value) is not bool:
                 raise ValueError("As regras de execução devem ser booleanas.")
 
@@ -558,6 +564,10 @@ class Engine:
                 return
         old = self.orders.get(key)
         order.requested_quantity = order.quantity
+        order.market_entry = order.kind == "market" and (
+            order.action in {"long", "short"}
+            or (self.position == 0 and order.action in {"net_long", "net_short"})
+        )
         same_order = old and (old.price, old.limit, old.requested_quantity or old.quantity) == (
             order.price, order.limit, order.quantity)
         if same_order:
@@ -787,14 +797,26 @@ class Engine:
                 self.daily = self.daily_costs = 0.0
                 if not self.rules.historico_continuo:
                     self.rolling.clear()
+            carry_market_entries = False
             if self.gap[row]:
-                self.orders_cancelled_at_gaps += len(self.orders)
+                carry_market_entries = self.rules.entrada_mercado_atraves_lacuna and self.position == 0
+                orders_before_gap = len(self.orders)
                 self.gaps_with_exposure += bool(self.position)
-                self.orders.clear()
+                if carry_market_entries:
+                    self.orders = {key: order for key, order in self.orders.items() if order.market_entry}
+                else:
+                    self.orders.clear()
+                cancelled = orders_before_gap - len(self.orders)
+                self.orders_cancelled_at_gaps += cancelled
                 if not self.rules.historico_continuo_lacunas:
                     self.rolling.clear()
                 if record_trace:
-                    self.logs.append((row+1, f"Lacuna de dados. Ordens canceladas; posição anterior: {self.position}."))
+                    if self.orders:
+                        message = (f"Lacuna de dados. Ordens canceladas: {cancelled}; "
+                                   f"entradas a mercado preservadas: {len(self.orders)}; posição anterior: {self.position}.")
+                    else:
+                        message = f"Lacuna de dados. Ordens canceladas; posição anterior: {self.position}."
+                    self.logs.append((row+1, message))
             position_before_orders = self.position
             fills_before_orders = len(self.fills)
             self.process_orders()
@@ -805,7 +827,7 @@ class Engine:
                         for fill in opening_fills)
             )
             if (self.rules.avaliacao_pos_preenchimento and opened_by_market_at_open
-                    and row > self.session_start and not self.gap[row]
+                    and row > self.session_start and (not self.gap[row] or carry_market_entries)
                     and all(fill["acao"] in {"long", "short"} and fill["tipo"] == "market"
                             for fill in opening_fills)):
                 self.protect_at_open()
@@ -976,6 +998,8 @@ def main():
     p.add_argument("--historico-continuo", action=argparse.BooleanOptionalAction, default=True)
     p.add_argument("--historico-continuo-lacunas", action="store_true",
                    help="OHLC: preserva janelas e referências históricas em lacunas intradiárias")
+    p.add_argument("--entrada-mercado-atraves-lacuna", action="store_true",
+                   help="OHLC experimental: preserva entradas a mercado com posição zerada; exige histórico contínuo em lacunas")
     p.add_argument("--motor-ticks", action="store_true")
     p.add_argument("--latencia-ticks-ms", type=int, default=0)
     p.add_argument("--lacuna-ticks-ms", type=int, default=5000)

@@ -120,6 +120,122 @@ def test_modo_ticks_rejeita_continuidade_em_lacunas_ohlc():
         ExecutionRules(motor_ticks=True, historico_continuo_lacunas=True)
 
 
+@pytest.mark.parametrize("case,carry,cancels,exposure,position,expected_fills", [
+    (0, False, 0, 0, 0, []),
+    (0, True, 0, 0, 0, []),
+    (1, False, 1, 0, 0, []),
+    (1, True, 0, 0, 1, ["09:39", "09:42"]),
+    (2, False, 2, 1, 1, ["09:28", "09:42"]),
+    (2, True, 2, 1, 1, ["09:28", "09:42"]),
+])
+def test_sonda_v3_entrada_mercado_atraves_lacuna(
+    tmp_path, case, carry, cancels, exposure, position, expected_fills,
+):
+    fixture = (ROOT / "docs/colaboracao/evidencias"
+               / "WINZ26_v5_8_controles_lacuna_20261026_v1")
+    output = tmp_path / "replay"
+    result = run_strategy(
+        fixture / "barras_sinteticas.csv",
+        (fixture / "sonda_lacuna_simulador_v1_0.ntsl").read_text(encoding="utf-8"),
+        output, 60, "ohlc", 5, {"p_Caso": case},
+        regras={"historico_continuo_lacunas": True, "entrada_mercado_atraves_lacuna": carry,
+                "avaliacao_pos_preenchimento": True, "rastrear_ordens": True},
+    )
+    assert result["lacunas_intradiarias"] == 1
+    assert result["ordens_canceladas_lacuna"] == cancels
+    assert result["lacunas_com_posicao"] == exposure
+    trace = pd.read_csv(output / "eventos_ordens.csv")
+    stamp = trace.timestamp.str[11:16]
+    assert trace.loc[trace.evento.eq("preenchimento"), "timestamp"].str[11:16].tolist() == expected_fills
+    resumed = trace[stamp.eq("09:39")]
+    expected_events = (["preenchimento", "avaliacao_ntsl_pos_preenchimento", "avaliacao_ntsl"]
+                       if case == 1 and carry else ["avaliacao_ntsl"])
+    assert resumed.evento.tolist() == expected_events
+    assert resumed.iloc[-1].posicao == position
+    if case == 1 and carry:
+        fill, extra, regular = tuple(resumed.itertuples(index=False))
+        assert fill.preco_execucao == 9580
+        assert fill.barra == extra.barra == regular.barra == 4
+        assert [fill.barra_contexto_ntsl, extra.barra_contexto_ntsl, regular.barra_contexto_ntsl] == [4, 3, 4]
+        assert extra.posicao == 1
+    console = pd.read_csv(output / "console.csv").mensagem
+    assert console.str.contains(r"hora=939\.0.*pendentes=0$").sum() == 1
+
+
+@pytest.mark.parametrize("rules,message", [
+    ({"motor_ticks": True, "historico_continuo_lacunas": True}, "motor OHLC"),
+    ({}, "--historico-continuo-lacunas"),
+])
+def test_entrada_mercado_atraves_lacuna_rejeita_modo_incompativel(rules, message):
+    with pytest.raises(ValueError, match=message):
+        ExecutionRules(entrada_mercado_atraves_lacuna=True, **rules)
+
+
+@pytest.mark.parametrize("entry,action", [
+    ("BuyAtMarket(1)", "long"),
+    ("SellShortAtMarket(1)", "short"),
+    ("SendOrder(osBuy, otMarket, 1, 0, 0)", "long"),
+])
+def test_entrada_mercado_atraves_lacuna_respeita_elegibilidade(entry, action):
+    source = f"""begin
+      if CurrentBar=1 then begin
+        {entry};
+        BuyAtLimit(100, 1);
+        SellShortAtStop(200, 195, 1);
+      end;
+      if HasPendingOrders then Plot(1) else Plot(0);
+    end;"""
+    engine = run(source, [100, 110, 115, 120],
+                 rules={"historico_continuo_lacunas": True, "entrada_mercado_atraves_lacuna": True,
+                        "avaliacao_pos_preenchimento": True, "rastrear_ordens": True, "latencia_barras": 1},
+                 lacuna_intradiaria=[False, True, False, False])
+    assert engine.orders_cancelled_at_gaps == 2
+    assert engine.trace[1]["posicao"] == 0 and engine.trace[1]["plot"] == 1
+    entry_fill, _ = engine.fills
+    assert (entry_fill["barra"], entry_fill["preco"], entry_fill["acao"]) == (3, 115, action)
+
+
+def test_entrada_mercado_atraves_lacuna_respeita_troca_de_pregao():
+    engine = run("begin if CurrentBar=1 then BuyAtMarket(1); end;", [100, 110, 120],
+                 days=["2026-10-02", "2026-10-05", "2026-10-05"],
+                 rules={"historico_continuo_lacunas": True, "entrada_mercado_atraves_lacuna": True,
+                        "avaliacao_pos_preenchimento": True, "rastrear_ordens": True})
+    assert engine.fills == []
+    assert engine.orders_cancelled_at_gaps == 0
+
+
+def test_entrada_mercado_atraves_lacuna_cancela_saida_generica_pendente():
+    source = '''begin
+      if CurrentBar=1 then BuyAtMarket(1);
+      if CurrentBar=3 then SellToCoverLimit(105, 1);
+      if CurrentBar=4 then SendOrder(osSell, otMarket, 1, 0, 0);
+    end;'''
+    engine = run(source, [100, 100, 100, 100, 110, 120, 120],
+                 rules={"historico_continuo_lacunas": True, "entrada_mercado_atraves_lacuna": True,
+                        "latencia_barras": 1},
+                 lacuna_intradiaria=[False, False, False, False, False, True, False])
+    assert [(fill["barra"], fill["acao"]) for fill in engine.fills] == [(3, "long"), (5, "exit_long")]
+    assert engine.orders_cancelled_at_gaps == 1
+    assert engine.gaps_with_exposure == 0
+
+
+def test_entrada_mercado_atraves_lacuna_extra_usa_fechamento_anterior():
+    source = """begin
+      if CurrentBar=1 then BuyAtMarket(1);
+      if IsBought then begin
+        ConsoleLog("Close=" + (Close));
+        SellToCoverStop(Close-5, Close-10, 1);
+      end;
+    end;"""
+    engine = run(source, [100, 110, 120],
+                 rules={"historico_continuo_lacunas": True, "entrada_mercado_atraves_lacuna": True,
+                        "avaliacao_pos_preenchimento": True, "rastrear_ordens": True},
+                 lacuna_intradiaria=[False, True, False])
+    assert engine.logs[1:] == [(1, "Close=100.0"), (2, "Close=110.0"), (3, "Close=120.0")]
+    stops = [e for e in engine.order_events if e["ordem"] == "selltocoverstop"]
+    assert stops[0]["gatilho"] == 95 and stops[0]["barra_contexto_ntsl"] == 1
+
+
 def test_indicadores_novos():
     source = "begin Plot(VWAP(1)); Plot2(StdDevs(Close, 2)); Plot3(AgressionVolBalance); end;"
     result = run(source, [100, 120, 200], ["2026-10-02", "2026-10-02", "2026-10-05"],
