@@ -1,0 +1,26 @@
+{ Teste sintetico da detecao de saida e da espera da v5.8. }
+
+input
+  p_Barras_Espera(3);
+
+var
+  v_Posicionado, v_Estava_Posicionado, v_Pode_Entrar : Boolean;
+  v_Barra_Ult_Saida : Integer;
+
+begin
+  v_Posicionado := IsBought or IsSold;
+  if v_Estava_Posicionado and (not v_Posicionado) then
+    v_Barra_Ult_Saida := CurrentBar;
+
+  v_Pode_Entrar := (CurrentBar >= 3) and (CurrentBar <= 7)
+                   and (CurrentBar >= v_Barra_Ult_Saida + p_Barras_Espera);
+  if IsBought then
+    SellToCoverStop(BuyPrice-5, BuyPrice-10, 1)
+  else if v_Pode_Entrar and not HasPendingOrders then
+    BuyAtMarket(1);
+
+  Plot(v_Barra_Ult_Saida);
+  Plot2(v_Estava_Posicionado);
+  Plot3(v_Pode_Entrar);
+  v_Estava_Posicionado := v_Posicionado;
+end;

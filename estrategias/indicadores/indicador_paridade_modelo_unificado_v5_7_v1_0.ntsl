@@ -1,0 +1,69 @@
+{ Indicador de paridade para Modelo_Unificado_Refatorado_v5_7. }
+{ Nao envia ordens. Exportar em WINZ26, 1 minuto, avaliacao no fechamento. }
+
+input
+  p_Periodo_ATR(14);
+  p_Periodo_Regime_ATR(50);
+  p_Desvio_VWAP(2.1);
+  p_ZScore_Vol(1.5);
+
+var
+  v_VWAP_Diaria    : Float;
+  v_Desvio_Padrao  : Float;
+  v_ATR            : Float;
+  v_Media_ATR      : Float;
+  v_Saldo_Agressao : Float;
+  v_Media_Volume   : Float;
+  v_Desvio_Volume  : Float;
+  v_Volume_ZScore  : Float;
+  v_Banda_Superior : Float;
+  v_Banda_Inferior : Float;
+  v_Regime_Mercado : Integer;
+  v_Sinal          : Integer;
+
+begin
+  v_VWAP_Diaria    := VWAP(1);
+  v_Desvio_Padrao  := StdDevs(Close, 20);
+  v_Banda_Superior := v_VWAP_Diaria + (p_Desvio_VWAP * v_Desvio_Padrao);
+  v_Banda_Inferior := v_VWAP_Diaria - (p_Desvio_VWAP * v_Desvio_Padrao);
+  v_ATR            := Media(p_Periodo_ATR, TrueRange);
+  v_Media_ATR      := Media(p_Periodo_Regime_ATR, v_ATR);
+  v_Saldo_Agressao := AgressionVolBalance;
+  v_Media_Volume   := Media(20, Volume);
+  v_Desvio_Volume  := StdDevs(Volume, 20);
+
+  if v_Desvio_Volume > 0 then
+    v_Volume_ZScore := (Volume - v_Media_Volume) / v_Desvio_Volume
+  else
+    v_Volume_ZScore := 0;
+
+  if (v_ATR > v_Media_ATR)
+     and (Abs(Close - v_VWAP_Diaria) > (1.2 * v_Desvio_Padrao)) then
+    v_Regime_Mercado := 1
+  else if ((Low <= v_Banda_Inferior) or (High >= v_Banda_Superior))
+          and (v_Volume_ZScore > p_ZScore_Vol) then
+    v_Regime_Mercado := 2
+  else
+    v_Regime_Mercado := 0;
+
+  v_Sinal := 0;
+  if (((v_Regime_Mercado = 1) and (Close > v_VWAP_Diaria)
+       and (v_Saldo_Agressao > 0) and (v_Volume_ZScore > p_ZScore_Vol))
+      or ((v_Regime_Mercado = 2) and (Low <= v_Banda_Inferior)
+          and (v_Saldo_Agressao > 0))) then
+    v_Sinal := 1
+  else if (((v_Regime_Mercado = 1) and (Close < v_VWAP_Diaria)
+            and (v_Saldo_Agressao < 0) and (v_Volume_ZScore > p_ZScore_Vol))
+           or ((v_Regime_Mercado = 2) and (High >= v_Banda_Superior)
+               and (v_Saldo_Agressao < 0))) then
+    v_Sinal := -1;
+
+  Plot(v_VWAP_Diaria);
+  Plot2(v_Desvio_Padrao);
+  Plot3(v_ATR);
+  Plot4(v_Media_ATR);
+  Plot5(v_Saldo_Agressao);
+  Plot6(v_Volume_ZScore);
+  Plot7(v_Regime_Mercado);
+  Plot8(v_Sinal);
+end;

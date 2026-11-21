@@ -1,0 +1,5 @@
+p_caso;ordem_console;evento;sequencia_avaliacao;gatilho_pontos_relativos;limite_pontos_relativos
+2;5;SOLICITA_ALVO;3;;100.00
+2;6;SOLICITA_STOP;3;-10000.00;-10500.00
+2;8;SOLICITA_ALVO;4;;100.00
+2;9;SOLICITA_STOP;4;-10000.00;-10500.00

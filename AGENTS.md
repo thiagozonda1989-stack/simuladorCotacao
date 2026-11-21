@@ -1,12 +1,23 @@
-# Diretrizes para agentes
+# simuladorCotacao
 
-Este repositório reúne o simulador local e estratégias NTSL do projeto ProfitRTD.
+O repositório oficial é `thiagozonda1989-stack/simuladorCotacao` no GitHub.
 
-1. Preserve dados brutos e códigos confirmados no Profit. Nunca altere um arquivo de estratégia publicado; crie uma nova versão.
-2. Antes de testar, inventarie arquivos, colunas, período, resolução, duplicidades, ordem temporal, lacunas e cobertura de Negócios, Preços e Ofertas.
-3. Separe claramente: compilação no Profit, compatibilidade com o subconjunto NTSL do simulador, replay executado e resultado observado.
-4. Não trate replay OHLC como Tick a Tick. Declare custos, slippage, latência, fila e ambiguidades intrabar.
-5. Use divisão cronológica. Ajuste, validação e teste final devem usar pregões distintos.
-6. Dados originais são imutáveis. Dados derivados precisam de versão, schema, hash da fonte e registro do processamento.
-7. Não publique arquivos de mercado reais neste repositório. Use somente schemas e exemplos sintéticos.
-8. Toda alteração funcional deve incluir teste de regressão e atualização da documentação.
+Para toda versão entregue, siga o processo em [MANUTENCAO.md](MANUTENCAO.md). Atualize o changelog, a documentação afetada e os metadados da versão. Valide os fluxos alterados, gere e confira o pacote, registre seu SHA-256, faça o commit, crie a tag anotada e publique e confirme ambos no GitHub. Se o acesso remoto bloquear a publicação, preserve os commits e as tags locais e indique o erro real na entrega.
+
+Mantenha ZIPs, executáveis e cotações privadas fora do Git. Use apenas exemplos pequenos adequados à distribuição.
+
+## ProfitRTD
+
+Preserve os NTSL publicados e crie novas versões para alterações. Confira resolução,
+colunas, lacunas e cobertura das fontes antes de validar. Os dados brutos são imutáveis e
+ficam fora do Git. Versione os schemas e registre origem e hash de derivados.
+Separe evidências de compilação, execução, paridade e validação fora da amostra.
+Toda alteração funcional deve incluir teste de regressão e documentação.
+Consulte [DIRETRIZES_PROJETO.md](DIRETRIZES_PROJETO.md) para as regras de pesquisa.
+
+## Colaboração entre IAs
+
+Ao participar de uma etapa compartilhada, leia a Issue e o PR referenciados pela tarefa,
+verifique o SHA antes de analisar ou executar, e use o formato de parecer em
+[Fluxo de colaboração](docs/colaboracao/FLUXO_IAS.md). Evidências públicas devem ser agregadas
+e autorizadas. As fontes brutas e a reserva final ficam no computador local.

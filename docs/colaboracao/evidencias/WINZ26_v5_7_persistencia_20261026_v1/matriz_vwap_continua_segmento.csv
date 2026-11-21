@@ -1,0 +1,7 @@
+pregao;modo;operacoes_profit;operacoes_motor;exatas;sem_par_profit;sem_par_motor;barras_elegiveis;primeira_barra_elegivel;vwap_dentro;atr_dentro;media_atr_dentro;regime_exato;plots_sem_divergencia
+2026-10-21;padrao;10;10;10;0;0;502;2026-10-21T10:03:00-03:00;502;502;502;502;8
+2026-10-21;protecao-legada;10;10;10;0;0;502;2026-10-21T10:03:00-03:00;502;502;502;502;8
+2026-10-21;pos-preenchimento;10;10;10;0;0;502;2026-10-21T10:03:00-03:00;502;502;502;502;8
+2026-10-26;padrao;12;10;8;4;2;463;2026-10-26T10:42:00-03:00;463;463;463;463;8
+2026-10-26;protecao-legada;12;11;11;1;0;463;2026-10-26T10:42:00-03:00;463;463;463;463;8
+2026-10-26;pos-preenchimento;12;12;12;0;0;463;2026-10-26T10:42:00-03:00;463;463;463;463;8

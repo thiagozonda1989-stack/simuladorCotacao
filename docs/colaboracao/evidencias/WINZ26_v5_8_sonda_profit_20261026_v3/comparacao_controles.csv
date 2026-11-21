@@ -1,0 +1,8 @@
+p_caso;motor;modo;barra_anterior;barra_retomada;posicao_retomada;pendentes_retomada;solicitacoes_compra;preenchimentos_entrada_retomada;canceladas_lacuna;avaliacao_extra_contexto_0929_com_posicao_aberta;origem
+0;Profit;captura;09:29;09:39;0;0;0;0;;0;console e relato do operador
+1;Profit;captura;09:29;09:39;1;0;1;1;;1;console e CSV de operações
+2;Profit;pendente;09:29;09:39;;;;;;;captura não fornecida
+0;Simulador;reinicio;09:29;09:39;0;0;0;0;0;0;replay local de barras preparadas
+0;Simulador;continuidade;09:29;09:39;0;0;0;0;0;0;replay local de barras preparadas
+1;Simulador;reinicio;09:29;09:39;0;0;1;0;1;0;replay local de barras preparadas
+1;Simulador;continuidade;09:29;09:39;0;0;1;0;1;0;replay local de barras preparadas

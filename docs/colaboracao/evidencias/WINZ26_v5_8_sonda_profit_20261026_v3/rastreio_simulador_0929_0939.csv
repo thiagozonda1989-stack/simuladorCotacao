@@ -1,0 +1,13 @@
+p_caso;modo;hora_barra_replay;rotulo_contexto_ntsl;evento;posicao;quantidade
+0;reinicio;09:29;09:29;avaliacao_ntsl;0;
+0;reinicio;09:39;09:39;avaliacao_ntsl;0;
+0;continuidade;09:29;09:29;avaliacao_ntsl;0;
+0;continuidade;09:39;09:39;avaliacao_ntsl;0;
+1;reinicio;09:29;09:29;avaliacao_ntsl;0;
+1;reinicio;09:29;09:29;solicitacao;0;1
+1;reinicio;09:39;;cancelamento_agregado_da_lacuna;0;1
+1;reinicio;09:39;09:39;avaliacao_ntsl;0;
+1;continuidade;09:29;09:29;avaliacao_ntsl;0;
+1;continuidade;09:29;09:29;solicitacao;0;1
+1;continuidade;09:39;;cancelamento_agregado_da_lacuna;0;1
+1;continuidade;09:39;09:39;avaliacao_ntsl;0;

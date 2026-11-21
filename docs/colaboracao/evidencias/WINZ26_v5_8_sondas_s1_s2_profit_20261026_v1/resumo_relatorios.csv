@@ -1,0 +1,4 @@
+sonda;paginas;inicio_periodo;fim_periodo;operacoes;ganhadoras;perdedoras;zeradas;liquido_brl;custos_brl;duracao_segundos
+s1;1;2026-05-20;2026-11-20;1;0;1;0;-240;0;420
+s2v1;1;2026-05-20;2026-11-20;1;0;1;0;-5;0;60
+s2v2;1;2026-05-20;2026-11-20;1;1;0;0;2;0;60

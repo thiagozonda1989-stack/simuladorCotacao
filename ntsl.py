@@ -18,7 +18,8 @@ SERIES = {
     "volume": "volume", "quantity": "volume_contratos", "trades": "v_trades_atual",
     "bidprice": "v_bid", "askprice": "v_ask", "bidsize": "v_qtd_bid", "asksize": "v_qtd_ask",
     "agressionvolbuy": "v_agressao_compra", "agressionvolsell": "v_agressao_venda",
-    "date": "data_ntsl", "time": "hora_ntsl", "currentbar": "barra_ntsl",
+    "date": "data_ntsl", "time": "hora_ntsl", "currentbar": "barra_ntsl", "barrasnosegmento": "barras_no_segmento",
+    "intervalobarrasegundos": "intervalo_barra_segundos", "segundosdodiabarra": "segundos_do_dia_barra",
 }
 STATE = {
     "isbought", "issold", "hasposition", "haspendingorders", "buyprice", "sellprice",
@@ -29,6 +30,7 @@ FUNCTIONS = {
     "truerange": (0, 0), "truehigh": (0, 0), "truelow": (0, 0),
     "truerangecustom": (3, 3), "typicalprice": (0, 0), "medianprice": (0, 0),
     "avgprice": (0, 0), "avgtruerange": (2, 2),
+    "calctime": (2, 2), "vwap": (1, 1), "agressionvolbalance": (0, 0),
     "mod": (2, 2), "intportion": (1, 1), "fracportion": (1, 1), "square": (1, 1),
     "sign": (1, 1), "log": (1, 1), "exp": (1, 1),
     "sendorder": (5, 5), "reverseposition": (0, 0),
@@ -43,13 +45,14 @@ FUNCTIONS = {
     "selltocoverstop": (1, 3), "buytocoverstop": (1, 3),
     "closeposition": (0, 0), "cancelpendingorders": (0, 0),
     "plot": (1, 1), "plot2": (1, 1), "plot3": (1, 1), "plot4": (1, 1),
+    "plot5": (1, 1), "plot6": (1, 1), "plot7": (1, 1), "plot8": (1, 1),
     "paintbar": (1, 1), "consolelog": (1, 2),
 }
 PURE_FUNCTIONS = {"abs", "min", "max", "sqrt", "round", "floor", "ceiling", "power",
                   "mod", "intportion", "fracportion", "square", "sign", "log", "exp",
                   "truerange", "truehigh", "truelow", "truerangecustom", "typicalprice", "medianprice",
-                  "avgprice", "avgtruerange"}
-ROLLING = {"media", "mediaexp", "highest", "lowest", "summation"}
+                  "avgprice", "avgtruerange", "calctime", "vwap", "agressionvolbalance"}
+ROLLING = {"media", "mediaexp", "highest", "lowest", "summation", "stddevs"}
 OPERATORS = {"or": 1, "and": 2, "=": 3, "<>": 3, "<": 3, ">": 3, "<=": 3,
              ">=": 3, "+": 4, "-": 4, "*": 5, "/": 5, "mod": 5}
 COLORS = {"clgreen": 32768, "cllime": 65280, "clred": 255, "clblue": 16711680,
@@ -74,7 +77,10 @@ class Symbol:
 class Compiler:
     def __init__(self, source):
         self.tokens = []
+        self.token_offsets = []
+        self.input_offsets = {}
         source = source.lstrip('\ufeff')
+        self.source = source
         pos, line = 0, 1
         while pos < len(source):
             match = TOKEN.match(source, pos)
@@ -82,6 +88,7 @@ class Compiler:
                 raise NTSLError(f"Linha {line}: caractere ou comentário inválido {source[pos:pos+16]!r}.")
             if match.lastgroup != "skip":
                 token = match.group()
+                self.token_offsets.append(match.span())
                 self.tokens.append((token if match.lastgroup == "string" else token.lower(), line))
             pos = match.end()
             line += match.group().count('\n')
@@ -157,7 +164,9 @@ class Compiler:
                 name = self.identifier()
                 if section == "input":
                     self.expect("(")
+                    start = self.token_offsets[self.pos][0]
                     self.declare(name, section, self.literal())
+                    self.input_offsets[name] = (start, self.token_offsets[self.pos-1][1])
                     self.expect(")")
                 elif section == "const":
                     self.expect("=")
@@ -197,7 +206,7 @@ class Compiler:
         self.expect("<fim>")
         namespace = {"__builtins__": {}}
         exec(compile("\n".join(self.routine_lines + self.lines), "<NTSL compilado>", "exec"), namespace)
-        return Program(namespace["strategy"], self.symbols, self.defaults, self.inputs, self.used, self.used_inputs)
+        return Program(namespace["strategy"], self.symbols, self.defaults, self.inputs, self.used, self.used_inputs, self.source)
 
     def array_type(self):
         self.expect("[")
@@ -206,6 +215,8 @@ class Compiler:
             upper = self.literal()
         else:
             lower, upper = 1, lower
+        if self.peek() == ",":
+            self.fail("arrays multidimensionais não são suportados.")
         self.expect("]")
         self.expect("of")
         kind = self.identifier()
@@ -224,6 +235,8 @@ class Compiler:
         args = []
         if self.take("("):
             while self.peek() != ")":
+                if self.peek() == "var":
+                    self.fail("parâmetros por referência não são suportados.")
                 args.extend(self.local_declarations())
                 if not self.take(";"):
                     break
@@ -387,8 +400,10 @@ class Compiler:
             right = self.expression(OPERATORS[op] + 1)
             if op in {"+", "/"}:
                 result = f"ctx.{('add' if op == '+' else 'divide')}({result},{right})"
+            elif op == "mod":
+                result = f"ctx.call('mod',{result},{right})"
             else:
-                python_op = {"=": "==", "<>": "!=", "mod": "%"}.get(op, op)
+                python_op = {"=": "==", "<>": "!="}.get(op, op)
                 result = f"({result} {python_op} {right})"
         return result
 
@@ -466,6 +481,11 @@ class Program:
     inputs: dict
     used: set
     used_inputs: set
+    source: str
+
+    def __reduce__(self):
+        # A função gerada por exec é reconstruída uma vez no processo filho.
+        return compile_ntsl, (self.source,)
 
 
 def compile_ntsl(source):
@@ -499,8 +519,32 @@ class Rolling:
             self.value = self.sum / len(self.window)
         elif kind == "mediaexp":
             self.value = self.ema
+        elif kind == "stddevs":
+            mean = self.sum / len(self.window)
+            self.value = (sum((x-mean)**2 for x in self.window) / len(self.window))**0.5
         elif kind == "summation":
             self.value = self.sum
         else:
             self.value = (max if kind == "highest" else min)(self.window)
         return self.value
+
+
+def parameterized_ntsl(source, parameters):
+    compiler = Compiler(source)
+    compiler.compile()
+    replacements = []
+    for name, value in parameters.items():
+        start, end = compiler.input_offsets[name.lower()]
+        if isinstance(value, str):
+            literal = '"' + value.replace('"', '""') + '"'
+        elif isinstance(value, bool):
+            literal = str(value).lower()
+        elif re.fullmatch(r"-?\d+", compiler.source[start:end]) and int(value) == value:
+            literal = str(int(value))
+        else:
+            literal = str(value)
+        replacements.append((start, end, literal))
+    result = compiler.source
+    for start, end, literal in sorted(replacements, reverse=True):
+        result = result[:start] + literal + result[end:]
+    return result

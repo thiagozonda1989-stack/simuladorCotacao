@@ -1,0 +1,602 @@
+FONTES PARA O GEMINI | Sonda V3, teste 2, casos 0, 1 e 2
+PR #2
+
+=== docs/colaboracao/evidencias/WINZ26_v5_8_sonda_profit_20261026_v3_teste2/avisos_profit_relativos.csv ===
+
+p_caso;bloco_console;depois_do_evento_estruturado;gatilho_pontos_relativos;abertura_mencionada_pontos_relativos;mensagem_resumida
+2;1;9;-10000.00;-10425.00;Stop de venda acima da abertura, com possível comportamento diferente na automação
+
+=== docs/colaboracao/evidencias/WINZ26_v5_8_sonda_profit_20261026_v3_teste2/barras_caso2_relativas.csv ===
+
+pregao;rotulo_barra;abertura_pontos_relativos;maxima_pontos_relativos;minima_pontos_relativos;fechamento_pontos_relativos
+2026-10-26;09:28;0.00;0.00;0.00;0.00
+2026-10-26;09:29;0.00;0.00;0.00;0.00
+2026-10-26;09:39;-10425.00;-10225.00;-10425.00;-10270.00
+2026-10-26;09:40;-10265.00;-9735.00;-10425.00;-10370.00
+2026-10-26;09:41;-10375.00;-10210.00;-10420.00;-10300.00
+2026-10-26;09:42;-10300.00;-9930.00;-10370.00;-10005.00
+
+=== docs/colaboracao/evidencias/WINZ26_v5_8_sonda_profit_20261026_v3_teste2/comparacao_controles.csv ===
+
+p_caso;motor;modo;posicao_09h39;pendentes_09h39_booleano;posicao_09h40;canceladas_lacuna;hora_entrada;hora_saida;pontos_operacao;resultado_liquido_brl
+0;Profit;OHLC;0;0;0;;;;;
+1;Profit;OHLC;1;0;1;;09:39:00;09:42:00;125;25
+2;Profit;OHLC;1;1;0;;09:28:00;09:40:00;-10000;-2000
+0;Simulador;reinicio;0;0;0;0;;;;
+0;Simulador;continuidade;0;0;0;0;;;;
+1;Simulador;reinicio;0;0;0;1;;;;
+1;Simulador;continuidade;0;0;0;1;;;;
+2;Simulador;reinicio;1;0;1;2;09:28:00;09:42:00;-10300.0;-2060
+2;Simulador;continuidade;1;0;1;2;09:28:00;09:42:00;-10300.0;-2060
+
+=== docs/colaboracao/evidencias/WINZ26_v5_8_sonda_profit_20261026_v3_teste2/configuracao_profit.csv ===
+
+p_caso;build;ativo;intervalo_minutos;modo;periodo_configurado;data_ntsl;lote;lote_maximo;slippage_ticks;executar_nos_limites;filtro_horario;pausar_e_zerar_as;inicio_log;entrada_antecipada;protecao_inicial;antes_lacuna;limpeza;fim_log;alvo_pts;stop_pts;folga_stop_pts
+0;5.0.4.33;WINZ26;1;OHLC;6 meses;1261026;1;1;0;1;0;0;09:27;09:27;09:28;09:29;09:41;09:43;100;10000;500
+1;5.0.4.33;WINZ26;1;OHLC;6 meses;1261026;1;1;0;1;0;0;09:27;09:27;09:28;09:29;09:41;09:43;100;10000;500
+2;5.0.4.33;WINZ26;1;OHLC;6 meses;1261026;1;1;0;1;0;0;09:27;09:27;09:28;09:29;09:41;09:43;100;10000;500
+
+=== docs/colaboracao/evidencias/WINZ26_v5_8_sonda_profit_20261026_v3_teste2/console_profit_normalizado.csv ===
+
+p_caso;ordem_console;evento;data_ntsl;hora_contexto_console;currentbar;sequencia_avaliacao;posicao_avaliacao;pendentes_avaliacao
+0;1;AVALIACAO;1261026;09:27;26798;1;0;0
+0;2;AVALIACAO;1261026;09:28;26799;2;0;0
+0;3;AVALIACAO;1261026;09:29;26800;3;0;0
+0;4;AVALIACAO;1261026;09:39;26801;4;0;0
+0;5;AVALIACAO;1261026;09:40;26802;5;0;0
+0;6;AVALIACAO;1261026;09:41;26803;6;0;0
+0;7;AVALIACAO;1261026;09:42;26804;7;0;0
+0;8;AVALIACAO;1261026;09:43;26805;8;0;0
+1;1;AVALIACAO;1261026;09:27;26798;1;0;0
+1;2;AVALIACAO;1261026;09:28;26799;2;0;0
+1;3;AVALIACAO;1261026;09:29;26800;3;0;0
+1;4;SOLICITA_COMPRA;1261026;09:29;26800;3;0;0
+1;5;AVALIACAO;1261026;09:29;26800;4;1;0
+1;6;AVALIACAO;1261026;09:39;26801;5;1;0
+1;7;AVALIACAO;1261026;09:40;26802;6;1;0
+1;8;AVALIACAO;1261026;09:41;26803;7;1;0
+1;9;SOLICITA_ZERAGEM_LIMPEZA;1261026;09:41;26803;7;1;0
+1;10;AVALIACAO;1261026;09:42;26804;8;0;0
+1;11;AVALIACAO;1261026;09:43;26805;9;0;0
+2;1;AVALIACAO;1261026;09:27;26798;1;0;0
+2;2;SOLICITA_COMPRA;1261026;09:27;26798;1;0;0
+2;3;AVALIACAO;1261026;09:27;26798;2;1;0
+2;4;AVALIACAO;1261026;09:28;26799;3;1;0
+2;5;SOLICITA_ALVO;1261026;09:28;26799;3;1;0
+2;6;SOLICITA_STOP;1261026;09:28;26799;3;1;0
+2;7;AVALIACAO;1261026;09:29;26800;4;1;1
+2;8;SOLICITA_ALVO;1261026;09:29;26800;4;1;1
+2;9;SOLICITA_STOP;1261026;09:29;26800;4;1;1
+2;10;AVALIACAO;1261026;09:39;26801;5;1;1
+2;11;AVALIACAO;1261026;09:40;26802;6;0;0
+2;12;AVALIACAO;1261026;09:41;26803;7;0;0
+2;13;AVALIACAO;1261026;09:42;26804;8;0;0
+2;14;AVALIACAO;1261026;09:43;26805;9;0;0
+
+=== docs/colaboracao/evidencias/WINZ26_v5_8_sonda_profit_20261026_v3_teste2/inventario_fontes.csv ===
+
+arquivo;bytes;sha256;formato;blocos_identicos;linhas_ou_paginas_retidas
+console_sondav3_p_0_teste2.txt;1539;93d6f5baa315db5eef4f545a2a73396adc78669e749bdda398b508aa6e948068;TXT UTF-8;2;8
+evidencia_sondav3_p_0_teste2.png;253212;e76ca4051dfad5967a78188982926cc1b29db4888185901ed4ba96980e002324;PNG verificado à parte;;
+console_sondav3_p_1_teste2.txt;1857;e4b3b99295e35fc316f9e006d8fe848bcad088e409e91eb306062593f87c266a;TXT UTF-8;2;11
+operacoes_sondav3_p_caso1_teste2.csv;463;efd6064df67830f76da1a34e539d107995fec159eaec6011773d0ed88d6bb9b2;CSV CP1252;;1
+relatorio_sondav3_p_caso1_teste2.pdf;10963;b6168d5b660d58a412f1aa18541727a734d7b01ff43e6199d20ad39f65cb15a0;PDF verificado à parte;;
+evidencia_sondav3_p_1_teste2.png;260229;9b6a524b26e849c8768d5b8b3f8877c68ee2bee7d5ef78b26a3320d6db906cd4;PNG verificado à parte;;
+console_sondav3_p_2_teste2.txt;2329;e918686f4ceeb9a991613780a622915e18f2d7949969260a4f557b45e98281e2;TXT UTF-8;2;14
+operacoes_sondav3_p_caso2_teste2.csv;484;7c13c5217f781d4c0ecf3d3066c68326257547cd763aa01927aa7c20d41f38ae;CSV CP1252;;1
+relatorio_sondav3_p_caso2_teste2.pdf;10991;fc86b88b7ba3d4178110b4e8cab21ff930085e8b14b0c3bdb6e6c89d6bf231d9;PDF verificado à parte;;
+evidencia_sondav3_p_2_teste2.png;261045;2ddfaf2a804c84d9428874261dee71415d2f30f5a4266776fe97b36569c690c6;PNG verificado à parte;;
+
+=== docs/colaboracao/evidencias/WINZ26_v5_8_sonda_profit_20261026_v3_teste2/operacoes_profit_relativas.csv ===
+
+p_caso;pregao;ativo;lado;quantidade_compra;quantidade_venda;hora_entrada_csv;hora_saida_csv;duracao_segundos;variacao_pontos;resultado_brl;comissoes_brl
+1;2026-10-26;WINZ26;C;1;1;09:39:00;09:42:00;180;125.00;25.00;0.00
+2;2026-10-26;WINZ26;C;1;1;09:28:00;09:40:00;720;-10000.00;-2000.00;0.00
+
+=== docs/colaboracao/evidencias/WINZ26_v5_8_sonda_profit_20261026_v3_teste2/rastreio_simulador.csv ===
+
+p_caso;modo;hora_barra_replay;rotulo_contexto_ntsl;evento;ordem;posicao;quantidade;preco_execucao_pontos_relativos
+0;reinicio;09:27;09:27;avaliacao_ntsl;;0;;
+0;reinicio;09:28;09:28;avaliacao_ntsl;;0;;
+0;reinicio;09:29;09:29;avaliacao_ntsl;;0;;
+0;reinicio;09:39;09:39;avaliacao_ntsl;;0;;
+0;reinicio;09:40;09:40;avaliacao_ntsl;;0;;
+0;reinicio;09:41;09:41;avaliacao_ntsl;;0;;
+0;reinicio;09:42;09:42;avaliacao_ntsl;;0;;
+0;reinicio;09:43;09:43;avaliacao_ntsl;;0;;
+0;continuidade;09:27;09:27;avaliacao_ntsl;;0;;
+0;continuidade;09:28;09:28;avaliacao_ntsl;;0;;
+0;continuidade;09:29;09:29;avaliacao_ntsl;;0;;
+0;continuidade;09:39;09:39;avaliacao_ntsl;;0;;
+0;continuidade;09:40;09:40;avaliacao_ntsl;;0;;
+0;continuidade;09:41;09:41;avaliacao_ntsl;;0;;
+0;continuidade;09:42;09:42;avaliacao_ntsl;;0;;
+0;continuidade;09:43;09:43;avaliacao_ntsl;;0;;
+1;reinicio;09:27;09:27;avaliacao_ntsl;;0;;
+1;reinicio;09:28;09:28;avaliacao_ntsl;;0;;
+1;reinicio;09:29;09:29;avaliacao_ntsl;;0;;
+1;reinicio;09:29;09:29;solicitacao;buyatmarket;0;1;
+1;reinicio;09:39;;cancelamento_agregado_lacuna;;0;1;
+1;reinicio;09:39;09:39;avaliacao_ntsl;;0;;
+1;reinicio;09:40;09:40;avaliacao_ntsl;;0;;
+1;reinicio;09:41;09:41;avaliacao_ntsl;;0;;
+1;reinicio;09:42;09:42;avaliacao_ntsl;;0;;
+1;reinicio;09:43;09:43;avaliacao_ntsl;;0;;
+1;continuidade;09:27;09:27;avaliacao_ntsl;;0;;
+1;continuidade;09:28;09:28;avaliacao_ntsl;;0;;
+1;continuidade;09:29;09:29;avaliacao_ntsl;;0;;
+1;continuidade;09:29;09:29;solicitacao;buyatmarket;0;1;
+1;continuidade;09:39;;cancelamento_agregado_lacuna;;0;1;
+1;continuidade;09:39;09:39;avaliacao_ntsl;;0;;
+1;continuidade;09:40;09:40;avaliacao_ntsl;;0;;
+1;continuidade;09:41;09:41;avaliacao_ntsl;;0;;
+1;continuidade;09:42;09:42;avaliacao_ntsl;;0;;
+1;continuidade;09:43;09:43;avaliacao_ntsl;;0;;
+2;reinicio;09:27;09:27;avaliacao_ntsl;;0;;
+2;reinicio;09:27;09:27;solicitacao;buyatmarket;0;1;
+2;reinicio;09:28;09:28;preenchimento;buyatmarket;1;1;0.00
+2;reinicio;09:28;09:27;avaliacao_ntsl_pos_preenchimento;;1;;
+2;reinicio;09:28;09:28;avaliacao_ntsl;;1;;
+2;reinicio;09:28;09:28;solicitacao;selltocoverlimit;1;1;
+2;reinicio;09:28;09:28;solicitacao;selltocoverstop;1;1;
+2;reinicio;09:29;09:29;avaliacao_ntsl;;1;;
+2;reinicio;09:29;09:29;solicitacao_renovada;selltocoverlimit;1;1;
+2;reinicio;09:29;09:29;solicitacao_renovada;selltocoverstop;1;1;
+2;reinicio;09:39;;cancelamento_agregado_lacuna;;1;2;
+2;reinicio;09:39;09:39;avaliacao_ntsl;;1;;
+2;reinicio;09:40;09:40;avaliacao_ntsl;;1;;
+2;reinicio;09:41;09:41;avaliacao_ntsl;;1;;
+2;reinicio;09:41;09:41;solicitacao;closeposition;1;1;
+2;reinicio;09:42;09:42;preenchimento;closeposition;0;1;-10300.00
+2;reinicio;09:42;09:42;avaliacao_ntsl;;0;;
+2;reinicio;09:43;09:43;avaliacao_ntsl;;0;;
+2;continuidade;09:27;09:27;avaliacao_ntsl;;0;;
+2;continuidade;09:27;09:27;solicitacao;buyatmarket;0;1;
+2;continuidade;09:28;09:28;preenchimento;buyatmarket;1;1;0.00
+2;continuidade;09:28;09:27;avaliacao_ntsl_pos_preenchimento;;1;;
+2;continuidade;09:28;09:28;avaliacao_ntsl;;1;;
+2;continuidade;09:28;09:28;solicitacao;selltocoverlimit;1;1;
+2;continuidade;09:28;09:28;solicitacao;selltocoverstop;1;1;
+2;continuidade;09:29;09:29;avaliacao_ntsl;;1;;
+2;continuidade;09:29;09:29;solicitacao_renovada;selltocoverlimit;1;1;
+2;continuidade;09:29;09:29;solicitacao_renovada;selltocoverstop;1;1;
+2;continuidade;09:39;;cancelamento_agregado_lacuna;;1;2;
+2;continuidade;09:39;09:39;avaliacao_ntsl;;1;;
+2;continuidade;09:40;09:40;avaliacao_ntsl;;1;;
+2;continuidade;09:41;09:41;avaliacao_ntsl;;1;;
+2;continuidade;09:41;09:41;solicitacao;closeposition;1;1;
+2;continuidade;09:42;09:42;preenchimento;closeposition;0;1;-10300.00
+2;continuidade;09:42;09:42;avaliacao_ntsl;;0;;
+2;continuidade;09:43;09:43;avaliacao_ntsl;;0;;
+
+=== docs/colaboracao/evidencias/WINZ26_v5_8_sonda_profit_20261026_v3_teste2/README.md ===
+
+# Sonda V3, teste 2 · execução do Profit através da lacuna de 26/10
+
+PR #2. Motor do simulador `0d2f19a47307d5390f5d89bb53d70e6c87a37856`. Base desta publicação `006ef4c5e268ebb17616bd62c34434b2bc60b151`. Os casos 0, 1 e 2 foram executados no Profit. Os controles locais usam a sonda v1.0 publicada em `f51b1fe289a38a347b5e542aab72e3db57099f03`. As capturas mostram o fonte da sonda V3 parcialmente e seus inputs efetivos. A correspondência de comportamento com a sonda versionada foi conferida nas saídas. A identidade byte a byte do fonte compilado no Profit fica sem verificação. [Controles e fonte versionado](../WINZ26_v5_8_controles_lacuna_20261026_v1/README.md) · [Primeira captura dos casos 0 e 1](../WINZ26_v5_8_sonda_profit_20261026_v3/README.md)
+
+## Configuração e cobertura
+
+Profit Ultra **5.0.4.33**, ativo **WINZ26**, 1 minuto, Backtest **OHLC**, quantidade e máximo 1, slippage 0, execução nos limites ativa, filtro de horário e pausa com zeragem horária desmarcados. As capturas mostram período de análise de seis meses. Os relatórios dos casos 1 e 2 imprimem 20/05/2026 a 20/11/2026 e custos zero. O input `p_Data=1261026` limita a sonda a 26/10/2026. A janela de log vai de 09:27 a 09:43. Mantiveram-se entrada antecipada 09:27, início das proteções 09:28, última barra pré-lacuna 09:29, limpeza 09:41, alvo 100 pontos, stop 10.000 e folga do stop-limit 500. A captura do caso 0 mostra a aba Operações vazia. A do caso 1 mostra as duas pernas da única operação. A do caso 2 mostra o resumo de desempenho e o aviso do stop. [Configuração transcrita](configuracao_profit.csv)
+
+O console dos três casos passa diretamente de 09:29, `CurrentBar=26800`, para 09:39, `CurrentBar=26801`. As barras preparadas de referência do replay também têm a lacuna de 09:30 a 09:38. Os horários do console representam o contexto NTSL. Os horários de execução vêm dos CSVs de operações. O fuso de referência nos replays é America/Sao_Paulo. [Console normalizado](console_profit_normalizado.csv) · [Operações em pontos relativos](operacoes_profit_relativas.csv)
+
+## Resultado por caso
+
+| Caso | Profit | Simulador em reinício e continuidade |
+|---|---|---|
+| 0 · controle sem ordens | Oito avaliações, sempre posição zero e sem pendências. Nenhuma solicitação ou operação. | Zero preenchimentos e cancelamentos. |
+| 1 · entrada antes da lacuna | Solicitação no contexto 09:29. Compra às 09:39 e saída de limpeza às 09:42. Uma operação, **+125 pontos**, **R$ 25,00** líquidos. | Cancela uma compra na retomada às 09:39. Posição zero e nenhum preenchimento. |
+| 2 · posição com alvo e stop | Compra às 09:28. Às 09:39, posição +1 e presença de pendentes. Venda às 09:40 ao preço do gatilho do stop. Uma operação, **−10.000 pontos**, **−R$ 2.000,00** líquidos. | Cancela duas proteções às 09:39. Fica comprado na retomada e às 09:40. Sai na limpeza às 09:42, **−10.300 pontos**, **−R$ 2.060,00** líquidos. |
+
+Os consolidados do PDF e os CSVs individuais concordam. O caso 1 dura 3 min e o caso 2 dura 12 min. Os TXT dos casos 0 e 1 e o CSV de operações do caso 1 têm os mesmos hashes da rodada anterior. O novo PDF do caso 1 tem outro hash e as mesmas métricas conferidas. Os resultados dos casos 0 e 1 ficam registrados com a evidência adicional das capturas de configuração. [Matriz dos nove controles](comparacao_controles.csv) · [Resumo dos PDFs](resumo_relatorios_profit.csv) · [Inventário e SHA-256](inventario_fontes.csv)
+
+## Caso 1
+
+No contexto 09:29, a sequência 3 observa posição zero e solicita uma compra. A sequência 4 ainda usa 09:29 e a mesma `CurrentBar` e vê posição +1. A exportação atribui a entrada à abertura de 09:39. A primeira avaliação com rótulo 09:39, sequência 5, vê posição +1 e pendências zero. Em 09:41, a sequência 7 solicita a limpeza. A exportação registra a saída na abertura de 09:42, quando a avaliação vê posição zero. A primeira divergência do simulador é o cancelamento da compra antes de processar a abertura de 09:39. A avaliação extra fica ausente. [Console](console_profit_normalizado.csv) · [Rastreio do simulador](rastreio_simulador.csv)
+
+## Caso 2
+
+| Seq. do console | Rótulo da barra do console | Hora da execução exportada | Evidência |
+|---|---|---|---|
+| 1 | 09:27 | | Posição zero e solicitação de compra. |
+| 2 | 09:27 | | Nova avaliação observa posição +1. |
+| | | 09:28:00 | Entrada de um contrato, ao preço de abertura da barra. |
+| 3 | 09:28 | | Posição +1. Solicita alvo +100 e stop-limit com gatilho −10.000 e limite −10.500, em pontos relativos à entrada. |
+| 4 | 09:29 | | Posição +1, `HasPendingOrders=1`. A sonda solicita as duas proteções novamente. |
+| 5 | 09:39 | | Posição +1, `HasPendingOrders=1`. Nenhuma nova solicitação. |
+| | | 09:40:00 | Venda de um contrato a −10.000 pontos, preço do gatilho. |
+| 6 | 09:40 | | Posição zero e `HasPendingOrders=0`. |
+| 7 | 09:41 | | Posição zero e sem nova solicitação de limpeza. |
+
+O alerta do Profit aparece **uma vez**, no primeiro bloco, entre a segunda solicitação do stop e a avaliação de 09:39. Ele avisa que o stop de venda estava acima da abertura do candle e que a automação pode se comportar de outra forma. O preço de abertura mencionado coincide com a barra de 09:39 no insumo privado. Na abertura de 09:39, o preço estava a −10.425 pontos da entrada, 425 pontos abaixo do gatilho e 75 pontos acima do limite. A máxima dessa barra ficou abaixo do gatilho e do alvo. Em 09:40, a barra cobriu o preço do gatilho, que coincide com a saída registrada. [Solicitações e níveis](solicitacoes_protecao_relativas.csv) · [Aviso em pontos relativos](avisos_profit_relativos.csv) · [OHLC relativo por barra](barras_caso2_relativas.csv)
+
+A primeira divergência do caso 2 é o estado de ordens na retomada. O Profit ainda mostra pendências e o simulador já cancelou as duas proteções. Às 09:40 o Profit já está zerado, e o simulador continua comprado até a saída de limpeza. `HasPendingOrders` é booleano. A captura prova a presença de pendências às 09:39 e uma saída às 09:40 ao preço do gatilho, coerente com a proteção solicitada. O ciclo detalhado continua indeterminado. Faltam IDs, status e timestamps nativos para atribuir o disparo, identificar quais ordens ou versões sobreviveram e confirmar o cancelamento da outra perna OCO. A primeira barra após a lacuna tem abertura dentro da faixa do stop-limit, mas o Profit não registrou preenchimento nessa abertura. Portanto, preservar pendências e aplicar imediatamente a regra atual de preenchimento do simulador nessa abertura não reproduziria esta observação.
+
+## Publicação e reprodução
+
+Os dez originais ficam no Windows. Cada console contém dois blocos idênticos de eventos estruturados `LACUNA;`. A análise manteve o primeiro em ordem de emissão (8, 11 e 14 eventos) e registrou o aviso fora desse conjunto, com seu bloco e posição. Os dois CSVs de operações usam CP1252, têm 19 colunas e uma operação cada. Os dois PDFs têm uma página e foram conferidos por extração de texto e inspeção da página renderizada. As três imagens confirmam a configuração. O inventário inclui SHA-256, tamanhos e formatos. Esta pasta publica somente dados normalizados, parâmetros, resumos e preços relativos.
+
+Use uma pasta de saída nova para extrair os dados. Os seis replays locais usam as barras privadas preparadas de 26/10, os três casos, `--avaliacao-pos-preenchimento` e `--rastrear-ordens`. O segundo modo acrescenta `--historico-continuo-lacunas`. A suíte passou com **75 testes** e os 12 avisos já conhecidos de timezone do pandas. O processamento da primeira captura reproduziu os três CSVs anteriores byte a byte.
+
+```powershell
+py -3.11 tools/publicar_sonda_lacuna_profit.py --teste2 --originais $pastaPrivada --saida $destinoNovo
+$ref = 'docs/colaboracao/evidencias/WINZ26_v5_8_controles_lacuna_20261026_v1'
+# Use {"p_Caso":0}, {"p_Caso":1} ou {"p_Caso":2} no JSON, um por replay.
+$flags = @()  # Ou @('--historico-continuo-lacunas').
+py -3.11 estrategia.py --csv $barrasPrivadas --formato ohlc --segundos 60 `
+  --tick 5 --valor-ponto 0.2 --ntsl "$ref/sonda_lacuna_simulador_v1_0.ntsl" `
+  --inputs $inputs --saida $replayNovo --avaliacao-pos-preenchimento --rastrear-ordens @flags
+py -3.11 -m pytest -q
+```
+
+Os resultados são de Backtest OHLC. A rodada documenta evidências e preserva o motor e a classificação da saída de 10:15 da v5.8 como ambígua em OHLC. [Ambiguidade das 10:15](../WINZ26_v5_8_continuidade_intrabar_20261026_v1/README.md#saída-das-1015-em-2610) · [Fontes completas para o Gemini](fontes_gemini.txt) · [Manifesto](SHA256SUMS.txt)
+
+=== docs/colaboracao/evidencias/WINZ26_v5_8_sonda_profit_20261026_v3_teste2/resumo_relatorios_profit.csv ===
+
+p_caso;paginas;inicio_relatorio;fim_relatorio;operacoes;vencedoras;perdedoras;zeradas;saldo_liquido_brl;custos_brl;duracao_media_segundos
+1;1;2026-05-20;2026-11-20;1;1;0;0;25;0;180
+2;1;2026-05-20;2026-11-20;1;0;1;0;-2000;0;720
+
+=== docs/colaboracao/evidencias/WINZ26_v5_8_sonda_profit_20261026_v3_teste2/solicitacoes_protecao_relativas.csv ===
+
+p_caso;ordem_console;evento;sequencia_avaliacao;gatilho_pontos_relativos;limite_pontos_relativos
+2;5;SOLICITA_ALVO;3;;100.00
+2;6;SOLICITA_STOP;3;-10000.00;-10500.00
+2;8;SOLICITA_ALVO;4;;100.00
+2;9;SOLICITA_STOP;4;-10000.00;-10500.00
+
+=== docs/colaboracao/evidencias/WINZ26_v5_8_sonda_profit_20261026_v3_teste2/SHA256SUMS.txt ===
+
+6e37f0fda2b677b056701bed00d1155e4c02f8e5ab979d6756a0d6c2034c45fd  avisos_profit_relativos.csv
+aa670cbfe59039437b5f057e2897ef8bfa2c04f648e2b91cd1cec8c38b911809  barras_caso2_relativas.csv
+c4c228201d53d64dc2a816d194dff6c429ecd025d9e6321a6a48d27de4d393d9  comparacao_controles.csv
+3497c9de2db16589460b39515cbd77995c804b43dd464d18dd76e6af32fd992c  configuracao_profit.csv
+53970c9e92cc89851af35eee0bc298451dd3fb556ccdb93357fe446bf099780d  console_profit_normalizado.csv
+dfc57069b0fe3c0a29a4c189dfe21600f84ba4f3227cf6fc9dc3fb9e2e3712f4  inventario_fontes.csv
+b6d442875e2042e93f20fff93e8d8131f1b15d442b01a3bbb7e2f0127fcd93e3  operacoes_profit_relativas.csv
+42887b7baeb02873040dd0ebe9ed56eedf1f528cf982d7473fe55377e2993101  rastreio_simulador.csv
+129071416108f5adc28c4cb0e5468494189d126742fbc045959ebcd632681a05  README.md
+972b4899f084dfffd4a844d8cffd87dae9e8ec9b586f6bd15e09f943d948ff6c  resumo_relatorios_profit.csv
+7ee266ac2e286aac211fc0a41f6f11f5bcb401b356171288b7ea96c2384441f5  solicitacoes_protecao_relativas.csv
+
+=== tools/publicar_sonda_lacuna_profit.py ===
+
+"""Extrai evidência compartilhável da sonda Profit de retomada de lacuna."""
+
+import argparse
+import csv
+import io
+import re
+from datetime import datetime
+from decimal import Decimal
+from hashlib import sha256
+from pathlib import Path
+
+
+def write_csv(path, rows):
+    with path.open("x", encoding="utf-8", newline="") as stream:
+        writer = csv.DictWriter(stream, fieldnames=list(rows[0]), delimiter=";", lineterminator="\n")
+        writer.writeheader()
+        writer.writerows(rows)
+
+
+def debug_blocks(data):
+    blocks = []
+    for line in data.decode("utf-8-sig").splitlines():
+        if line == "Código em Execução":
+            blocks.append([])
+        elif blocks:
+            blocks[-1].append(line)
+    return [block for block in blocks if block]
+
+
+def read_console(data, case):
+    blocks = [
+        structured for block in debug_blocks(data)
+        if (structured := [line for line in block if line.startswith("LACUNA;")])
+    ]
+    if not blocks or any(block != blocks[0] for block in blocks):
+        raise ValueError("O console precisa conter um bloco ou cópias idênticas.")
+    result = []
+    for index, line in enumerate(blocks[0], 1):
+        _, event, *fields = line.split(";")
+        values = dict(item.split("=", 1) for item in fields)
+        if event == "AVALIACAO":
+            if int(values["caso"]) != case:
+                raise ValueError("Valor de p_Caso inconsistente no console.")
+            context = values
+        elif context["seq"] != values["seq"]:
+            raise ValueError("Solicitação fora da sequência da avaliação correspondente.")
+        stamp = context["hora"].zfill(4)
+        result.append({
+            "p_caso": case, "ordem_console": index, "evento": event,
+            "data_ntsl": context["data"].replace(".", ""), "hora_contexto_console": stamp[:2] + ":" + stamp[2:],
+            "currentbar": context["barra"].replace(".", ""), "sequencia_avaliacao": values["seq"],
+            "posicao_avaliacao": context["posicao"], "pendentes_avaliacao": context["pendentes"],
+        })
+    return len(blocks), result
+
+
+def number(text):
+    return Decimal(text.replace(".", "").replace(",", "."))
+
+
+def raw_operation(data):
+    raw = csv.reader(io.StringIO(data.decode("cp1252")), delimiter=";")
+    header = next(row for row in raw if row[:2] == ["Ativo", "Abertura"])
+    values, = [row for row in raw if row]
+    return dict(zip(header, values, strict=True))
+
+
+def read_operation(data, case=1):
+    def timestamp(value):
+        return datetime.strptime(value, "%d/%m/%Y %H:%M:%S")
+
+    operation = raw_operation(data)
+    opening, closing = (timestamp(operation[key]) for key in ("Abertura", "Fechamento"))
+    return {
+        "p_caso": case, "pregao": opening.date(), "ativo": operation["Ativo"], "lado": operation["Lado"],
+        "quantidade_compra": operation["Qtd Compra"], "quantidade_venda": operation["Qtd Venda"],
+        "hora_entrada_csv": opening.time(), "hora_saida_csv": closing.time(),
+        "duracao_segundos": int((closing - opening).total_seconds()),
+        "variacao_pontos": number(operation["Preço Venda"]) - number(operation["Preço Compra"]),
+        "resultado_brl": number(operation["Total"]), "comissoes_brl": number(operation["Comissões"]),
+    }
+
+
+def read_teste2(source, output):
+    inventory = []
+    events = []
+    operations = []
+
+    def collect(name, format_name, copies="", retained=""):
+        data = (source / name).read_bytes()
+        inventory.append({
+            "arquivo": name, "bytes": len(data), "sha256": sha256(data).hexdigest(),
+            "formato": format_name, "blocos_identicos": copies, "linhas_ou_paginas_retidas": retained,
+        })
+        return data
+
+    for case in (0, 1, 2):
+        data = collect(f"console_sondav3_p_{case}_teste2.txt", "TXT UTF-8")
+        copies, rows = read_console(data, case)
+        events.extend(rows)
+        inventory[-1].update(blocos_identicos=copies, linhas_ou_paginas_retidas=len(rows))
+        if case:
+            operation = collect(f"operacoes_sondav3_p_caso{case}_teste2.csv", "CSV CP1252", retained=1)
+            operations.append(read_operation(operation, case))
+            collect(f"relatorio_sondav3_p_caso{case}_teste2.pdf", "PDF verificado à parte")
+        collect(f"evidencia_sondav3_p_{case}_teste2.png", "PNG verificado à parte")
+
+    entry = number(raw_operation(operation)["Preço Compra"])
+    protections = []
+    warnings = []
+    for block_index, block in enumerate(debug_blocks(data), 1):
+        index = 0
+        for line in block:
+            if line.startswith("LACUNA;"):
+                index += 1
+                if block_index == 1 and line.startswith(("LACUNA;SOLICITA_ALVO;", "LACUNA;SOLICITA_STOP;")):
+                    _, event, *fields = line.split(";")
+                    values = dict(item.split("=", 1) for item in fields)
+                    protections.append({
+                        "p_caso": 2, "ordem_console": index, "evento": event,
+                        "sequencia_avaliacao": values["seq"],
+                        "gatilho_pontos_relativos": number(values["gatilho"]) - entry if "gatilho" in values else "",
+                        "limite_pontos_relativos": number(values["limite"]) - entry,
+                    })
+            if line.startswith("SellToCoverStop enviado com stop em"):
+                pattern = r"stop em ([0-9.]+), acima da abertura do candle \(([0-9.]+)\)"
+                threshold, opening = re.search(pattern, line).groups()
+                warnings.append({
+                    "p_caso": 2, "bloco_console": block_index, "depois_do_evento_estruturado": index,
+                    "gatilho_pontos_relativos": number(threshold) - entry,
+                    "abertura_mencionada_pontos_relativos": number(opening) - entry,
+                    "mensagem_resumida": "Stop de venda acima da abertura, com possível comportamento diferente na automação",
+                })
+
+    output.mkdir(exist_ok=False)
+    write_csv(output / "console_profit_normalizado.csv", events)
+    write_csv(output / "operacoes_profit_relativas.csv", operations)
+    write_csv(output / "inventario_fontes.csv", inventory)
+    write_csv(output / "solicitacoes_protecao_relativas.csv", protections)
+    if warnings:
+        write_csv(output / "avisos_profit_relativos.csv", warnings)
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--originais", type=Path, required=True)
+    parser.add_argument("--saida", type=Path, required=True)
+    parser.add_argument("--teste2", action="store_true", help="Processa os três anexos de console da segunda captura.")
+    args = parser.parse_args()
+    if args.teste2:
+        read_teste2(args.originais, args.saida)
+        return
+    inventory = []
+    events = []
+    for case in (0, 1):
+        file = args.originais / f"console_sondaV3_p_caso{case}.txt"
+        content = file.read_bytes()
+        copies, rows = read_console(content, case)
+        events.extend(rows)
+        inventory.append({
+            "arquivo": file.name, "bytes": len(content), "sha256": sha256(content).hexdigest(),
+            "formato": "TXT UTF-8", "blocos_identicos": copies, "linhas_ou_paginas_retidas": len(rows),
+        })
+    file = args.originais / "operacoes_sondav3_p_caso1.csv"
+    content = file.read_bytes()
+    operation = read_operation(content)
+    inventory.append({
+        "arquivo": file.name, "bytes": len(content), "sha256": sha256(content).hexdigest(),
+        "formato": "CSV CP1252", "blocos_identicos": "", "linhas_ou_paginas_retidas": 1,
+    })
+    file = args.originais / "relatorio_sondav3_p_caso1.pdf"
+    content = file.read_bytes()
+    inventory.append({
+        "arquivo": file.name, "bytes": len(content), "sha256": sha256(content).hexdigest(),
+        "formato": "PDF verificado à parte", "blocos_identicos": "", "linhas_ou_paginas_retidas": "",
+    })
+    args.saida.mkdir(exist_ok=False)
+    write_csv(args.saida / "console_profit_normalizado.csv", events)
+    write_csv(args.saida / "operacao_profit_relativa.csv", [operation])
+    write_csv(args.saida / "inventario_fontes.csv", inventory)
+
+
+if __name__ == "__main__":
+    main()
+
+=== docs/colaboracao/evidencias/WINZ26_v5_8_controles_lacuna_20261026_v1/sonda_lacuna_profit_v1_0.ntsl ===
+
+{ Controle de lacuna. Exclusivo para Backtest OHLC.
+  Caso 1: compra solicitada na ultima barra antes da lacuna.
+  Caso 2: compra anterior, alvo e stop solicitados antes da lacuna. }
+input
+  p_Caso(1);
+  p_Data(1261026);
+  p_InicioLog(927);
+  p_EntradaAntecipada(927);
+  p_HoraProtecaoInicial(928);
+  p_AntesLacuna(929);
+  p_Limpeza(941);
+  p_FimLog(943);
+  p_Alvo(100);
+  p_Stop(10000);
+  p_FolgaStop(500);
+
+var
+  v_Seq, v_Pendentes, v_BarraProtecao : Integer;
+  v_EntradaSolicitada, v_LimpezaSolicitada : Boolean;
+
+begin
+  if (Date = p_Data) and (Time >= p_InicioLog) and (Time <= p_FimLog) then
+  begin
+    v_Seq := v_Seq + 1;
+    if HasPendingOrders then v_Pendentes := 1
+    else v_Pendentes := 0;
+    ConsoleLog("LACUNA;AVALIACAO"
+               + ";caso=" + FloatToString(p_Caso, 0)
+               + ";data=" + FloatToString(Date, 0)
+               + ";hora=" + FloatToString(Time, 0)
+               + ";barra=" + FloatToString(CurrentBar, 0)
+               + ";seq=" + FloatToString(v_Seq, 0)
+               + ";posicao=" + FloatToString(PositionQty, 0)
+               + ";pendentes=" + FloatToString(v_Pendentes, 0), clYellow);
+
+    if not v_EntradaSolicitada and not HasPosition and not HasPendingOrders
+      and (((p_Caso = 1) and (Time = p_AntesLacuna))
+        or ((p_Caso = 2) and (Time = p_EntradaAntecipada))) then
+    begin
+      v_EntradaSolicitada := True;
+      ConsoleLog("LACUNA;SOLICITA_COMPRA;seq=" + FloatToString(v_Seq, 0), clYellow);
+      BuyAtMarket(1);
+    end;
+
+    if (p_Caso = 2) and IsBought and (v_BarraProtecao <> CurrentBar)
+      and ((Time = p_HoraProtecaoInicial) or (Time = p_AntesLacuna)) then
+    begin
+      v_BarraProtecao := CurrentBar;
+      ConsoleLog("LACUNA;SOLICITA_ALVO;seq=" + FloatToString(v_Seq, 0)
+                 + ";limite=" + FloatToString(BuyPrice + p_Alvo, 0), clYellow);
+      SellToCoverLimit(BuyPrice + p_Alvo, 1);
+      ConsoleLog("LACUNA;SOLICITA_STOP;seq=" + FloatToString(v_Seq, 0)
+                 + ";gatilho=" + FloatToString(BuyPrice - p_Stop, 0)
+                 + ";limite=" + FloatToString(BuyPrice - p_Stop - p_FolgaStop, 0), clYellow);
+      SellToCoverStop(BuyPrice - p_Stop, BuyPrice - p_Stop - p_FolgaStop, 1);
+    end;
+
+    { Limpeza posterior para que a operacao apareca na exportacao. }
+    if (Time = p_Limpeza) and not v_LimpezaSolicitada then
+    begin
+      v_LimpezaSolicitada := True;
+      if HasPosition then
+      begin
+        ConsoleLog("LACUNA;SOLICITA_ZERAGEM_LIMPEZA;seq=" + FloatToString(v_Seq, 0), clYellow);
+        ClosePosition;
+      end
+      else if HasPendingOrders then
+      begin
+        ConsoleLog("LACUNA;SOLICITA_CANCELAMENTO_LIMPEZA;seq=" + FloatToString(v_Seq, 0), clYellow);
+        CancelPendingOrders;
+      end;
+    end;
+  end;
+end;
+
+=== docs/colaboracao/evidencias/WINZ26_v5_8_controles_lacuna_20261026_v1/sonda_lacuna_simulador_v1_0.ntsl ===
+
+{ Controle de lacuna. Exclusivo para Backtest OHLC.
+  Caso 1: compra solicitada na ultima barra antes da lacuna.
+  Caso 2: compra anterior, alvo e stop solicitados antes da lacuna. }
+input
+  p_Caso(1);
+  p_Data(1261026);
+  p_InicioLog(927);
+  p_EntradaAntecipada(927);
+  p_HoraProtecaoInicial(928);
+  p_AntesLacuna(929);
+  p_Limpeza(941);
+  p_FimLog(943);
+  p_Alvo(100);
+  p_Stop(10000);
+  p_FolgaStop(500);
+
+var
+  v_Seq, v_Pendentes, v_BarraProtecao : Integer;
+  v_EntradaSolicitada, v_LimpezaSolicitada : Boolean;
+
+begin
+  if (Date = p_Data) and (Time >= p_InicioLog) and (Time <= p_FimLog) then
+  begin
+    v_Seq := v_Seq + 1;
+    if HasPendingOrders then v_Pendentes := 1
+    else v_Pendentes := 0;
+    ConsoleLog("LACUNA;AVALIACAO"
+               + ";caso=" + (p_Caso)
+               + ";data=" + (Date)
+               + ";hora=" + (Time)
+               + ";barra=" + (CurrentBar)
+               + ";seq=" + (v_Seq)
+               + ";posicao=" + (PositionQty)
+               + ";pendentes=" + (v_Pendentes));
+
+    if not v_EntradaSolicitada and not HasPosition and not HasPendingOrders
+      and (((p_Caso = 1) and (Time = p_AntesLacuna))
+        or ((p_Caso = 2) and (Time = p_EntradaAntecipada))) then
+    begin
+      v_EntradaSolicitada := True;
+      ConsoleLog("LACUNA;SOLICITA_COMPRA;seq=" + (v_Seq));
+      BuyAtMarket(1);
+    end;
+
+    if (p_Caso = 2) and IsBought and (v_BarraProtecao <> CurrentBar)
+      and ((Time = p_HoraProtecaoInicial) or (Time = p_AntesLacuna)) then
+    begin
+      v_BarraProtecao := CurrentBar;
+      ConsoleLog("LACUNA;SOLICITA_ALVO;seq=" + (v_Seq)
+                 + ";limite=" + (BuyPrice + p_Alvo));
+      SellToCoverLimit(BuyPrice + p_Alvo, 1);
+      ConsoleLog("LACUNA;SOLICITA_STOP;seq=" + (v_Seq)
+                 + ";gatilho=" + (BuyPrice - p_Stop)
+                 + ";limite=" + (BuyPrice - p_Stop - p_FolgaStop));
+      SellToCoverStop(BuyPrice - p_Stop, BuyPrice - p_Stop - p_FolgaStop, 1);
+    end;
+
+    { Limpeza posterior para que a operacao apareca na exportacao. }
+    if (Time = p_Limpeza) and not v_LimpezaSolicitada then
+    begin
+      v_LimpezaSolicitada := True;
+      if HasPosition then
+      begin
+        ConsoleLog("LACUNA;SOLICITA_ZERAGEM_LIMPEZA;seq=" + (v_Seq));
+        ClosePosition;
+      end
+      else if HasPendingOrders then
+      begin
+        ConsoleLog("LACUNA;SOLICITA_CANCELAMENTO_LIMPEZA;seq=" + (v_Seq));
+        CancelPendingOrders;
+      end;
+    end;
+  end;
+end;

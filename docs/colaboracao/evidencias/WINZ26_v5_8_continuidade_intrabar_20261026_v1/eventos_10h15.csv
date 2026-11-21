@@ -1,0 +1,15 @@
+fonte;rotulo_contexto_barra;hora_execucao_minuto;sequencia_console_profit;evento;posicao;quantidade;nivel_relativo_pontos
+Profit console;10:14;;635;avaliação com sinal de compra;0;;
+Profit console;10:14;;635;solicitação compra a mercado;0;5;
+Profit console;10:14;;636;avaliação observa posição comprada;5;;
+Profit console;10:14;;636;solicitação alvo;5;5;400
+Profit console;10:14;;636;solicitação stop-limit;5;5;-350/-400
+Profit console;10:15;;637;avaliação observa posição zerada;0;;
+Profit exportação;;10:15;;entrada;5;5;0
+Profit exportação;;10:15;;saída;0;5;400
+Simulador;10:14;;;solicitação compra a mercado;0;5;
+Simulador;10:15;10:15;;preenchimento da compra;5;5;0
+Simulador;10:14;;;solicitação alvo na avaliação extra;5;5;400
+Simulador;10:14;;;solicitação stop-limit na avaliação extra;5;5;-350/-400
+Simulador;10:15;;;gatilho do stop modelado;5;5;-350
+Simulador;10:15;10:15;;preenchimento adverso do stop;0;5;-350

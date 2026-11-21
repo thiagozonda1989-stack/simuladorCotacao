@@ -1,0 +1,548 @@
+FONTES PARA O GEMINI | Entrada a mercado através de lacuna intradiária
+PR #2 | Código 142dbe882ae2a0436c4273a6e5bfa1268222e5d3
+
+=== docs/colaboracao/evidencias/WINZ26_v5_8_entrada_mercado_lacuna_20261026_v1/controles_v3.csv ===
+
+caso;modo;canceladas_lacuna;lacunas_com_posicao;preenchimentos_total;posicao_avaliacao_regular_09h39;hora_entrada;hora_saida;contexto_extra_na_retomada;pontos;resultado_liquido_brl
+0;reinicio;0;0;0;0;;;;0.0;0.0
+0;continuidade;0;0;0;0;;;;0.0;0.0
+0;entrada;0;0;0;0;;;;0.0;0.0
+1;reinicio;1;0;0;0;;;;0.0;0.0
+1;continuidade;1;0;0;0;;;;0.0;0.0
+1;entrada;0;0;2;1;09:39;09:42;09:29;125.0;25.0
+2;reinicio;2;1;2;1;09:28;09:42;;-10300.0;-2060.0
+2;continuidade;2;1;2;1;09:28;09:42;;-10300.0;-2060.0
+2;entrada;2;1;2;1;09:28;09:42;;-10300.0;-2060.0
+
+=== docs/colaboracao/evidencias/WINZ26_v5_8_entrada_mercado_lacuna_20261026_v1/exportacoes_profit.md ===
+
+# Coleta nativa das sondas S1 e S2
+
+Use o Editor de Estratégias em Backtest OHLC. Execute S1 uma vez e S2 duas vezes, com `p_Variante=1` e `p_Variante=2`. Use estes prefixos de arquivo local e a janela indicada.
+
+| Execução | Prefixo | Janela de coleta |
+|---|---|---|
+| S1 | `sonda_s1` | 26/10/2026, 13:15–13:23 |
+| S2, variante 1 | `sonda_s2_variante1` | 26/10/2026, 13:44–13:50 |
+| S2, variante 2 | `sonda_s2_variante2` | 26/10/2026, 15:27–15:33 |
+
+Para cada prefixo, preserve os seguintes arquivos privados:
+
+| Sufixo | Dados |
+|---|---|
+| `_console.txt` | Linhas `SONDA_S1;` ou `SONDA_S2;`, mais os avisos do Profit, em ordem de emissão e com rótulo de contexto, CurrentBar, sequência, posição, pendentes e níveis. |
+| `_barras.csv` | Ativo, resolução, fuso, data/hora e OHLC de cada barra da janela. |
+| `_operacoes.csv` | Operações do mesmo backtest com ID, lado, quantidades, preços e horários de entrada e saída. |
+| `_config.txt` ou captura | Build, execução OHLC, intervalo avaliado, quantidade, slippage, custos, execução nos limites e parâmetros da sonda. |
+| `_ordens.csv`, se disponível | Eventos do mesmo backtest: IDs e IDs substituídos, vínculo OCO, tipo, lado, quantidade, gatilho, limite, estados e motivos, timestamps subminuto de solicitação, aceitação, renovação, disparo, preenchimento e cancelamento. |
+
+A S1 observa um par de proteções. A S2 envia somente um stop, sem perna OCO. A exportação de uma conta separada não identifica ordens do backtest. Quando o histórico nativo faltar, marque a identidade da ordem e os horários de transição como indeterminados. Preserve os timestamps do console e de execução em colunas distintas.
+
+=== docs/colaboracao/evidencias/WINZ26_v5_8_entrada_mercado_lacuna_20261026_v1/rastreio_caso1.csv ===
+
+motor;modo;hora_barra_replay;hora_contexto_ntsl;hora_execucao;evento;posicao;preco_relativo_pontos;ordem
+simulador;reinicio;09:29;09:29;;avaliacao_ntsl;0;;
+simulador;reinicio;09:29;09:29;;solicitacao;0;;buyatmarket
+simulador;reinicio;09:39;;;cancelamento_agregado;0;;
+simulador;reinicio;09:39;09:39;;avaliacao_ntsl;0;;
+simulador;reinicio;09:40;09:40;;avaliacao_ntsl;0;;
+simulador;reinicio;09:41;09:41;;avaliacao_ntsl;0;;
+simulador;reinicio;09:42;09:42;;avaliacao_ntsl;0;;
+simulador;continuidade;09:29;09:29;;avaliacao_ntsl;0;;
+simulador;continuidade;09:29;09:29;;solicitacao;0;;buyatmarket
+simulador;continuidade;09:39;;;cancelamento_agregado;0;;
+simulador;continuidade;09:39;09:39;;avaliacao_ntsl;0;;
+simulador;continuidade;09:40;09:40;;avaliacao_ntsl;0;;
+simulador;continuidade;09:41;09:41;;avaliacao_ntsl;0;;
+simulador;continuidade;09:42;09:42;;avaliacao_ntsl;0;;
+simulador;entrada;09:29;09:29;;avaliacao_ntsl;0;;
+simulador;entrada;09:29;09:29;;solicitacao;0;;buyatmarket
+simulador;entrada;09:39;09:39;09:39;preenchimento;1;0.0;buyatmarket
+simulador;entrada;09:39;09:29;;avaliacao_ntsl_pos_preenchimento;1;;
+simulador;entrada;09:39;09:39;;avaliacao_ntsl;1;;
+simulador;entrada;09:40;09:40;;avaliacao_ntsl;1;;
+simulador;entrada;09:41;09:41;;avaliacao_ntsl;1;;
+simulador;entrada;09:41;09:41;;solicitacao;1;;closeposition
+simulador;entrada;09:42;09:42;09:42;preenchimento;0;125.0;closeposition
+simulador;entrada;09:42;09:42;;avaliacao_ntsl;0;;
+Profit;OHLC;;09:29;;avaliação seq. 3;0;;
+Profit;OHLC;;09:29;;solicitação de compra;0;;
+Profit;OHLC;;;09:39;preenchimento;1;0;
+Profit;OHLC;;09:29;;avaliação extra seq. 4;1;;
+Profit;OHLC;;09:39;;avaliação seq. 5;1;;
+Profit;OHLC;;09:41;;solicitação de limpeza;1;;
+Profit;OHLC;;;09:42;preenchimento;0;125;
+Profit;OHLC;;09:42;;avaliação seq. 8;0;;
+
+=== docs/colaboracao/evidencias/WINZ26_v5_8_entrada_mercado_lacuna_20261026_v1/README.md ===
+
+# Entrada a mercado através de lacuna intradiária no replay OHLC
+
+PR #2. Código executado `142dbe882ae2a0436c4273a6e5bfa1268222e5d3`. Motor da sonda no Profit e dos replays de referência `0d2f19a47307d5390f5d89bb53d70e6c87a37856`. Evidências revisadas `b2fd88a5dbb951410975c425594a08cf947d3ad6`. WINZ26, 26/10/2026, barras de 1 minuto e fuso America/Sao_Paulo. [Sonda V3, teste 2](../WINZ26_v5_8_sonda_profit_20261026_v3_teste2/README.md) · [Revisão Claude](https://github.com/thiagozonda1989-stack/simuladorCotacao/pull/2#issuecomment-7056510702) · [Revisão Gemini](https://github.com/thiagozonda1989-stack/simuladorCotacao/pull/2#issuecomment-7056520481)
+
+## Opção experimental
+
+`--entrada-mercado-atraves-lacuna` vem desativada, exige `--historico-continuo-lacunas` e é exclusiva do motor OHLC. Na retomada intradiária com posição zerada, mantém entradas a mercado. O processamento usa o mesmo critério de elegibilidade do replay regular. Uma latência adicional configurada continua valendo em número de barras existentes. Ordens limite e stop, proteções e demais pendências continuam sujeitas ao cancelamento na lacuna. A regra de mudança de pregão, a contagem de cancelamentos efetivos e o registro de lacunas com posição exposta foram preservados. A regra stop-limit e `--vwap-continuo-lacunas` seguem independentes.
+
+Com `--avaliacao-pos-preenchimento`, a avaliação adicional pode usar a última barra fechada antes da lacuna. A execução usa a abertura da primeira barra existente em que a ordem está elegível. O processamento grava o horário da execução na barra de retomada e mantém o rótulo de contexto NTSL separado. Usa a mesma regra de criação de novas proteções da avaliação extra existente.
+
+## Controles com a sonda V3
+
+No caso 1, o Profit solicita compra no contexto 09:29 (seq. 3). A seq. 4, também rotulada 09:29, já observa posição +1. A exportação registra o preenchimento na abertura 09:39. No simulador com a opção ativa, o preenchimento registra 09:39, a extra usa o contexto 09:29 e a avaliação regular de 09:39 vê posição +1 e `HasPendingOrders=0`. A saída de limpeza ocorre às 09:42. As duas execuções coincidem em preço e quantidade com o Profit, incluindo +125 pontos (R$ 25,00).
+
+| Caso | Reinício | Continuidade histórica | Continuidade e entrada pela lacuna |
+|---|---|---|---|
+| 0, controle | 0 cancelamentos e 0 preenchimentos | Igual | Igual |
+| 1, entrada pendente | 1 cancelamento, posição 0 às 09:39 | Igual | 0 cancelamentos, compra às 09:39, extra com contexto 09:29 |
+| 2, posição com proteções | 2 cancelamentos, posição +1 às 09:39 e saída de limpeza às 09:42 | Igual | Igual |
+
+O **caso 2 continua divergente**. No Profit, a avaliação de 09:39 ainda identifica pendentes e a saída da posição ocorre às 09:40 ao preço do gatilho, a −10.000 pontos da entrada. O simulador cancela o par de proteções na lacuna, mantém a posição aberta na retomada e sai na limpeza às 09:42, a −10.300 pontos. O próximo controle separa a validade sem renovação da hipótese de preenchimento do stop-limit na abertura além do gatilho. Os IDs, o instante de disparo e o vínculo OCO ficam pendentes da evidência nativa. [Matriz dos casos](controles_v3.csv) · [Rastreio na retomada](rastreio_caso1.csv)
+
+## Regressões e testes
+
+Usaram-se barras preparadas, VWAP contínua, agressão exportada, volume financeiro, zero custo e slippage, tick 5 e valor de R$ 0,20 por ponto. O comparador da v5.8 usa o pregão anterior no histórico, `p_Exec_Tick=0`, lote 5, e corte de 63 barras por segmento.
+
+| v5.8 | Reinício | Continuidade histórica | Continuidade e entrada pela lacuna |
+|---|---:|---:|---:|
+| 21/10 | 7/7 | 7/7 | 7/7 |
+| 26/10 | 8/10 | 9/10 | 9/10 |
+
+Os quatro CSVs de operação, candles, ordens e console ficaram idênticos byte a byte aos respectivos replays de referência nos seis cenários, totalizando 24 comparações. Em 26/10 com continuidade, as 62 solicitações e as dez entradas continuam exatas. A saída de **10:15** segue ambígua em OHLC. O Profit registra alvo de +400, e o simulador aplica stop de −350. A nova opção não altera a decisão nessa barra. [Matriz v5.8](regressao_v5_8.csv)
+
+A **v5.7** manteve **10/10** em 21/10 em todos os modos. Em 26/10, foram **8/12** no padrão, **11/12** na proteção legada e **12/12** no pós-preenchimento. A operação **#182** foi conferida diretamente contra o CSV privado por entrada, saída, lado, preço e quantidade. Também ficou exata com continuidade e a opção de entrada ativa. Os 26 arquivos de referência ficaram idênticos. O teste pareado adicional da v5.7 (continuidade com e sem entrada na lacuna) produziu mais oito comparações idênticas. [Matriz v5.7](regressao_v5_7.csv)
+
+**89 testes passaram**, com 12 avisos de timezone do pandas já conhecidos. Os 14 novos casos de teste cobrem os três cenários sintéticos da V3, a preservação de compra e venda a mercado, a exclusão de entrada limite/stop e de saída a mercado via `SendOrder`, elegibilidade com latência, troca de pregão, leitura exclusiva do fechamento anterior na extra e horários da barra de replay e do contexto. A CLI também foi testada nos dois modos incompatíveis e retornou código 2, sem criar pastas de replay.
+
+## Sondas S1 e S2 no Profit
+
+As duas sondas estão prontas para o **Backtest OHLC** e ainda precisam ser executadas no Profit. Use WINZ26, 1 minuto, 26/10/2026, lote e máximo 1, slippage e custos zero, execução nos limites e sem zeragem horária externa nas janelas indicadas. As janelas são de barras consecutivas nas barras preparadas. Confira a mesma sequência no histórico efetivamente usado pelo Profit. Use uma execução independente por sonda e variante.
+
+- **S1, validade sem renovação.** Compra solicitada no contexto 13:15. Envia alvo e stop uma só vez em 13:16, a +2.000 e −2.000 pontos da entrada, com folga de 500. Os níveis ficam fora da faixa das barras de 13:17 a 13:20. Observe `HasPendingOrders` nesses quatro rótulos. O encerramento do controle pede cancelamento às 13:21 se ainda houver pendências e zeragem às 13:22. No simulador, a presença registrada é **1, 0, 0, 0**. Se o Profit mostrar pendências a partir de 13:18, isso estabelece persistência além da primeira barra elegível no cenário. A identificação das duas pernas depende dos IDs. [NTSL S1](sonda_s1_validade_profit_v1_0.ntsl)
+- **S2, stop-limit com abertura abaixo do gatilho.** A sonda calcula o gatilho como fechamento da barra de envio menos cinco pontos e limite 500 pontos abaixo do gatilho, sem renovação. Em `p_Variante=1`, envia às 13:45 e a primeira barra, 13:46, cobre o gatilho. Em `p_Variante=2`, envia às 15:28; a máxima de 15:29 fica abaixo do gatilho e 15:30 cobre esse preço. As primeiras barras abrem cinco pontos abaixo do gatilho e acima do limite. O simulador preenche na primeira abertura em ambas. O resultado nativo determinará em qual barra e a que preço o Profit preencheu, ou se o stop expirou. Compare com S1 antes de atribuir a diferença a uma fórmula de disparo. [NTSL S2](sonda_s2_stop_limit_profit_v1_0.ntsl)
+
+O replay local das sondas converteu somente a formatação de ConsoleLog para a sintaxe do interpretador. As janelas e condições relativas estão na matriz. O procedimento de coleta descreve os campos necessários e a janela de cada variante. [Janelas e controles locais](sondas_barras_comuns.csv) · [Exportações do Profit](exportacoes_profit.md)
+
+## Comandos de reprodução
+
+Use destinos novos e os mesmos insumos privados dos relatórios de referência. Para o controle V3, escolha o JSON do caso 0, 1 ou 2. Para a v5.8, use o NTSL de auditoria v1.0 e o JSON da validação; para a v5.7, use o NTSL original, `p_Lote=1` e a barra preparada do respectivo pregão.
+
+```powershell
+$cli = @('--segundos','60','--formato','ohlc','--tick','5','--valor-ponto','0.2','--rastrear-ordens')
+$extra = @('--avaliacao-pos-preenchimento')
+$hist = @('--historico-continuo-lacunas')
+$entrada = @('--historico-continuo-lacunas','--entrada-mercado-atraves-lacuna')
+$paridade = @('--volume-financeiro-ntsl','--agressao-referencia-injetada','--vwap-continuo-lacunas')
+# Para os três cenários da V3, $flags recebe @(), $hist ou $entrada.
+py -3.11 estrategia.py --csv $barrasV3 --ntsl $sondaSimulador --inputs $jsonCaso `
+  --saida $saidaV3 @cli @extra @flags
+# Para cada cenário v5.8, repetir com @(), $hist e $entrada.
+py -3.11 estrategia.py --csv $barrasComPregaoAnterior --ntsl $auditoriaV58 --inputs $jsonV58 `
+  --saida $saidaV58 @cli @paridade @extra @flags
+py -3.11 tools/comparar_v5_8.py --data $dia --aquecimento 63 `
+  --console-profit $consoleProfit --operacoes-profit $operacoesProfit --barras-profit $barrasProfit `
+  --barras-preparadas $barrasComPregaoAnterior --console-simulador "$saidaV58/console.csv" `
+  --candles-simulador "$saidaV58/candles.csv" --execucoes-simulador "$saidaV58/execucoes.csv" --saida $comparacao
+# v5.7: $modoV57 é @(), @('--protecao-no-candle-entrada') ou $extra.
+# Para o pareado adicional, usar $extra e acrescentar $hist ou $entrada.
+py -3.11 estrategia.py --csv $barrasV57 --ntsl estrategias/execucao/Modelo_Unificado_Refatorado_v5_7.ntsl `
+  --inputs $jsonV57 --saida $saidaV57 @cli @paridade @modoV57
+py -3.11 -m pytest -q
+```
+
+A lista de pendências mantém a vida das proteções, disparo, preenchimento e OCO a cargo da coleta nativa. Os dados brutos continuam no Windows. O PR permanece em rascunho. [Fontes completas para o Gemini](fontes_gemini.txt) · [Manifesto](SHA256SUMS.txt)
+
+=== docs/colaboracao/evidencias/WINZ26_v5_8_entrada_mercado_lacuna_20261026_v1/regressao_v5_7.csv ===
+
+pregao;modo;profit;simulador;exatas;operacao_182_exata;arquivos_com_hash_igual;referencia
+2026-10-21;padrao;10;10;10;;4;replay anterior
+2026-10-21;protecao-legada;10;10;10;;4;replay anterior
+2026-10-21;pos-preenchimento;10;10;10;;4;replay anterior
+2026-10-21;pareado-continuidade;10;10;10;;4;par com continuidade
+2026-10-21;pareado-entrada;10;10;10;;4;par com continuidade
+2026-10-26;padrao;12;10;8;0;4;replay anterior
+2026-10-26;protecao-legada;12;11;11;0;4;replay anterior
+2026-10-26;pos-preenchimento;12;12;12;1;4;replay anterior
+2026-10-26;pareado-continuidade;12;12;12;1;4;par com continuidade
+2026-10-26;pareado-entrada;12;12;12;1;4;par com continuidade
+
+=== docs/colaboracao/evidencias/WINZ26_v5_8_entrada_mercado_lacuna_20261026_v1/regressao_v5_8.csv ===
+
+pregao;modo;profit;simulador;exatas;solicitacoes_comparadas;solicitacoes_divergentes;primeiro_preenchimento_diferente_profit;primeiro_preenchimento_diferente_simulador;arquivos_iguais_a_referencia
+2026-10-21;reinicio;7;7;7;306;0;;;4
+2026-10-21;continuidade;7;7;7;306;0;;;4
+2026-10-21;entrada;7;7;7;306;0;;;4
+2026-10-26;reinicio;10;10;8;68;18;10:15;09:51;4
+2026-10-26;continuidade;10;10;9;62;0;10:15;10:15;4
+2026-10-26;entrada;10;10;9;62;0;10:15;10:15;4
+
+=== docs/colaboracao/evidencias/WINZ26_v5_8_entrada_mercado_lacuna_20261026_v1/sonda_s1_validade_profit_v1_0.ntsl ===
+
+{ S1: validade das protecoes sem renovacao. Somente Backtest OHLC. }
+input
+  p_Data(1261026);
+  p_Entrada(1315);
+  p_Protecao(1316);
+  p_Cancela(1321);
+  p_Zera(1322);
+  p_Fim(1323);
+  p_Distancia(2000);
+  p_Folga(500);
+
+var
+  v_Seq, v_Pendentes : Integer;
+  v_EntradaEnviada, v_ProtecaoEnviada, v_Cancelou, v_Zerou : Boolean;
+  v_Alvo, v_Gatilho, v_Limite : Float;
+
+begin
+  if (Date = p_Data) and (Time >= p_Entrada) and (Time <= p_Fim) then
+  begin
+      v_Seq := v_Seq + 1;
+      if HasPendingOrders then v_Pendentes := 1 else v_Pendentes := 0;
+      ConsoleLog("SONDA_S1;AVALIACAO"
+        + ";data=" + FloatToString(Date, 0)
+        + ";hora=" + FloatToString(Time, 0)
+        + ";barra=" + FloatToString(CurrentBar, 0)
+        + ";seq=" + FloatToString(v_Seq, 0)
+        + ";posicao=" + FloatToString(PositionQty, 0)
+        + ";pendentes=" + FloatToString(v_Pendentes, 0), clYellow);
+
+    if (Time = p_Entrada) and not HasPosition and not HasPendingOrders
+      and not v_EntradaEnviada then
+    begin
+      v_EntradaEnviada := True;
+      ConsoleLog("SONDA_S1;SOLICITA_COMPRA;seq=" + FloatToString(v_Seq, 0), clYellow);
+      BuyAtMarket(1);
+    end;
+
+    if (Time = p_Protecao) and IsBought and not v_ProtecaoEnviada then
+    begin
+      v_ProtecaoEnviada := True;
+      v_Alvo := BuyPrice + p_Distancia;
+      v_Gatilho := BuyPrice - p_Distancia;
+      v_Limite := v_Gatilho - p_Folga;
+      ConsoleLog("SONDA_S1;SOLICITA_ALVO;seq=" + FloatToString(v_Seq, 0)
+        + ";limite=" + FloatToString(v_Alvo, 0), clYellow);
+      SellToCoverLimit(v_Alvo, 1);
+      ConsoleLog("SONDA_S1;SOLICITA_STOP;seq=" + FloatToString(v_Seq, 0)
+        + ";gatilho=" + FloatToString(v_Gatilho, 0)
+        + ";limite=" + FloatToString(v_Limite, 0), clYellow);
+      SellToCoverStop(v_Gatilho, v_Limite, 1);
+    end;
+
+    if (Time = p_Cancela) and HasPendingOrders and not v_Cancelou then
+    begin
+      v_Cancelou := True;
+      ConsoleLog("SONDA_S1;SOLICITA_CANCELAMENTO_LIMPEZA;seq=" + FloatToString(v_Seq, 0), clYellow);
+      CancelPendingOrders;
+    end;
+    if (Time = p_Zera) and HasPosition and not v_Zerou then
+    begin
+      v_Zerou := True;
+      ConsoleLog("SONDA_S1;SOLICITA_ZERAGEM_LIMPEZA;seq=" + FloatToString(v_Seq, 0), clYellow);
+      ClosePosition;
+    end;
+  end;
+end;
+
+=== docs/colaboracao/evidencias/WINZ26_v5_8_entrada_mercado_lacuna_20261026_v1/sonda_s2_stop_limit_profit_v1_0.ntsl ===
+
+{ S2: stop-limit em barras consecutivas com abertura abaixo do gatilho.
+  Variante 1: a primeira barra apos o envio cobre o gatilho.
+  Variante 2: somente a segunda barra cobre o gatilho.
+  Somente Backtest OHLC. }
+input
+  p_Data(1261026);
+  p_Variante(1);
+  p_DistanciaGatilho(5);
+  p_FolgaStop(500);
+
+var
+  v_Entrada, v_Protecao, v_Limpeza, v_Fim, v_Seq, v_Pendentes : Integer;
+  v_EntradaEnviada, v_StopEnviado, v_Limpou : Boolean;
+  v_Gatilho, v_Limite : Float;
+
+begin
+  if p_Variante = 1 then
+  begin
+    v_Entrada := 1344;
+    v_Protecao := 1345;
+    v_Limpeza := 1348;
+    v_Fim := 1350;
+  end
+  else
+  begin
+    v_Entrada := 1527;
+    v_Protecao := 1528;
+    v_Limpeza := 1531;
+    v_Fim := 1533;
+  end;
+
+  if ((p_Variante = 1) or (p_Variante = 2)) and (Date = p_Data)
+    and (Time >= v_Entrada) and (Time <= v_Fim) then
+  begin
+      v_Seq := v_Seq + 1;
+      if HasPendingOrders then v_Pendentes := 1 else v_Pendentes := 0;
+      ConsoleLog("SONDA_S2;AVALIACAO"
+        + ";data=" + FloatToString(Date, 0)
+        + ";hora=" + FloatToString(Time, 0)
+        + ";barra=" + FloatToString(CurrentBar, 0)
+        + ";seq=" + FloatToString(v_Seq, 0)
+        + ";posicao=" + FloatToString(PositionQty, 0)
+        + ";pendentes=" + FloatToString(v_Pendentes, 0), clYellow);
+
+    if (Time = v_Entrada) and not HasPosition and not HasPendingOrders
+      and not v_EntradaEnviada then
+    begin
+      v_EntradaEnviada := True;
+      ConsoleLog("SONDA_S2;SOLICITA_COMPRA;seq=" + FloatToString(v_Seq, 0), clYellow);
+      BuyAtMarket(1);
+    end;
+
+    if (Time = v_Protecao) and IsBought and not v_StopEnviado then
+    begin
+      v_StopEnviado := True;
+      v_Gatilho := Close - p_DistanciaGatilho;
+      v_Limite := v_Gatilho - p_FolgaStop;
+      ConsoleLog("SONDA_S2;SOLICITA_STOP;seq=" + FloatToString(v_Seq, 0)
+        + ";gatilho=" + FloatToString(v_Gatilho, 0)
+        + ";limite=" + FloatToString(v_Limite, 0), clYellow);
+      SellToCoverStop(v_Gatilho, v_Limite, 1);
+    end;
+
+    if (Time = v_Limpeza) and not v_Limpou then
+    begin
+      v_Limpou := True;
+      if HasPosition then
+      begin
+        ConsoleLog("SONDA_S2;SOLICITA_ZERAGEM_LIMPEZA;seq=" + FloatToString(v_Seq, 0), clYellow);
+        ClosePosition;
+      end
+      else if HasPendingOrders then
+      begin
+        ConsoleLog("SONDA_S2;SOLICITA_CANCELAMENTO_LIMPEZA;seq=" + FloatToString(v_Seq, 0), clYellow);
+        CancelPendingOrders;
+      end;
+    end;
+  end;
+end;
+
+=== docs/colaboracao/evidencias/WINZ26_v5_8_entrada_mercado_lacuna_20261026_v1/sondas_barras_comuns.csv ===
+
+sonda;inicio;envio_protecao;primeira_barra;segunda_barra;fim;abertura_t1_pontos_ao_gatilho;maxima_t1_pontos_ao_gatilho;minima_t1_pontos_ao_gatilho;abertura_t2_pontos_ao_gatilho;maxima_t2_pontos_ao_gatilho;minima_t2_pontos_ao_gatilho;resultado_controle;saida_simulador;ordem_saida_simulador;preco_saida_simulador_pontos_ao_gatilho;execucao_profit
+S1;13:15;13:16;13:17;13:18;13:23;;;;;;;pendentes em t+1..t+4: 1,0,0,0;13:23;closeposition;;pendente
+S2 variante 1;13:44;13:45;13:46;13:47;13:50;-5;70;-90;-15;80;-240;gatilho coberto na primeira barra;13:46;selltocoverstop;-5;pendente
+S2 variante 2;15:27;15:28;15:29;15:30;15:33;-5;-5;-200;-105;75;-160;gatilho coberto na segunda barra;15:29;selltocoverstop;-5;pendente
+
+=== docs/colaboracao/evidencias/WINZ26_v5_8_entrada_mercado_lacuna_20261026_v1/SHA256SUMS.txt ===
+
+9310f0adbdc13307166bd49655c29a1f718689198ff6b117e6aa744ec9498e2c  controles_v3.csv
+79ccec6ddd91ddc61d73a1f7cc21e10ddb951aaa8ee3ef78b4b4ad9e625ff570  exportacoes_profit.md
+bbb24506f6483f537d60f6083262cd3f15582d9977d83a6e36d43f82f6128f92  rastreio_caso1.csv
+6fd4b50f5602da573689e6e290c115a14a39960154b1ef0c1d9376227923f318  README.md
+159c198595d54d13c67b71b7e65b5c12893611da562baf4aaa9efe14dcdf24dc  regressao_v5_7.csv
+99939e858208b7e67f10e928b42c33e610b2cec1c1292612545b131ec22f3f3c  regressao_v5_8.csv
+37271e80f7afb45d3fb6e27b1918e91c75c64d3d7aa8c014554b43810c78dd9f  sonda_s1_validade_profit_v1_0.ntsl
+a3128ba262ae9bd8fd82b9df04dc521ed23a0437890245bb7d61046f01cb0782  sonda_s2_stop_limit_profit_v1_0.ntsl
+2f33a0e8230e8e67b5cab2cf04c93e4aa53b5557cd1add37bb98f6d814d19c17  sondas_barras_comuns.csv
+
+=== docs/colaboracao/evidencias/WINZ26_v5_8_sonda_profit_20261026_v3_teste2/comparacao_controles.csv ===
+
+p_caso;motor;modo;posicao_09h39;pendentes_09h39_booleano;posicao_09h40;canceladas_lacuna;hora_entrada;hora_saida;pontos_operacao;resultado_liquido_brl
+0;Profit;OHLC;0;0;0;;;;;
+1;Profit;OHLC;1;0;1;;09:39:00;09:42:00;125;25
+2;Profit;OHLC;1;1;0;;09:28:00;09:40:00;-10000;-2000
+0;Simulador;reinicio;0;0;0;0;;;;
+0;Simulador;continuidade;0;0;0;0;;;;
+1;Simulador;reinicio;0;0;0;1;;;;
+1;Simulador;continuidade;0;0;0;1;;;;
+2;Simulador;reinicio;1;0;1;2;09:28:00;09:42:00;-10300.0;-2060
+2;Simulador;continuidade;1;0;1;2;09:28:00;09:42:00;-10300.0;-2060
+
+=== docs/colaboracao/evidencias/WINZ26_v5_8_sonda_profit_20261026_v3_teste2/operacoes_profit_relativas.csv ===
+
+p_caso;pregao;ativo;lado;quantidade_compra;quantidade_venda;hora_entrada_csv;hora_saida_csv;duracao_segundos;variacao_pontos;resultado_brl;comissoes_brl
+1;2026-10-26;WINZ26;C;1;1;09:39:00;09:42:00;180;125.00;25.00;0.00
+2;2026-10-26;WINZ26;C;1;1;09:28:00;09:40:00;720;-10000.00;-2000.00;0.00
+
+=== docs/colaboracao/evidencias/WINZ26_v5_8_sonda_profit_20261026_v3_teste2/barras_caso2_relativas.csv ===
+
+pregao;rotulo_barra;abertura_pontos_relativos;maxima_pontos_relativos;minima_pontos_relativos;fechamento_pontos_relativos
+2026-10-26;09:28;0.00;0.00;0.00;0.00
+2026-10-26;09:29;0.00;0.00;0.00;0.00
+2026-10-26;09:39;-10425.00;-10225.00;-10425.00;-10270.00
+2026-10-26;09:40;-10265.00;-9735.00;-10425.00;-10370.00
+2026-10-26;09:41;-10375.00;-10210.00;-10420.00;-10300.00
+2026-10-26;09:42;-10300.00;-9930.00;-10370.00;-10005.00
+
+=== Diff do motor e testes ===
+
+diff --git a/estrategia.py b/estrategia.py
+index bc69498..d826646 100644
+--- a/estrategia.py
++++ b/estrategia.py
+@@ -110,0 +111 @@ class Order:
++    market_entry: bool = False
+@@ -131,0 +133 @@ class ExecutionRules:
++    entrada_mercado_atraves_lacuna: bool = False
+@@ -140,0 +143,4 @@ class ExecutionRules:
++        if self.entrada_mercado_atraves_lacuna and self.motor_ticks:
++            raise ValueError("A entrada a mercado através de lacuna só se aplica ao motor OHLC.")
++        if self.entrada_mercado_atraves_lacuna and not self.historico_continuo_lacunas:
++            raise ValueError("--entrada-mercado-atraves-lacuna exige --historico-continuo-lacunas.")
+@@ -157 +163 @@ class ExecutionRules:
+-                      self.historico_continuo_lacunas):
++                      self.historico_continuo_lacunas, self.entrada_mercado_atraves_lacuna):
+@@ -560,0 +567,4 @@ class Engine:
++        order.market_entry = order.kind == "market" and (
++            order.action in {"long", "short"}
++            or (self.position == 0 and order.action in {"net_long", "net_short"})
++        )
+@@ -789,0 +800 @@ class Engine:
++            carry_market_entries = False
+@@ -791 +802,2 @@ class Engine:
+-                self.orders_cancelled_at_gaps += len(self.orders)
++                carry_market_entries = self.rules.entrada_mercado_atraves_lacuna and self.position == 0
++                orders_before_gap = len(self.orders)
+@@ -793 +805,6 @@ class Engine:
+-                self.orders.clear()
++                if carry_market_entries:
++                    self.orders = {key: order for key, order in self.orders.items() if order.market_entry}
++                else:
++                    self.orders.clear()
++                cancelled = orders_before_gap - len(self.orders)
++                self.orders_cancelled_at_gaps += cancelled
+@@ -797 +814,6 @@ class Engine:
+-                    self.logs.append((row+1, f"Lacuna de dados. Ordens canceladas; posição anterior: {self.position}."))
++                    if self.orders:
++                        message = (f"Lacuna de dados. Ordens canceladas: {cancelled}; "
++                                   f"entradas a mercado preservadas: {len(self.orders)}; posição anterior: {self.position}.")
++                    else:
++                        message = f"Lacuna de dados. Ordens canceladas; posição anterior: {self.position}."
++                    self.logs.append((row+1, message))
+@@ -808 +830 @@ class Engine:
+-                    and row > self.session_start and not self.gap[row]
++                    and row > self.session_start and (not self.gap[row] or carry_market_entries)
+@@ -978,0 +1001,2 @@ def main():
++    p.add_argument("--entrada-mercado-atraves-lacuna", action="store_true",
++                   help="OHLC experimental: preserva entradas a mercado com posição zerada; exige histórico contínuo em lacunas")
+diff --git a/tests/test_replay.py b/tests/test_replay.py
+index 6012adb..ba24aae 100644
+--- a/tests/test_replay.py
++++ b/tests/test_replay.py
+@@ -122,0 +123,116 @@ def test_modo_ticks_rejeita_continuidade_em_lacunas_ohlc():
++@pytest.mark.parametrize("case,carry,cancels,exposure,position,expected_fills", [
++    (0, False, 0, 0, 0, []),
++    (0, True, 0, 0, 0, []),
++    (1, False, 1, 0, 0, []),
++    (1, True, 0, 0, 1, ["09:39", "09:42"]),
++    (2, False, 2, 1, 1, ["09:28", "09:42"]),
++    (2, True, 2, 1, 1, ["09:28", "09:42"]),
++])
++def test_sonda_v3_entrada_mercado_atraves_lacuna(
++    tmp_path, case, carry, cancels, exposure, position, expected_fills,
++):
++    fixture = (ROOT / "docs/colaboracao/evidencias"
++               / "WINZ26_v5_8_controles_lacuna_20261026_v1")
++    output = tmp_path / "replay"
++    result = run_strategy(
++        fixture / "barras_sinteticas.csv",
++        (fixture / "sonda_lacuna_simulador_v1_0.ntsl").read_text(encoding="utf-8"),
++        output, 60, "ohlc", 5, {"p_Caso": case},
++        regras={"historico_continuo_lacunas": True, "entrada_mercado_atraves_lacuna": carry,
++                "avaliacao_pos_preenchimento": True, "rastrear_ordens": True},
++    )
++    assert result["lacunas_intradiarias"] == 1
++    assert result["ordens_canceladas_lacuna"] == cancels
++    assert result["lacunas_com_posicao"] == exposure
++    trace = pd.read_csv(output / "eventos_ordens.csv")
++    stamp = trace.timestamp.str[11:16]
++    assert trace.loc[trace.evento.eq("preenchimento"), "timestamp"].str[11:16].tolist() == expected_fills
++    resumed = trace[stamp.eq("09:39")]
++    expected_events = (["preenchimento", "avaliacao_ntsl_pos_preenchimento", "avaliacao_ntsl"]
++                       if case == 1 and carry else ["avaliacao_ntsl"])
++    assert resumed.evento.tolist() == expected_events
++    assert resumed.iloc[-1].posicao == position
++    if case == 1 and carry:
++        fill, extra, regular = tuple(resumed.itertuples(index=False))
++        assert fill.preco_execucao == 9580
++        assert fill.barra == extra.barra == regular.barra == 4
++        assert [fill.barra_contexto_ntsl, extra.barra_contexto_ntsl, regular.barra_contexto_ntsl] == [4, 3, 4]
++        assert extra.posicao == 1
++    console = pd.read_csv(output / "console.csv").mensagem
++    assert console.str.contains(r"hora=939\.0.*pendentes=0$").sum() == 1
++
++
++@pytest.mark.parametrize("rules,message", [
++    ({"motor_ticks": True, "historico_continuo_lacunas": True}, "motor OHLC"),
++    ({}, "--historico-continuo-lacunas"),
++])
++def test_entrada_mercado_atraves_lacuna_rejeita_modo_incompativel(rules, message):
++    with pytest.raises(ValueError, match=message):
++        ExecutionRules(entrada_mercado_atraves_lacuna=True, **rules)
++
++
++@pytest.mark.parametrize("entry,action", [
++    ("BuyAtMarket(1)", "long"),
++    ("SellShortAtMarket(1)", "short"),
++    ("SendOrder(osBuy, otMarket, 1, 0, 0)", "long"),
++])
++def test_entrada_mercado_atraves_lacuna_respeita_elegibilidade(entry, action):
++    source = f"""begin
++      if CurrentBar=1 then begin
++        {entry};
++        BuyAtLimit(100, 1);
++        SellShortAtStop(200, 195, 1);
++      end;
++      if HasPendingOrders then Plot(1) else Plot(0);
++    end;"""
++    engine = run(source, [100, 110, 115, 120],
++                 rules={"historico_continuo_lacunas": True, "entrada_mercado_atraves_lacuna": True,
++                        "avaliacao_pos_preenchimento": True, "rastrear_ordens": True, "latencia_barras": 1},
++                 lacuna_intradiaria=[False, True, False, False])
++    assert engine.orders_cancelled_at_gaps == 2
++    assert engine.trace[1]["posicao"] == 0 and engine.trace[1]["plot"] == 1
++    entry_fill, _ = engine.fills
++    assert (entry_fill["barra"], entry_fill["preco"], entry_fill["acao"]) == (3, 115, action)
++
++
++def test_entrada_mercado_atraves_lacuna_respeita_troca_de_pregao():
++    engine = run("begin if CurrentBar=1 then BuyAtMarket(1); end;", [100, 110, 120],
++                 days=["2026-10-02", "2026-10-05", "2026-10-05"],
++                 rules={"historico_continuo_lacunas": True, "entrada_mercado_atraves_lacuna": True,
++                        "avaliacao_pos_preenchimento": True, "rastrear_ordens": True})
++    assert engine.fills == []
++    assert engine.orders_cancelled_at_gaps == 0
++
++
++def test_entrada_mercado_atraves_lacuna_cancela_saida_generica_pendente():
++    source = '''begin
++      if CurrentBar=1 then BuyAtMarket(1);
++      if CurrentBar=3 then SellToCoverLimit(105, 1);
++      if CurrentBar=4 then SendOrder(osSell, otMarket, 1, 0, 0);
++    end;'''
++    engine = run(source, [100, 100, 100, 100, 110, 120, 120],
++                 rules={"historico_continuo_lacunas": True, "entrada_mercado_atraves_lacuna": True,
++                        "latencia_barras": 1},
++                 lacuna_intradiaria=[False, False, False, False, False, True, False])
++    assert [(fill["barra"], fill["acao"]) for fill in engine.fills] == [(3, "long"), (5, "exit_long")]
++    assert engine.orders_cancelled_at_gaps == 1
++    assert engine.gaps_with_exposure == 0
++
++
++def test_entrada_mercado_atraves_lacuna_extra_usa_fechamento_anterior():
++    source = """begin
++      if CurrentBar=1 then BuyAtMarket(1);
++      if IsBought then begin
++        ConsoleLog("Close=" + (Close));
++        SellToCoverStop(Close-5, Close-10, 1);
++      end;
++    end;"""
++    engine = run(source, [100, 110, 120],
++                 rules={"historico_continuo_lacunas": True, "entrada_mercado_atraves_lacuna": True,
++                        "avaliacao_pos_preenchimento": True, "rastrear_ordens": True},
++                 lacuna_intradiaria=[False, True, False])
++    assert engine.logs[1:] == [(1, "Close=100.0"), (2, "Close=110.0"), (3, "Close=120.0")]
++    stops = [e for e in engine.order_events if e["ordem"] == "selltocoverstop"]
++    assert stops[0]["gatilho"] == 95 and stops[0]["barra_contexto_ntsl"] == 1
++
++

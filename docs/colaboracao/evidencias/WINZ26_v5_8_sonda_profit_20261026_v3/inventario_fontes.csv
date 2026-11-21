@@ -1,0 +1,5 @@
+arquivo;bytes;sha256;formato;blocos_identicos;linhas_ou_paginas_retidas
+console_sondaV3_p_caso0.txt;1539;93d6f5baa315db5eef4f545a2a73396adc78669e749bdda398b508aa6e948068;TXT UTF-8;2;8
+console_sondaV3_p_caso1.txt;1857;e4b3b99295e35fc316f9e006d8fe848bcad088e409e91eb306062593f87c266a;TXT UTF-8;2;11
+operacoes_sondav3_p_caso1.csv;463;efd6064df67830f76da1a34e539d107995fec159eaec6011773d0ed88d6bb9b2;CSV CP1252;;1
+relatorio_sondav3_p_caso1.pdf;10963;78efd0931cc88b76bda4200cabf749e2eba221f7779761d2ee18f15e31feb051;PDF verificado à parte;;

@@ -1,0 +1,14 @@
+cenario;camada;profit;motor_antes;motor_depois;estado_depois;evidencia_ou_limite
+WINZ26_20261026_1258_1407;console;"fonte Texto colado (2).txt, bloco 4, linhas 3542-3552";nao_aplicavel;nao_aplicavel;selecionado_sem_duplicar_fontes;"avaliacao e execucao preservadas como relogios distintos"
+WINZ26_20261026_1258_1407;entrada_177565;"entrada 13:04 a 177565";"entrada 13:04 a 177565";"entrada 13:04 a 177565";coincidente;preenchimento a mercado na abertura
+WINZ26_20261026_1258_1407;posicao_visivel;"console avaliacao 13:03 observa +1 a 177565";"avaliacao motor 13:04 observa +1 a 177565";"avaliacao motor 13:04 observa +1 a 177565";coincidente_com_rotulos_distintos;nenhum deslocamento global aplicado
+WINZ26_20261026_1258_1407;solicitacao_stop;"console 13:03 solicita 177215/177210";"motor 13:04 solicita 177215/177210";"motor 13:04 solicita 177215/177210";coincidente_com_rotulos_distintos;aceitacao nativa nao exportada
+WINZ26_20261026_1258_1407;elegibilidade_stop;"protecao observada antes da zeragem 13:04";primeira elegivel 13:05;primeira elegivel 13:04;corrigido_opt_in;primeira divergencia demonstrada
+WINZ26_20261026_1258_1407;preenchimento_stop;"relatorio 13:04 a 177215";"14:01 a 177210";"13:04 a 177215";coincidente;sequencia intrabar exata continua indisponivel
+WINZ26_20261026_1258_1407;segunda_compra;"13:05: 176815 para 176465";ausente;ausente;indeterminado;exigiria nova avaliacao NTSL depois da zeragem no mesmo candle
+WINZ26_20261026_1258_1407;controle_1404_1406;"177775 para 178225";coincidente;coincidente;coincidente;protecao nao tocada no candle da entrada
+WINZ26_20261021_dia_completo;operacoes_exatas;10_de_10;10_de_10;10_de_10;coincidente;sem regressao observada
+WINZ26_20261026_dia_completo;operacoes_exatas;12_total;8_de_10;11_de_11;parcial;resta somente a segunda compra de 13:05
+REGRESSAO_ESCOPO;saida_mercado_fechamento;barra_seguinte;nao_coberto;barra_seguinte;preservado;nenhum preenchimento retroativo na abertura
+REGRESSAO_ESCOPO;entrada_limite_ou_stop;protecao_sem_retroacao;nao_coberto;protecao_sem_retroacao;preservado;hipotese especial exige entrada market na abertura
+REGRESSAO_ESCOPO;ordem_antiga_disparada;nao_reprocessar;nao_coberto;nao_reprocessada;preservado;segunda passagem recebe somente chaves das protecoes novas

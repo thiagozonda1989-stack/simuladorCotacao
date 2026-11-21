@@ -1,0 +1,13 @@
+origem;ordem_console;data;hora_barra_contexto;rotulo_barra_contexto;seq_ntsl;posicao;antes;depois
+profit;1;2026-10-26;13:03;27005;1;0;0;0
+profit;2;2026-10-26;13:03;27005;2;1;0;1
+profit;3;2026-10-26;13:04;27006;3;0;1;0
+profit;4;2026-10-26;13:05;27007;4;0;0;0
+simulador_antes;1;2026-10-26;13:03;2;1;0;0;0
+simulador_antes;2;2026-10-26;13:03;2;2;1;0;1
+simulador_antes;3;2026-10-26;13:04;3;2;0;0;0
+simulador_antes;4;2026-10-26;13:05;4;3;0;0;0
+simulador_depois;1;2026-10-26;13:03;2;1;0;0;0
+simulador_depois;2;2026-10-26;13:03;2;2;1;0;1
+simulador_depois;3;2026-10-26;13:04;3;3;0;1;0
+simulador_depois;4;2026-10-26;13:05;4;4;0;0;0

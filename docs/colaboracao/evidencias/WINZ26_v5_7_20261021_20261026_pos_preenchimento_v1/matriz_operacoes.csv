@@ -1,0 +1,7 @@
+pregao;modo;operacoes_profit;operacoes_motor;correspondencias_exatas;sem_par_profit;sem_par_motor;solicitacoes_compra_motor;solicitacoes_venda_motor;avaliacoes_pos_preenchimento;barras_ambiguas_motor;operacao_182_exata
+2026-10-21;padrao;10;10;10;0;0;5;5;0;0;
+2026-10-21;protecao-legada;10;10;10;0;0;5;5;0;0;
+2026-10-21;pos-preenchimento;10;10;10;0;0;5;5;10;0;
+2026-10-26;padrao;12;10;8;4;2;7;3;0;0;false
+2026-10-26;protecao-legada;12;11;11;1;0;7;4;0;0;false
+2026-10-26;pos-preenchimento;12;12;12;0;0;8;4;12;0;true

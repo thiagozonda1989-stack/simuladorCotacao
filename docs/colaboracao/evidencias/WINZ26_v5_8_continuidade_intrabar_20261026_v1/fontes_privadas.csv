@@ -1,0 +1,8 @@
+arquivo;bytes;sha256;uso
+win_negocios_21102026.csv;518068335;e3198fdead01e3c3bb673961af68d65f7cbed16b4e5ea6bf6a18d2edfdd84b17;"Negócios ProfitRTD; referência da auditoria"
+win_negocios_26102026.csv;568983191;1d89701275b3ecb247303961d643a6c33641638de5fd0f804ad3b9a4e77941e4;"Negócios ProfitRTD; cobertura e ordem dos toques observados"
+operacoes_v58.csv;43885;66cece48ff5c3e1aca3d42d4482665451d39195bf0be50fc497d302a77585c7d;"Exportação Profit; entradas e saídas"
+console_58.txt;1083641;38624ee2aab7c55ea12287f29736d7bfea3a3f0fce2140d833aeea8633e5bb69;"Debug Profit; avaliações e solicitações, primeiro de dois blocos idênticos"
+barras_v58.csv;920086;1036ce183e5e0ff371ca10b21b2774e2f8420598c50d71b107cbe6a1eebf6863;"OHLC Profit; preço das barras"
+2026-10-21-barras-historico.csv;127607;f1d85e4454e8c6c61e47c44832f5d9fc7280d60f44fa7ff49ff1d1bda9ffdf6b;"20/10 e 21/10; barras preparadas com histórico"
+2026-10-26-barras-historico.csv;125330;bd13dfa559bb6c26ff0c253d3414b8b9994fe699af3482a80b9129b66ab1ec13;"23/10 e 26/10; barras preparadas com histórico"

@@ -8,6 +8,7 @@
     "sequencia_fonte": {"type": "integer", "minimum": 0},
     "pregao": {"type": "string", "format": "date"},
     "ativo_origem": {"type": "string"},
+    "preco_snapshot": {"type": ["number", "null"]},
     "preco_ultimo": {"type": ["number", "null"]},
     "quantidade_negocio": {"type": ["number", "null"], "minimum": 0},
     "bid": {"type": ["number", "null"]},
