@@ -1,0 +1,10 @@
+caso;modo;canceladas_lacuna;lacunas_com_posicao;preenchimentos_total;posicao_avaliacao_regular_09h39;hora_entrada;hora_saida;contexto_extra_na_retomada;pontos;resultado_liquido_brl
+0;reinicio;0;0;0;0;;;;0.0;0.0
+0;continuidade;0;0;0;0;;;;0.0;0.0
+0;entrada;0;0;0;0;;;;0.0;0.0
+1;reinicio;1;0;0;0;;;;0.0;0.0
+1;continuidade;1;0;0;0;;;;0.0;0.0
+1;entrada;0;0;2;1;09:39;09:42;09:29;125.0;25.0
+2;reinicio;2;1;2;1;09:28;09:42;;-10300.0;-2060.0
+2;continuidade;2;1;2;1;09:28;09:42;;-10300.0;-2060.0
+2;entrada;2;1;2;1;09:28;09:42;;-10300.0;-2060.0
