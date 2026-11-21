@@ -128,6 +128,7 @@ class ExecutionRules:
     protecao_no_candle_entrada: bool = False
     rastrear_ordens: bool = False
     avaliacao_pos_preenchimento: bool = False
+    historico_continuo_lacunas: bool = False
 
     def __post_init__(self):
         for value in (self.latencia_ticks_ms, self.lacuna_ticks_ms):
@@ -137,6 +138,8 @@ class ExecutionRules:
             raise ValueError("motor_ticks deve ser booleano.")
         if self.motor_ticks and self.latencia_barras:
             raise ValueError("Para tick a tick, zere a latência em barras e use a latência em milissegundos.")
+        if self.motor_ticks and self.historico_continuo_lacunas:
+            raise ValueError("A continuidade histórica em lacunas só se aplica ao motor OHLC.")
         if self.motor_ticks and self.protecao_no_candle_entrada:
             raise ValueError("A proteção no candle da entrada só se aplica ao motor OHLC.")
         if self.avaliacao_pos_preenchimento and (self.motor_ticks or self.protecao_no_candle_entrada):
@@ -150,7 +153,8 @@ class ExecutionRules:
                       self.historico_continuo, self.volume_financeiro_ntsl,
                       self.agressao_por_barra, self.agressao_referencia_injetada,
                       self.vwap_continuo_lacunas, self.protecao_no_candle_entrada,
-                      self.rastrear_ordens, self.avaliacao_pos_preenchimento):
+                      self.rastrear_ordens, self.avaliacao_pos_preenchimento,
+                      self.historico_continuo_lacunas):
             if type(value) is not bool:
                 raise ValueError("As regras de execução devem ser booleanas.")
 
@@ -176,7 +180,8 @@ class Engine:
         self.gap = (frame["lacuna_intradiaria"].to_numpy(dtype=bool) if "lacuna_intradiaria" in frame
                     else np.r_[False, (frame["segmento"].to_numpy()[1:] != frame["segmento"].to_numpy()[:-1])
                                     & (self.days[1:] == self.days[:-1])] if "segmento" in frame else np.zeros(len(frame), bool))
-        self.segment_starts = np.maximum.accumulate(np.where(self.gap, np.arange(len(frame)), 0))
+        history_resets = self.gap & (not self.rules.historico_continuo_lacunas)
+        self.segment_starts = np.maximum.accumulate(np.where(history_resets, np.arange(len(frame)), 0))
         self.orders_cancelled_at_gaps = self.gaps_with_exposure = 0
         self.checkpoint = None
         for name, value in overrides.items():
@@ -786,7 +791,8 @@ class Engine:
                 self.orders_cancelled_at_gaps += len(self.orders)
                 self.gaps_with_exposure += bool(self.position)
                 self.orders.clear()
-                self.rolling.clear()
+                if not self.rules.historico_continuo_lacunas:
+                    self.rolling.clear()
                 if record_trace:
                     self.logs.append((row+1, f"Lacuna de dados. Ordens canceladas; posição anterior: {self.position}."))
             position_before_orders = self.position
@@ -968,6 +974,8 @@ def main():
     p.add_argument("--ordem-so-proxima-barra", action=argparse.BooleanOptionalAction, default=True)
     p.add_argument("--latencia-barras", type=int, default=0)
     p.add_argument("--historico-continuo", action=argparse.BooleanOptionalAction, default=True)
+    p.add_argument("--historico-continuo-lacunas", action="store_true",
+                   help="OHLC: preserva janelas e referências históricas em lacunas intradiárias")
     p.add_argument("--motor-ticks", action="store_true")
     p.add_argument("--latencia-ticks-ms", type=int, default=0)
     p.add_argument("--lacuna-ticks-ms", type=int, default=5000)

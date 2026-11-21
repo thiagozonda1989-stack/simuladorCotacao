@@ -5,7 +5,7 @@ from pathlib import Path
 import pandas as pd
 import pytest
 
-from estrategia import Engine, Order, run_strategy
+from estrategia import Engine, ExecutionRules, Order, run_strategy
 from ntsl import compile_ntsl
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -65,6 +65,59 @@ def test_historico_e_media_entre_pregoes():
             run(source, [100, 120], days).trace[1]["plot2"]) == (100, 110)
     legacy = run(source, [100, 120], days, {"historico_continuo": False})
     assert (legacy.trace[1]["plot"], legacy.trace[1]["plot2"]) == (0, 120)
+
+
+@pytest.mark.parametrize("continuous,session_history,expected", [
+    (False, True, (0, 140, 0, 0, 170)),
+    (True, True, (120, 130, 2, 20, 170)),
+    (True, False, (120, 130, 2, 20, 200)),
+])
+def test_historico_em_lacunas(continuous, session_history, expected):
+    source = '''
+    var n: Integer;
+    begin
+      n := CurrentBar;
+      Plot(CurrentBar);
+      Plot2(Close[1]);
+      Plot3(Media(2, Close));
+      Plot4(n[1]);
+      Plot5(TrueRange);
+      Plot6(BarrasNoSegmento);
+    end;
+    '''
+    engine = run(source, [100, 120, 140, 200],
+                 ["2026-10-02"] * 3 + ["2026-10-05"],
+                 {"historico_continuo_lacunas": continuous, "historico_continuo": session_history},
+                 lacuna_intradiaria=[False, False, True, False],
+                 barras_no_segmento=[1, 2, 1, 1])
+    lag, mean, prior_state, true_range, next_session_mean = expected
+    columns = ("plot", "plot2", "plot3", "plot4", "plot5", "plot6")
+    assert [engine.trace[2][column] for column in columns] == [3, lag, mean, prior_state, true_range, 1]
+    assert engine.trace[3]["plot3"] == next_session_mean
+    assert engine.gap.tolist() == [False, False, True, False]
+
+
+@pytest.mark.parametrize("continuous", [False, True])
+def test_ordens_e_posicao_na_lacuna_independem_do_historico(continuous):
+    source = '''
+    begin
+      if CurrentBar=1 then BuyAtMarket(1);
+      if IsBought then SellToCoverStop(95, 90, 1);
+    end;
+    '''
+    engine = run(source, [100, 100, 94, 94],
+                 rules={"historico_continuo_lacunas": continuous,
+                        "avaliacao_pos_preenchimento": True, "rastrear_ordens": True},
+                 lacuna_intradiaria=[False, False, True, False])
+    assert engine.orders_cancelled_at_gaps == engine.gaps_with_exposure == 1
+    assert [(fill["barra"], fill["ordem"], fill["preco"]) for fill in engine.fills] == [
+        (2, "buyatmarket", 100), (4, "selltocoverstop", 94),
+    ]
+
+
+def test_modo_ticks_rejeita_continuidade_em_lacunas_ohlc():
+    with pytest.raises(ValueError, match="só se aplica ao motor OHLC"):
+        ExecutionRules(motor_ticks=True, historico_continuo_lacunas=True)
 
 
 def test_indicadores_novos():

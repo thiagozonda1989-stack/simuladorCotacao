@@ -8,6 +8,7 @@
 - Experimenta a avaliação pós-preenchimento na abertura com dados da barra anterior e avaliação regular após o processamento das proteções.
 - Preserva as atribuições escalares da avaliação pós-preenchimento até o fechamento no modo experimental, mantendo isolados arrays e janelas móveis.
 - Permite comparar indicadores com aquecimento contado a partir de cada reinício do replay.
+- Acrescenta `--historico-continuo-lacunas` ao replay OHLC para preservar janelas e referências históricas, mantendo cancelamento de pendentes e registro de lacunas com exposição.
 
 ## 0.14.0
 

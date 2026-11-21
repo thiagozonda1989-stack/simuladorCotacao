@@ -196,3 +196,21 @@ def test_comparador_v5_8_marca_campos_ausentes_na_exportacao_ohlc():
     assert result["comuns"] == 2
     assert result["campos_ausentes_exportacao_profit"] == ["quantity", "trades", "volume_financeiro"]
     assert result["campos"]["fechamento"]["primeira_divergencia"]["timestamp"] == "2026-10-21T09:01:00"
+
+
+def test_toques_no_mesmo_milissegundo_nao_provam_ordem():
+    from datetime import datetime
+    from types import SimpleNamespace
+
+    from tools.investigar_protecoes_v5_8 import describe_trade_minute
+
+    start = datetime(2026, 10, 26, 10, 15)
+    tie = start.replace(microsecond=1000)
+    rows = [(start, 1, 100, 1), (tie, 3, 95, 1), (tie, 2, 105, 1)]
+    bar = SimpleNamespace(abertura=100, maxima=105, minima=90, fechamento=95,
+                          v_trades_atual=4, volume_contratos=4)
+    result = describe_trade_minute(rows, bar, 1, 100, 105, 95, 90)
+    assert result["primeiro_limiar_observado"] == "empate_ms"
+    assert result["primeiros"]["alvo"]["sequencia_captura"] == 2
+    assert result["primeiros"]["limite_stop"] is None
+    assert result["delta_ohlc"] == [0, 0, 5, 0]
