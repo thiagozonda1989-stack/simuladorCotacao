@@ -1,0 +1,7 @@
+pregao;rotulo_barra_ohlc;hora_entrada_exportacao;evento_de_preco;nivel_relativo_pontos;hora;sequencia_captura;negocios_no_ms;preco_relativo
+2026-10-26;10:15;10:15;preco_entrada;0;10:15:00.000;266837;1;0.0
+2026-10-26;10:15;10:15;alvo;400;10:15:12.283;268564;47;425.0
+2026-10-26;10:15;10:15;preco_exato_alvo;400;10:15:12.283;268582;47;400.0
+2026-10-26;10:15;10:15;gatilho_stop;-350;10:15:43.810;274300;39;-360.0
+2026-10-26;10:15;10:15;preco_exato_gatilho;-350;10:15:43.810;274311;39;-350.0
+2026-10-26;10:15;10:15;limite_stop;-400;10:15:44.720;274806;8;-400.0
