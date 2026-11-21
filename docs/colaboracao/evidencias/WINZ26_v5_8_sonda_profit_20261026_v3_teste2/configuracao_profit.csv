@@ -1,0 +1,4 @@
+p_caso;build;ativo;intervalo_minutos;modo;periodo_configurado;data_ntsl;lote;lote_maximo;slippage_ticks;executar_nos_limites;filtro_horario;pausar_e_zerar_as;inicio_log;entrada_antecipada;protecao_inicial;antes_lacuna;limpeza;fim_log;alvo_pts;stop_pts;folga_stop_pts
+0;5.0.4.33;WINZ26;1;OHLC;6 meses;1261026;1;1;0;1;0;0;09:27;09:27;09:28;09:29;09:41;09:43;100;10000;500
+1;5.0.4.33;WINZ26;1;OHLC;6 meses;1261026;1;1;0;1;0;0;09:27;09:27;09:28;09:29;09:41;09:43;100;10000;500
+2;5.0.4.33;WINZ26;1;OHLC;6 meses;1261026;1;1;0;1;0;0;09:27;09:27;09:28;09:29;09:41;09:43;100;10000;500
