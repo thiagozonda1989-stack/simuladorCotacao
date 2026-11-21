@@ -1,0 +1,74 @@
+{ Controle de lacuna. Exclusivo para Backtest OHLC.
+  Caso 1: compra solicitada na ultima barra antes da lacuna.
+  Caso 2: compra anterior, alvo e stop solicitados antes da lacuna. }
+input
+  p_Caso(1);
+  p_Data(1261026);
+  p_InicioLog(927);
+  p_EntradaAntecipada(927);
+  p_HoraProtecaoInicial(928);
+  p_AntesLacuna(929);
+  p_Limpeza(941);
+  p_FimLog(943);
+  p_Alvo(100);
+  p_Stop(10000);
+  p_FolgaStop(500);
+
+var
+  v_Seq, v_Pendentes, v_BarraProtecao : Integer;
+  v_EntradaSolicitada, v_LimpezaSolicitada : Boolean;
+
+begin
+  if (Date = p_Data) and (Time >= p_InicioLog) and (Time <= p_FimLog) then
+  begin
+    v_Seq := v_Seq + 1;
+    if HasPendingOrders then v_Pendentes := 1
+    else v_Pendentes := 0;
+    ConsoleLog("LACUNA;AVALIACAO"
+               + ";caso=" + (p_Caso)
+               + ";data=" + (Date)
+               + ";hora=" + (Time)
+               + ";barra=" + (CurrentBar)
+               + ";seq=" + (v_Seq)
+               + ";posicao=" + (PositionQty)
+               + ";pendentes=" + (v_Pendentes));
+
+    if not v_EntradaSolicitada and not HasPosition and not HasPendingOrders
+      and (((p_Caso = 1) and (Time = p_AntesLacuna))
+        or ((p_Caso = 2) and (Time = p_EntradaAntecipada))) then
+    begin
+      v_EntradaSolicitada := True;
+      ConsoleLog("LACUNA;SOLICITA_COMPRA;seq=" + (v_Seq));
+      BuyAtMarket(1);
+    end;
+
+    if (p_Caso = 2) and IsBought and (v_BarraProtecao <> CurrentBar)
+      and ((Time = p_HoraProtecaoInicial) or (Time = p_AntesLacuna)) then
+    begin
+      v_BarraProtecao := CurrentBar;
+      ConsoleLog("LACUNA;SOLICITA_ALVO;seq=" + (v_Seq)
+                 + ";limite=" + (BuyPrice + p_Alvo));
+      SellToCoverLimit(BuyPrice + p_Alvo, 1);
+      ConsoleLog("LACUNA;SOLICITA_STOP;seq=" + (v_Seq)
+                 + ";gatilho=" + (BuyPrice - p_Stop)
+                 + ";limite=" + (BuyPrice - p_Stop - p_FolgaStop));
+      SellToCoverStop(BuyPrice - p_Stop, BuyPrice - p_Stop - p_FolgaStop, 1);
+    end;
+
+    { Limpeza posterior para que a operacao apareca na exportacao. }
+    if (Time = p_Limpeza) and not v_LimpezaSolicitada then
+    begin
+      v_LimpezaSolicitada := True;
+      if HasPosition then
+      begin
+        ConsoleLog("LACUNA;SOLICITA_ZERAGEM_LIMPEZA;seq=" + (v_Seq));
+        ClosePosition;
+      end
+      else if HasPendingOrders then
+      begin
+        ConsoleLog("LACUNA;SOLICITA_CANCELAMENTO_LIMPEZA;seq=" + (v_Seq));
+        CancelPendingOrders;
+      end;
+    end;
+  end;
+end;

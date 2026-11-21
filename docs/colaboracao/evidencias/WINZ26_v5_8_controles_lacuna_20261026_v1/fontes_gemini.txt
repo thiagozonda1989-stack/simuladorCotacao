@@ -1,0 +1,451 @@
+FONTES PARA O GEMINI | Fechamento da v5.8 e controles de lacuna
+PR #2
+
+=== docs/colaboracao/evidencias/WINZ26_v5_8_controles_lacuna_20261026_v1/barras_sinteticas.csv ===
+
+timestamp;abertura;maxima;minima;fechamento
+2026-10-26 09:27:00-03:00;20000;20000;20000;20000
+2026-10-26 09:28:00-03:00;20000;20000;20000;20000
+2026-10-26 09:29:00-03:00;20000;20000;20000;20000
+2026-10-26 09:39:00-03:00;9580;9760;9580;9650
+2026-10-26 09:40:00-03:00;9650;9800;9580;9610
+2026-10-26 09:41:00-03:00;9610;9700;9600;9660
+2026-10-26 09:42:00-03:00;9660;9700;9600;9650
+2026-10-26 09:43:00-03:00;9650;9700;9640;9660
+
+=== docs/colaboracao/evidencias/WINZ26_v5_8_controles_lacuna_20261026_v1/inputs_caso_1.json ===
+
+{
+  "p_Caso": 1
+}
+
+=== docs/colaboracao/evidencias/WINZ26_v5_8_controles_lacuna_20261026_v1/inputs_caso_2.json ===
+
+{
+  "p_Caso": 2
+}
+
+=== docs/colaboracao/evidencias/WINZ26_v5_8_controles_lacuna_20261026_v1/rastreio_simulador.csv ===
+
+fonte_barras;caso;modo;seq_replay;hora_barra_replay;rotulo_contexto_ntsl;evento;ordem;posicao;ordens_canceladas;quantidade_ordem;gatilho_pontos_relativos;limite_pontos_relativos;preco_execucao_pontos_relativos
+sintetico;1;reinicio;1;09:27;09:27;avaliacao_ntsl;;0;;;;;
+sintetico;1;reinicio;2;09:28;09:28;avaliacao_ntsl;;0;;;;;
+sintetico;1;reinicio;3;09:29;09:29;avaliacao_ntsl;;0;;;;;
+sintetico;1;reinicio;4;09:29;09:29;solicitacao;buyatmarket;0;;1;;;
+sintetico;1;reinicio;5;09:39;;cancelamento_agregado_lacuna;;0;1;;;;
+sintetico;1;reinicio;6;09:39;09:39;avaliacao_ntsl;;0;;;;;
+sintetico;1;reinicio;7;09:40;09:40;avaliacao_ntsl;;0;;;;;
+sintetico;1;reinicio;8;09:41;09:41;avaliacao_ntsl;;0;;;;;
+sintetico;1;reinicio;9;09:42;09:42;avaliacao_ntsl;;0;;;;;
+sintetico;1;reinicio;10;09:43;09:43;avaliacao_ntsl;;0;;;;;
+sintetico;1;continuidade;1;09:27;09:27;avaliacao_ntsl;;0;;;;;
+sintetico;1;continuidade;2;09:28;09:28;avaliacao_ntsl;;0;;;;;
+sintetico;1;continuidade;3;09:29;09:29;avaliacao_ntsl;;0;;;;;
+sintetico;1;continuidade;4;09:29;09:29;solicitacao;buyatmarket;0;;1;;;
+sintetico;1;continuidade;5;09:39;;cancelamento_agregado_lacuna;;0;1;;;;
+sintetico;1;continuidade;6;09:39;09:39;avaliacao_ntsl;;0;;;;;
+sintetico;1;continuidade;7;09:40;09:40;avaliacao_ntsl;;0;;;;;
+sintetico;1;continuidade;8;09:41;09:41;avaliacao_ntsl;;0;;;;;
+sintetico;1;continuidade;9;09:42;09:42;avaliacao_ntsl;;0;;;;;
+sintetico;1;continuidade;10;09:43;09:43;avaliacao_ntsl;;0;;;;;
+sintetico;2;reinicio;1;09:27;09:27;avaliacao_ntsl;;0;;;;;
+sintetico;2;reinicio;2;09:27;09:27;solicitacao;buyatmarket;0;;1;;;
+sintetico;2;reinicio;3;09:28;09:28;preenchimento;buyatmarket;1;;1;;;0
+sintetico;2;reinicio;4;09:28;09:27;avaliacao_ntsl_pos_preenchimento;;1;;;;;
+sintetico;2;reinicio;5;09:28;09:28;avaliacao_ntsl;;1;;;;;
+sintetico;2;reinicio;6;09:28;09:28;solicitacao;selltocoverlimit;1;;1;100;;
+sintetico;2;reinicio;7;09:28;09:28;solicitacao;selltocoverstop;1;;1;-10000;-10500;
+sintetico;2;reinicio;8;09:29;09:29;avaliacao_ntsl;;1;;;;;
+sintetico;2;reinicio;9;09:29;09:29;solicitacao_renovada;selltocoverlimit;1;;1;100;;
+sintetico;2;reinicio;10;09:29;09:29;solicitacao_renovada;selltocoverstop;1;;1;-10000;-10500;
+sintetico;2;reinicio;11;09:39;;cancelamento_agregado_lacuna;;1;2;;;;
+sintetico;2;reinicio;12;09:39;09:39;avaliacao_ntsl;;1;;;;;
+sintetico;2;reinicio;13;09:40;09:40;avaliacao_ntsl;;1;;;;;
+sintetico;2;reinicio;14;09:41;09:41;avaliacao_ntsl;;1;;;;;
+sintetico;2;reinicio;15;09:41;09:41;solicitacao;closeposition;1;;1;;;
+sintetico;2;reinicio;16;09:42;09:42;preenchimento;closeposition;0;;1;;;-10340
+sintetico;2;reinicio;17;09:42;09:42;avaliacao_ntsl;;0;;;;;
+sintetico;2;reinicio;18;09:43;09:43;avaliacao_ntsl;;0;;;;;
+sintetico;2;continuidade;1;09:27;09:27;avaliacao_ntsl;;0;;;;;
+sintetico;2;continuidade;2;09:27;09:27;solicitacao;buyatmarket;0;;1;;;
+sintetico;2;continuidade;3;09:28;09:28;preenchimento;buyatmarket;1;;1;;;0
+sintetico;2;continuidade;4;09:28;09:27;avaliacao_ntsl_pos_preenchimento;;1;;;;;
+sintetico;2;continuidade;5;09:28;09:28;avaliacao_ntsl;;1;;;;;
+sintetico;2;continuidade;6;09:28;09:28;solicitacao;selltocoverlimit;1;;1;100;;
+sintetico;2;continuidade;7;09:28;09:28;solicitacao;selltocoverstop;1;;1;-10000;-10500;
+sintetico;2;continuidade;8;09:29;09:29;avaliacao_ntsl;;1;;;;;
+sintetico;2;continuidade;9;09:29;09:29;solicitacao_renovada;selltocoverlimit;1;;1;100;;
+sintetico;2;continuidade;10;09:29;09:29;solicitacao_renovada;selltocoverstop;1;;1;-10000;-10500;
+sintetico;2;continuidade;11;09:39;;cancelamento_agregado_lacuna;;1;2;;;;
+sintetico;2;continuidade;12;09:39;09:39;avaliacao_ntsl;;1;;;;;
+sintetico;2;continuidade;13;09:40;09:40;avaliacao_ntsl;;1;;;;;
+sintetico;2;continuidade;14;09:41;09:41;avaliacao_ntsl;;1;;;;;
+sintetico;2;continuidade;15;09:41;09:41;solicitacao;closeposition;1;;1;;;
+sintetico;2;continuidade;16;09:42;09:42;preenchimento;closeposition;0;;1;;;-10340
+sintetico;2;continuidade;17;09:42;09:42;avaliacao_ntsl;;0;;;;;
+sintetico;2;continuidade;18;09:43;09:43;avaliacao_ntsl;;0;;;;;
+recorte_privado;1;reinicio;1;09:27;09:27;avaliacao_ntsl;;0;;;;;
+recorte_privado;1;reinicio;2;09:28;09:28;avaliacao_ntsl;;0;;;;;
+recorte_privado;1;reinicio;3;09:29;09:29;avaliacao_ntsl;;0;;;;;
+recorte_privado;1;reinicio;4;09:29;09:29;solicitacao;buyatmarket;0;;1;;;
+recorte_privado;1;reinicio;5;09:39;;cancelamento_agregado_lacuna;;0;1;;;;
+recorte_privado;1;reinicio;6;09:39;09:39;avaliacao_ntsl;;0;;;;;
+recorte_privado;1;reinicio;7;09:40;09:40;avaliacao_ntsl;;0;;;;;
+recorte_privado;1;reinicio;8;09:41;09:41;avaliacao_ntsl;;0;;;;;
+recorte_privado;1;reinicio;9;09:42;09:42;avaliacao_ntsl;;0;;;;;
+recorte_privado;1;reinicio;10;09:43;09:43;avaliacao_ntsl;;0;;;;;
+recorte_privado;1;continuidade;1;09:27;09:27;avaliacao_ntsl;;0;;;;;
+recorte_privado;1;continuidade;2;09:28;09:28;avaliacao_ntsl;;0;;;;;
+recorte_privado;1;continuidade;3;09:29;09:29;avaliacao_ntsl;;0;;;;;
+recorte_privado;1;continuidade;4;09:29;09:29;solicitacao;buyatmarket;0;;1;;;
+recorte_privado;1;continuidade;5;09:39;;cancelamento_agregado_lacuna;;0;1;;;;
+recorte_privado;1;continuidade;6;09:39;09:39;avaliacao_ntsl;;0;;;;;
+recorte_privado;1;continuidade;7;09:40;09:40;avaliacao_ntsl;;0;;;;;
+recorte_privado;1;continuidade;8;09:41;09:41;avaliacao_ntsl;;0;;;;;
+recorte_privado;1;continuidade;9;09:42;09:42;avaliacao_ntsl;;0;;;;;
+recorte_privado;1;continuidade;10;09:43;09:43;avaliacao_ntsl;;0;;;;;
+recorte_privado;2;reinicio;1;09:27;09:27;avaliacao_ntsl;;0;;;;;
+recorte_privado;2;reinicio;2;09:27;09:27;solicitacao;buyatmarket;0;;1;;;
+recorte_privado;2;reinicio;3;09:28;09:28;preenchimento;buyatmarket;1;;1;;;0
+recorte_privado;2;reinicio;4;09:28;09:27;avaliacao_ntsl_pos_preenchimento;;1;;;;;
+recorte_privado;2;reinicio;5;09:28;09:28;avaliacao_ntsl;;1;;;;;
+recorte_privado;2;reinicio;6;09:28;09:28;solicitacao;selltocoverlimit;1;;1;100;;
+recorte_privado;2;reinicio;7;09:28;09:28;solicitacao;selltocoverstop;1;;1;-10000;-10500;
+recorte_privado;2;reinicio;8;09:29;09:29;avaliacao_ntsl;;1;;;;;
+recorte_privado;2;reinicio;9;09:29;09:29;solicitacao_renovada;selltocoverlimit;1;;1;100;;
+recorte_privado;2;reinicio;10;09:29;09:29;solicitacao_renovada;selltocoverstop;1;;1;-10000;-10500;
+recorte_privado;2;reinicio;11;09:39;;cancelamento_agregado_lacuna;;1;2;;;;
+recorte_privado;2;reinicio;12;09:39;09:39;avaliacao_ntsl;;1;;;;;
+recorte_privado;2;reinicio;13;09:40;09:40;avaliacao_ntsl;;1;;;;;
+recorte_privado;2;reinicio;14;09:41;09:41;avaliacao_ntsl;;1;;;;;
+recorte_privado;2;reinicio;15;09:41;09:41;solicitacao;closeposition;1;;1;;;
+recorte_privado;2;reinicio;16;09:42;09:42;preenchimento;closeposition;0;;1;;;-10300
+recorte_privado;2;reinicio;17;09:42;09:42;avaliacao_ntsl;;0;;;;;
+recorte_privado;2;reinicio;18;09:43;09:43;avaliacao_ntsl;;0;;;;;
+recorte_privado;2;continuidade;1;09:27;09:27;avaliacao_ntsl;;0;;;;;
+recorte_privado;2;continuidade;2;09:27;09:27;solicitacao;buyatmarket;0;;1;;;
+recorte_privado;2;continuidade;3;09:28;09:28;preenchimento;buyatmarket;1;;1;;;0
+recorte_privado;2;continuidade;4;09:28;09:27;avaliacao_ntsl_pos_preenchimento;;1;;;;;
+recorte_privado;2;continuidade;5;09:28;09:28;avaliacao_ntsl;;1;;;;;
+recorte_privado;2;continuidade;6;09:28;09:28;solicitacao;selltocoverlimit;1;;1;100;;
+recorte_privado;2;continuidade;7;09:28;09:28;solicitacao;selltocoverstop;1;;1;-10000;-10500;
+recorte_privado;2;continuidade;8;09:29;09:29;avaliacao_ntsl;;1;;;;;
+recorte_privado;2;continuidade;9;09:29;09:29;solicitacao_renovada;selltocoverlimit;1;;1;100;;
+recorte_privado;2;continuidade;10;09:29;09:29;solicitacao_renovada;selltocoverstop;1;;1;-10000;-10500;
+recorte_privado;2;continuidade;11;09:39;;cancelamento_agregado_lacuna;;1;2;;;;
+recorte_privado;2;continuidade;12;09:39;09:39;avaliacao_ntsl;;1;;;;;
+recorte_privado;2;continuidade;13;09:40;09:40;avaliacao_ntsl;;1;;;;;
+recorte_privado;2;continuidade;14;09:41;09:41;avaliacao_ntsl;;1;;;;;
+recorte_privado;2;continuidade;15;09:41;09:41;solicitacao;closeposition;1;;1;;;
+recorte_privado;2;continuidade;16;09:42;09:42;preenchimento;closeposition;0;;1;;;-10300
+recorte_privado;2;continuidade;17;09:42;09:42;avaliacao_ntsl;;0;;;;;
+recorte_privado;2;continuidade;18;09:43;09:43;avaliacao_ntsl;;0;;;;;
+
+=== docs/colaboracao/evidencias/WINZ26_v5_8_controles_lacuna_20261026_v1/README.md ===
+
+# Fechamento da v5.8 e controles na retomada de lacuna
+
+Motor executado em `0d2f19a47307d5390f5d89bb53d70e6c87a37856`. Head de evidências que fundamenta o fechamento `10ba1e979bebfe18a27e0322a47ee55092a265ab`. Os controles desta rodada usam esse motor. [Revisão Claude](https://github.com/thiagozonda1989-stack/simuladorCotacao/pull/2#issuecomment-7054792922) · [Revisão Gemini](https://github.com/thiagozonda1989-stack/simuladorCotacao/pull/2#issuecomment-7054828827)
+
+## Fechamento da amostra v5.8
+
+| WINZ26, 1 minuto, com pregão anterior | Reinício | Continuidade histórica |
+|---|---:|---:|
+| 21/10/2026 | 7/7 | **7/7** |
+| 26/10/2026 | 8/10 | **9/10** |
+
+Com continuidade, coincidiram as 17 entradas, as 306 e 62 solicitações e as 509 e 472 avaliações comparáveis nos respectivos pregões. A paridade observada nas retomadas cobre **posição zerada e ausência de ordens pendentes**. O replay de 21/10 com histórico anterior não tem lacunas intradiárias. O de 26/10 tem a retomada às 09:39 e também uma no histórico de 23/10 às 17:55. As duas ficaram sem exposição e sem cancelamentos no replay. As duas políticas de continuidade são independentes. `--historico-continuo-lacunas` conserva janelas e referências históricas `[n]`. `--vwap-continuo-lacunas` controla o acumulador da VWAP e também foi usado nessa matriz. A sonda v2 já publicada mantém arrays e `estado[n]` como pendências gerais do motor. [Relatório da rodada fechada](../WINZ26_v5_8_continuidade_intrabar_20261026_v1/README.md) · [Matriz v5.8](../WINZ26_v5_8_continuidade_intrabar_20261026_v1/matriz_v5_8.csv)
+
+## Controles de execução
+
+As sondas se concentram em WINZ26, 26/10/2026, candles de 1 minuto. A barra rotulada **09:29** precede diretamente a **09:39**. O controle usa um contrato. O log nativo mostra rótulo de contexto, `CurrentBar`, sequência da sonda, posição e `HasPendingOrders` antes de cada ação. O log do simulador também distingue a barra física do replay, o rótulo de contexto NTSL e o tipo de avaliação.
+
+| Caso | Condição que precisa existir antes da lacuna | O que observar na retomada |
+|---|---|---|
+| 1 · entrada pendente | A compra a mercado é solicitada em 09:29 com posição zerada. A ordem precisa permanecer pendente até a fronteira. | Preenchimento ou cancelamento da solicitação, posição e pendentes na primeira avaliação regular e eventual avaliação extra com posição alterada. |
+| 2 · posição protegida | A compra é solicitada em 09:27. A sonda solicita alvo e stop em 09:28 e renova ambos em 09:29. A avaliação de 09:29 precisa ver a posição comprada e proteções já pendentes, ou o histórico de ordens precisa comprová-las antes da renovação. | Sobrevivência e execução das proteções, eventual cancelamento, posição e pendentes na primeira avaliação regular e eventual avaliação adicional por mudança de posição. |
+
+No caso 2, alvo +100, gatilho −10.000 e limite −10.500 pontos são níveis deliberadamente escolhidos para isolar o stop. A abertura de 09:39 fica dentro da faixa do stop-limit e a máxima fica abaixo do alvo. O controle usa o mesmo perfil em uma série sintética com oito candles e no replay das barras privadas preparadas a partir do Profit. A sonda só volta a enviar uma ação às 09:41, quando solicita a zeragem ou o cancelamento de limpeza necessário para encerrar a execução. Essa limpeza fica fora da observação da primeira barra da retomada.
+
+### Resultado no simulador
+
+Os oito replays locais, quatro por fonte, produziram os mesmos estados em ambos os modos:
+
+| Caso | Posição antes da lacuna | Ordens canceladas | Preenchimentos às 09:39 | Extra às 09:39 | Posição na avaliação regular às 09:39 | Pendentes na avaliação regular |
+|---|---:|---:|---:|---:|---:|---:|
+| 1 | 0 | 1 | 0 | 0 | 0 | 0 |
+| 2 | 1 | 2 | 0 | 0 | 1 | 0 |
+
+No caso 2, a compra e a avaliação extra ocorreram normalmente na barra de replay das 09:28, com contexto NTSL das 09:27 na extra. Alvo e stop ficaram pendentes antes da avaliação regular de 09:29 e foram renovados. O motor atual cancela pendências na retomada e a extra de entrada a mercado tem uma guarda para lacunas. A hipótese do parecer Claude sobre a sobrevivência da ordem pendente e das proteções no Profit fica para validação nativa. Nenhuma regra do motor foi alterada. [Resumo dos oito replays](resumo_controles.csv) · [Rastreio em ordem de emissão](rastreio_simulador.csv)
+
+## Execução manual no Profit
+
+1. Compile o [NTSL pronto para o Profit](sonda_lacuna_profit_v1_0.ntsl) como estratégia de execução no Editor. Use **Backtest OHLC**, WINZ26, 1 minuto, 26/10/2026, posição inicial zerada, quantidade padrão e máxima 1, slippage e custos zero, execução nos limites e sem zeragem horária externa na janela. Rode o pregão com a janela efetiva contendo 09:27–09:43. [Backtest OHLC da Nelogica](https://ajuda.nelogica.com.br/hc/pt-br/articles/12742147789851-Backtest-OHLC)
+2. Faça duas execuções independentes. Use `p_Caso=1` na primeira e `p_Caso=2` na segunda. Mantenha os outros valores padrão. Confira antes de interpretar os resultados que as barras 09:29 e 09:39 são consecutivas no histórico efetivamente usado, sem barras de 09:30 a 09:38. Se esse requisito ou a condição inicial da tabela falhar, registre o controle como inconclusivo.
+3. Guarde estes arquivos privados por execução, com `X` igual a 1 ou 2. Preserve a ordem e os cabeçalhos das exportações.
+
+| Arquivo | Conteúdo |
+|---|---|
+| `lacuna_caso_X_console.txt` | Todas as linhas `LACUNA;` do Debug de uma execução, 09:27–09:43. Inclui avaliações repetidas no mesmo rótulo, solicitações, posição e pendentes. |
+| `lacuna_caso_X_barras.csv` | Ativo, data/hora, abertura, máxima, mínima e fechamento das barras do backtest no intervalo 09:27–09:43, com fuso registrado. |
+| `lacuna_caso_X_operacoes.csv` | Exportação da aba Operações do mesmo backtest, com ID ou número da operação, lado, quantidade, preços e horários de abertura e fechamento. Preserve o relatório vazio se o caso 1 ficar sem operação. |
+| `lacuna_caso_X_config.txt` ou captura | Versão/build do Profit, ativo, resolução, dia, modo de execução, intervalo efetivo, quantidade, custos, regras de risco e valores dos inputs. |
+| `lacuna_caso_X_ordens.csv` | Se o backtest disponibilizar o histórico de ordens, exporte 09:27–09:43 com ID, vínculo OCO, tipo, lado, quantidades, preços de gatilho/limite, status, motivos de cancelamento e timestamps de solicitação, ativação, disparo, preenchimento e cancelamento. Preserve resolução e sequência nativas. |
+
+O console identifica solicitações e estados observados. Conte avaliações adicionais na ordem em que aparecem e preserve o rótulo da barra, mesmo quando ele se repetir. Use o relatório de operações para localizar o minuto da execução e o histórico nativo para atribuir eventos de ciclo de ordem. Se houver apenas uma avaliação ou se o histórico não identificar as ordens do backtest, registre o que ficou indeterminado. A Lista de Ordens de contas conectadas é uma fonte distinta do backtest. [Lista de Ordens da Nelogica](https://ajuda.nelogica.com.br/hc/pt-br/articles/360047168931-Lista-de-Ordens)
+
+## Saída das 10:15
+
+Permanece **ambígua em OHLC**. Nos negócios capturados, a faixa do alvo apareceu às 10:15:12.283 e a do stop às 10:15:43.810. A captura contém 64,84% dos negócios de referência do minuto. O histórico nativo com IDs, vínculo OCO e timestamps subminuto do mesmo backtest da v5.8 continua ausente dos arquivos disponíveis. Caso apareça, associe a compra de cinco contratos e as duas ordens de proteção ao mesmo backtest e preserve os tempos de ativação, disparo, preenchimento e cancelamento. A política conservadora do simulador permanece em uso. [Toques observados](../WINZ26_v5_8_continuidade_intrabar_20261026_v1/toques_10h15.csv) · [Cobertura do minuto](../WINZ26_v5_8_continuidade_intrabar_20261026_v1/cobertura_negocios_10h15.csv)
+
+## Reprodução e testes
+
+Os controles locais usam o mesmo perfil de ordens nos dois modos. Para rodar, escolha o caso, as barras e um destino novo. Use a flag de continuidade apenas na segunda execução. O fixture é sintético. A reprodução sobre o recorte histórico exige as barras privadas preparadas de 26/10 usadas na rodada de paridade.
+
+```powershell
+$evid = 'docs/colaboracao/evidencias/WINZ26_v5_8_controles_lacuna_20261026_v1'
+$caso = 1
+$barras = "$evid/barras_sinteticas.csv"
+$flags = @()  # na segunda execução, @('--historico-continuo-lacunas')
+py -3.11 estrategia.py --csv $barras --formato ohlc --segundos 60 --tick 5 `
+  --valor-ponto 0.2 --ntsl "$evid/sonda_lacuna_simulador_v1_0.ntsl" `
+  --inputs "$evid/inputs_caso_$caso.json" --saida $destinoNovo `
+  --avaliacao-pos-preenchimento --rastrear-ordens @flags
+py -3.11 -m pytest -q
+```
+
+A suíte local passou com **75 testes** e 12 avisos de timezone do pandas já presentes. Os resultados de regressão da v5.7 e da v5.8 vêm das execuções verificadas do motor revisado. Os oito replays acima são novos. A rodada só acrescenta sondas, controles e documentação no PR em rascunho. O rastreio histórico publica rótulos, contagens e preços em pontos relativos. Os originais continuam no Windows. [Regressão v5.7 verificada](../WINZ26_v5_8_continuidade_intrabar_20261026_v1/regressao_v5_7.csv) · [Fontes completas para o Gemini](fontes_gemini.txt) · [Manifesto](SHA256SUMS.txt)
+
+=== docs/colaboracao/evidencias/WINZ26_v5_8_controles_lacuna_20261026_v1/resumo_controles.csv ===
+
+fonte_barras;caso;modo;barra_anterior;barra_retomada;posicao_antes;ordens_canceladas_lacuna;posicao_regular_retomada;has_pending_orders_regular_retomada;preenchimentos_retomada;avaliacoes_extras_retomada;avaliacoes_regulares_retomada;barra_preenchimento_anterior;barra_extra_anterior;abertura_retomada_pontos_relativos;toque_alvo_retomada_se_elegivel;abertura_retomada_entre_limite_e_gatilho_do_stop;pendentes_na_avaliacao_09h29_antes_de_solicitar
+sintetico;1;reinicio;09:29;09:39;0;1;0;0;0;0;1;;;;;;0
+sintetico;1;continuidade;09:29;09:39;0;1;0;0;0;0;1;;;;;;0
+sintetico;2;reinicio;09:29;09:39;1;2;1;0;0;0;1;09:28;09:28;-10420;0;1;1
+sintetico;2;continuidade;09:29;09:39;1;2;1;0;0;0;1;09:28;09:28;-10420;0;1;1
+recorte_privado;1;reinicio;09:29;09:39;0;1;0;0;0;0;1;;;;;;0
+recorte_privado;1;continuidade;09:29;09:39;0;1;0;0;0;0;1;;;;;;0
+recorte_privado;2;reinicio;09:29;09:39;1;2;1;0;0;0;1;09:28;09:28;-10425;0;1;1
+recorte_privado;2;continuidade;09:29;09:39;1;2;1;0;0;0;1;09:28;09:28;-10425;0;1;1
+
+=== docs/colaboracao/evidencias/WINZ26_v5_8_controles_lacuna_20261026_v1/sonda_lacuna_profit_v1_0.ntsl ===
+
+{ Controle de lacuna. Exclusivo para Backtest OHLC.
+  Caso 1: compra solicitada na ultima barra antes da lacuna.
+  Caso 2: compra anterior, alvo e stop solicitados antes da lacuna. }
+input
+  p_Caso(1);
+  p_Data(1261026);
+  p_InicioLog(927);
+  p_EntradaAntecipada(927);
+  p_HoraProtecaoInicial(928);
+  p_AntesLacuna(929);
+  p_Limpeza(941);
+  p_FimLog(943);
+  p_Alvo(100);
+  p_Stop(10000);
+  p_FolgaStop(500);
+
+var
+  v_Seq, v_Pendentes, v_BarraProtecao : Integer;
+  v_EntradaSolicitada, v_LimpezaSolicitada : Boolean;
+
+begin
+  if (Date = p_Data) and (Time >= p_InicioLog) and (Time <= p_FimLog) then
+  begin
+    v_Seq := v_Seq + 1;
+    if HasPendingOrders then v_Pendentes := 1
+    else v_Pendentes := 0;
+    ConsoleLog("LACUNA;AVALIACAO"
+               + ";caso=" + FloatToString(p_Caso, 0)
+               + ";data=" + FloatToString(Date, 0)
+               + ";hora=" + FloatToString(Time, 0)
+               + ";barra=" + FloatToString(CurrentBar, 0)
+               + ";seq=" + FloatToString(v_Seq, 0)
+               + ";posicao=" + FloatToString(PositionQty, 0)
+               + ";pendentes=" + FloatToString(v_Pendentes, 0), clYellow);
+
+    if not v_EntradaSolicitada and not HasPosition and not HasPendingOrders
+      and (((p_Caso = 1) and (Time = p_AntesLacuna))
+        or ((p_Caso = 2) and (Time = p_EntradaAntecipada))) then
+    begin
+      v_EntradaSolicitada := True;
+      ConsoleLog("LACUNA;SOLICITA_COMPRA;seq=" + FloatToString(v_Seq, 0), clYellow);
+      BuyAtMarket(1);
+    end;
+
+    if (p_Caso = 2) and IsBought and (v_BarraProtecao <> CurrentBar)
+      and ((Time = p_HoraProtecaoInicial) or (Time = p_AntesLacuna)) then
+    begin
+      v_BarraProtecao := CurrentBar;
+      ConsoleLog("LACUNA;SOLICITA_ALVO;seq=" + FloatToString(v_Seq, 0)
+                 + ";limite=" + FloatToString(BuyPrice + p_Alvo, 0), clYellow);
+      SellToCoverLimit(BuyPrice + p_Alvo, 1);
+      ConsoleLog("LACUNA;SOLICITA_STOP;seq=" + FloatToString(v_Seq, 0)
+                 + ";gatilho=" + FloatToString(BuyPrice - p_Stop, 0)
+                 + ";limite=" + FloatToString(BuyPrice - p_Stop - p_FolgaStop, 0), clYellow);
+      SellToCoverStop(BuyPrice - p_Stop, BuyPrice - p_Stop - p_FolgaStop, 1);
+    end;
+
+    { Limpeza posterior para que a operacao apareca na exportacao. }
+    if (Time = p_Limpeza) and not v_LimpezaSolicitada then
+    begin
+      v_LimpezaSolicitada := True;
+      if HasPosition then
+      begin
+        ConsoleLog("LACUNA;SOLICITA_ZERAGEM_LIMPEZA;seq=" + FloatToString(v_Seq, 0), clYellow);
+        ClosePosition;
+      end
+      else if HasPendingOrders then
+      begin
+        ConsoleLog("LACUNA;SOLICITA_CANCELAMENTO_LIMPEZA;seq=" + FloatToString(v_Seq, 0), clYellow);
+        CancelPendingOrders;
+      end;
+    end;
+  end;
+end;
+
+=== docs/colaboracao/evidencias/WINZ26_v5_8_controles_lacuna_20261026_v1/sonda_lacuna_simulador_v1_0.ntsl ===
+
+{ Controle de lacuna. Exclusivo para Backtest OHLC.
+  Caso 1: compra solicitada na ultima barra antes da lacuna.
+  Caso 2: compra anterior, alvo e stop solicitados antes da lacuna. }
+input
+  p_Caso(1);
+  p_Data(1261026);
+  p_InicioLog(927);
+  p_EntradaAntecipada(927);
+  p_HoraProtecaoInicial(928);
+  p_AntesLacuna(929);
+  p_Limpeza(941);
+  p_FimLog(943);
+  p_Alvo(100);
+  p_Stop(10000);
+  p_FolgaStop(500);
+
+var
+  v_Seq, v_Pendentes, v_BarraProtecao : Integer;
+  v_EntradaSolicitada, v_LimpezaSolicitada : Boolean;
+
+begin
+  if (Date = p_Data) and (Time >= p_InicioLog) and (Time <= p_FimLog) then
+  begin
+    v_Seq := v_Seq + 1;
+    if HasPendingOrders then v_Pendentes := 1
+    else v_Pendentes := 0;
+    ConsoleLog("LACUNA;AVALIACAO"
+               + ";caso=" + (p_Caso)
+               + ";data=" + (Date)
+               + ";hora=" + (Time)
+               + ";barra=" + (CurrentBar)
+               + ";seq=" + (v_Seq)
+               + ";posicao=" + (PositionQty)
+               + ";pendentes=" + (v_Pendentes));
+
+    if not v_EntradaSolicitada and not HasPosition and not HasPendingOrders
+      and (((p_Caso = 1) and (Time = p_AntesLacuna))
+        or ((p_Caso = 2) and (Time = p_EntradaAntecipada))) then
+    begin
+      v_EntradaSolicitada := True;
+      ConsoleLog("LACUNA;SOLICITA_COMPRA;seq=" + (v_Seq));
+      BuyAtMarket(1);
+    end;
+
+    if (p_Caso = 2) and IsBought and (v_BarraProtecao <> CurrentBar)
+      and ((Time = p_HoraProtecaoInicial) or (Time = p_AntesLacuna)) then
+    begin
+      v_BarraProtecao := CurrentBar;
+      ConsoleLog("LACUNA;SOLICITA_ALVO;seq=" + (v_Seq)
+                 + ";limite=" + (BuyPrice + p_Alvo));
+      SellToCoverLimit(BuyPrice + p_Alvo, 1);
+      ConsoleLog("LACUNA;SOLICITA_STOP;seq=" + (v_Seq)
+                 + ";gatilho=" + (BuyPrice - p_Stop)
+                 + ";limite=" + (BuyPrice - p_Stop - p_FolgaStop));
+      SellToCoverStop(BuyPrice - p_Stop, BuyPrice - p_Stop - p_FolgaStop, 1);
+    end;
+
+    { Limpeza posterior para que a operacao apareca na exportacao. }
+    if (Time = p_Limpeza) and not v_LimpezaSolicitada then
+    begin
+      v_LimpezaSolicitada := True;
+      if HasPosition then
+      begin
+        ConsoleLog("LACUNA;SOLICITA_ZERAGEM_LIMPEZA;seq=" + (v_Seq));
+        ClosePosition;
+      end
+      else if HasPendingOrders then
+      begin
+        ConsoleLog("LACUNA;SOLICITA_CANCELAMENTO_LIMPEZA;seq=" + (v_Seq));
+        CancelPendingOrders;
+      end;
+    end;
+  end;
+end;
+
+=== docs/colaboracao/evidencias/WINZ26_v5_8_controles_lacuna_20261026_v1/SHA256SUMS.txt ===
+
+21f168c95141d676b5d7a00a479cae5b7cf44ce8638d9f4006888b6730ba0bc1  barras_sinteticas.csv
+b65a749e91bcd88eb0db145b935ce5017c2b9e1e2f8bef40015a27a309af0671  inputs_caso_1.json
+28a66d10db291fa4da013221eeb2dbf7ef1662f77fa838939c5e82031bf6e2df  inputs_caso_2.json
+f909e81e116e586852922394fa6469112445e1b64c036372cffdbc3477b15722  rastreio_simulador.csv
+22c9fc5c980ecdcc527dc54641250d78388a00b6a40e25443d01699820f7b7bf  README.md
+a82ed19188356b6c24b7aa704c568c454681a4326f528f92b072a1ad961809e8  resumo_controles.csv
+3146d2dcc8cb9bd6ad5c30c6fd44a2bf1d72dfa16117806c13d9c2cd52ec6fd3  sonda_lacuna_profit_v1_0.ntsl
+7a0aa154952fd0da3dd72e62d6490f90d9322b3cc8b7df1ed54644ae1c1612ca  sonda_lacuna_simulador_v1_0.ntsl
+
+=== docs/colaboracao/evidencias/WINZ26_v5_8_continuidade_intrabar_20261026_v1/matriz_v5_8.csv ===
+
+pregao;modo;exec_tick;barras_ohlc_comuns;barras_elegiveis;operacoes_profit;operacoes_replay;operacoes_exatas;solicitacoes_comparadas_pregao;solicitacoes_divergentes_pregao;primeira_divergencia_solicitacao_contexto;avaliacoes_estado_comparadas;avaliacoes_estado_divergentes;divergencias_sinais;divergencias_filtros;divergencias_indicadores;divergencias_posicao;hora_primeiro_fill_divergente_profit;hora_primeiro_fill_divergente_simulador;evento_primeiro_fill_divergente;lacunas_com_historico_prefixado;posicao_exposta_em_lacunas;ordens_canceladas_em_lacunas
+2026-10-21;reinicio;0;565;502;7;7;7;306;0;;509;0;0;0;0;0;;;;0;0;0
+2026-10-21;continuidade;0;565;502;7;7;7;306;0;;509;0;0;0;0;0;;;;0;0;0
+2026-10-26;reinicio;0;553;463;10;10;8;68;18;09:50;472;263;1;1;1;4;10:15;09:51;long;2;0;0
+2026-10-26;continuidade;0;553;463;10;10;9;62;0;;472;0;0;0;0;0;10:15;10:15;exit_long;2;0;0
+
+=== docs/colaboracao/evidencias/WINZ26_v5_8_continuidade_intrabar_20261026_v1/regressao_v5_7.csv ===
+
+pregao;modo;operacoes_profit;operacoes_exatas;barras_elegiveis;plots_sem_divergencia_de_8;artefatos_identicos_rodada_anterior;operacao_182_exata;arquivos_replay_identicos
+2026-10-21;padrao;10;10;502;8;1;;4
+2026-10-21;protecao-legada;10;10;502;8;1;;4
+2026-10-21;pos-preenchimento;10;10;502;8;1;;4
+2026-10-26;padrao;12;8;463;8;1;0;4
+2026-10-26;protecao-legada;12;11;463;8;1;0;4
+2026-10-26;pos-preenchimento;12;12;463;8;1;1;4
+
+=== docs/colaboracao/evidencias/WINZ26_v5_8_continuidade_intrabar_20261026_v1/censo_duplo_toque.csv ===
+
+pregao;operacoes_profit;operacoes_replay;pares_mesmos_horarios_entrada_saida_e_preco_entrada;operacoes_com_protecao_elegivel;barras_com_protecao_elegivel;barras_duplo_toque
+2026-10-21;7;7;7;7;149;0
+2026-10-26;10;10;10;10;26;1
+
+=== docs/colaboracao/evidencias/WINZ26_v5_8_continuidade_intrabar_20261026_v1/cobertura_negocios_10h15.csv ===
+
+pregao;rotulo_barra_ohlc;negocios;trades_profit;contratos;quantity_profit;inicio;fim;ms_com_empate;ms_distintos;sequencias_repetidas;inversoes_temporais_ordem_fisica;segundos_com_negocios;maior_intervalo_ms;maior_intervalo_ate_o_primeiro_alvo_ms;primeiro_limiar_observado;percentual_trades;percentual_contratos;delta_abertura_pontos;delta_maxima_pontos;delta_minima_pontos;delta_fechamento_pontos
+2026-10-26;10:15;12352;19050;22974;34844;10:15:00.000;10:15:59.999;1996;4773;0;4731;57;2966;1076;alvo;64.84;65.93;0.0;0.0;15.0;0.0
+
+=== docs/colaboracao/evidencias/WINZ26_v5_8_continuidade_intrabar_20261026_v1/toques_10h15.csv ===
+
+pregao;rotulo_barra_ohlc;hora_entrada_exportacao;evento_de_preco;nivel_relativo_pontos;hora;sequencia_captura;negocios_no_ms;preco_relativo
+2026-10-26;10:15;10:15;preco_entrada;0;10:15:00.000;266837;1;0.0
+2026-10-26;10:15;10:15;alvo;400;10:15:12.283;268564;47;425.0
+2026-10-26;10:15;10:15;preco_exato_alvo;400;10:15:12.283;268582;47;400.0
+2026-10-26;10:15;10:15;gatilho_stop;-350;10:15:43.810;274300;39;-360.0
+2026-10-26;10:15;10:15;preco_exato_gatilho;-350;10:15:43.810;274311;39;-350.0
+2026-10-26;10:15;10:15;limite_stop;-400;10:15:44.720;274806;8;-400.0
+
+=== docs/colaboracao/evidencias/WINZ26_v5_8_continuidade_intrabar_20261026_v1/eventos_10h15.csv ===
+
+fonte;rotulo_contexto_barra;hora_execucao_minuto;sequencia_console_profit;evento;posicao;quantidade;nivel_relativo_pontos
+Profit console;10:14;;635;avaliação com sinal de compra;0;;
+Profit console;10:14;;635;solicitação compra a mercado;0;5;
+Profit console;10:14;;636;avaliação observa posição comprada;5;;
+Profit console;10:14;;636;solicitação alvo;5;5;400
+Profit console;10:14;;636;solicitação stop-limit;5;5;-350/-400
+Profit console;10:15;;637;avaliação observa posição zerada;0;;
+Profit exportação;;10:15;;entrada;5;5;0
+Profit exportação;;10:15;;saída;0;5;400
+Simulador;10:14;;;solicitação compra a mercado;0;5;
+Simulador;10:15;10:15;;preenchimento da compra;5;5;0
+Simulador;10:14;;;solicitação alvo na avaliação extra;5;5;400
+Simulador;10:14;;;solicitação stop-limit na avaliação extra;5;5;-350/-400
+Simulador;10:15;;;gatilho do stop modelado;5;5;-350
+Simulador;10:15;10:15;;preenchimento adverso do stop;0;5;-350
