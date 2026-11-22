@@ -1,0 +1,63 @@
+{ S1 toque tardio: apenas SellToCoverLimit. Somente Backtest OHLC. }
+input
+  p_Data(1261026);
+  p_Entrada(1051);
+  p_Protecao(1052);
+  p_Cancela(1056);
+  p_Zera(1057);
+  p_Fim(1058);
+  p_Distancia(430);
+
+var
+  v_Seq, v_Pendentes : Integer;
+  v_EntradaEnviada, v_ProtecaoEnviada, v_Cancelou, v_Zerou : Boolean;
+  v_Limite : Float;
+
+begin
+  if (Date = p_Data) and (Time >= p_Entrada) and (Time <= p_Fim) then
+  begin
+    v_Seq := v_Seq + 1;
+    if HasPendingOrders then v_Pendentes := 1 else v_Pendentes := 0;
+    ConsoleLog("SONDA_S1_ALVO;AVALIACAO"
+      + ";data=" + FloatToString(Date, 0)
+      + ";hora=" + FloatToString(Time, 0)
+      + ";barra=" + FloatToString(CurrentBar, 0)
+      + ";seq=" + FloatToString(v_Seq, 0)
+      + ";posicao=" + FloatToString(PositionQty, 0)
+      + ";pendentes=" + FloatToString(v_Pendentes, 0)
+      + ";abertura=" + FloatToString(Open, 0)
+      + ";maxima=" + FloatToString(High, 0)
+      + ";minima=" + FloatToString(Low, 0)
+      + ";fechamento=" + FloatToString(Close, 0), clYellow);
+
+    if (Time = p_Entrada) and not v_EntradaEnviada and not HasPosition and not HasPendingOrders then
+    begin
+      v_EntradaEnviada := True;
+      ConsoleLog("SONDA_S1_ALVO;SOLICITA_COMPRA;seq=" + FloatToString(v_Seq, 0), clYellow);
+      BuyAtMarket(1);
+    end;
+
+    if (Time = p_Protecao) and IsBought and not v_ProtecaoEnviada then
+    begin
+      v_ProtecaoEnviada := True;
+      v_Limite := BuyPrice + p_Distancia;
+      ConsoleLog("SONDA_S1_ALVO;SOLICITA_ALVO;seq=" + FloatToString(v_Seq, 0)
+        + ";limite=" + FloatToString(v_Limite, 0), clYellow);
+      SellToCoverLimit(v_Limite, 1);
+    end;
+
+    if (Time = p_Cancela) and HasPendingOrders and not v_Cancelou then
+    begin
+      v_Cancelou := True;
+      ConsoleLog("SONDA_S1_ALVO;SOLICITA_CANCELAMENTO_LIMPEZA;seq=" + FloatToString(v_Seq, 0), clYellow);
+      CancelPendingOrders;
+    end;
+
+    if (Time = p_Zera) and HasPosition and not v_Zerou then
+    begin
+      v_Zerou := True;
+      ConsoleLog("SONDA_S1_ALVO;SOLICITA_ZERAGEM_LIMPEZA;seq=" + FloatToString(v_Seq, 0), clYellow);
+      ClosePosition;
+    end;
+  end;
+end;
