@@ -1,0 +1,7 @@
+sonda;motor;modo;contexto_envio_protecao;nivel_pts_entrada;limite_pts_entrada;pendentes_t1;pendentes_t2;pendentes_t3;pendentes_t4;hora_preenchimento_protecao;hora_saida_limpeza;pontos_saida;resultado_liquido_brl;classificacao
+s1_alvo;Simulador;padrao;10:52;430;430;1;0;0;0;;10:58;-375.0;-75.0;expirada
+s1_alvo;Simulador;diagnostico;10:52;430;430;1;1;0;0;10:55;;430.0;86.0;preenchida após espera
+s1_alvo;Profit;Backtest OHLC;10:52;430.00;430.00;1;1;0;0;10:55;;430.00;86.00;preenchida após espera
+s1_stop;Simulador;padrao;10:52;-795;-895;1;0;0;0;;10:58;-375.0;-75.0;expirada
+s1_stop;Simulador;diagnostico;10:52;-795;-895;1;1;0;0;10:55;;-795.0;-159.0;preenchida após espera
+s1_stop;Profit;Backtest OHLC;10:52;-795.00;-895.00;1;1;0;0;10:55;;-795.00;-159.00;preenchida após espera
