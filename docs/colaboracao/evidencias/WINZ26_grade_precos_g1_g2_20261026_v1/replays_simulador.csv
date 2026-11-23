@@ -1,0 +1,8 @@
+controle;protecao_contexto;gatilho_pts_entrada;limite_pts_entrada;pendentes_1053;pendentes_1054;posicao_1055;pendentes_1055;saida_execucao;ordem_simulador;saida_pts_entrada;cancela_contexto;zeragem_contexto
+g1-bruto;10:52;;447;1;1;1;1;10:58:00;closeposition;-375;10:56;10:57
+g1-mais-proximo;10:52;;445;1;1;0;0;10:55:00;selltocoverlimit;445;;
+g1-distante;10:52;;450;1;1;1;1;10:58:00;closeposition;-375;10:56;10:57
+g2-bruto;10:52;-877;-1000;1;1;1;1;10:58:00;closeposition;-375;10:56;10:57
+g2-mais-proximo;10:52;-875;-1000;1;1;0;0;10:55:00;selltocoverstop;-875;;
+g2-distante;10:52;-880;-1000;1;1;1;1;10:58:00;closeposition;-375;10:56;10:57
+g2-limite-894;10:52;-793;-894;1;1;0;0;10:55:00;selltocoverstop;-793;;

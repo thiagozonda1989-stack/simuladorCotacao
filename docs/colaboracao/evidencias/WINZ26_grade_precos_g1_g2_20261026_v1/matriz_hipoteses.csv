@@ -1,0 +1,11 @@
+sonda;hipotese;limite_solicitado_pts_entrada;gatilho_solicitado_pts_entrada;nivel_efetivo_necessario_pts_entrada;extremo_1055_pts_entrada;pendentes_1053_e_1054;posicao_1055;pendentes_1055;preenchimento_protecao_1055;preco_previsto_pts_entrada;classificacao
+G1;tick mais próximo;447;;445;445;1/1;0;0;sim;445;toque no limite
+G1;ajuste direcional em direção ao mercado;447;;445;445;1/1;0;0;sim;445;toque no limite
+G1;ajuste direcional para longe do mercado;447;;450;445;1/1;1;1;não;;pendente sem toque
+G1;preço bruto preservado;447;;447;445;1/1;1;1;não;;pendente sem toque
+G1;pendência não observada;447;;;445;variável;1;0;não;;investigar rejeição cancelamento ou expiração
+G2;tick mais próximo;-1000;-877;-875;-875;1/1;0;0;sim;-875;toque no gatilho
+G2;ajuste direcional em direção ao mercado;-1000;-877;-875;-875;1/1;0;0;sim;-875;toque no gatilho
+G2;ajuste direcional para longe do mercado;-1000;-877;-880;-875;1/1;1;1;não;;pendente sem toque
+G2;preço bruto preservado;-1000;-877;-877;-875;1/1;1;1;não;;pendente sem toque
+G2;pendência não observada;-1000;-877;;-875;variável;1;0;não;;investigar rejeição cancelamento ou expiração
