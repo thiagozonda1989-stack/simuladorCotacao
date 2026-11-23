@@ -1,0 +1,430 @@
+G1 e G2 | Execuções nativas | WINZ26 em 26/10/2026 | PR #2
+Motor d67a8731bfa1597b0bdfe4cc4064e6502822f81a | Protocolo d5b21f3c74749ce28058c58277ce9f7f4e124c96
+
+===== docs/colaboracao/evidencias/WINZ26_grade_precos_g1_g2_profit_20261026_v1/README.md =====
+# G1 e G2 no Profit Backtest OHLC · WINZ26
+
+Execuções nativas de **26/10/2026**, WINZ26, 1 minuto, fuso America/Sao_Paulo. Protocolo `d5b21f3c74749ce28058c58277ce9f7f4e124c96` e motor de comparação `d67a8731bfa1597b0bdfe4cc4064e6502822f81a`. [Protocolo e hipóteses](../WINZ26_grade_precos_g1_g2_20261026_v1/README.md)
+
+**As duas proteções preencheram às 10:55 no extremo da barra, depois de permanecerem pendentes às 10:53 e 10:54.** Os níveis brutos de G1 e G2 estavam fora da faixa. No simulador, os mesmos parâmetros brutos resultaram em saída de limpeza às 10:58. Os controles com níveis na grade reproduziram os dois resultados nativos. [Matriz Profit × simulador](matriz_profit_simulador.csv)
+
+| Sonda | Preços solicitados (pts desde a compra) | Extremo de 10:55 (pts) | Venda Profit | Resultado líquido | Replay com preços brutos |
+|---|---|---:|---:|---:|---|
+| G1 | Limite +447 | Máxima +445 | 10:55:00, +445 pts | R$ 89,00 | 10:58:00, −375 pts |
+| G2 | Gatilho −877, limite −1000 | Mínima −875 | 10:55:00, −875 pts | −R$ 175,00 | 10:58:00, −375 pts |
+
+## Parâmetros e fontes
+
+Os dois prints exibem o seletor **OHLC/Tick a Tick**, com **OHLC** selecionado. A aba Backtest está ativa e o código aparece compilado no Profit Ultra 5.0.4.33. O painel registra WINZ26, período de 1 minuto, análise de 26/10 a 26/10/2026, quantidade e máxima 1, slippage 0 ticks e “Executar nos Limites” ativo. Os parâmetros comuns são `p_Data=1261026`, `p_Entrada=1051`, `p_Protecao=1052`, `p_Cancela=1056`, `p_Zera=1057`, `p_Fim=1058`. G1 mostra `p_Alvo=447`; G2 mostra `p_Gatilho=877` e `p_Limite=1000`. Os PDFs confirmam uma operação e custo zero em cada sonda, em concordância com os CSVs. [Inventário e SHA-256 dos oito anexos](inventario_anexos.csv)
+
+Cada console contém dois blocos completos idênticos, sem avisos. O derivado conserva o primeiro bloco em ordem física com 11 eventos por sonda. Os dois registros do rótulo 10:51 correspondem a avaliações da mesma barra, sequências 1 e 2. A compra é solicitada na sequência 1, e a sequência 2 já mostra posição +1. A entrada de um contrato está registrada no CSV às **10:52:00**. A proteção é solicitada uma vez na avaliação 3, rótulo 10:52. As avaliações 4 e 5 (10:53 e 10:54) mostram posição +1 e pendência 1. A avaliação 6 (10:55) já mostra posição 0 e pendência 0. A venda de um contrato está registrada no CSV às **10:55:00**, com posição e pendências zeradas até 10:58 e sem solicitação de limpeza. [Console derivado](console_profit.csv)
+
+A janela tem oito barras consecutivas de 10:51 a 10:58. Os 32 valores OHLC dos dois consoles coincidem com as exportações locais anteriores do Profit e a série preparada usada no simulador. A barra de 10:55 tem abertura +220, máxima +445, mínima −875 e fechamento −260 pontos. As máximas e mínimas de 10:52–10:54 ficam fora dos níveis em disputa. O lote recebido não traz um CSV de barras da própria execução. [Barras relativas](barras_referencia.csv) · [Hashes das fontes de barras](fontes_barras.csv)
+
+## Interpretação e limite da evidência
+
+G1 vendeu **2 pontos abaixo** do limite solicitado, no preço da máxima de 10:55. G2 vendeu **2 pontos acima** do gatilho solicitado, no preço da mínima. Os resultados demonstram comportamento efetivo de ajuste à grade de 5 pontos na execução dessas duas proteções. Os níveis brutos preservados e o ajuste para longe do mercado (+450 e −880) ficariam fora da faixa de 10:55. O ajuste direcional em direção ao mercado também produziria +445 e −875 nesta janela. Nos controles nativos anteriores, +428 e −793 resultaram em +430 e −795, respectivamente, na direção oposta. Em conjunto, as quatro observações sustentam o **tick mais próximo para as saídas de venda testadas**. [Controles nativos anteriores](../WINZ26_v5_8_prioridade_protecao_profit_20261026_v1/matriz_profit_simulador.csv)
+
+A ordem de eventos subminuto, o preço aceito no cadastro da ordem e o momento interno da normalização exigem histórico nativo. A G2 usou limite −1000, que já estava na grade e ficou fora da faixa da barra. A rodada separada com limite −894 e exportação do limite aceito fica pendente. O escopo observado cobre essas duas saídas de venda em posição comprada com “Executar nos Limites” ativo. A regra para ordens de compra, outros tipos de ordens e o arredondamento do preço limite do stop-limit seguem em aberto.
+
+## Reprodução e publicação
+
+O motor foi preservado. Foram reexecutados quatro controles, usando o NTSL do protocolo e a série privada `WINZ26_20261026_profit_1min_privado.csv`. O perfil bruto usa os parâmetros do painel. O perfil na grade aplica diretamente +445 ou −875 no NTSL, com o limite −1000 preservado na G2. Não há ajuste de grade novo no simulador. Use destinos separados com os nomes `g1-bruto`, `g1-mais-proximo`, `g2-bruto` e `g2-mais-proximo`.
+
+```powershell
+$fonte = [IO.File]::ReadAllText($arquivoNtslProfit)
+$fonte = $fonte -creplace 'FloatToString\((\w+), 0\)', '($1)' -creplace ', clYellow\);', ');'
+[IO.File]::WriteAllText($arquivoNtslLocal, $fonte)
+# G1: p_Alvo=447 ou 445. G2: p_Gatilho=877 ou 875, p_Limite=1000.
+py -3.11 estrategia.py --csv $barrasPreparadas --ntsl $arquivoNtslLocal --inputs $inputs `
+  --saida $saidaPerfil --segundos 60 --formato ohlc --tick 5 --valor-ponto 0.2 `
+  --avaliacao-pos-preenchimento --rastrear-ordens --protecoes-ate-cancelar
+# O extrator usa PyMuPDF para conciliar os relatórios.
+py -3.11 -m tools.publicar_grade_g1_g2_profit --originais $originais --barras $barrasPreparadas `
+  --protocolo $pastaProtocolo --replays $pastaReplays --saida $saidaPublicavel
+py -3.11 -m pytest -q
+```
+
+Todos os 108 testes locais passaram, com 12 avisos de fuso do pandas já conhecidos. Os originais e as cotações absolutas ficam no Windows. [Manifesto dos derivados](SHA256SUMS.txt) · [Fontes para o Gemini](fontes_gemini.txt)
+
+===== docs/colaboracao/evidencias/WINZ26_grade_precos_g1_g2_profit_20261026_v1/barras_referencia.csv =====
+hora_barra;abertura_pts_entrada;maxima_pts_entrada;minima_pts_entrada;fechamento_pts_entrada
+10:51;110;375;-200;-5
+10:52;0;175;-425;-290
+10:53;-285;225;-355;35
+10:54;35;405;-85;220
+10:55;220;445;-875;-260
+10:56;-260;-70;-705;-90
+10:57;-95;200;-425;-375
+10:58;-375;-235;-615;-540
+
+===== docs/colaboracao/evidencias/WINZ26_grade_precos_g1_g2_profit_20261026_v1/console_profit.csv =====
+sonda;seq_console;evento;seq_avaliacao;data_ntsl;hora_contexto;currentbar;posicao;pendentes;gatilho_pts_entrada;limite_pts_entrada;linha_original;base_pts_entrada;abertura_pts_entrada;maxima_pts_entrada;minima_pts_entrada;fechamento_pts_entrada
+G1;1;AVALIACAO;1;1261026;10:51;26873;0;0;;;3;;110;375;-200;-5
+G1;2;SOLICITA_COMPRA;1;1261026;10:51;26873;0;0;;;4;;;;;
+G1;3;AVALIACAO;2;1261026;10:51;26873;1;0;;;5;;110;375;-200;-5
+G1;4;AVALIACAO;3;1261026;10:52;26874;1;0;;;6;;0;175;-425;-290
+G1;5;SOLICITA_ALVO;3;1261026;10:52;26874;1;0;;447;7;0;;;;
+G1;6;AVALIACAO;4;1261026;10:53;26875;1;1;;;8;;-285;225;-355;35
+G1;7;AVALIACAO;5;1261026;10:54;26876;1;1;;;9;;35;405;-85;220
+G1;8;AVALIACAO;6;1261026;10:55;26877;0;0;;;10;;220;445;-875;-260
+G1;9;AVALIACAO;7;1261026;10:56;26878;0;0;;;11;;-260;-70;-705;-90
+G1;10;AVALIACAO;8;1261026;10:57;26879;0;0;;;12;;-95;200;-425;-375
+G1;11;AVALIACAO;9;1261026;10:58;26880;0;0;;;13;;-375;-235;-615;-540
+G2;1;AVALIACAO;1;1261026;10:51;26873;0;0;;;3;;110;375;-200;-5
+G2;2;SOLICITA_COMPRA;1;1261026;10:51;26873;0;0;;;4;;;;;
+G2;3;AVALIACAO;2;1261026;10:51;26873;1;0;;;5;;110;375;-200;-5
+G2;4;AVALIACAO;3;1261026;10:52;26874;1;0;;;6;;0;175;-425;-290
+G2;5;SOLICITA_STOP;3;1261026;10:52;26874;1;0;-877;-1000;7;0;;;;
+G2;6;AVALIACAO;4;1261026;10:53;26875;1;1;;;8;;-285;225;-355;35
+G2;7;AVALIACAO;5;1261026;10:54;26876;1;1;;;9;;35;405;-85;220
+G2;8;AVALIACAO;6;1261026;10:55;26877;0;0;;;10;;220;445;-875;-260
+G2;9;AVALIACAO;7;1261026;10:56;26878;0;0;;;11;;-260;-70;-705;-90
+G2;10;AVALIACAO;8;1261026;10:57;26879;0;0;;;12;;-95;200;-425;-375
+G2;11;AVALIACAO;9;1261026;10:58;26880;0;0;;;13;;-375;-235;-615;-540
+
+===== docs/colaboracao/evidencias/WINZ26_grade_precos_g1_g2_profit_20261026_v1/fontes_barras.csv =====
+arquivo;bytes;sha256;barras_total;barras_janela
+SONDA_S1_ALVO_barras.csv;920086;1036ce183e5e0ff371ca10b21b2774e2f8420598c50d71b107cbe6a1eebf6863;20001;8
+SONDA_S1_STOP_barras.csv;920086;530d7efaed5c29d0973c9343ba55629915685cd4528e4e885ca3d5424935b8b5;20001;8
+barras_v58.csv;920086;1036ce183e5e0ff371ca10b21b2774e2f8420598c50d71b107cbe6a1eebf6863;20001;8
+WINZ26_20261026_profit_1min_privado.csv;62218;adace8f7c2ab691c3686e9e85533e2094b4bfd957ff7d377b3854fcb90fd92b9;553;8
+
+===== docs/colaboracao/evidencias/WINZ26_grade_precos_g1_g2_profit_20261026_v1/inventario_anexos.csv =====
+sonda;fonte;arquivo;bytes;sha256;blocos_identicos;registros_retidos
+G1;console;G1_ALVO_LIMITE_CONSOLE.txt;3033;98f08b3a1f2079c8c525c1f8eff3dcec9b7af43226fcba54291050b2affb9f2e;2;11
+G1;operacoes;G1_ALVO_LIMITE_OPERACOES.csv;431;ec2df233057a8baa61201d08a27e4f08b99796ac800fc578414509f1bdf60060;;1
+G1;relatorio;G1_ALVO_LIMITE_RELATORIO.pdf;10889;611a9ff5543fbc8b9da5e29460f06b4bd3f61ed207861e8458175dcb4f508700;;1
+G1;configuracao;G1_ALVO_LIMITE_CONFIGURACAO.png;230273;f666f4880e04a7c939c8f6225cde96f0789fa9f31b80ac089bdb9154975a63ae;;1
+G2;console;G2_STOP_LIMITE_CONSOLE.txt;3065;3b32116d5136c6d510e69849791c11d3f69db6b0542e89cde90fe28b2af5f51e;2;11
+G2;operacoes;G2_STOP_LIMITE_OPERACOES.csv;439;511c72dd07111b8bc892e183b563a660697912769cb80625d3836473d6dcbdd4;;1
+G2;relatorio;G2_STOP_LIMITE_RELATORIO.pdf;10903;0459194b5b04a4e5913dee751d63ce0307b239d36f6186947a2dd283fd44fa35;;1
+G2;configuracao;G2_STOP_LIMITE_CONFIGURACAO.png;230462;cf6d0cd715254b6f5477e34a29cd0e9670f4c2b668078e0cea830ece4bc2c9e7;;1
+
+===== docs/colaboracao/evidencias/WINZ26_grade_precos_g1_g2_profit_20261026_v1/matriz_profit_simulador.csv =====
+sonda;entrada_contexto;protecao_contexto;quantidade;abertura_1055_pts_entrada;maxima_1055_pts_entrada;minima_1055_pts_entrada;fonte;gatilho_pts_entrada;limite_pts_entrada;entrada_execucao;saida_execucao;posicao_1053;pendentes_1053;posicao_1054;pendentes_1054;posicao_1055;pendentes_1055;saida_pts_entrada;resultado_brl;ordem_simulador
+G1;10:51;10:52;1;220;445;-875;Profit;;447;10:52:00;10:55:00;1;1;1;1;0;0;445;89.00;
+G1;10:51;10:52;1;220;445;-875;Simulador bruto;;447;10:52:00;10:58:00;1;1;1;1;1;1;-375.0;-75.00;closeposition
+G1;10:51;10:52;1;220;445;-875;Simulador com níveis na grade;;445;10:52:00;10:55:00;1;1;1;1;0;0;445.0;89.00;selltocoverlimit
+G2;10:51;10:52;1;220;445;-875;Profit;-877;-1000;10:52:00;10:55:00;1;1;1;1;0;0;-875;-175.00;
+G2;10:51;10:52;1;220;445;-875;Simulador bruto;-877;-1000;10:52:00;10:58:00;1;1;1;1;1;1;-375.0;-75.00;closeposition
+G2;10:51;10:52;1;220;445;-875;Simulador com níveis na grade;-875;-1000;10:52:00;10:55:00;1;1;1;1;0;0;-875.0;-175.00;selltocoverstop
+
+===== docs/colaboracao/evidencias/WINZ26_grade_precos_g1_g2_profit_20261026_v1/SHA256SUMS.txt =====
+074fa517e10373eb1a97b24c10e6b528415ac5020132f3135bb9fb9ce9712074  README.md
+fb7cc48f9e4fe23b78c361cd809b6d53152ada22856cacadf1e45ae52ee2f420  barras_referencia.csv
+e57bfe5153e0a3b781143d8fd54ac348f8d193af9f6842db12471267345c3c9b  console_profit.csv
+df0826ab037e610895dc49d6a378c242d1400edfc3f71ad920ec1b21b86089bf  fontes_barras.csv
+27744c9cac3466d6e7a8b343572ead3dfb5b49f88ac9f34520570c7efb420376  inventario_anexos.csv
+6bd4417f90b44110ff53a39b89c8ac81cf9d031e31d298143b4169e03db3dccd  matriz_profit_simulador.csv
+
+===== docs/colaboracao/evidencias/WINZ26_grade_precos_g1_g2_20261026_v1/g1_alvo_grade_profit_v1_0.ntsl =====
+{ G1: venda limite fora da grade. Somente Backtest OHLC. }
+input
+  p_Data(1261026);
+  p_Entrada(1051);
+  p_Protecao(1052);
+  p_Cancela(1056);
+  p_Zera(1057);
+  p_Fim(1058);
+  p_Alvo(447);
+
+var
+  v_Seq, v_Pendentes : Integer;
+  v_EntradaEnviada, v_ProtecaoEnviada, v_Cancelou, v_Zerou : Boolean;
+  v_Limite : Float;
+
+begin
+  if (Date = p_Data) and (Time >= p_Entrada) and (Time <= p_Fim) then
+  begin
+    v_Seq := v_Seq + 1;
+    if HasPendingOrders then v_Pendentes := 1 else v_Pendentes := 0;
+    ConsoleLog("GRADE_G1;AVALIACAO"
+      + ";data=" + FloatToString(Date, 0)
+      + ";hora=" + FloatToString(Time, 0)
+      + ";barra=" + FloatToString(CurrentBar, 0)
+      + ";seq=" + FloatToString(v_Seq, 0)
+      + ";posicao=" + FloatToString(PositionQty, 0)
+      + ";pendentes=" + FloatToString(v_Pendentes, 0)
+      + ";abertura=" + FloatToString(Open, 0)
+      + ";maxima=" + FloatToString(High, 0)
+      + ";minima=" + FloatToString(Low, 0)
+      + ";fechamento=" + FloatToString(Close, 0), clYellow);
+
+    if (Time = p_Entrada) and not v_EntradaEnviada and not HasPosition and not HasPendingOrders then
+    begin
+      v_EntradaEnviada := True;
+      ConsoleLog("GRADE_G1;SOLICITA_COMPRA;seq=" + FloatToString(v_Seq, 0), clYellow);
+      BuyAtMarket(1);
+    end;
+
+    if (Time = p_Protecao) and IsBought and not v_ProtecaoEnviada then
+    begin
+      v_ProtecaoEnviada := True;
+      v_Limite := BuyPrice + p_Alvo;
+      ConsoleLog("GRADE_G1;SOLICITA_ALVO;seq=" + FloatToString(v_Seq, 0)
+        + ";base=" + FloatToString(BuyPrice, 0)
+        + ";limite=" + FloatToString(v_Limite, 0), clYellow);
+      SellToCoverLimit(v_Limite, 1);
+    end;
+
+    if (Time = p_Cancela) and HasPendingOrders and not v_Cancelou then
+    begin
+      v_Cancelou := True;
+      ConsoleLog("GRADE_G1;SOLICITA_CANCELAMENTO_LIMPEZA;seq=" + FloatToString(v_Seq, 0), clYellow);
+      CancelPendingOrders;
+    end;
+
+    if (Time = p_Zera) and HasPosition and not v_Zerou then
+    begin
+      v_Zerou := True;
+      ConsoleLog("GRADE_G1;SOLICITA_ZERAGEM_LIMPEZA;seq=" + FloatToString(v_Seq, 0), clYellow);
+      ClosePosition;
+    end;
+  end;
+end;
+
+===== docs/colaboracao/evidencias/WINZ26_grade_precos_g1_g2_20261026_v1/g2_stop_grade_profit_v1_0.ntsl =====
+{ G2: gatilho de venda fora da grade. Somente Backtest OHLC. }
+input
+  p_Data(1261026);
+  p_Entrada(1051);
+  p_Protecao(1052);
+  p_Cancela(1056);
+  p_Zera(1057);
+  p_Fim(1058);
+  p_Gatilho(877);
+  p_Limite(1000);
+
+var
+  v_Seq, v_Pendentes : Integer;
+  v_EntradaEnviada, v_ProtecaoEnviada, v_Cancelou, v_Zerou : Boolean;
+  v_Limite, v_Gatilho : Float;
+
+begin
+  if (Date = p_Data) and (Time >= p_Entrada) and (Time <= p_Fim) then
+  begin
+    v_Seq := v_Seq + 1;
+    if HasPendingOrders then v_Pendentes := 1 else v_Pendentes := 0;
+    ConsoleLog("GRADE_G2;AVALIACAO"
+      + ";data=" + FloatToString(Date, 0)
+      + ";hora=" + FloatToString(Time, 0)
+      + ";barra=" + FloatToString(CurrentBar, 0)
+      + ";seq=" + FloatToString(v_Seq, 0)
+      + ";posicao=" + FloatToString(PositionQty, 0)
+      + ";pendentes=" + FloatToString(v_Pendentes, 0)
+      + ";abertura=" + FloatToString(Open, 0)
+      + ";maxima=" + FloatToString(High, 0)
+      + ";minima=" + FloatToString(Low, 0)
+      + ";fechamento=" + FloatToString(Close, 0), clYellow);
+
+    if (Time = p_Entrada) and not v_EntradaEnviada and not HasPosition and not HasPendingOrders then
+    begin
+      v_EntradaEnviada := True;
+      ConsoleLog("GRADE_G2;SOLICITA_COMPRA;seq=" + FloatToString(v_Seq, 0), clYellow);
+      BuyAtMarket(1);
+    end;
+
+    if (Time = p_Protecao) and IsBought and not v_ProtecaoEnviada then
+    begin
+      v_ProtecaoEnviada := True;
+      v_Gatilho := BuyPrice - p_Gatilho;
+      v_Limite := BuyPrice - p_Limite;
+      ConsoleLog("GRADE_G2;SOLICITA_STOP;seq=" + FloatToString(v_Seq, 0)
+        + ";base=" + FloatToString(BuyPrice, 0)
+        + ";gatilho=" + FloatToString(v_Gatilho, 0)
+        + ";limite=" + FloatToString(v_Limite, 0), clYellow);
+      SellToCoverStop(v_Gatilho, v_Limite, 1);
+    end;
+
+    if (Time = p_Cancela) and HasPendingOrders and not v_Cancelou then
+    begin
+      v_Cancelou := True;
+      ConsoleLog("GRADE_G2;SOLICITA_CANCELAMENTO_LIMPEZA;seq=" + FloatToString(v_Seq, 0), clYellow);
+      CancelPendingOrders;
+    end;
+
+    if (Time = p_Zera) and HasPosition and not v_Zerou then
+    begin
+      v_Zerou := True;
+      ConsoleLog("GRADE_G2;SOLICITA_ZERAGEM_LIMPEZA;seq=" + FloatToString(v_Seq, 0), clYellow);
+      ClosePosition;
+    end;
+  end;
+end;
+
+===== docs/colaboracao/evidencias/WINZ26_grade_precos_g1_g2_20261026_v1/matriz_hipoteses.csv =====
+sonda;hipotese;limite_solicitado_pts_entrada;gatilho_solicitado_pts_entrada;nivel_efetivo_necessario_pts_entrada;extremo_1055_pts_entrada;pendentes_1053_e_1054;posicao_1055;pendentes_1055;preenchimento_protecao_1055;preco_previsto_pts_entrada;classificacao
+G1;tick mais próximo;447;;445;445;1/1;0;0;sim;445;toque no limite
+G1;ajuste direcional em direção ao mercado;447;;445;445;1/1;0;0;sim;445;toque no limite
+G1;ajuste direcional para longe do mercado;447;;450;445;1/1;1;1;não;;pendente sem toque
+G1;preço bruto preservado;447;;447;445;1/1;1;1;não;;pendente sem toque
+G1;pendência não observada;447;;;445;variável;1;0;não;;investigar rejeição cancelamento ou expiração
+G2;tick mais próximo;-1000;-877;-875;-875;1/1;0;0;sim;-875;toque no gatilho
+G2;ajuste direcional em direção ao mercado;-1000;-877;-875;-875;1/1;0;0;sim;-875;toque no gatilho
+G2;ajuste direcional para longe do mercado;-1000;-877;-880;-875;1/1;1;1;não;;pendente sem toque
+G2;preço bruto preservado;-1000;-877;-877;-875;1/1;1;1;não;;pendente sem toque
+G2;pendência não observada;-1000;-877;;-875;variável;1;0;não;;investigar rejeição cancelamento ou expiração
+
+===== docs/colaboracao/evidencias/WINZ26_grade_precos_g1_g2_20261026_v1/replays_simulador.csv =====
+controle;protecao_contexto;gatilho_pts_entrada;limite_pts_entrada;pendentes_1053;pendentes_1054;posicao_1055;pendentes_1055;saida_execucao;ordem_simulador;saida_pts_entrada;cancela_contexto;zeragem_contexto
+g1-bruto;10:52;;447;1;1;1;1;10:58:00;closeposition;-375;10:56;10:57
+g1-mais-proximo;10:52;;445;1;1;0;0;10:55:00;selltocoverlimit;445;;
+g1-distante;10:52;;450;1;1;1;1;10:58:00;closeposition;-375;10:56;10:57
+g2-bruto;10:52;-877;-1000;1;1;1;1;10:58:00;closeposition;-375;10:56;10:57
+g2-mais-proximo;10:52;-875;-1000;1;1;0;0;10:55:00;selltocoverstop;-875;;
+g2-distante;10:52;-880;-1000;1;1;1;1;10:58:00;closeposition;-375;10:56;10:57
+g2-limite-894;10:52;-793;-894;1;1;0;0;10:55:00;selltocoverstop;-793;;
+
+===== docs/colaboracao/evidencias/WINZ26_v5_8_prioridade_protecao_profit_20261026_v1/matriz_profit_simulador.csv =====
+rodada;p_Perna;p_SaidaMercado;entrada_contexto;entrada_execucao;protecao_contexto;posicao_1054;pendentes_1054;solicita_mercado_contexto;abertura_1055_pts_entrada;saida_execucao;qtd_compra;qtd_venda;operacoes;posicao_1055;pendentes_1055;posicao_1058;pendentes_1058;alvo_ou_limite_solicitado_pts_entrada;gatilho_solicitado_pts_entrada;fonte;saida_pts_entrada;saida_menos_abertura_pts;resultado_liquido_brl;ordem_simulador;gatilhos_simulador;ambiguidades_simulador
+01_alvo_controle;1;0;10:51;10:52:00;10:52;1;1;;220.00;10:55:00;1;1;1;0;0;0;0;428.00;;Profit;430.00;210.00;86.00;;;
+01_alvo_controle;1;0;10:51;10:52:00;10:52;1;1;;220.00;10:55:00;1;1;1;0;0;0;0;428.00;;Simulador painel;428.0;208.00;85.60;selltocoverlimit;0;0
+01_alvo_controle;1;0;10:51;10:52:00;10:52;1;1;;220.00;10:55:00;1;1;1;0;0;0;0;430;;Simulador padrões;430.0;210.00;86.00;selltocoverlimit;0;0
+02_alvo_mercado;1;1;10:51;10:52:00;10:52;1;1;10:54;220.00;10:55:00;1;1;1;0;0;0;0;428.00;;Profit;220.00;0.00;44.00;;;
+02_alvo_mercado;1;1;10:51;10:52:00;10:52;1;1;10:54;220.00;10:55:00;1;1;1;0;0;0;0;428.00;;Simulador painel;220.0;0.00;44.00;selltocoveratmarket;0;0
+02_alvo_mercado;1;1;10:51;10:52:00;10:52;1;1;10:54;220.00;10:55:00;1;1;1;0;0;0;0;430;;Simulador padrões;220.0;0.00;44.00;selltocoveratmarket;0;0
+03_stop_controle;2;0;10:51;10:52:00;10:52;1;1;;220.00;10:55:00;1;1;1;0;0;0;0;-894.00;-793.00;Profit;-795.00;-1015.00;-159.00;;;
+03_stop_controle;2;0;10:51;10:52:00;10:52;1;1;;220.00;10:55:00;1;1;1;0;0;0;0;-894.00;-793.00;Simulador painel;-793.0;-1013.00;-158.60;selltocoverstop;1;0
+03_stop_controle;2;0;10:51;10:52:00;10:52;1;1;;220.00;10:55:00;1;1;1;0;0;0;0;-895;-795;Simulador padrões;-795.0;-1015.00;-159.00;selltocoverstop;1;0
+04_stop_mercado;2;1;10:51;10:52:00;10:52;1;1;10:54;220.00;10:55:00;1;1;1;0;0;0;0;-894.00;-793.00;Profit;220.00;0.00;44.00;;;
+04_stop_mercado;2;1;10:51;10:52:00;10:52;1;1;10:54;220.00;10:55:00;1;1;1;0;0;0;0;-894.00;-793.00;Simulador painel;220.0;0.00;44.00;selltocoveratmarket;0;0
+04_stop_mercado;2;1;10:51;10:52:00;10:52;1;1;10:54;220.00;10:55:00;1;1;1;0;0;0;0;-895;-795;Simulador padrões;220.0;0.00;44.00;selltocoveratmarket;0;0
+
+===== tools/publicar_grade_g1_g2_profit.py =====
+"""Confere e publica a coleta nativa das sondas de grade G1 e G2."""
+import argparse
+from datetime import datetime
+from decimal import Decimal
+from pathlib import Path
+
+from tools.publicar_prioridade_protecao_profit import OHLC, file_info, pdf_totals, window_references
+from tools.publicar_sonda_lacuna_profit import debug_blocks, number, raw_operation, write_csv
+from tools.publicar_sondas_protecao_profit import TIMESTAMP_FORMAT, normalize_console, read_csv
+
+
+CASES = (
+    ("G1", "G1_ALVO_LIMITE", "SOLICITA_ALVO", "", 447, 445),
+    ("G2", "G2_STOP_LIMITE", "SOLICITA_STOP", -877, -1000, -875),
+)
+EXTENSIONS = {"CONSOLE": "txt", "OPERACOES": "csv", "RELATORIO": "pdf", "CONFIGURACAO": "png"}
+
+
+def read_native_log(case, data, entry, bars, kind):
+    blocks = debug_blocks(data)
+    if len(blocks) != 2 or blocks[0] != blocks[1]:
+        raise ValueError(f"{case}: blocos completos não são idênticos.")
+    header, *structured = blocks[0]
+    if header != "Modo de Debug" or any(not line.startswith(f"GRADE_{case};") for line in structured):
+        raise ValueError(f"{case}: mensagens não estruturadas exigem inspeção.")
+    assert data.decode("utf-8-sig").splitlines()[0] == "Código em Execução"
+    rows = normalize_console(case, structured, entry, number)
+    requests = [r for r in rows if r["evento"] != "AVALIACAO"]
+    assert [(r["evento"], r["hora_contexto"]) for r in requests] == [
+        ("SOLICITA_COMPRA", "10:51"), (kind, "10:52"),
+    ]
+    states = []
+    for index, (row, source) in enumerate(zip(rows, structured, strict=True), 3):
+        original = dict(field.split("=", 1) for field in source.split(";")[2:])
+        assert row["data_ntsl"] == 1261026
+        row["linha_original"] = index
+        row["base_pts_entrada"] = number(original["base"]) - entry if "base" in original else ""
+        for field in OHLC:
+            row[f"{field}_pts_entrada"] = ""
+        if row["evento"] == "AVALIACAO":
+            hour = row["hora_contexto"]
+            prices = {field: number(original[field]) for field in OHLC}
+            assert prices == bars[hour]
+            for field in OHLC:
+                row[f"{field}_pts_entrada"] = prices[field] - entry
+            states.append((hour, row["posicao"], row["pendentes"]))
+    assert states == [
+        ("10:51", 0, 0), ("10:51", 1, 0), ("10:52", 1, 0), ("10:53", 1, 1), ("10:54", 1, 1),
+        ("10:55", 0, 0), ("10:56", 0, 0), ("10:57", 0, 0), ("10:58", 0, 0),
+    ]
+    assert requests[1]["base_pts_entrada"] == 0
+    return rows, requests[1], len(blocks)
+
+
+def replay(name, root, expected, entry):
+    target = root / name
+    buy, sell = read_csv(target / "execucoes.csv")
+    assert [r["acao"] for r in (buy, sell)] == ["long", "exit_long"]
+    assert all(r["quantidade"] == "1" and r["pregao"] == "2026-10-26" for r in (buy, sell))
+    assert Decimal(buy["preco"]) == entry and int(sell["posicao"]) == 0
+    candles = read_csv(target / "candles.csv")
+    times = [candles[int(row["barra"]) - 1]["timestamp"][11:19] for row in (buy, sell)]
+    points = Decimal(sell["preco"]) - entry
+    assert times == ["10:52:00", expected["saida_execucao"]]
+    assert points == Decimal(expected["saida_pts_entrada"]) and sell["ordem"] == expected["ordem_simulador"]
+    logs = normalize_console(name, [row["mensagem"] for row in read_csv(target / "console.csv")
+                                    if row["mensagem"].startswith("GRADE_")], entry, Decimal)
+    states = {row["hora_contexto"]: row for row in logs if row["evento"] == "AVALIACAO"}
+    status = {f"{field}_{hour.replace(':', '')}": states[hour][field]
+              for hour in ("10:53", "10:54", "10:55") for field in ("posicao", "pendentes")}
+    assert all(status[key] == int(expected[key]) for key in expected.keys() & status.keys())
+    return dict(entrada_execucao=times[0], saida_execucao=times[1], **status,
+                saida_pts_entrada=points, resultado_brl=Decimal(sell["liquido_reais"]).quantize(Decimal("0.01")),
+                ordem_simulador=sell["ordem"])
+
+
+def collect(args):
+    bars, sources = window_references(args.originais, args.barras)
+    entry = bars["10:52"]["abertura"]
+    geometry = [dict(hora_barra=hour, **{f"{key}_pts_entrada": value-entry for key, value in fields.items()})
+                for hour, fields in bars.items()]
+    previous_bars = read_csv(args.protocolo / "barras_referencia.csv", ";")
+    assert [{key: str(value) for key, value in row.items()} for row in geometry] == previous_bars
+    assert [bars["10:55"][k] - entry for k in OHLC] == [220, 445, -875, -260]
+    previous = {row["controle"]: row for row in read_csv(args.protocolo / "replays_simulador.csv", ";")}
+    all_rows, matrix, inventory = [], [], []
+    for case, prefix, kind, gate, limit, native_points in CASES:
+        paths = {spec: args.originais / f"{prefix}_{spec}.{ext}" for spec, ext in EXTENSIONS.items()}
+        data = {spec: path.read_bytes() for spec, path in paths.items()}
+        native = raw_operation(data["OPERACOES"])
+        assert (native["Ativo"], native["Lado"], native["Qtd Compra"], native["Qtd Venda"]) == ("WINZ26", "C", "1", "1")
+        buy, sell = (datetime.strptime(native[key], TIMESTAMP_FORMAT) for key in ("Abertura", "Fechamento"))
+        assert [d.isoformat() for d in (buy, sell)] == ["2026-10-26T10:52:00", "2026-10-26T10:55:00"]
+        assert number(native["Preço Compra"]) == entry and number(native["Preço Venda"]) - entry == native_points
+        net, fees, count = pdf_totals(paths["RELATORIO"])
+        assert (net, fees, count) == (number(native["Total"]), Decimal(0), 1)
+        assert fees == number(native["Comissões"]) and net == Decimal(native_points) * Decimal("0.20")
+        log, protection, copies = read_native_log(case, data["CONSOLE"], entry, bars, kind)
+        assert (protection["gatilho_pts_entrada"], protection["limite_pts_entrada"]) == (gate, limit)
+        all_rows.extend(log)
+        inventory.extend(dict(sonda=case, fonte=spec.lower()) | file_info(path, data[spec]) | dict(
+            blocos_identicos=copies if spec == "CONSOLE" else "",
+            registros_retidos=len(log) if spec == "CONSOLE" else 1,
+        ) for spec, path in paths.items())
+        shared = dict(sonda=case, entrada_contexto="10:51", protecao_contexto="10:52",
+                      quantidade=1, abertura_1055_pts_entrada=220, maxima_1055_pts_entrada=445,
+                      minima_1055_pts_entrada=-875)
+        matrix.append(shared | dict(fonte="Profit", gatilho_pts_entrada=gate, limite_pts_entrada=limit,
+                                    entrada_execucao=str(buy.time()), saida_execucao=str(sell.time()),
+                                    posicao_1053=1, pendentes_1053=1, posicao_1054=1, pendentes_1054=1,
+                                    posicao_1055=0, pendentes_1055=0, saida_pts_entrada=native_points,
+                                    resultado_brl=net, ordem_simulador=""))
+        for profile, label in (("bruto", "Simulador bruto"), ("mais-proximo", "Simulador com níveis na grade")):
+            name = f"{case.lower()}-{profile}"
+            expected = previous[name]
+            result = replay(name, args.replays, expected, entry)
+            matrix.append(shared | dict(fonte=label, gatilho_pts_entrada=expected["gatilho_pts_entrada"],
+                                        limite_pts_entrada=expected["limite_pts_entrada"]) | result)
+    return {"inventario_anexos.csv": inventory, "console_profit.csv": all_rows,
+            "matriz_profit_simulador.csv": matrix, "barras_referencia.csv": geometry,
+            "fontes_barras.csv": sources}
+
+
+def main():
+    command = argparse.ArgumentParser(description=__doc__)
+    for key in ("originais", "barras", "protocolo", "replays", "saida"):
+        command.add_argument(f"--{key}", type=Path, required=True)
+    args = command.parse_args()
+    outputs = collect(args)
+    args.saida.mkdir()
+    for filename, rows in outputs.items():
+        write_csv(args.saida / filename, rows)
+
+
+if __name__ == "__main__":
+    main()

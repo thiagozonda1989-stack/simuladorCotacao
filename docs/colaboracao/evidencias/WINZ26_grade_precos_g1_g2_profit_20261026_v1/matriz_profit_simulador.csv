@@ -1,0 +1,7 @@
+sonda;entrada_contexto;protecao_contexto;quantidade;abertura_1055_pts_entrada;maxima_1055_pts_entrada;minima_1055_pts_entrada;fonte;gatilho_pts_entrada;limite_pts_entrada;entrada_execucao;saida_execucao;posicao_1053;pendentes_1053;posicao_1054;pendentes_1054;posicao_1055;pendentes_1055;saida_pts_entrada;resultado_brl;ordem_simulador
+G1;10:51;10:52;1;220;445;-875;Profit;;447;10:52:00;10:55:00;1;1;1;1;0;0;445;89.00;
+G1;10:51;10:52;1;220;445;-875;Simulador bruto;;447;10:52:00;10:58:00;1;1;1;1;1;1;-375.0;-75.00;closeposition
+G1;10:51;10:52;1;220;445;-875;Simulador com níveis na grade;;445;10:52:00;10:55:00;1;1;1;1;0;0;445.0;89.00;selltocoverlimit
+G2;10:51;10:52;1;220;445;-875;Profit;-877;-1000;10:52:00;10:55:00;1;1;1;1;0;0;-875;-175.00;
+G2;10:51;10:52;1;220;445;-875;Simulador bruto;-877;-1000;10:52:00;10:58:00;1;1;1;1;1;1;-375.0;-75.00;closeposition
+G2;10:51;10:52;1;220;445;-875;Simulador com níveis na grade;-875;-1000;10:52:00;10:55:00;1;1;1;1;0;0;-875.0;-175.00;selltocoverstop
