@@ -1,0 +1,1061 @@
+Persist?ncia experimental de prote??es OHLC | WINZ26 | PR #2
+Motor executado d67a8731bfa1597b0bdfe4cc4064e6502822f81a
+
+===== docs/colaboracao/evidencias/WINZ26_v5_8_protecoes_ate_cancelar_20261026_v1/README.md =====
+# Persistência experimental de proteções no replay OHLC
+
+Motor executado `d67a8731bfa1597b0bdfe4cc4064e6502822f81a`. Motor de referência `142dbe882ae2a0436c4273a6e5bfa1268222e5d3`. Evidência nativa das sondas S1 `2a180c3c437cbb2bb8c3824ebb0f7275ad4f1e7a`. [S1 nativa](../WINZ26_v5_8_s1_toque_tardio_profit_20261026_v1/README.md) · [Parecer Claude](https://github.com/thiagozonda1989-stack/simuladorCotacao/pull/2#issuecomment-7115147308) · [Parecer Gemini](https://github.com/thiagozonda1989-stack/simuladorCotacao/pull/2#issuecomment-7115175173)
+
+## Regra do simulador
+
+- `--protecoes-ate-cancelar` vem desligada e é exclusiva do OHLC. Com a validade normal de uma barra, a opção conserva saídas limite e stop-limit do lado da posição aberta, em barras consecutivas. A elegibilidade continua valendo, inclusive com latência. As entradas, os stops sem limite e as ordens genéricas limite/stop por `SendOrder` seguem a validade normal.
+- `CancelPendingOrders`, zeragem, mudança de pregão e lacunas mantêm o descarte de proteções e os contadores existentes. O teste combinado preserva apenas a entrada a mercado elegível através da lacuna. A avaliação extra usa a barra anterior e pode criar proteção para a posição recém-aberta. Renovação idêntica usa a mesma chave e conserva a elegibilidade e o estado de disparo.
+- Quando uma saída a mercado elegível encerra a posição na abertura e há proteção elegível, o simulador preenche a mercado, pelo preço de abertura com o slippage configurado, e remove as saídas da posição. Em seguida o NTSL avalia o fechamento com posição zerada. Os toques posteriores da barra não registram disparo, preenchimento adicional ou ambiguidade. A regra também reconhece a ordem genérica a mercado exatamente redutora via `SendOrder`. Duplo toque de proteções sem zeragem na abertura continua sujeito à regra adversa de OHLC.
+- `--no-ordem-so-proxima-barra` tem precedência quando as duas flags são usadas juntas. O diagnóstico global mantém sua validade geral e sua política de ambiguidade anterior.
+- A evidência nativa confirma as duas proteções isoladas em posição comprada. A prioridade da saída a mercado é uma regra do simulador com sonda Profit à espera de execução. OCO nativo, preenchimento parcial, renovação com preço alterado e persistência isolada em posição vendida são validações próprias.
+
+## S1 · toque tardio em WINZ26
+
+WINZ26 em 26/10/2026, barras de 1 minuto, fuso America/Sao_Paulo, tick 5, um contrato, R$ 0,20 por ponto, zero custo e slippage. A proteção é enviada uma vez no contexto 10:52. A primeira barra que pode tocar o nível é 10:55 (t+3). O rótulo 10:51 da avaliação extra e a hora 10:52 da entrada pertencem a campos distintos.
+
+| Motor e modo | Pendentes em t+1 / t+2 / t+3 | Alvo | Stop-limit |
+|---|---|---|---|
+| Profit Backtest OHLC | 1 / 1 / 0 | 10:55, +430 pontos | 10:55, −795 pontos |
+| Simulador padrão | 1 / 0 / 0 | 10:58, limpeza, −375 pontos | 10:58, limpeza, −375 pontos |
+| Simulador com persistência | 1 / 1 / 0 | 10:55, +430 pontos | 10:55, −795 pontos |
+| Simulador com diagnóstico global, com ou sem persistência | 1 / 1 / 0 | 10:55, +430 pontos | 10:55, −795 pontos |
+
+Nos quatro arquivos de execução, o padrão ficou idêntico à rodada S1 anterior. A opção ativa igualou os quatro arquivos do diagnóstico global nas duas pernas. A primeira divergência do padrão antes da saída é a pendência às 10:54. [Matriz S1](sondas_s1.csv) · [Matriz Profit nativa](../WINZ26_v5_8_s1_toque_tardio_profit_20261026_v1/matriz_profit_simulador.csv)
+
+## Sonda de prioridade na abertura
+
+Execute no **Profit Backtest OHLC**, WINZ26, 1 minuto, 26/10/2026, conta de simulação no backtest, quantidade e máximo 1, slippage e custos zero, “Executar nos Limites” ativo e nenhuma zeragem horária externa entre 10:51 e 10:58. Faça quatro rodadas independentes combinando `p_Perna=1` (alvo) ou `2` (stop-limit) com `p_SaidaMercado=0` (controle) ou `1` (envio a mercado). Os demais parâmetros ficam no padrão da sonda. Compile como estratégia de execução para o Backtest OHLC.
+
+Na janela S1, a barra 10:55 abre a +220 pontos em relação à entrada, entre o alvo +430 e o gatilho −795. A máxima chega a +445 e a mínima a −875, dentro do limite de venda −895. Em 10:54 a sonda só envia a saída a mercado se observar posição comprada e a única proteção pendente. Ela não solicita cancelamento nesse ponto. Com a opção ativa, os controles locais reproduziram as S1. Nas duas variantes com mercado, houve **uma única saída a mercado às 10:55, a +220 pontos**, posição final zero, sem evento de gatilho nem barra ambígua. Para o Profit, o horário em minutos não separa as hipóteses. Use o preço e, se disponível, o tipo e o ciclo nativo de cada ordem. [Sonda NTSL](sonda_prioridade_mercado_protecao_profit_v1_0.ntsl) · [Resultados do simulador](sonda_prioridade_simulador.csv)
+
+Para cada combinação, exporte:
+
+1. Console Debug completo com os eventos `PRIORIDADE;`, da avaliação inicial à última, preservando a ordem física e eventuais avisos. Use um arquivo por execução.
+2. CSV de operações com ativação, lado, horários de entrada e saída, preços, quantidades e resultado. Campos de ordem ausentes podem ser complementados com a exportação nativa.
+3. CSV de barras de 26/10 com timestamp, abertura, máxima, mínima e fechamento, cobrindo pelo menos 10:51 a 10:58.
+4. PDF do relatório e captura da configuração do ativo, período, modo OHLC, parâmetros, quantidade, slippage, custos e execução nos limites.
+5. Se o Backtest oferecer histórico nativo da mesma execução, exporte IDs, tipo, preço, quantidade, timestamps subminuto de criação, disparo, execução e cancelamento, e vínculo OCO quando existir. Uma lista proveniente de Replay separado deve vir identificada como tal.
+
+## Regressões privadas e controles de lacuna
+
+| Estratégia | Configuração | 21/10 | 26/10 |
+|---|---|---:|---:|
+| v5.7 | Padrão | 10/10 | 8/12 |
+| v5.7 | Proteção legada | 10/10 | 11/12 |
+| v5.7 | Avaliação pós-preenchimento, incluindo os dois modos pareados | 10/10 | 12/12 |
+| v5.8 | Reinício em lacunas | 7/7 | 8/10 |
+| v5.8 | Continuidade, com ou sem entrada através de lacuna | 7/7 | 9/10 |
+
+Resultados idênticos com a nova opção desligada e ligada. A operação #182 da v5.7 corresponde por entrada, saída, lado, quantidade e preços nos três modos com avaliação pós-preenchimento. Em 26/10, com continuidade, as 62 solicitações comparadas da v5.8 continuam exatas. A saída das **10:15** permanece ambígua em OHLC. O Profit registra alvo de +400 pontos e o simulador stop de −350. A proteção persistente também não atravessou o gap no caso 2 da V3. O simulador cancelou duas pendências, manteve a exposição na retomada e saiu na limpeza às 09:42. O Profit saiu às 09:40. No caso 1, a compra atravessou a lacuna às 09:39 sem cancelamento e saiu às 09:42 nas duas configurações. [Matriz v5.7](regressao_v57.csv) · [Matriz v5.8](regressao_v58.csv) · [Controle da lacuna](controle_lacuna.csv)
+
+Foram 32 replays v5.7/v5.8 em 16 cenários. Para cada cenário foram comparados dois pares, referência × desligado e desligado × ligado. `candles.csv`, `execucoes.csv`, `console.csv`, `eventos_ordens.csv` e `estrategia.ntsl` foram idênticos byte a byte nas **160 comparações**. As outras 64 comparações apontam somente a inclusão da flag em `metricas.json` e em `relatorio.html`, e a mudança do valor entre ligado e desligado. Removendo esse campo, o JSON e o HTML correspondem nos dois pares de cada cenário. [Comparação por arquivo](comparacao_artefatos.csv)
+
+## Reprodução
+
+Use os insumos privados da [rodada de referência](../WINZ26_v5_8_entrada_mercado_lacuna_20261026_v1/README.md#comandos-de-reprodução). A janela v5.7 usa o CSV preparado do respectivo pregão e `p_Lote=1`. A v5.8 usa o histórico preparado com o pregão anterior, o NTSL de auditoria do simulador, o JSON versionado (`p_Exec_Tick=0`, lote 5) e o corte de 63 barras por segmento no comparador. Os insumos estão verificados por hash, e a coleta de prioridade e S1 usa as barras preparadas de 26/10. Os originais, os relatórios HTML e as exportações inteiras dos replays ficam no Windows. [Inventário dos insumos](insumos_privados.csv)
+
+```powershell
+$base = @('--formato','ohlc','--segundos','60','--tick','5','--valor-ponto','0.2','--rastrear-ordens')
+$paridade = @('--volume-financeiro-ntsl','--agressao-referencia-injetada','--vwap-continuo-lacunas')
+$extra = @('--avaliacao-pos-preenchimento')
+$cont = @('--historico-continuo-lacunas')
+$entrada = $cont + @('--entrada-mercado-atraves-lacuna')
+$flag = @('--protecoes-ate-cancelar') # Repetir com $flag = @().
+# v5.7: $modo = @(), @('--protecao-no-candle-entrada'), $extra, ($extra + $cont) ou ($extra + $entrada).
+py -3.11 estrategia.py --csv $barrasV57 --ntsl $ntslV57 --inputs $jsonV57 --saida $saidaV57 @base @paridade @modo @flag
+# v5.8: $modo = @(), $cont ou $entrada. $barrasV58 contém o pregão anterior.
+py -3.11 estrategia.py --csv $barrasV58 --ntsl $auditoriaV58 --inputs $jsonV58 --saida $saidaV58 @base @paridade @extra @modo @flag
+py -3.11 -m tools.comparar_v5_8 --data $dia --aquecimento 63 --barras-profit $barrasProfit `
+  --operacoes-profit $operacoesProfit --console-profit $consoleProfit --barras-preparadas $barrasV58 `
+  --candles-simulador "$saidaV58/candles.csv" --console-simulador "$saidaV58/console.csv" `
+  --execucoes-simulador "$saidaV58/execucoes.csv" --saida "$saidaV58.comparacao.json"
+# S1 e prioridade: na cópia de NTSL para o simulador, use (expr) no lugar de FloatToString(expr, 0)
+# e remova o argumento de cor clYellow. Na sonda de prioridade passe o JSON de p_Perna e p_SaidaMercado.
+py -3.11 estrategia.py --csv $barrasV57 --ntsl $sondaLocal --saida $saidaSonda @base @extra @flag
+# V3: JSON do caso 1 ou 2.
+py -3.11 estrategia.py --csv $barrasV57 --ntsl $sondaV3 --inputs $jsonCaso --saida $saidaV3 @base @extra @entrada @flag
+py -3.11 -m tools.publicar_protecoes_ohlc --atuais $replays --referencia $referencia --referencia-s1 $referenciaS1 `
+  --operacoes-v57 $operacoesV57 --saida $publicavel
+py -3.11 -m pytest -q
+```
+
+O extrator lê uma pasta com saídas nomeadas `${dia}-v57-${modo}-${estado}`, `v58-${dia}-${modo}-${estado}`, `s1-${perna}-${estado}`, `prioridade-${p_Perna}-${p_SaidaMercado}` e `sonda-${caso}-entrada-${estado}`. O estado é `off` ou `on`; em S1, também `global` e `global-e-on`. Os modos estão nos CSVs. A execução com `--motor-ticks --protecoes-ate-cancelar` foi rejeitada pela CLI com código 2 antes de gravar os resultados.
+
+A suíte passou com **108 testes**, incluindo 19 novos casos, e 12 avisos de timezone do pandas já conhecidos. [Fonte do extrator](../../../../tools/publicar_protecoes_ohlc.py) · [Testes](../../../../tests/test_protecoes_ohlc.py) · [Manifesto](SHA256SUMS.txt) · [Fontes para o Gemini](fontes_gemini.txt)
+
+===== docs/colaboracao/evidencias/WINZ26_v5_8_protecoes_ate_cancelar_20261026_v1/comparacao_artefatos.csv =====
+conjunto;comparacao;arquivo;bytes_iguais;conteudo_igual_sem_flag
+2026-10-21-v57-padrao;referencia_x_off;candles.csv;1;
+2026-10-21-v57-padrao;referencia_x_off;execucoes.csv;1;
+2026-10-21-v57-padrao;referencia_x_off;console.csv;1;
+2026-10-21-v57-padrao;referencia_x_off;eventos_ordens.csv;1;
+2026-10-21-v57-padrao;referencia_x_off;estrategia.ntsl;1;
+2026-10-21-v57-padrao;referencia_x_off;metricas.json;0;1
+2026-10-21-v57-padrao;referencia_x_off;relatorio.html;0;1
+2026-10-21-v57-padrao;off_x_on;candles.csv;1;
+2026-10-21-v57-padrao;off_x_on;execucoes.csv;1;
+2026-10-21-v57-padrao;off_x_on;console.csv;1;
+2026-10-21-v57-padrao;off_x_on;eventos_ordens.csv;1;
+2026-10-21-v57-padrao;off_x_on;estrategia.ntsl;1;
+2026-10-21-v57-padrao;off_x_on;metricas.json;0;1
+2026-10-21-v57-padrao;off_x_on;relatorio.html;0;1
+2026-10-21-v57-protecao-legada;referencia_x_off;candles.csv;1;
+2026-10-21-v57-protecao-legada;referencia_x_off;execucoes.csv;1;
+2026-10-21-v57-protecao-legada;referencia_x_off;console.csv;1;
+2026-10-21-v57-protecao-legada;referencia_x_off;eventos_ordens.csv;1;
+2026-10-21-v57-protecao-legada;referencia_x_off;estrategia.ntsl;1;
+2026-10-21-v57-protecao-legada;referencia_x_off;metricas.json;0;1
+2026-10-21-v57-protecao-legada;referencia_x_off;relatorio.html;0;1
+2026-10-21-v57-protecao-legada;off_x_on;candles.csv;1;
+2026-10-21-v57-protecao-legada;off_x_on;execucoes.csv;1;
+2026-10-21-v57-protecao-legada;off_x_on;console.csv;1;
+2026-10-21-v57-protecao-legada;off_x_on;eventos_ordens.csv;1;
+2026-10-21-v57-protecao-legada;off_x_on;estrategia.ntsl;1;
+2026-10-21-v57-protecao-legada;off_x_on;metricas.json;0;1
+2026-10-21-v57-protecao-legada;off_x_on;relatorio.html;0;1
+2026-10-21-v57-pos-preenchimento;referencia_x_off;candles.csv;1;
+2026-10-21-v57-pos-preenchimento;referencia_x_off;execucoes.csv;1;
+2026-10-21-v57-pos-preenchimento;referencia_x_off;console.csv;1;
+2026-10-21-v57-pos-preenchimento;referencia_x_off;eventos_ordens.csv;1;
+2026-10-21-v57-pos-preenchimento;referencia_x_off;estrategia.ntsl;1;
+2026-10-21-v57-pos-preenchimento;referencia_x_off;metricas.json;0;1
+2026-10-21-v57-pos-preenchimento;referencia_x_off;relatorio.html;0;1
+2026-10-21-v57-pos-preenchimento;off_x_on;candles.csv;1;
+2026-10-21-v57-pos-preenchimento;off_x_on;execucoes.csv;1;
+2026-10-21-v57-pos-preenchimento;off_x_on;console.csv;1;
+2026-10-21-v57-pos-preenchimento;off_x_on;eventos_ordens.csv;1;
+2026-10-21-v57-pos-preenchimento;off_x_on;estrategia.ntsl;1;
+2026-10-21-v57-pos-preenchimento;off_x_on;metricas.json;0;1
+2026-10-21-v57-pos-preenchimento;off_x_on;relatorio.html;0;1
+2026-10-21-v57-pareado-continuidade;referencia_x_off;candles.csv;1;
+2026-10-21-v57-pareado-continuidade;referencia_x_off;execucoes.csv;1;
+2026-10-21-v57-pareado-continuidade;referencia_x_off;console.csv;1;
+2026-10-21-v57-pareado-continuidade;referencia_x_off;eventos_ordens.csv;1;
+2026-10-21-v57-pareado-continuidade;referencia_x_off;estrategia.ntsl;1;
+2026-10-21-v57-pareado-continuidade;referencia_x_off;metricas.json;0;1
+2026-10-21-v57-pareado-continuidade;referencia_x_off;relatorio.html;0;1
+2026-10-21-v57-pareado-continuidade;off_x_on;candles.csv;1;
+2026-10-21-v57-pareado-continuidade;off_x_on;execucoes.csv;1;
+2026-10-21-v57-pareado-continuidade;off_x_on;console.csv;1;
+2026-10-21-v57-pareado-continuidade;off_x_on;eventos_ordens.csv;1;
+2026-10-21-v57-pareado-continuidade;off_x_on;estrategia.ntsl;1;
+2026-10-21-v57-pareado-continuidade;off_x_on;metricas.json;0;1
+2026-10-21-v57-pareado-continuidade;off_x_on;relatorio.html;0;1
+2026-10-21-v57-pareado-entrada;referencia_x_off;candles.csv;1;
+2026-10-21-v57-pareado-entrada;referencia_x_off;execucoes.csv;1;
+2026-10-21-v57-pareado-entrada;referencia_x_off;console.csv;1;
+2026-10-21-v57-pareado-entrada;referencia_x_off;eventos_ordens.csv;1;
+2026-10-21-v57-pareado-entrada;referencia_x_off;estrategia.ntsl;1;
+2026-10-21-v57-pareado-entrada;referencia_x_off;metricas.json;0;1
+2026-10-21-v57-pareado-entrada;referencia_x_off;relatorio.html;0;1
+2026-10-21-v57-pareado-entrada;off_x_on;candles.csv;1;
+2026-10-21-v57-pareado-entrada;off_x_on;execucoes.csv;1;
+2026-10-21-v57-pareado-entrada;off_x_on;console.csv;1;
+2026-10-21-v57-pareado-entrada;off_x_on;eventos_ordens.csv;1;
+2026-10-21-v57-pareado-entrada;off_x_on;estrategia.ntsl;1;
+2026-10-21-v57-pareado-entrada;off_x_on;metricas.json;0;1
+2026-10-21-v57-pareado-entrada;off_x_on;relatorio.html;0;1
+v58-2026-10-21-reinicio;referencia_x_off;candles.csv;1;
+v58-2026-10-21-reinicio;referencia_x_off;execucoes.csv;1;
+v58-2026-10-21-reinicio;referencia_x_off;console.csv;1;
+v58-2026-10-21-reinicio;referencia_x_off;eventos_ordens.csv;1;
+v58-2026-10-21-reinicio;referencia_x_off;estrategia.ntsl;1;
+v58-2026-10-21-reinicio;referencia_x_off;metricas.json;0;1
+v58-2026-10-21-reinicio;referencia_x_off;relatorio.html;0;1
+v58-2026-10-21-reinicio;off_x_on;candles.csv;1;
+v58-2026-10-21-reinicio;off_x_on;execucoes.csv;1;
+v58-2026-10-21-reinicio;off_x_on;console.csv;1;
+v58-2026-10-21-reinicio;off_x_on;eventos_ordens.csv;1;
+v58-2026-10-21-reinicio;off_x_on;estrategia.ntsl;1;
+v58-2026-10-21-reinicio;off_x_on;metricas.json;0;1
+v58-2026-10-21-reinicio;off_x_on;relatorio.html;0;1
+v58-2026-10-21-continuidade;referencia_x_off;candles.csv;1;
+v58-2026-10-21-continuidade;referencia_x_off;execucoes.csv;1;
+v58-2026-10-21-continuidade;referencia_x_off;console.csv;1;
+v58-2026-10-21-continuidade;referencia_x_off;eventos_ordens.csv;1;
+v58-2026-10-21-continuidade;referencia_x_off;estrategia.ntsl;1;
+v58-2026-10-21-continuidade;referencia_x_off;metricas.json;0;1
+v58-2026-10-21-continuidade;referencia_x_off;relatorio.html;0;1
+v58-2026-10-21-continuidade;off_x_on;candles.csv;1;
+v58-2026-10-21-continuidade;off_x_on;execucoes.csv;1;
+v58-2026-10-21-continuidade;off_x_on;console.csv;1;
+v58-2026-10-21-continuidade;off_x_on;eventos_ordens.csv;1;
+v58-2026-10-21-continuidade;off_x_on;estrategia.ntsl;1;
+v58-2026-10-21-continuidade;off_x_on;metricas.json;0;1
+v58-2026-10-21-continuidade;off_x_on;relatorio.html;0;1
+v58-2026-10-21-entrada;referencia_x_off;candles.csv;1;
+v58-2026-10-21-entrada;referencia_x_off;execucoes.csv;1;
+v58-2026-10-21-entrada;referencia_x_off;console.csv;1;
+v58-2026-10-21-entrada;referencia_x_off;eventos_ordens.csv;1;
+v58-2026-10-21-entrada;referencia_x_off;estrategia.ntsl;1;
+v58-2026-10-21-entrada;referencia_x_off;metricas.json;0;1
+v58-2026-10-21-entrada;referencia_x_off;relatorio.html;0;1
+v58-2026-10-21-entrada;off_x_on;candles.csv;1;
+v58-2026-10-21-entrada;off_x_on;execucoes.csv;1;
+v58-2026-10-21-entrada;off_x_on;console.csv;1;
+v58-2026-10-21-entrada;off_x_on;eventos_ordens.csv;1;
+v58-2026-10-21-entrada;off_x_on;estrategia.ntsl;1;
+v58-2026-10-21-entrada;off_x_on;metricas.json;0;1
+v58-2026-10-21-entrada;off_x_on;relatorio.html;0;1
+2026-10-26-v57-padrao;referencia_x_off;candles.csv;1;
+2026-10-26-v57-padrao;referencia_x_off;execucoes.csv;1;
+2026-10-26-v57-padrao;referencia_x_off;console.csv;1;
+2026-10-26-v57-padrao;referencia_x_off;eventos_ordens.csv;1;
+2026-10-26-v57-padrao;referencia_x_off;estrategia.ntsl;1;
+2026-10-26-v57-padrao;referencia_x_off;metricas.json;0;1
+2026-10-26-v57-padrao;referencia_x_off;relatorio.html;0;1
+2026-10-26-v57-padrao;off_x_on;candles.csv;1;
+2026-10-26-v57-padrao;off_x_on;execucoes.csv;1;
+2026-10-26-v57-padrao;off_x_on;console.csv;1;
+2026-10-26-v57-padrao;off_x_on;eventos_ordens.csv;1;
+2026-10-26-v57-padrao;off_x_on;estrategia.ntsl;1;
+2026-10-26-v57-padrao;off_x_on;metricas.json;0;1
+2026-10-26-v57-padrao;off_x_on;relatorio.html;0;1
+2026-10-26-v57-protecao-legada;referencia_x_off;candles.csv;1;
+2026-10-26-v57-protecao-legada;referencia_x_off;execucoes.csv;1;
+2026-10-26-v57-protecao-legada;referencia_x_off;console.csv;1;
+2026-10-26-v57-protecao-legada;referencia_x_off;eventos_ordens.csv;1;
+2026-10-26-v57-protecao-legada;referencia_x_off;estrategia.ntsl;1;
+2026-10-26-v57-protecao-legada;referencia_x_off;metricas.json;0;1
+2026-10-26-v57-protecao-legada;referencia_x_off;relatorio.html;0;1
+2026-10-26-v57-protecao-legada;off_x_on;candles.csv;1;
+2026-10-26-v57-protecao-legada;off_x_on;execucoes.csv;1;
+2026-10-26-v57-protecao-legada;off_x_on;console.csv;1;
+2026-10-26-v57-protecao-legada;off_x_on;eventos_ordens.csv;1;
+2026-10-26-v57-protecao-legada;off_x_on;estrategia.ntsl;1;
+2026-10-26-v57-protecao-legada;off_x_on;metricas.json;0;1
+2026-10-26-v57-protecao-legada;off_x_on;relatorio.html;0;1
+2026-10-26-v57-pos-preenchimento;referencia_x_off;candles.csv;1;
+2026-10-26-v57-pos-preenchimento;referencia_x_off;execucoes.csv;1;
+2026-10-26-v57-pos-preenchimento;referencia_x_off;console.csv;1;
+2026-10-26-v57-pos-preenchimento;referencia_x_off;eventos_ordens.csv;1;
+2026-10-26-v57-pos-preenchimento;referencia_x_off;estrategia.ntsl;1;
+2026-10-26-v57-pos-preenchimento;referencia_x_off;metricas.json;0;1
+2026-10-26-v57-pos-preenchimento;referencia_x_off;relatorio.html;0;1
+2026-10-26-v57-pos-preenchimento;off_x_on;candles.csv;1;
+2026-10-26-v57-pos-preenchimento;off_x_on;execucoes.csv;1;
+2026-10-26-v57-pos-preenchimento;off_x_on;console.csv;1;
+2026-10-26-v57-pos-preenchimento;off_x_on;eventos_ordens.csv;1;
+2026-10-26-v57-pos-preenchimento;off_x_on;estrategia.ntsl;1;
+2026-10-26-v57-pos-preenchimento;off_x_on;metricas.json;0;1
+2026-10-26-v57-pos-preenchimento;off_x_on;relatorio.html;0;1
+2026-10-26-v57-pareado-continuidade;referencia_x_off;candles.csv;1;
+2026-10-26-v57-pareado-continuidade;referencia_x_off;execucoes.csv;1;
+2026-10-26-v57-pareado-continuidade;referencia_x_off;console.csv;1;
+2026-10-26-v57-pareado-continuidade;referencia_x_off;eventos_ordens.csv;1;
+2026-10-26-v57-pareado-continuidade;referencia_x_off;estrategia.ntsl;1;
+2026-10-26-v57-pareado-continuidade;referencia_x_off;metricas.json;0;1
+2026-10-26-v57-pareado-continuidade;referencia_x_off;relatorio.html;0;1
+2026-10-26-v57-pareado-continuidade;off_x_on;candles.csv;1;
+2026-10-26-v57-pareado-continuidade;off_x_on;execucoes.csv;1;
+2026-10-26-v57-pareado-continuidade;off_x_on;console.csv;1;
+2026-10-26-v57-pareado-continuidade;off_x_on;eventos_ordens.csv;1;
+2026-10-26-v57-pareado-continuidade;off_x_on;estrategia.ntsl;1;
+2026-10-26-v57-pareado-continuidade;off_x_on;metricas.json;0;1
+2026-10-26-v57-pareado-continuidade;off_x_on;relatorio.html;0;1
+2026-10-26-v57-pareado-entrada;referencia_x_off;candles.csv;1;
+2026-10-26-v57-pareado-entrada;referencia_x_off;execucoes.csv;1;
+2026-10-26-v57-pareado-entrada;referencia_x_off;console.csv;1;
+2026-10-26-v57-pareado-entrada;referencia_x_off;eventos_ordens.csv;1;
+2026-10-26-v57-pareado-entrada;referencia_x_off;estrategia.ntsl;1;
+2026-10-26-v57-pareado-entrada;referencia_x_off;metricas.json;0;1
+2026-10-26-v57-pareado-entrada;referencia_x_off;relatorio.html;0;1
+2026-10-26-v57-pareado-entrada;off_x_on;candles.csv;1;
+2026-10-26-v57-pareado-entrada;off_x_on;execucoes.csv;1;
+2026-10-26-v57-pareado-entrada;off_x_on;console.csv;1;
+2026-10-26-v57-pareado-entrada;off_x_on;eventos_ordens.csv;1;
+2026-10-26-v57-pareado-entrada;off_x_on;estrategia.ntsl;1;
+2026-10-26-v57-pareado-entrada;off_x_on;metricas.json;0;1
+2026-10-26-v57-pareado-entrada;off_x_on;relatorio.html;0;1
+v58-2026-10-26-reinicio;referencia_x_off;candles.csv;1;
+v58-2026-10-26-reinicio;referencia_x_off;execucoes.csv;1;
+v58-2026-10-26-reinicio;referencia_x_off;console.csv;1;
+v58-2026-10-26-reinicio;referencia_x_off;eventos_ordens.csv;1;
+v58-2026-10-26-reinicio;referencia_x_off;estrategia.ntsl;1;
+v58-2026-10-26-reinicio;referencia_x_off;metricas.json;0;1
+v58-2026-10-26-reinicio;referencia_x_off;relatorio.html;0;1
+v58-2026-10-26-reinicio;off_x_on;candles.csv;1;
+v58-2026-10-26-reinicio;off_x_on;execucoes.csv;1;
+v58-2026-10-26-reinicio;off_x_on;console.csv;1;
+v58-2026-10-26-reinicio;off_x_on;eventos_ordens.csv;1;
+v58-2026-10-26-reinicio;off_x_on;estrategia.ntsl;1;
+v58-2026-10-26-reinicio;off_x_on;metricas.json;0;1
+v58-2026-10-26-reinicio;off_x_on;relatorio.html;0;1
+v58-2026-10-26-continuidade;referencia_x_off;candles.csv;1;
+v58-2026-10-26-continuidade;referencia_x_off;execucoes.csv;1;
+v58-2026-10-26-continuidade;referencia_x_off;console.csv;1;
+v58-2026-10-26-continuidade;referencia_x_off;eventos_ordens.csv;1;
+v58-2026-10-26-continuidade;referencia_x_off;estrategia.ntsl;1;
+v58-2026-10-26-continuidade;referencia_x_off;metricas.json;0;1
+v58-2026-10-26-continuidade;referencia_x_off;relatorio.html;0;1
+v58-2026-10-26-continuidade;off_x_on;candles.csv;1;
+v58-2026-10-26-continuidade;off_x_on;execucoes.csv;1;
+v58-2026-10-26-continuidade;off_x_on;console.csv;1;
+v58-2026-10-26-continuidade;off_x_on;eventos_ordens.csv;1;
+v58-2026-10-26-continuidade;off_x_on;estrategia.ntsl;1;
+v58-2026-10-26-continuidade;off_x_on;metricas.json;0;1
+v58-2026-10-26-continuidade;off_x_on;relatorio.html;0;1
+v58-2026-10-26-entrada;referencia_x_off;candles.csv;1;
+v58-2026-10-26-entrada;referencia_x_off;execucoes.csv;1;
+v58-2026-10-26-entrada;referencia_x_off;console.csv;1;
+v58-2026-10-26-entrada;referencia_x_off;eventos_ordens.csv;1;
+v58-2026-10-26-entrada;referencia_x_off;estrategia.ntsl;1;
+v58-2026-10-26-entrada;referencia_x_off;metricas.json;0;1
+v58-2026-10-26-entrada;referencia_x_off;relatorio.html;0;1
+v58-2026-10-26-entrada;off_x_on;candles.csv;1;
+v58-2026-10-26-entrada;off_x_on;execucoes.csv;1;
+v58-2026-10-26-entrada;off_x_on;console.csv;1;
+v58-2026-10-26-entrada;off_x_on;eventos_ordens.csv;1;
+v58-2026-10-26-entrada;off_x_on;estrategia.ntsl;1;
+v58-2026-10-26-entrada;off_x_on;metricas.json;0;1
+v58-2026-10-26-entrada;off_x_on;relatorio.html;0;1
+
+===== docs/colaboracao/evidencias/WINZ26_v5_8_protecoes_ate_cancelar_20261026_v1/controle_lacuna.csv =====
+caso;protecoes_ate_cancelar;entrada;saida;cancelamentos_lacuna;lacunas_com_posicao
+1;off;09:39;09:42;0;0
+1;on;09:39;09:42;0;0
+2;off;09:28;09:42;2;1
+2;on;09:28;09:42;2;1
+
+===== docs/colaboracao/evidencias/WINZ26_v5_8_protecoes_ate_cancelar_20261026_v1/insumos_privados.csv =====
+arquivo;bytes;sha256;uso
+WINZ26_20261021_profit_1min_privado.csv;64357;7b1e173400d7bd68f6198fbda51e0ef2026c3f289b7ea51e956e4c8d04066e60;replay v5.7 em 21/10
+WINZ26_20261026_profit_1min_privado.csv;62218;adace8f7c2ab691c3686e9e85533e2094b4bfd957ff7d377b3854fcb90fd92b9;replay v5.7 em 26/10 e controles S1, prioridade, V3
+2026-10-21-barras-historico.csv;127607;f1d85e4454e8c6c61e47c44832f5d9fc7280d60f44fa7ff49ff1d1bda9ffdf6b;replay v5.8 em 21/10 com preg?o anterior
+2026-10-26-barras-historico.csv;125330;bd13dfa559bb6c26ff0c253d3414b8b9994fe699af3482a80b9129b66ab1ec13;replay v5.8 em 26/10 com preg?o anterior
+inputs_v5_7_paridade.json;18;1b357e35a59c0fe6668e5763e93a4f3335ff8e5798f6b6160db6838bfd72a982;p_Lote=1
+operacoes_teste_v.csv;48497;da6261fcdcd58bb6313ab409bd220fae39766665b513da2a9b554c17511d0a97;compara??o v5.7 com o Profit
+operacoes_v58.csv;43885;66cece48ff5c3e1aca3d42d4482665451d39195bf0be50fc497d302a77585c7d;compara??o v5.8 com o Profit
+console_58.txt;1083641;38624ee2aab7c55ea12287f29736d7bfea3a3f0fce2140d833aeea8633e5bb69;avalia??es do Profit na regress?o v5.8
+barras_v58.csv;920086;1036ce183e5e0ff371ca10b21b2774e2f8420598c50d71b107cbe6a1eebf6863;refer?ncia OHLC nativa v5.8
+
+===== docs/colaboracao/evidencias/WINZ26_v5_8_protecoes_ate_cancelar_20261026_v1/regressao_v57.csv =====
+pregao;modo;protecoes_ate_cancelar;profit;simulador;exatas;operacao_182_exata
+2026-10-21;padrao;off;10;10;10;
+2026-10-21;padrao;on;10;10;10;
+2026-10-21;protecao-legada;off;10;10;10;
+2026-10-21;protecao-legada;on;10;10;10;
+2026-10-21;pos-preenchimento;off;10;10;10;
+2026-10-21;pos-preenchimento;on;10;10;10;
+2026-10-21;pareado-continuidade;off;10;10;10;
+2026-10-21;pareado-continuidade;on;10;10;10;
+2026-10-21;pareado-entrada;off;10;10;10;
+2026-10-21;pareado-entrada;on;10;10;10;
+2026-10-26;padrao;off;12;10;8;0
+2026-10-26;padrao;on;12;10;8;0
+2026-10-26;protecao-legada;off;12;11;11;0
+2026-10-26;protecao-legada;on;12;11;11;0
+2026-10-26;pos-preenchimento;off;12;12;12;1
+2026-10-26;pos-preenchimento;on;12;12;12;1
+2026-10-26;pareado-continuidade;off;12;12;12;1
+2026-10-26;pareado-continuidade;on;12;12;12;1
+2026-10-26;pareado-entrada;off;12;12;12;1
+2026-10-26;pareado-entrada;on;12;12;12;1
+
+===== docs/colaboracao/evidencias/WINZ26_v5_8_protecoes_ate_cancelar_20261026_v1/regressao_v58.csv =====
+pregao;modo;protecoes_ate_cancelar;profit;simulador;exatas;solicitacoes_comparadas;solicitacoes_divergentes;primeiro_preenchimento_diferente_profit;primeiro_preenchimento_diferente_simulador
+2026-10-21;reinicio;off;7;7;7;306;0;;
+2026-10-21;reinicio;on;7;7;7;306;0;;
+2026-10-21;continuidade;off;7;7;7;306;0;;
+2026-10-21;continuidade;on;7;7;7;306;0;;
+2026-10-21;entrada;off;7;7;7;306;0;;
+2026-10-21;entrada;on;7;7;7;306;0;;
+2026-10-26;reinicio;off;10;10;8;68;18;10:15;09:51
+2026-10-26;reinicio;on;10;10;8;68;18;10:15;09:51
+2026-10-26;continuidade;off;10;10;9;62;0;10:15;10:15
+2026-10-26;continuidade;on;10;10;9;62;0;10:15;10:15
+2026-10-26;entrada;off;10;10;9;62;0;10:15;10:15
+2026-10-26;entrada;on;10;10;9;62;0;10:15;10:15
+
+===== docs/colaboracao/evidencias/WINZ26_v5_8_protecoes_ate_cancelar_20261026_v1/sonda_prioridade_simulador.csv =====
+perna;solicita_saida_mercado;hora_entrada;hora_saida;tipo_saida;pontos;fechamento_1055_posicao;eventos_disparo_stop;barras_ambiguas
+alvo;0;10:52;10:55;selltocoverlimit;430.0;0;0;0
+alvo;1;10:52;10:55;selltocoveratmarket;220.0;0;0;0
+stop;0;10:52;10:55;selltocoverstop;-795.0;0;1;0
+stop;1;10:52;10:55;selltocoveratmarket;220.0;0;0;0
+
+===== docs/colaboracao/evidencias/WINZ26_v5_8_protecoes_ate_cancelar_20261026_v1/sondas_s1.csv =====
+perna;modo;pendentes_t1;pendentes_t2;pendentes_t3;saida;tipo_saida;pontos;arquivos_iguais_a_referencia
+alvo;off;1;0;0;10:58;closeposition;-375.0;4
+alvo;on;1;1;0;10:55;selltocoverlimit;430.0;4
+alvo;global;1;1;0;10:55;selltocoverlimit;430.0;4
+alvo;global-e-on;1;1;0;10:55;selltocoverlimit;430.0;4
+stop;off;1;0;0;10:58;closeposition;-375.0;4
+stop;on;1;1;0;10:55;selltocoverstop;-795.0;4
+stop;global;1;1;0;10:55;selltocoverstop;-795.0;4
+stop;global-e-on;1;1;0;10:55;selltocoverstop;-795.0;4
+
+===== docs/colaboracao/evidencias/WINZ26_v5_8_protecoes_ate_cancelar_20261026_v1/sonda_prioridade_mercado_protecao_profit_v1_0.ntsl =====
+{ Sonda de prioridade: uma perna por execução. Somente Backtest OHLC. }
+input
+  p_Data(1261026);
+  p_Entrada(1051);
+  p_Protecao(1052);
+  p_EnvioMercado(1054);
+  p_Limpeza(1056);
+  p_Fim(1058);
+  p_Perna(1);
+  p_SaidaMercado(1);
+  p_Alvo(430);
+  p_Stop(795);
+  p_Folga(100);
+
+var
+  v_Seq, v_Pendentes : Integer;
+  v_EntradaEnviada, v_ProtecaoEnviada, v_MercadoEnviado, v_LimpezaEnviada : Boolean;
+  v_Limite, v_Gatilho : Float;
+
+begin
+  if (Date = p_Data) and (Time >= p_Entrada) and (Time <= p_Fim) then
+  begin
+    v_Seq := v_Seq + 1;
+    if HasPendingOrders then v_Pendentes := 1 else v_Pendentes := 0;
+    ConsoleLog("PRIORIDADE;AVALIACAO"
+      + ";data=" + FloatToString(Date, 0)
+      + ";hora=" + FloatToString(Time, 0)
+      + ";barra=" + FloatToString(CurrentBar, 0)
+      + ";seq=" + FloatToString(v_Seq, 0)
+      + ";posicao=" + FloatToString(PositionQty, 0)
+      + ";pendentes=" + FloatToString(v_Pendentes, 0)
+      + ";abertura=" + FloatToString(Open, 0)
+      + ";maxima=" + FloatToString(High, 0)
+      + ";minima=" + FloatToString(Low, 0)
+      + ";fechamento=" + FloatToString(Close, 0), clYellow);
+
+    if (Time = p_Entrada) and not v_EntradaEnviada and not HasPosition and not HasPendingOrders then
+    begin
+      v_EntradaEnviada := True;
+      ConsoleLog("PRIORIDADE;SOLICITA_COMPRA;seq=" + FloatToString(v_Seq, 0), clYellow);
+      BuyAtMarket(1);
+    end;
+
+    if (Time = p_Protecao) and IsBought and not v_ProtecaoEnviada then
+    begin
+      v_ProtecaoEnviada := True;
+      if p_Perna = 1 then
+      begin
+        v_Limite := BuyPrice + p_Alvo;
+        ConsoleLog("PRIORIDADE;SOLICITA_ALVO;seq=" + FloatToString(v_Seq, 0)
+          + ";limite=" + FloatToString(v_Limite, 0), clYellow);
+        SellToCoverLimit(v_Limite, 1);
+      end
+      else if p_Perna = 2 then
+      begin
+        v_Gatilho := BuyPrice - p_Stop;
+        v_Limite := v_Gatilho - p_Folga;
+        ConsoleLog("PRIORIDADE;SOLICITA_STOP;seq=" + FloatToString(v_Seq, 0)
+          + ";gatilho=" + FloatToString(v_Gatilho, 0)
+          + ";limite=" + FloatToString(v_Limite, 0), clYellow);
+        SellToCoverStop(v_Gatilho, v_Limite, 1);
+      end;
+    end;
+
+    if (p_SaidaMercado = 1) and (Time = p_EnvioMercado)
+      and IsBought and HasPendingOrders and not v_MercadoEnviado then
+    begin
+      v_MercadoEnviado := True;
+      ConsoleLog("PRIORIDADE;SOLICITA_MERCADO;seq=" + FloatToString(v_Seq, 0), clYellow);
+      SellToCoverAtMarket(1);
+    end;
+
+    if (Time = p_Limpeza) and (HasPosition or HasPendingOrders) and not v_LimpezaEnviada then
+    begin
+      v_LimpezaEnviada := True;
+      ConsoleLog("PRIORIDADE;SOLICITA_LIMPEZA;seq=" + FloatToString(v_Seq, 0), clYellow);
+      CancelPendingOrders;
+      if HasPosition then ClosePosition;
+    end;
+  end;
+end;
+
+===== docs/colaboracao/evidencias/WINZ26_v5_8_protecoes_ate_cancelar_20261026_v1/SHA256SUMS.txt =====
+d2517be871ba47b68feac493ef9027f42b4d25f98904ea89b448898f29d2dbfe  README.md
+b0fab7dc572267e1610001e0c2ab8eff1ce36940cbea7aaee83df9dae9f90ef1  comparacao_artefatos.csv
+84f93dab2a1e1726afd26f2b7ab74e0f7da000c37c424e5fe92026858ed4a97c  controle_lacuna.csv
+e6b71adec00ba33bbc8f1703d4983d51c6fb5aea7408d8f68bc6b9323001adea  insumos_privados.csv
+8881148c5c04819b1ab2c4c2dd342c06d625793188073fc5db56f54befa602e7  regressao_v57.csv
+53405e1fe3714074191f54409d0ef098219ac54c14dd7b7bd103cf5210ca7f11  regressao_v58.csv
+4834514c7d85c27ca9ccaea9184663f0c64f0fbdc3039cf409a80c48bf4bab55  sonda_prioridade_simulador.csv
+f48304089752bccbe1bfb1e1cf733c87faa7e9f61f3874cda17c04556ffbd6eb  sondas_s1.csv
+4ddf79333bed432913808d690691fca1fe3e7f497cd32116e5654a1c1e0957e6  sonda_prioridade_mercado_protecao_profit_v1_0.ntsl
+
+===== docs/colaboracao/evidencias/WINZ26_v5_8_s1_toque_tardio_20261026_v1/sonda_s1_alvo_toque_tardio_profit_v1_0.ntsl =====
+{ S1 toque tardio: apenas SellToCoverLimit. Somente Backtest OHLC. }
+input
+  p_Data(1261026);
+  p_Entrada(1051);
+  p_Protecao(1052);
+  p_Cancela(1056);
+  p_Zera(1057);
+  p_Fim(1058);
+  p_Distancia(430);
+
+var
+  v_Seq, v_Pendentes : Integer;
+  v_EntradaEnviada, v_ProtecaoEnviada, v_Cancelou, v_Zerou : Boolean;
+  v_Limite : Float;
+
+begin
+  if (Date = p_Data) and (Time >= p_Entrada) and (Time <= p_Fim) then
+  begin
+    v_Seq := v_Seq + 1;
+    if HasPendingOrders then v_Pendentes := 1 else v_Pendentes := 0;
+    ConsoleLog("SONDA_S1_ALVO;AVALIACAO"
+      + ";data=" + FloatToString(Date, 0)
+      + ";hora=" + FloatToString(Time, 0)
+      + ";barra=" + FloatToString(CurrentBar, 0)
+      + ";seq=" + FloatToString(v_Seq, 0)
+      + ";posicao=" + FloatToString(PositionQty, 0)
+      + ";pendentes=" + FloatToString(v_Pendentes, 0)
+      + ";abertura=" + FloatToString(Open, 0)
+      + ";maxima=" + FloatToString(High, 0)
+      + ";minima=" + FloatToString(Low, 0)
+      + ";fechamento=" + FloatToString(Close, 0), clYellow);
+
+    if (Time = p_Entrada) and not v_EntradaEnviada and not HasPosition and not HasPendingOrders then
+    begin
+      v_EntradaEnviada := True;
+      ConsoleLog("SONDA_S1_ALVO;SOLICITA_COMPRA;seq=" + FloatToString(v_Seq, 0), clYellow);
+      BuyAtMarket(1);
+    end;
+
+    if (Time = p_Protecao) and IsBought and not v_ProtecaoEnviada then
+    begin
+      v_ProtecaoEnviada := True;
+      v_Limite := BuyPrice + p_Distancia;
+      ConsoleLog("SONDA_S1_ALVO;SOLICITA_ALVO;seq=" + FloatToString(v_Seq, 0)
+        + ";limite=" + FloatToString(v_Limite, 0), clYellow);
+      SellToCoverLimit(v_Limite, 1);
+    end;
+
+    if (Time = p_Cancela) and HasPendingOrders and not v_Cancelou then
+    begin
+      v_Cancelou := True;
+      ConsoleLog("SONDA_S1_ALVO;SOLICITA_CANCELAMENTO_LIMPEZA;seq=" + FloatToString(v_Seq, 0), clYellow);
+      CancelPendingOrders;
+    end;
+
+    if (Time = p_Zera) and HasPosition and not v_Zerou then
+    begin
+      v_Zerou := True;
+      ConsoleLog("SONDA_S1_ALVO;SOLICITA_ZERAGEM_LIMPEZA;seq=" + FloatToString(v_Seq, 0), clYellow);
+      ClosePosition;
+    end;
+  end;
+end;
+
+===== docs/colaboracao/evidencias/WINZ26_v5_8_s1_toque_tardio_20261026_v1/sonda_s1_stop_toque_tardio_profit_v1_0.ntsl =====
+{ S1 toque tardio: apenas SellToCoverStop. Somente Backtest OHLC. }
+input
+  p_Data(1261026);
+  p_Entrada(1051);
+  p_Protecao(1052);
+  p_Cancela(1056);
+  p_Zera(1057);
+  p_Fim(1058);
+  p_Distancia(795);
+  p_Folga(100);
+
+var
+  v_Seq, v_Pendentes : Integer;
+  v_EntradaEnviada, v_ProtecaoEnviada, v_Cancelou, v_Zerou : Boolean;
+  v_Limite, v_Gatilho : Float;
+
+begin
+  if (Date = p_Data) and (Time >= p_Entrada) and (Time <= p_Fim) then
+  begin
+    v_Seq := v_Seq + 1;
+    if HasPendingOrders then v_Pendentes := 1 else v_Pendentes := 0;
+    ConsoleLog("SONDA_S1_STOP;AVALIACAO"
+      + ";data=" + FloatToString(Date, 0)
+      + ";hora=" + FloatToString(Time, 0)
+      + ";barra=" + FloatToString(CurrentBar, 0)
+      + ";seq=" + FloatToString(v_Seq, 0)
+      + ";posicao=" + FloatToString(PositionQty, 0)
+      + ";pendentes=" + FloatToString(v_Pendentes, 0)
+      + ";abertura=" + FloatToString(Open, 0)
+      + ";maxima=" + FloatToString(High, 0)
+      + ";minima=" + FloatToString(Low, 0)
+      + ";fechamento=" + FloatToString(Close, 0), clYellow);
+
+    if (Time = p_Entrada) and not v_EntradaEnviada and not HasPosition and not HasPendingOrders then
+    begin
+      v_EntradaEnviada := True;
+      ConsoleLog("SONDA_S1_STOP;SOLICITA_COMPRA;seq=" + FloatToString(v_Seq, 0), clYellow);
+      BuyAtMarket(1);
+    end;
+
+    if (Time = p_Protecao) and IsBought and not v_ProtecaoEnviada then
+    begin
+      v_ProtecaoEnviada := True;
+      v_Gatilho := BuyPrice - p_Distancia;
+      v_Limite := v_Gatilho - p_Folga;
+      ConsoleLog("SONDA_S1_STOP;SOLICITA_STOP;seq=" + FloatToString(v_Seq, 0)
+        + ";gatilho=" + FloatToString(v_Gatilho, 0)
+        + ";limite=" + FloatToString(v_Limite, 0), clYellow);
+      SellToCoverStop(v_Gatilho, v_Limite, 1);
+    end;
+
+    if (Time = p_Cancela) and HasPendingOrders and not v_Cancelou then
+    begin
+      v_Cancelou := True;
+      ConsoleLog("SONDA_S1_STOP;SOLICITA_CANCELAMENTO_LIMPEZA;seq=" + FloatToString(v_Seq, 0), clYellow);
+      CancelPendingOrders;
+    end;
+
+    if (Time = p_Zera) and HasPosition and not v_Zerou then
+    begin
+      v_Zerou := True;
+      ConsoleLog("SONDA_S1_STOP;SOLICITA_ZERAGEM_LIMPEZA;seq=" + FloatToString(v_Seq, 0), clYellow);
+      ClosePosition;
+    end;
+  end;
+end;
+
+===== docs/colaboracao/evidencias/WINZ26_v5_8_s1_toque_tardio_profit_20261026_v1/matriz_profit_simulador.csv =====
+sonda;motor;modo;contexto_envio_protecao;nivel_pts_entrada;limite_pts_entrada;pendentes_t1;pendentes_t2;pendentes_t3;pendentes_t4;hora_preenchimento_protecao;hora_saida_limpeza;pontos_saida;resultado_liquido_brl;classificacao
+s1_alvo;Simulador;padrao;10:52;430;430;1;0;0;0;;10:58;-375.0;-75.0;expirada
+s1_alvo;Simulador;diagnostico;10:52;430;430;1;1;0;0;10:55;;430.0;86.0;preenchida após espera
+s1_alvo;Profit;Backtest OHLC;10:52;430.00;430.00;1;1;0;0;10:55;;430.00;86.00;preenchida após espera
+s1_stop;Simulador;padrao;10:52;-795;-895;1;0;0;0;;10:58;-375.0;-75.0;expirada
+s1_stop;Simulador;diagnostico;10:52;-795;-895;1;1;0;0;10:55;;-795.0;-159.0;preenchida após espera
+s1_stop;Profit;Backtest OHLC;10:52;-795.00;-895.00;1;1;0;0;10:55;;-795.00;-159.00;preenchida após espera
+
+===== docs/colaboracao/evidencias/WINZ26_v5_8_s1_toque_tardio_profit_20261026_v1/console_profit.csv =====
+sonda;seq_console;evento;seq_avaliacao;data_ntsl;hora_contexto;currentbar;posicao;pendentes;gatilho_pts_entrada;limite_pts_entrada
+s1_alvo;1;AVALIACAO;1;1261026;10:51;26873;0;0;;
+s1_alvo;2;SOLICITA_COMPRA;1;1261026;10:51;26873;0;0;;
+s1_alvo;3;AVALIACAO;2;1261026;10:51;26873;1;0;;
+s1_alvo;4;AVALIACAO;3;1261026;10:52;26874;1;0;;
+s1_alvo;5;SOLICITA_ALVO;3;1261026;10:52;26874;1;0;;430.00
+s1_alvo;6;AVALIACAO;4;1261026;10:53;26875;1;1;;
+s1_alvo;7;AVALIACAO;5;1261026;10:54;26876;1;1;;
+s1_alvo;8;AVALIACAO;6;1261026;10:55;26877;0;0;;
+s1_alvo;9;AVALIACAO;7;1261026;10:56;26878;0;0;;
+s1_alvo;10;AVALIACAO;8;1261026;10:57;26879;0;0;;
+s1_alvo;11;AVALIACAO;9;1261026;10:58;26880;0;0;;
+s1_stop;1;AVALIACAO;1;1261026;10:51;26873;0;0;;
+s1_stop;2;SOLICITA_COMPRA;1;1261026;10:51;26873;0;0;;
+s1_stop;3;AVALIACAO;2;1261026;10:51;26873;1;0;;
+s1_stop;4;AVALIACAO;3;1261026;10:52;26874;1;0;;
+s1_stop;5;SOLICITA_STOP;3;1261026;10:52;26874;1;0;-795.00;-895.00
+s1_stop;6;AVALIACAO;4;1261026;10:53;26875;1;1;;
+s1_stop;7;AVALIACAO;5;1261026;10:54;26876;1;1;;
+s1_stop;8;AVALIACAO;6;1261026;10:55;26877;0;0;;
+s1_stop;9;AVALIACAO;7;1261026;10:56;26878;0;0;;
+s1_stop;10;AVALIACAO;8;1261026;10:57;26879;0;0;;
+s1_stop;11;AVALIACAO;9;1261026;10:58;26880;0;0;;
+
+===== docs/colaboracao/evidencias/WINZ26_v5_8_s1_toque_tardio_profit_20261026_v1/barras_conferencia.csv =====
+sonda;hora_barra;abertura_pts_entrada;maxima_pts_entrada;minima_pts_entrada;fechamento_pts_entrada
+s1_alvo;10:51;110.00;375.00;-200.00;-5.00
+s1_alvo;10:52;0.00;175.00;-425.00;-290.00
+s1_alvo;10:53;-285.00;225.00;-355.00;35.00
+s1_alvo;10:54;35.00;405.00;-85.00;220.00
+s1_alvo;10:55;220.00;445.00;-875.00;-260.00
+s1_alvo;10:56;-260.00;-70.00;-705.00;-90.00
+s1_alvo;10:57;-95.00;200.00;-425.00;-375.00
+s1_alvo;10:58;-375.00;-235.00;-615.00;-540.00
+s1_stop;10:51;110.00;375.00;-200.00;-5.00
+s1_stop;10:52;0.00;175.00;-425.00;-290.00
+s1_stop;10:53;-285.00;225.00;-355.00;35.00
+s1_stop;10:54;35.00;405.00;-85.00;220.00
+s1_stop;10:55;220.00;445.00;-875.00;-260.00
+s1_stop;10:56;-260.00;-70.00;-705.00;-90.00
+s1_stop;10:57;-95.00;200.00;-425.00;-375.00
+s1_stop;10:58;-375.00;-235.00;-615.00;-540.00
+
+===== tools/publicar_protecoes_ohlc.py =====
+"""Resume replays privados de proteção OHLC sem divulgar cotações."""
+import argparse
+import csv
+import json
+import re
+from decimal import Decimal
+from pathlib import Path
+
+import pandas as pd
+
+from tools.comparar_paridade_profit_win import (
+    compare_operations, local_round_trips, profit_round_trips, read_profit_operations,
+)
+from tools.publicar_sonda_lacuna_profit import write_csv
+from tools.publicar_sondas_protecao_profit import normalize_console
+
+
+DAYS = ("2026-10-21", "2026-10-26")
+V57 = ("padrao", "protecao-legada", "pos-preenchimento", "pareado-continuidade", "pareado-entrada")
+V58 = ("reinicio", "continuidade", "entrada")
+DATA_FILES = ("candles.csv", "execucoes.csv", "console.csv", "eventos_ordens.csv")
+
+
+def read_json(path):
+    return json.loads(path.read_text(encoding="utf-8"))
+
+
+def rows(path):
+    with path.open(encoding="utf-8", newline="") as file:
+        return list(csv.DictReader(file))
+
+
+def metrics_equal_without_flag(left, right):
+    left, right = (read_json(path / "metricas.json") for path in (left, right))
+    for payload in (left, right):
+        payload["regras_execucao"].pop("protecoes_ate_cancelar", None)
+    return left == right
+
+
+def html_equal_without_flag(left, right):
+    marker = r", &#x27;protecoes_ate_cancelar&#x27;: (?:True|False)"
+    before, after = (re.sub(marker, "", (path / "relatorio.html").read_text(encoding="utf-8"))
+                     for path in (left, right))
+    return before == after
+
+
+def regression(args):
+    matrices = {"v5.7": [], "v5.8": []}
+    comparisons = []
+    for day in DAYS:
+        native_v57 = profit_round_trips(read_profit_operations(args.operacoes_v57, day))
+        for version, modes in (("v5.7", V57), ("v5.8", V58)):
+            for mode in modes:
+                key = f"{day}-v57-{mode}" if version == "v5.7" else f"v58-{day}-{mode}"
+                previous = args.referencia / key
+                off, on = (args.atuais / f"{key}-{state}" for state in ("off", "on"))
+                for description, left, right in (("referencia_x_off", previous, off), ("off_x_on", off, on)):
+                    for name in (*DATA_FILES, "estrategia.ntsl", "metricas.json", "relatorio.html"):
+                        equals = (left / name).read_bytes() == (right / name).read_bytes()
+                        normalized = ""
+                        if name == "metricas.json":
+                            normalized = int(metrics_equal_without_flag(left, right))
+                        elif name == "relatorio.html":
+                            normalized = int(html_equal_without_flag(left, right))
+                        comparisons.append(dict(
+                            conjunto=key, comparacao=description, arquivo=name, bytes_iguais=int(equals),
+                            conteudo_igual_sem_flag=normalized,
+                        ))
+                for state, folder in (("off", off), ("on", on)):
+                    common = dict(pregao=day, modo=mode, protecoes_ate_cancelar=state)
+                    if version == "v5.7":
+                        local = local_round_trips(pd.read_csv(folder / "execucoes.csv"),
+                                                  pd.read_csv(folder / "candles.csv"))
+                        report = compare_operations(native_v57, local)
+                        target = native_v57.loc[native_v57["numero_operacao"] == 182]
+                        exact_182 = compare_operations(target, local)["correspondencias_exatas"] if len(target) else ""
+                        fields = dict(operacao_182_exata=exact_182)
+                    else:
+                        full = read_json(folder.with_suffix(".comparacao.json"))
+                        report = full["operacoes"]
+                        requests = full["solicitacoes_pregao"]
+                        first = full["preenchimentos"]["primeira_divergencia"] or {}
+                        fields = dict(
+                            solicitacoes_comparadas=requests["comparados"],
+                            solicitacoes_divergentes=requests["divergentes"],
+                            primeiro_preenchimento_diferente_profit=(first.get("profit") or [""])[0][11:16],
+                            primeiro_preenchimento_diferente_simulador=(first.get("simulador") or [""])[0][11:16],
+                        )
+                    matrices[version].append(common | dict(
+                        profit=report["operacoes_profit"], simulador=report["operacoes_local"],
+                        exatas=report["correspondencias_exatas"],
+                    ) | fields)
+    return {"regressao_v57.csv": matrices["v5.7"], "regressao_v58.csv": matrices["v5.8"],
+            "comparacao_artefatos.csv": comparisons}
+
+
+def focused(args):
+    s1, priority, v3 = [], [], []
+    for leg in ("alvo", "stop"):
+        for state in ("off", "on", "global", "global-e-on"):
+            folder = args.atuais / f"s1-{leg}-{state}"
+            opening, closing = rows(folder / "execucoes.csv")
+            times = {row["indice"]: row["timestamp"][11:16] for row in rows(folder / "candles.csv")}
+            prefix = "SONDA_S1_" + leg.upper()
+            messages = [row["mensagem"] for row in rows(folder / "console.csv")
+                        if row["mensagem"].startswith(prefix)]
+            console = normalize_console(f"s1_{leg}", messages, Decimal(opening["preco"]), Decimal)
+            pending = {item["hora_contexto"]: item["pendentes"] for item in console
+                       if item["evento"] == "AVALIACAO"}
+            prior = args.referencia_s1 / f"{leg}-{'padrao' if state == 'off' else 'diagnostico'}"
+            s1.append(dict(
+                perna=leg, modo=state, pendentes_t1=pending["10:53"], pendentes_t2=pending["10:54"],
+                pendentes_t3=pending["10:55"], saida=times[str(int(closing["barra"]) - 1)],
+                tipo_saida=closing["ordem"], pontos=closing["pontos_contrato"],
+                arquivos_iguais_a_referencia=sum((folder / name).read_bytes() == (prior / name).read_bytes()
+                                                 for name in DATA_FILES),
+            ))
+    for leg in (1, 2):
+        for market in (0, 1):
+            folder = args.atuais / f"prioridade-{leg}-{market}"
+            events = rows(folder / "eventos_ordens.csv")
+            opening, closing = (event for event in events if event["evento"] == "preenchimento")
+            positions = {event["timestamp"][11:16]: event["posicao"] for event in events
+                         if event["evento"] == "avaliacao_ntsl"}
+            priority.append(dict(
+                perna="alvo" if leg == 1 else "stop", solicita_saida_mercado=market,
+                hora_entrada=opening["timestamp"][11:16], hora_saida=closing["timestamp"][11:16],
+                tipo_saida=closing["ordem"],
+                pontos=Decimal(closing["preco_execucao"]) - Decimal(opening["preco_execucao"]),
+                fechamento_1055_posicao=positions["10:55"],
+                eventos_disparo_stop=sum(event["evento"] == "gatilho_stop" for event in events),
+                barras_ambiguas=read_json(folder / "metricas.json")["barras_ambiguas"],
+            ))
+    for case in (1, 2):
+        for state in ("off", "on"):
+            folder = args.atuais / f"sonda-{case}-entrada-{state}"
+            metrics = read_json(folder / "metricas.json")
+            events = rows(folder / "eventos_ordens.csv")
+            fills = [event["timestamp"][11:16] for event in events if event["evento"] == "preenchimento"]
+            v3.append(dict(caso=case, protecoes_ate_cancelar=state, entrada=fills[0], saida=fills[1],
+                           cancelamentos_lacuna=metrics["ordens_canceladas_lacuna"],
+                           lacunas_com_posicao=metrics["lacunas_com_posicao"]))
+    return {"sondas_s1.csv": s1, "sonda_prioridade_simulador.csv": priority, "controle_lacuna.csv": v3}
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    for name in ("atuais", "referencia", "referencia-s1", "operacoes-v57", "saida"):
+        parser.add_argument(f"--{name}", type=Path, required=True)
+    args = parser.parse_args()
+    tables = regression(args) | focused(args)
+    args.saida.mkdir()
+    for filename, values in tables.items():
+        write_csv(args.saida / filename, values)
+
+
+if __name__ == "__main__":
+    main()
+
+===== tests/test_protecoes_ohlc.py =====
+import pytest
+
+from estrategia import ExecutionRules
+from test_replay import run, run_ohlc
+
+
+PERSISTENT = {"protecoes_ate_cancelar": True, "rastrear_ordens": True}
+
+
+@pytest.mark.parametrize("protection,pnl,price", [
+    ("SellToCoverLimit(BuyPrice + 430, 1)", 430, 1430),
+    ("SellToCoverStop(BuyPrice - 795, BuyPrice - 895, 1)", -795, 205),
+])
+@pytest.mark.parametrize("keep", [False, True])
+def test_protecao_isolada_toca_tres_barras_depois(protection, pnl, price, keep):
+    source = f"""begin
+        if CurrentBar = 1 then BuyAtMarket(1);
+        if (CurrentBar = 2) and IsBought then {protection};
+        if HasPendingOrders then Plot(1) else Plot(0);
+    end;"""
+    engine = run_ohlc(source, [1110, 1000, 715, 1035, 1220, 740],
+                      [1375, 1175, 1225, 1405, 1445, 930],
+                      [800, 575, 645, 915, 125, 295],
+                      [995, 710, 1035, 1220, 740, 910],
+                      {"protecoes_ate_cancelar": keep})
+    assert [row["plot"] for row in engine.trace[2:5]] == [1, int(keep), 0]
+    assert engine.trace[4]["posicao"] == (0 if keep else 1)
+    assert [(f["barra"], f["preco"], f["pontos_contrato"]) for f in engine.fills] == [
+        (2, 1000, 0), (5, price, pnl) if keep else (6, 910, -90),
+    ]
+
+
+@pytest.mark.parametrize("order", ["BuyAtLimit(85)", "SellShortAtStop(85, 80)",
+                                   "SendOrder(osSell, otLimit, 1, 110, 0)"])
+def test_protecao_preserva_validade_das_entradas(order):
+    source = f"begin if CurrentBar=1 then {order}; end;"
+    prices = [100, 100, 100, 85 if "SendOrder" not in order else 110, 100]
+    assert not run(source, prices, rules=PERSISTENT).fills
+    diagnostic = {"ordem_so_proxima_barra": False}
+    old = run(source, prices, rules=diagnostic)
+    combined = run(source, prices, rules=diagnostic | PERSISTENT)
+    assert combined.fills == old.fills and old.fills[0]["barra"] == 4
+
+
+def test_stop_sem_limite_preserva_validade():
+    engine = run("""begin
+        if CurrentBar=1 then BuyAtMarket(1);
+        if CurrentBar=2 then SellToCoverStop(95);
+    end;""", [100, 100, 100, 94, 100], rules=PERSISTENT)
+    assert [fill["ordem"] for fill in engine.fills] == ["buyatmarket", "fim_pregao"]
+
+
+def test_protecoes_ate_cancelar_rejeita_motor_tick():
+    with pytest.raises(ValueError, match="--protecoes-ate-cancelar só se aplica ao motor OHLC"):
+        ExecutionRules(protecoes_ate_cancelar=True, motor_ticks=True)
+
+
+@pytest.mark.parametrize("cleanup,last_fill", [
+    ("CancelPendingOrders", "fim_pregao"), ("ClosePosition", "closeposition"),
+])
+def test_protecao_persistente_cancelamento_e_zeragem(cleanup, last_fill):
+    engine = run(f"""begin
+        if CurrentBar=1 then BuyAtMarket(1);
+        if CurrentBar=2 then SellToCoverLimit(110);
+        if HasPendingOrders then Plot(1) else Plot(0);
+        if CurrentBar=4 then {cleanup};
+    end;""", [100, 100, 100, 100, 115, 120], rules=PERSISTENT)
+    assert [row["plot"] for row in engine.trace[2:5]] == [1, 1, 0]
+    assert [f["ordem"] for f in engine.fills] == ["buyatmarket", last_fill]
+    assert not engine.orders
+
+
+def test_protecao_persistente_nao_atravessa_pregao():
+    engine = run("""begin
+        if CurrentBar = 1 then BuyAtMarket(1);
+        if CurrentBar = 2 then SellToCoverLimit(110);
+        if HasPendingOrders then Plot(1) else Plot(0);
+    end;""".replace("CurrentBar", "CurrentBar"), [100, 100, 100, 100, 115, 120],
+        days=["2026-10-02"] * 4 + ["2026-10-05"] * 2, rules=PERSISTENT)
+    assert [row["plot"] for row in engine.trace[2:5]] == [1, 1, 0]
+    assert [(f["barra"], f["ordem"]) for f in engine.fills] == [(2, "buyatmarket"), (4, "fim_pregao")]
+
+
+@pytest.mark.parametrize("exit_order,entry,protection,opening,high,low", [
+    ("SellToCoverAtMarket(1)", "BuyAtMarket(1)", "SellToCoverStop(95, 90, 1)", 100, 105, 90),
+    ("SendOrder(osSell, otMarket, 1, 0, 0)", "BuyAtMarket(1)", "SellToCoverStop(95, 90, 1)", 100, 105, 90),
+    ("BuyToCoverAtMarket(1)", "SellShortAtMarket(1)", "BuyToCoverStop(105, 110, 1)", 100, 110, 95),
+    ("SellToCoverAtMarket(1)", "BuyAtMarket(1)", "SellToCoverLimit(110, 1)", 100, 115, 95),
+])
+def test_zeragem_a_mercado_na_abertura_antecede_toque_da_protecao(
+    exit_order, entry, protection, opening, high, low,
+):
+    source = f"""begin
+        if CurrentBar=1 then {entry};
+        if CurrentBar=2 then {protection};
+        if CurrentBar=4 then {exit_order};
+        if HasPendingOrders then Plot(1) else Plot(0);
+    end;"""
+    args = (source, [100] * 4 + [opening, opening], [100] * 4 + [high, high],
+            [100] * 4 + [low, low], [100] * 6)
+    engine = run_ohlc(*args, PERSISTENT)
+    assert [(f["barra"], f["tipo"], f["preco"], f["posicao"]) for f in engine.fills] == [
+        (2, "market", 100, -1 if "SellShort" in entry else 1), (5, "market", opening, 0),
+    ]
+    assert engine.ambiguities == 0
+    assert [row["plot"] for row in engine.trace[2:6]] == [1, 1, 0, 0]
+    assert all(event["evento"] != "gatilho_stop" for event in engine.order_events)
+
+    if "SendOrder" not in exit_order:
+        legacy = run_ohlc(*args, {"ordem_so_proxima_barra": False} | PERSISTENT)
+        assert legacy.ambiguities == 1
+        assert legacy.fills == run_ohlc(*args, {"ordem_so_proxima_barra": False}).fills
+
+
+def test_protecao_persistente_com_entrada_e_avaliacao_extra_apos_lacuna():
+    source = """var enviado: Boolean;
+    begin
+      if CurrentBar=1 then BuyAtMarket(1);
+      if IsBought and (CurrentBar <= 3) then begin
+        SellToCoverLimit(BuyPrice + 30);
+        if not enviado then ConsoleLog("contexto=" + (Close));
+        enviado := True;
+      end;
+      if HasPendingOrders then Plot(1) else Plot(0);
+    end;"""
+    engine = run(source, [100, 110, 115, 125, 130, 145],
+                 rules=PERSISTENT | {"historico_continuo_lacunas": True,
+                                     "entrada_mercado_atraves_lacuna": True,
+                                     "avaliacao_pos_preenchimento": True},
+                 lacuna_intradiaria=[False, True, False, False, False, False])
+    assert engine.orders_cancelled_at_gaps == engine.gaps_with_exposure == 0
+    assert engine.logs[-1] == (1, "contexto=100.0")
+    assert [row["plot"] for row in engine.trace[2:5]] == [1, 1, 1]
+    assert [(f["barra"], f["ordem"], f["preco"]) for f in engine.fills] == [
+        (2, "buyatmarket", 110), (6, "selltocoverlimit", 145),
+    ]
+    submitted = [e for e in engine.order_events if e["ordem"] == "selltocoverlimit"
+                 and e["evento"].startswith("solicitacao")]
+    assert [e["evento"] for e in submitted] == ["solicitacao", "solicitacao_renovada", "solicitacao_renovada"]
+    assert [e["primeira_barra_elegivel"] for e in submitted] == [2, 2, 2]
+    assert [e["barra_contexto_ntsl"] for e in submitted] == [1, 2, 3]
+
+
+def test_protecao_persistente_cancela_na_lacuna_com_posicao_aberta():
+    engine = run("""begin
+        if CurrentBar=1 then BuyAtMarket(1);
+        if CurrentBar=2 then SellToCoverLimit(130);
+        if HasPendingOrders then Plot(1) else Plot(0);
+    end;""", [100, 100, 100, 100, 130, 140],
+        rules=PERSISTENT | {"historico_continuo_lacunas": True, "entrada_mercado_atraves_lacuna": True,
+                            "avaliacao_pos_preenchimento": True},
+        lacuna_intradiaria=[False, False, False, False, True, False])
+    assert engine.orders_cancelled_at_gaps == engine.gaps_with_exposure == 1
+    assert [row["plot"] for row in engine.trace[2:5]] == [1, 1, 0]
+    assert engine.trace[4]["posicao"] == 1
+    assert [fill["ordem"] for fill in engine.fills] == ["buyatmarket", "fim_pregao"]
+
+
+def test_duplo_toque_de_protecoes_persistentes_preserva_ambiguidade():
+    engine = run_ohlc("""begin
+        if CurrentBar=1 then BuyAtMarket(1);
+        if CurrentBar=2 then begin
+            SellToCoverLimit(110);
+            SellToCoverStop(95, 90);
+        end;
+    end;""", [100] * 5, [100, 100, 100, 115, 100], [100, 100, 100, 90, 100],
+        [100] * 5, PERSISTENT)
+    assert engine.ambiguities == 1
+    assert [(f["barra"], f["ordem"], f["preco"]) for f in engine.fills] == [
+        (2, "buyatmarket", 100), (4, "selltocoverstop", 95),
+    ]
+
+===== Altera??o do motor OHLC (estrategia.py) =====
+diff --git a/estrategia.py b/estrategia.py
+index d826646..a77d9ca 100644
+--- a/estrategia.py
++++ b/estrategia.py
+@@ -133,0 +134 @@ class ExecutionRules:
++    protecoes_ate_cancelar: bool = False
+@@ -142,0 +144,2 @@ class ExecutionRules:
++        if self.protecoes_ate_cancelar and self.motor_ticks:
++            raise ValueError("--protecoes-ate-cancelar só se aplica ao motor OHLC.")
+@@ -163 +166,2 @@ class ExecutionRules:
+-                      self.historico_continuo_lacunas, self.entrada_mercado_atraves_lacuna):
++                      self.historico_continuo_lacunas, self.entrada_mercado_atraves_lacuna,
++                      self.protecoes_ate_cancelar):
+@@ -654,0 +659,27 @@ class Engine:
++    def is_position_protection(self, order):
++        if not self.position:
++            return False
++        exit_action = "exit_long" if self.position > 0 else "exit_short"
++        return order.action == exit_action and (
++            order.kind == "limit" or (order.kind == "stop" and order.limit is not None)
++        )
++
++    def fill_market_close_at_open(self, opening_price):
++        if not any(order.eligible_at <= self.row and self.is_position_protection(order)
++                   for order in self.orders.values()):
++            return False
++
++        exit_action, net_action = (("exit_long", "net_short") if self.position > 0
++                                   else ("exit_short", "net_long"))
++        quantity = abs(self.position)
++        for key, order in self.orders.items():
++            if order.kind != "market" or self.row < order.eligible_at:
++                continue
++            if ((order.action == exit_action and order.quantity >= quantity)
++                    or (order.action == net_action and order.quantity == quantity)):
++                # A zeragem na abertura encerra a exposição antes de examinar a faixa da barra.
++                self.orders.pop(key)
++                self.execute(order, self.slipped(opening_price, exit_action == "exit_short"))
++                return True
++        return False
++
+@@ -656,0 +688,3 @@ class Engine:
++        if (only_keys is None and self.rules.protecoes_ate_cancelar and self.rules.ordem_so_proxima_barra
++                and self.fill_market_close_at_open(o)):
++            return
+@@ -850 +884,5 @@ class Engine:
+-                self.orders = {key: order for key, order in self.orders.items() if order.sent_at == row or order.eligible_at > row}
++                self.orders = {
++                    key: order for key, order in self.orders.items()
++                    if order.sent_at == row or order.eligible_at > row
++                    or (self.rules.protecoes_ate_cancelar and self.is_position_protection(order))
++                }
+@@ -996,0 +1035,2 @@ def main():
++    p.add_argument("--protecoes-ate-cancelar", action="store_true",
++                   help="OHLC experimental: mantém saídas limite e stop-limit compatíveis em barras consecutivas")

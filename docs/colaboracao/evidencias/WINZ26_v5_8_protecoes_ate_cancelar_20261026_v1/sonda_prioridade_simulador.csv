@@ -1,0 +1,5 @@
+perna;solicita_saida_mercado;hora_entrada;hora_saida;tipo_saida;pontos;fechamento_1055_posicao;eventos_disparo_stop;barras_ambiguas
+alvo;0;10:52;10:55;selltocoverlimit;430.0;0;0;0
+alvo;1;10:52;10:55;selltocoveratmarket;220.0;0;0;0
+stop;0;10:52;10:55;selltocoverstop;-795.0;0;1;0
+stop;1;10:52;10:55;selltocoveratmarket;220.0;0;0;0

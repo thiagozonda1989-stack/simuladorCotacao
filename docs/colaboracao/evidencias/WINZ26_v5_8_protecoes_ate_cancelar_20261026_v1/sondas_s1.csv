@@ -1,0 +1,9 @@
+perna;modo;pendentes_t1;pendentes_t2;pendentes_t3;saida;tipo_saida;pontos;arquivos_iguais_a_referencia
+alvo;off;1;0;0;10:58;closeposition;-375.0;4
+alvo;on;1;1;0;10:55;selltocoverlimit;430.0;4
+alvo;global;1;1;0;10:55;selltocoverlimit;430.0;4
+alvo;global-e-on;1;1;0;10:55;selltocoverlimit;430.0;4
+stop;off;1;0;0;10:58;closeposition;-375.0;4
+stop;on;1;1;0;10:55;selltocoverstop;-795.0;4
+stop;global;1;1;0;10:55;selltocoverstop;-795.0;4
+stop;global-e-on;1;1;0;10:55;selltocoverstop;-795.0;4
