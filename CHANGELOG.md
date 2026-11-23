@@ -10,6 +10,7 @@
 - Permite comparar indicadores com aquecimento contado a partir de cada reinício do replay.
 - Acrescenta `--historico-continuo-lacunas` ao replay OHLC para preservar janelas e referências históricas, mantendo cancelamento de pendentes e registro de lacunas com exposição.
 - Acrescenta `--entrada-mercado-atraves-lacuna` como opção experimental do replay OHLC para entradas elegíveis com posição zerada e histórico contínuo em lacunas.
+- Acrescenta `--protecoes-ate-cancelar` como opção experimental no OHLC, com proteção limitada à posição aberta e zeragem a mercado prioritária na abertura.
 
 ## 0.14.0
 

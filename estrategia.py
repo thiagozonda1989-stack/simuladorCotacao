@@ -131,6 +131,7 @@ class ExecutionRules:
     avaliacao_pos_preenchimento: bool = False
     historico_continuo_lacunas: bool = False
     entrada_mercado_atraves_lacuna: bool = False
+    protecoes_ate_cancelar: bool = False
 
     def __post_init__(self):
         for value in (self.latencia_ticks_ms, self.lacuna_ticks_ms):
@@ -140,6 +141,8 @@ class ExecutionRules:
             raise ValueError("motor_ticks deve ser booleano.")
         if self.motor_ticks and self.latencia_barras:
             raise ValueError("Para tick a tick, zere a latência em barras e use a latência em milissegundos.")
+        if self.protecoes_ate_cancelar and self.motor_ticks:
+            raise ValueError("--protecoes-ate-cancelar só se aplica ao motor OHLC.")
         if self.entrada_mercado_atraves_lacuna and self.motor_ticks:
             raise ValueError("A entrada a mercado através de lacuna só se aplica ao motor OHLC.")
         if self.entrada_mercado_atraves_lacuna and not self.historico_continuo_lacunas:
@@ -160,7 +163,8 @@ class ExecutionRules:
                       self.agressao_por_barra, self.agressao_referencia_injetada,
                       self.vwap_continuo_lacunas, self.protecao_no_candle_entrada,
                       self.rastrear_ordens, self.avaliacao_pos_preenchimento,
-                      self.historico_continuo_lacunas, self.entrada_mercado_atraves_lacuna):
+                      self.historico_continuo_lacunas, self.entrada_mercado_atraves_lacuna,
+                      self.protecoes_ate_cancelar):
             if type(value) is not bool:
                 raise ValueError("As regras de execução devem ser booleanas.")
 
@@ -652,8 +656,38 @@ class Engine:
                                custo_reais=cost, liquido_reais=pnl*self.point_value-cost))
         self.audit_order("preenchimento", order, order.function, price)
 
+    def is_position_protection(self, order):
+        if not self.position:
+            return False
+        exit_action = "exit_long" if self.position > 0 else "exit_short"
+        return order.action == exit_action and (
+            order.kind == "limit" or (order.kind == "stop" and order.limit is not None)
+        )
+
+    def fill_market_close_at_open(self, opening_price):
+        if not any(order.eligible_at <= self.row and self.is_position_protection(order)
+                   for order in self.orders.values()):
+            return False
+
+        exit_action, net_action = (("exit_long", "net_short") if self.position > 0
+                                   else ("exit_short", "net_long"))
+        quantity = abs(self.position)
+        for key, order in self.orders.items():
+            if order.kind != "market" or self.row < order.eligible_at:
+                continue
+            if ((order.action == exit_action and order.quantity >= quantity)
+                    or (order.action == net_action and order.quantity == quantity)):
+                # A zeragem na abertura encerra a exposição antes de examinar a faixa da barra.
+                self.orders.pop(key)
+                self.execute(order, self.slipped(opening_price, exit_action == "exit_short"))
+                return True
+        return False
+
     def process_orders(self, only_keys=None):
         o,h,l = (self.series(name) for name in ("open","high","low"))
+        if (only_keys is None and self.rules.protecoes_ate_cancelar and self.rules.ordem_so_proxima_barra
+                and self.fill_market_close_at_open(o)):
+            return
         matched = []
         for key,order in self.orders.items():
             if only_keys is not None and key not in only_keys:
@@ -847,7 +881,11 @@ class Engine:
                 if protections:
                     self.process_orders({key for key, _ in protections})
             if self.rules.ordem_so_proxima_barra and not self.rules.motor_ticks:
-                self.orders = {key: order for key, order in self.orders.items() if order.sent_at == row or order.eligible_at > row}
+                self.orders = {
+                    key: order for key, order in self.orders.items()
+                    if order.sent_at == row or order.eligible_at > row
+                    or (self.rules.protecoes_ate_cancelar and self.is_position_protection(order))
+                }
             for slot in var_slots:
                 self.history[row,slot] = self.values[slot]
             for slot,val in numeric_constants:
@@ -994,6 +1032,8 @@ def main():
     p.add_argument("--slippage-ticks", type=float, default=0)
     p.add_argument("--limite-exige-ultrapassar", action="store_true")
     p.add_argument("--ordem-so-proxima-barra", action=argparse.BooleanOptionalAction, default=True)
+    p.add_argument("--protecoes-ate-cancelar", action="store_true",
+                   help="OHLC experimental: mantém saídas limite e stop-limit compatíveis em barras consecutivas")
     p.add_argument("--latencia-barras", type=int, default=0)
     p.add_argument("--historico-continuo", action=argparse.BooleanOptionalAction, default=True)
     p.add_argument("--historico-continuo-lacunas", action="store_true",
