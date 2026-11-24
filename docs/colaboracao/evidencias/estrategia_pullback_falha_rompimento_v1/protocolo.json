@@ -1,0 +1,108 @@
+{
+  "motor": "db9ace693c9396d87198e0973d9708ddeb7668d4",
+  "enunciado": "PROTOCOLO.md",
+  "dados": {
+    "intervalo_segundos": 60,
+    "tick": 5,
+    "valor_ponto_reais": 0.2
+  },
+  "execucao": {
+    "contratos": 2,
+    "custo_por_contrato_lado_reais": 0.5,
+    "slippage_ticks": 1
+  },
+  "referencia": {
+    "p_Rapida": 20,
+    "p_Lenta": 21,
+    "p_Alvo": 200,
+    "p_UsarAlvoDinamico": 1,
+    "p_AlvoMin": 50,
+    "p_AlvoMax": 220,
+    "p_Rompimento": 1,
+    "p_FolgaStop": 50,
+    "p_PerdaMaxDia": 150,
+    "p_HoraInicio": 1000,
+    "p_HoraFimEntradas": 1700,
+    "p_HoraZeragem": 1745,
+    "p_Stop": 110,
+    "p_TempoMax": 5,
+    "p_MaxEntradasDia": 24,
+    "p_Espera": 1,
+    "p_JanelaAmplitude": 5,
+    "p_FatorAmplitude": 1.6,
+    "p_FatorStop": 0.8
+  },
+  "desenvolvimento": [
+    "2026-09-15",
+    "2026-09-16",
+    "2026-09-17",
+    "2026-09-23",
+    "2026-09-24",
+    "2026-09-25",
+    "2026-09-29",
+    "2026-09-30",
+    "2026-10-01",
+    "2026-10-02",
+    "2026-10-05",
+    "2026-10-06",
+    "2026-10-07",
+    "2026-10-08",
+    "2026-10-09",
+    "2026-10-13",
+    "2026-10-14",
+    "2026-10-15",
+    "2026-10-16"
+  ],
+  "exploratorio": [
+    "2026-10-19",
+    "2026-10-20",
+    "2026-10-22",
+    "2026-10-23",
+    "2026-10-27",
+    "2026-10-28",
+    "2026-10-29",
+    "2026-10-30",
+    "2026-11-03",
+    "2026-11-04",
+    "2026-11-05",
+    "2026-11-06",
+    "2026-11-09",
+    "2026-11-10",
+    "2026-11-11",
+    "2026-11-12",
+    "2026-11-13",
+    "2026-11-16",
+    "2026-11-17",
+    "2026-11-18"
+  ],
+  "variantes": [
+    {
+      "p_AtivarSaidaFalha": 1,
+      "p_JanelaFalha": 1,
+      "p_ToleranciaFalhaTicks": 0
+    },
+    {
+      "p_AtivarSaidaFalha": 1,
+      "p_JanelaFalha": 1,
+      "p_ToleranciaFalhaTicks": 1
+    },
+    {
+      "p_AtivarSaidaFalha": 1,
+      "p_JanelaFalha": 2,
+      "p_ToleranciaFalhaTicks": 0
+    },
+    {
+      "p_AtivarSaidaFalha": 1,
+      "p_JanelaFalha": 2,
+      "p_ToleranciaFalhaTicks": 1
+    }
+  ],
+  "metas": {
+    "acerto": 0.45,
+    "liquido_diario_reais": 3000
+  },
+  "incerteza": {
+    "reamostragens": 2000,
+    "semente": 11
+  }
+}

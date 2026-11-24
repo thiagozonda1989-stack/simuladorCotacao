@@ -169,6 +169,12 @@
       "sha256": "38b368998b3885beaaab1eadfc0dec1ece0bdba75ab9b33548b4113fb9aa643e",
       "bytes": 3046,
       "origem_relativa": "criado no repositório (pesquisa)"
+    },
+    {
+      "arquivo": "execucao/pullback_tendencia_v1_7.ntsl",
+      "sha256": "ec5904bce4b7f429287eff55f975c9c3598cf38bc65e8f50948c34f7c0726ba4",
+      "bytes": 5781,
+      "origem_relativa": "docs/colaboracao/evidencias/estrategia_pullback_adaptativo_v1/pullback_tendencia_v1_5.ntsl"
     }
   ]
 }
