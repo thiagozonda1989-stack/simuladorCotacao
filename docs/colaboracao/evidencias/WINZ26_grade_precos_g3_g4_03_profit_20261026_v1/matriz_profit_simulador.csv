@@ -1,0 +1,12 @@
+sonda;entrada_contexto;protecao_contexto;quantidade;fonte;entrada_execucao;saida_execucao;posicao_1055;pendentes_1055;solicitado_pts_entrada;efetivo_cadastro_pts_entrada;limite_stop_solicitado_pts_entrada;limite_stop_efetivo_cadastro_pts_entrada;saida_pts_entrada;pontos_contrato;liquido_brl;ordem_simulador;ajuste_tick_simulador;coincide_profit
+G3;10:51;10:52;1;Profit Backtest OHLC;10:52:00;10:55:00;0;0;-877.00;;;;-875.00;875.00;175.00;;;1
+G3;10:51;10:52;1;Simulador bruto;10:52:00;10:58:00;-1;1;-877.0;-877.0;;;-375.0;375.0;75.00;closeposition;;0
+G3;10:51;10:52;1;Simulador flag_venda;10:52:00;10:58:00;-1;1;-877.0;-877.0;;;-375.0;375.0;75.00;closeposition;;0
+G3;10:51;10:52;1;Simulador grade_manual;10:52:00;10:55:00;0;0;-875.0;-875.0;;;-875.0;875.0;175.00;buytocoverlimit;;1
+G4;10:51;10:52;1;Profit Backtest OHLC;10:52:00;10:55:00;0;0;447.00;;1000.00;;445.00;-445.00;-89.00;;;1
+G4;10:51;10:52;1;Simulador bruto;10:52:00;10:58:00;-1;1;447.0;447.0;1000.0;1000.0;-375.0;375.0;75.00;closeposition;;0
+G4;10:51;10:52;1;Simulador flag_venda;10:52:00;10:58:00;-1;1;447.0;447.0;1000.0;1000.0;-375.0;375.0;75.00;closeposition;;0
+G4;10:51;10:52;1;Simulador grade_manual;10:52:00;10:55:00;0;0;445.0;445.0;1000.0;1000.0;445.0;-445.0;-89.00;buytocoverstop;;1
+03;10:51;10:52;1;Profit Backtest OHLC;10:52:00;10:55:00;0;0;-793.00;;-894.00;;-795.00;-795.00;-159.00;;;1
+03;10:51;10:52;1;Simulador bruto;10:52:00;10:55:00;0;0;-793.0;-793.0;-894.0;-894.0;-793.0;-793.0;-158.60;selltocoverstop;;0
+03;10:51;10:52;1;Simulador flag_venda;10:52:00;10:55:00;0;0;-793.0;-795.0;-894.0;-894.0;-795.0;-795.0;-159.00;selltocoverstop;ajustado;1
