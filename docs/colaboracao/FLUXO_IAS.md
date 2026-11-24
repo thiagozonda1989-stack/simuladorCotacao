@@ -13,6 +13,10 @@ O `AGENTS.md` e as diretrizes do projeto definem as regras comuns. A Issue conce
 
 Antes de solicitar parecer, siga a [diretriz de publicação de dados e logs do Profit](../../DIRETRIZES_PROJETO.md#publicação-de-dados-e-logs-do-profit). Forneça no PR os caminhos dos arquivos e o SHA de cada execução. Envie links fixos para os arquivos compartilháveis e confira que eles abrem antes do repasse.
 
+## Fechamento de rodada
+
+Na publicação de cada rodada, atualize o [painel de acompanhamento](ACOMPANHAMENTO.md) com a data, o SHA da evidência, as operações avaliadas e as notas das três frentes. Registre também as rodadas em que as notas se mantêm e inclua o link do painel no fechamento do PR.
+
 ## Parecer de revisão
 
 ```text
