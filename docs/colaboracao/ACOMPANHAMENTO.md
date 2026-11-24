@@ -1,6 +1,6 @@
 # Acompanhamento do simuladorCotacao
 
-**Estado em 23/11/2026 — Simulador 65/100 · Estratégias 30/100 · Dados 60/100.**
+**Estado em 24/11/2026 — Simulador 65/100 · Estratégias 30/100 · Dados 60/100.**
 
 O eixo X segue a ordem das rodadas. O eixo Y vai de 0 (nenhum trabalho) a 100 (objetivo demonstrado). As notas são estimativas por marcos com evidência. Os números de operações da tabela se referem a cada rodada e podem reutilizar os mesmos pregões. As datas indicam a publicação das evidências no fuso America/Sao_Paulo. A rodada zero é uma referência sem data de publicação associada.
 
@@ -13,11 +13,11 @@ config:
 ---
 xychart-beta
   title "Evolução por rodada"
-  x-axis "Rodadas de validação" [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+  x-axis "Rodadas de validação" [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
   y-axis "Avanço" 0 --> 100
-  line [0, 20, 35, 45, 50, 55, 60, 60, 65, 65]
-  line [0, 15, 25, 30, 30, 30, 30, 30, 30, 30]
-  line [0, 30, 40, 45, 50, 50, 55, 55, 55, 60]
+  line [0, 20, 35, 45, 50, 55, 60, 60, 65, 65, 65]
+  line [0, 15, 25, 30, 30, 30, 30, 30, 30, 30, 30]
+  line [0, 30, 40, 45, 50, 50, 55, 55, 55, 60, 60]
 ```
 
 **Linhas:** azul para simulador, laranja para estratégias NTSL e verde para dados.
@@ -34,6 +34,7 @@ xychart-beta
 | 7 | 23/11/2026 | Grade G1/G2 | 60 | 30 | 55 | Duas sondas deram suporte ao tick mais próximo nas saídas de posição comprada. [723838a](https://github.com/thiagozonda1989-stack/simuladorCotacao/commit/723838af659a8a1e3145ba22e00468dd8feae6d8) |
 | 8 | 23/11/2026 | Ajuste experimental à grade | 65 | 30 | 55 | Opção OHLC para saída de posição comprada, 130 testes e 32 replays privados reportados. [ca1b602](https://github.com/thiagozonda1989-stack/simuladorCotacao/commit/ca1b602481e25802d0d5369afa159c677dc5316e) |
 | 9 | 23/11/2026 | Grade G3/G4 e 03 | 65 | 30 | 60 | Três operações nativas. G3/G4 confirmam os exemplos de recompra. Os níveis aceitos da 03 seguem pendentes. [d37a339](https://github.com/thiagozonda1989-stack/simuladorCotacao/commit/d37a339a6ea750b36b9aaf6d7afad9ca63698265) |
+| 10 | 24/11/2026 | Sonda 03 no Replay | 65 | 30 | 60 | Uma operação em duas ordens. Gatilho −795 e limite −895 registrados na criação no Replay. Detalhes nativos de OHLC seguem em aberto. [88a4487](https://github.com/thiagozonda1989-stack/simuladorCotacao/blob/88a44871cdc6bfa1c8e9df075a6038e4ba20bcf0/docs/colaboracao/evidencias/WINZ26_sonda_03_replay_20261026_v1/README.md) |
 
 ## Critério para chegar a 100
 
