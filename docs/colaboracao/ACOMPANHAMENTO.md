@@ -4,6 +4,10 @@
 
 O eixo X segue a ordem das rodadas. O eixo Y vai de 0 (nenhum trabalho) a 100 (objetivo demonstrado). As notas são estimativas por marcos com evidência. Os números de operações da tabela se referem a cada rodada e podem reutilizar os mesmos pregões. As datas indicam a publicação das evidências no fuso America/Sao_Paulo. A rodada zero é uma referência sem data de publicação associada.
 
+**Legenda** · 🔵 Simulador · 🟠 Estratégias NTSL · 🟢 Dados
+
+[Baixar gráfico interativo](ACOMPANHAMENTO_INTERATIVO.html) (use **Download raw file** no GitHub e abra o HTML no navegador). Passe o mouse sobre uma linha ou ponto para ver o nome da série, a rodada e o percentual.
+
 ```mermaid
 ---
 config:
@@ -19,8 +23,6 @@ xychart-beta
   line [0, 15, 25, 30, 30, 30, 30, 30, 30, 30, 35, 35, 35, 35, 35, 35]
   line [0, 30, 40, 45, 50, 50, 55, 55, 55, 60, 60, 60, 60, 60, 60, 60]
 ```
-
-**Linhas:** azul para simulador, laranja para estratégias NTSL e verde para dados.
 
 | Rodada | Publicação | Marco | Simulador | Estratégias (progresso e acerto) | Dados | Evidência e operações |
 |---:|---|---|---:|---:|---:|---|
