@@ -1,0 +1,33 @@
+{
+  "ativo": "WINZ26",
+  "periodo_segundos": 60,
+  "tick_pontos": 5,
+  "resultado_tela_informado": {
+    "variacoes": 1,
+    "liquido_reais": 5745,
+    "fator_lucro": 2.22,
+    "operacoes": 43
+  },
+  "inputs_tela_informados": {
+    "p_Periodo_Regime_ATR": 50,
+    "p_Desvio_VWAP": 2.1,
+    "p_ZScore_Vol": 1.5,
+    "p_Stop_Pontos": 350,
+    "p_Alvo_Pontos": 450,
+    "p_MinimoTrades": 100,
+    "p_Lote": 5,
+    "p_Offset_Limite_Stop": 5
+  },
+  "periodo_atr_padrao_fonte_candidata": 14,
+  "modo_profit": null,
+  "inicio": null,
+  "fim": null,
+  "quantidade_painel": null,
+  "quantidade_maxima": null,
+  "executar_nos_limites": null,
+  "inputs_profit": null,
+  "regras_ohlc": null,
+  "origem_agressao": null,
+  "origem_vwap": null,
+  "fontes_sha256": null
+}
