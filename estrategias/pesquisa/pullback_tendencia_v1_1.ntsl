@@ -1,0 +1,96 @@
+{ Pesquisa v1.1. Exige confirmação por fechamento contra o candle anterior
+  e fechamento nos 35% da amplitude mais favoráveis ao lado do sinal. }
+
+input
+  p_Rapida(9);
+  p_Lenta(34);
+  p_Alvo(200);
+  p_Stop(150);
+  p_FolgaStop(50);
+  p_TempoMax(30);
+  p_MaxEntradasDia(4);
+  p_Espera(3);
+  p_PerdaMaxDia(150);        { em reais: DailyResult já aplica valor do ponto e custos }
+  p_HoraInicio(930);
+  p_HoraFimEntradas(1700);
+  p_HoraZeragem(1745);
+
+var
+  v_Rapida, v_Lenta : Float;
+  v_Alvo, v_Stop, v_Folga : Float;
+  v_TendAlta, v_TendBaixa : Boolean;
+  v_SinalCompra, v_SinalVenda : Boolean;
+  v_Posicionado, v_EstavaPosicionado : Boolean;
+  v_PodeEntrar, v_Zerar : Boolean;
+  v_BarraEntrada, v_BarraSaida, v_EntradasDia : Integer;
+
+begin
+  v_Rapida := Media(p_Rapida, Close);
+  v_Lenta := Media(p_Lenta, Close);
+
+  { niveis sempre na grade de 5 pontos }
+  v_Alvo := Round(p_Alvo / 5) * 5;
+  v_Stop := Round(p_Stop / 5) * 5;
+  v_Folga := Round(p_FolgaStop / 5) * 5;
+
+  v_TendAlta := (v_Rapida > v_Lenta) and (v_Rapida > v_Rapida[1]);
+  v_TendBaixa := (v_Rapida < v_Lenta) and (v_Rapida < v_Rapida[1]);
+  v_SinalCompra := v_TendAlta and (Low <= v_Rapida) and (Close > v_Rapida) and (Close > Open)
+                   and (Close > Close[1]) and (High > Low)
+                   and (Close - Low >= 0.65 * (High - Low));
+  v_SinalVenda := v_TendBaixa and (High >= v_Rapida) and (Close < v_Rapida) and (Close < Open)
+                  and (Close < Close[1]) and (High > Low)
+                  and (High - Close >= 0.65 * (High - Low));
+
+  if Date <> Date[1] then
+    v_EntradasDia := 0;
+
+  v_Posicionado := IsBought or IsSold;
+  if v_Posicionado and (not v_EstavaPosicionado) then
+    v_BarraEntrada := CurrentBar;
+  if v_EstavaPosicionado and (not v_Posicionado) then
+    v_BarraSaida := CurrentBar;
+
+  v_Zerar := (Time >= p_HoraZeragem)
+             or (v_Posicionado and (CurrentBar - v_BarraEntrada >= p_TempoMax));
+
+  v_PodeEntrar := (not v_Posicionado)
+                  and (CurrentBar > p_Lenta + 2)
+                  and (Time >= p_HoraInicio) and (Time <= p_HoraFimEntradas)
+                  and (v_EntradasDia < p_MaxEntradasDia)
+                  and (CurrentBar >= v_BarraSaida + p_Espera)
+                  and (DailyResult > -p_PerdaMaxDia);
+
+  if v_Posicionado and v_Zerar then
+  begin
+    if IsBought then SellToCoverAtMarket(1)
+    else BuyToCoverAtMarket(1);
+  end
+  else if IsBought then
+  begin
+    SellToCoverLimit(BuyPrice + v_Alvo, 1);
+    SellToCoverStop(BuyPrice - v_Stop, BuyPrice - v_Stop - v_Folga, 1);
+  end
+  else if IsSold then
+  begin
+    BuyToCoverLimit(SellPrice - v_Alvo, 1);
+    BuyToCoverStop(SellPrice + v_Stop, SellPrice + v_Stop + v_Folga, 1);
+  end
+  else if v_PodeEntrar then
+  begin
+    if v_SinalCompra then
+    begin
+      BuyAtMarket(1);
+      v_EntradasDia := v_EntradasDia + 1;
+    end
+    else if v_SinalVenda then
+    begin
+      SellShortAtMarket(1);
+      v_EntradasDia := v_EntradasDia + 1;
+    end;
+  end;
+
+  v_EstavaPosicionado := v_Posicionado;
+  Plot(v_Rapida);
+  Plot2(v_Lenta);
+end;
