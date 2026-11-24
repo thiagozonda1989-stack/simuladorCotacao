@@ -420,7 +420,14 @@ def parallel_replays(executor, entries, parameters, workers, deadline, record, f
     return deadline_hit
 
 
-def optimize(replay, config, out, on_progress=None, on_resources=None, on_partial=None, control=None, session=None, on_candidates=None):
+def write_search_artifacts(out, summary, history, names, seen):
+    (out/'metricas.json').write_text(json.dumps(summary, indent=2, ensure_ascii=False, allow_nan=False), encoding='utf-8')
+    pd.DataFrame(history).to_csv(out/'evolucao.csv', index=False)
+    ranking = [dict(zip((f"input:{name}" for name in names), g)) | {'aptidao': fitness} | stats for g, (fitness, stats) in seen.items()]
+    pd.DataFrame(ranking).sort_values('aptidao', ascending=False).to_csv(out/'candidatos.csv', index=False)
+
+
+def optimize(replay, config, out, on_progress=None, on_resources=None, on_partial=None, control=None, session=None, on_candidates=None, candidate_gate=None, search_only=False):
     worker_checkpoint = control.checkpoint if control else None
     checkpoint = (lambda: session.checkpoint(control)) if session else worker_checkpoint
     if control and (not session or control.cancelled.is_set()):
@@ -464,6 +471,8 @@ def optimize(replay, config, out, on_progress=None, on_resources=None, on_partia
         metric, stop_score = 'metas_classes', 1.0
 
     def fitness_for(stats):
+        if candidate_gate is not None and not candidate_gate(stats):
+            return -math.inf
         return candidate_fitness(stats, metric, minimum_signals, targets)
 
     financial = metric in {'resultado','resultado_menos_drawdown','resultado_estavel'}
@@ -476,17 +485,19 @@ def optimize(replay, config, out, on_progress=None, on_resources=None, on_partia
         raise ValueError('Configuração genética inválida.')
     days = np.unique(replay.day)
     n_test = int(config['pregoes_teste'])
-    if not 1 <= n_test < len(days):
+    if search_only and (not financial or n_test != 0):
+        raise ValueError('A busca isolada exige objetivo financeiro e zero pregões de teste no AG.')
+    if not search_only and not 1 <= n_test < len(days):
         raise ValueError('Reserve pelo menos um pregão de busca e um de teste.')
     base_mask = replay.valid_label if generic else replay.eligible(1)
-    search = base_mask & (replay.day < days[-n_test])
-    test = base_mask & (replay.day >= days[-n_test])
+    search_rows = np.ones(len(replay.day), dtype=bool) if search_only else replay.day < days[-n_test]
+    search = base_mask & search_rows
+    test = base_mask & ~search_rows
     for mask in (search, test):
         classes = replay.label[mask]
         if not financial and (not classes.any() or classes.all()):
             raise ValueError('Busca e teste precisam conter exemplos positivos e negativos do alvo.')
     splits = {'busca': search, 'teste': test}
-    search_rows = replay.day < days[-n_test]
     search_replay = replay.subset(search_rows) if generic else Replay(replay.frame.loc[search_rows].reset_index(drop=True),
                            replay.model, replay.seconds, config.get('classe_alvo', '1C'), replay.specification, replay.excluded)
     local_mask = search[search_rows]
@@ -811,6 +822,14 @@ def optimize(replay, config, out, on_progress=None, on_resources=None, on_partia
     report_partial('validacao')
     fitted = parameters(best)
     optimized = dict(zip(names, best))
+    if search_only:
+        summary = dict(motor='ntsl', configuracao=config, **resources, busca=method, metrica=metric,
+                       parada=reason, candidatos_avaliados=len(seen), espaco_busca=total,
+                       segundos_busca=history[-1]['segundos'],
+                       atende_min_sinais=math.isfinite(best_value), parametros_otimizados=optimized,
+                       resultados={'busca': seen[best][1]})
+        write_search_artifacts(out, summary, history, names, seen)
+        return summary
     try:
         original_score = replay.score(defaults, checkpoint)
     except (ValueError, TypeError, ArithmeticError) as error:
@@ -850,10 +869,7 @@ def optimize(replay, config, out, on_progress=None, on_resources=None, on_partia
         for split in summary['resultados'].values():
             stats = split['otimizado']
             split['atingiu_metas'] = all(stats[key] >= goal for key, goal in targets.items())
-    (out/'metricas.json').write_text(json.dumps(summary, indent=2, ensure_ascii=False, allow_nan=False), encoding='utf-8')
-    pd.DataFrame(history).to_csv(out/'evolucao.csv', index=False)
-    ranking = [dict(zip((f"input:{name}" for name in names), g)) | {'aptidao': fitness} | stats for g, (fitness, stats) in seen.items()]
-    pd.DataFrame(ranking).sort_values('aptidao', ascending=False).to_csv(out/'candidatos.csv', index=False)
+    write_search_artifacts(out, summary, history, names, seen)
     columns = [col for col in ['minuto', 'ordem_no_minuto', 'v_barra_id', 'timestamp', 'inicio', 'segmento', *OHLC] if col in replay.frame]
     candles = replay.frame[columns]
     candles.to_csv(out/'candles.csv', index=False)
