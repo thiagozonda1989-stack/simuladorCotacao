@@ -1,0 +1,232 @@
+{
+  "parametros": {
+    "p_Rapida": 20.0,
+    "p_Lenta": 21.0,
+    "p_Alvo": 200.0,
+    "p_Stop": 300.0,
+    "p_TempoMax": 15.0,
+    "p_MaxEntradasDia": 2.0,
+    "p_Espera": 3.0,
+    "p_HoraInicio": 1000.0
+  },
+  "coortes": {
+    "csv": {
+      "original": {
+        "pregoes": 2,
+        "barras": 1118,
+        "rotulos_validos": 969,
+        "rotulos_ambiguos": 89,
+        "rotulos_invalidos": 60,
+        "matriz_confusao": {
+          "C": {
+            "C": 0,
+            "V": 0,
+            "N": 448
+          },
+          "V": {
+            "C": 2,
+            "V": 0,
+            "N": 513
+          },
+          "N": {
+            "C": 0,
+            "V": 0,
+            "N": 6
+          }
+        },
+        "por_classe": {
+          "C": {
+            "verdadeiros_positivos": 0,
+            "previstos": 2,
+            "reais": 448,
+            "taxa_base": 0.4623,
+            "precisao": 0.0,
+            "precisao_ic95": [
+              0.0,
+              0.6576
+            ],
+            "sensibilidade": 0.0,
+            "sensibilidade_ic95": [
+              0.0,
+              0.0085
+            ],
+            "falsos_positivos": 2,
+            "resultado_falsos_positivos_reais": -23.0
+          },
+          "V": {
+            "verdadeiros_positivos": 0,
+            "previstos": 0,
+            "reais": 515,
+            "taxa_base": 0.5315,
+            "precisao": null,
+            "precisao_ic95": [
+              null,
+              null
+            ],
+            "sensibilidade": 0.0,
+            "sensibilidade_ic95": [
+              0.0,
+              0.0074
+            ],
+            "falsos_positivos": 0,
+            "resultado_falsos_positivos_reais": 0.0
+          },
+          "N": {
+            "verdadeiros_positivos": 6,
+            "previstos": 967,
+            "reais": 6,
+            "taxa_base": 0.0062,
+            "precisao": 0.0062,
+            "precisao_ic95": [
+              0.0028,
+              0.0135
+            ],
+            "sensibilidade": 1.0,
+            "sensibilidade_ic95": [
+              0.6097,
+              1.0
+            ]
+          }
+        },
+        "operacoes": 4,
+        "operacoes_por_pregao": 2.0,
+        "operacoes_compra": 3,
+        "operacoes_venda": 1,
+        "operacoes_positivas": 1,
+        "taxa_acerto_operacoes": 0.25,
+        "exposicao_barras": 0.0072,
+        "resultado_liquido_reais": -147.0,
+        "resultado_pontos": -715.0,
+        "drawdown_liquido_reais": 186.0,
+        "pregoes_positivos": 0,
+        "pregoes_negativos": 2,
+        "media_diaria_reais": -73.5,
+        "desvio_diario_reais": 71.42,
+        "media_diaria_ic95_bootstrap": [
+          -124.0,
+          -23.0
+        ],
+        "saidas_por_tipo": {
+          "selltocoverstop": 2,
+          "selltocoverlimit": 1,
+          "buytocoverstop": 1
+        },
+        "barras_ambiguas_execucao": 1
+      },
+      "candidata": {
+        "pregoes": 2,
+        "barras": 1118,
+        "rotulos_validos": 969,
+        "rotulos_ambiguos": 89,
+        "rotulos_invalidos": 60,
+        "matriz_confusao": {
+          "C": {
+            "C": 0,
+            "V": 1,
+            "N": 447
+          },
+          "V": {
+            "C": 1,
+            "V": 0,
+            "N": 514
+          },
+          "N": {
+            "C": 0,
+            "V": 0,
+            "N": 6
+          }
+        },
+        "por_classe": {
+          "C": {
+            "verdadeiros_positivos": 0,
+            "previstos": 1,
+            "reais": 448,
+            "taxa_base": 0.4623,
+            "precisao": 0.0,
+            "precisao_ic95": [
+              0.0,
+              0.7935
+            ],
+            "sensibilidade": 0.0,
+            "sensibilidade_ic95": [
+              0.0,
+              0.0085
+            ],
+            "falsos_positivos": 1,
+            "resultado_falsos_positivos_reais": 39.0
+          },
+          "V": {
+            "verdadeiros_positivos": 0,
+            "previstos": 1,
+            "reais": 515,
+            "taxa_base": 0.5315,
+            "precisao": 0.0,
+            "precisao_ic95": [
+              0.0,
+              0.7935
+            ],
+            "sensibilidade": 0.0,
+            "sensibilidade_ic95": [
+              0.0,
+              0.0074
+            ],
+            "falsos_positivos": 1,
+            "resultado_falsos_positivos_reais": 39.0
+          },
+          "N": {
+            "verdadeiros_positivos": 6,
+            "previstos": 967,
+            "reais": 6,
+            "taxa_base": 0.0062,
+            "precisao": 0.0062,
+            "precisao_ic95": [
+              0.0028,
+              0.0135
+            ],
+            "sensibilidade": 1.0,
+            "sensibilidade_ic95": [
+              0.6097,
+              1.0
+            ]
+          }
+        },
+        "operacoes": 4,
+        "operacoes_por_pregao": 2.0,
+        "operacoes_compra": 2,
+        "operacoes_venda": 2,
+        "operacoes_positivas": 2,
+        "taxa_acerto_operacoes": 0.5,
+        "exposicao_barras": 0.0116,
+        "resultado_liquido_reais": -46.0,
+        "resultado_pontos": -210.0,
+        "drawdown_liquido_reais": 124.0,
+        "pregoes_positivos": 1,
+        "pregoes_negativos": 1,
+        "media_diaria_reais": -23.0,
+        "desvio_diario_reais": 142.84,
+        "media_diaria_ic95_bootstrap": [
+          -124.0,
+          78.0
+        ],
+        "saidas_por_tipo": {
+          "selltocoverlimit": 1,
+          "buytocoverlimit": 1,
+          "buytocoverstop": 1,
+          "selltocoverstop": 1
+        },
+        "barras_ambiguas_execucao": 1
+      },
+      "delta_por_pregao": [
+        101.0,
+        0.0
+      ]
+    }
+  },
+  "confirmacao": {
+    "baseline": -147.0,
+    "liquido_candidata": -46.0,
+    "delta_reais": 101.0,
+    "meta_delta_reais": 14.700000000000001,
+    "delta_diario_ic95": null
+  }
+}
