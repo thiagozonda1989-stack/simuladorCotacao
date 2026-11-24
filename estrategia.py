@@ -3,6 +3,7 @@ import argparse
 import csv
 from copy import deepcopy
 from dataclasses import asdict, dataclass
+from fractions import Fraction
 import hashlib
 import html
 import json
@@ -109,6 +110,8 @@ class Order:
     eligible_ns: int = -1
     requested_quantity: int = 0
     market_entry: bool = False
+    requested_price: float | None = None
+    tick_adjustment: str = ""
 
 
 @dataclass(frozen=True)
@@ -132,6 +135,7 @@ class ExecutionRules:
     historico_continuo_lacunas: bool = False
     entrada_mercado_atraves_lacuna: bool = False
     protecoes_ate_cancelar: bool = False
+    ajuste_tick_saidas_venda: bool = False
 
     def __post_init__(self):
         for value in (self.latencia_ticks_ms, self.lacuna_ticks_ms):
@@ -141,6 +145,8 @@ class ExecutionRules:
             raise ValueError("motor_ticks deve ser booleano.")
         if self.motor_ticks and self.latencia_barras:
             raise ValueError("Para tick a tick, zere a latência em barras e use a latência em milissegundos.")
+        if self.ajuste_tick_saidas_venda and self.motor_ticks:
+            raise ValueError("--ajuste-tick-saidas-venda só se aplica ao motor OHLC.")
         if self.protecoes_ate_cancelar and self.motor_ticks:
             raise ValueError("--protecoes-ate-cancelar só se aplica ao motor OHLC.")
         if self.entrada_mercado_atraves_lacuna and self.motor_ticks:
@@ -164,7 +170,7 @@ class ExecutionRules:
                       self.vwap_continuo_lacunas, self.protecao_no_candle_entrada,
                       self.rastrear_ordens, self.avaliacao_pos_preenchimento,
                       self.historico_continuo_lacunas, self.entrada_mercado_atraves_lacuna,
-                      self.protecoes_ate_cancelar):
+                      self.protecoes_ate_cancelar, self.ajuste_tick_saidas_venda):
             if type(value) is not bool:
                 raise ValueError("As regras de execução devem ser booleanas.")
 
@@ -179,6 +185,8 @@ class Engine:
         if not math.isfinite(self.point_value) or self.point_value <= 0:
             raise ValueError("O valor por ponto precisa ser positivo.")
         self.rules = ExecutionRules(**(regras or {}))
+        self.price_tick = Fraction(str(self.tick)) if self.rules.ajuste_tick_saidas_venda else None
+        self.tick_adjustments = {"ajustado": 0, "empate_meio_tick": 0}
         self.costs = self.daily_costs = 0.0
         self.values = program.defaults.copy()
         self.arrays = {symbol.slot: [0.0]*(program.defaults[symbol.slot][1]-program.defaults[symbol.slot][0]+1)
@@ -247,6 +255,15 @@ class Engine:
         )
         if self.rules.avaliacao_pos_preenchimento:
             record["barra_contexto_ntsl"] = self.row+1
+        if self.rules.ajuste_tick_saidas_venda:
+            priced = order is not None and order.kind in {"limit", "stop"} and order.price > 0
+            requested = order.requested_price if priced and order.requested_price is not None else (
+                order.price if priced else ""
+            )
+            limit = order.limit if priced and order.limit is not None else ""
+            record.update(nivel_solicitado=requested, nivel_efetivo=order.price if priced else "",
+                          limite_solicitado=limit, limite_efetivo=limit,
+                          ajuste_tick=order.tick_adjustment if priced else "")
         self.order_events.append(record)
 
     @staticmethod
@@ -561,11 +578,30 @@ class Engine:
         if not exit_order:
             self.entry_intentions.add(action)
 
+    def adjust_sell_exit(self, order):
+        order.requested_price = order.price
+        # As representações decimais passam a frações exatas para evitar erro na comparação do meio tick.
+        units, remainder = divmod(Fraction(str(order.price)), self.price_tick)
+        if remainder == 0:
+            order.tick_adjustment = "na_grade"
+            return
+        if 2 * remainder == self.price_tick:
+            order.tick_adjustment = "empate_meio_tick"
+        else:
+            nearest = units + (2 * remainder > self.price_tick)
+            if nearest == 0:
+                raise NTSLError("O nível ajustado ao tick precisa ser positivo.")
+            order.price = float(nearest * self.price_tick)
+            order.tick_adjustment = "ajustado"
+        self.tick_adjustments[order.tick_adjustment] += 1
+
     def place(self, key, order):
         if self.opening_evaluation_row is not None:
             exit_action = "exit_long" if self.position > 0 else "exit_short"
             if order.action != exit_action or order.kind not in {"limit", "stop"}:
                 return
+        if self.price_tick is not None and order.action == "exit_long" and order.kind in {"limit", "stop"}:
+            self.adjust_sell_exit(order)
         old = self.orders.get(key)
         order.requested_quantity = order.quantity
         order.market_entry = order.kind == "market" and (
@@ -584,6 +620,8 @@ class Engine:
         order.sent_at = self.row
         self.orders[key] = order
         self.audit_order("solicitacao_renovada" if same_order else "solicitacao", order, key)
+        if order.tick_adjustment == "empate_meio_tick":
+            self.audit_order("empate_meio_tick", order, key)
 
     def slipped(self, price, buying):
         return price + (1 if buying else -1) * self.rules.slippage_ticks * self.tick
@@ -728,6 +766,8 @@ class Engine:
                      indicadores=[(key, value.window.maxlen, list(value.window),
                                    value.row, value.sum, value.ema, value.value)
                                   for key, value in self.rolling.items()])
+        if self.price_tick is not None:
+            state["ajustes_tick_saidas_venda"] = self.tick_adjustments.copy()
         return state, self.history[:self.completed]
 
     def restore(self, state, package):
@@ -764,6 +804,7 @@ class Engine:
         self.orders_cancelled_at_gaps = state.get("ordens_canceladas_lacuna", 0)
         self.gaps_with_exposure = state.get("lacunas_com_posicao", 0)
         self.ambiguities = state["ambiguidades"]
+        self.tick_adjustments.update(state.get("ajustes_tick_saidas_venda", {}))
         self.orders = {key: Order(**order) for key, order in state["ordens"]}
         self.fills, self.trace, self.logs = state["execucoes"], state["candles"], state["console"]
         self.order_events = state.get("eventos_ordens", [])
@@ -973,6 +1014,10 @@ def run_strategy(csv, source, output, seconds, format_name, tick, overrides=None
                    regras_execucao=asdict(engine.rules),
                    inputs=program.inputs|{k.lower():v for k,v in (overrides or {}).items()},
                    usa_asset_snapshot=engine.ignored_asset)
+    if rules.ajuste_tick_saidas_venda:
+        summary["ajustes_tick_saidas_venda"] = engine.tick_adjustments
+    else:
+        del summary["regras_execucao"]["ajuste_tick_saidas_venda"]
     validation_graphs = ""
     validation_links = ""
     if validacao is not None:
@@ -1034,6 +1079,8 @@ def main():
     p.add_argument("--ordem-so-proxima-barra", action=argparse.BooleanOptionalAction, default=True)
     p.add_argument("--protecoes-ate-cancelar", action="store_true",
                    help="OHLC experimental: mantém saídas limite e stop-limit compatíveis em barras consecutivas")
+    p.add_argument("--ajuste-tick-saidas-venda", action="store_true",
+                   help="OHLC experimental: aproxima alvo limite e gatilho de stop das saídas de posição comprada")
     p.add_argument("--latencia-barras", type=int, default=0)
     p.add_argument("--historico-continuo", action=argparse.BooleanOptionalAction, default=True)
     p.add_argument("--historico-continuo-lacunas", action="store_true",
