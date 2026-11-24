@@ -13,11 +13,11 @@ config:
 ---
 xychart-beta
   title "Evolução por rodada"
-  x-axis "Rodadas de validação" [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]
+  x-axis "Rodadas de validação" [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
   y-axis "Avanço" 0 --> 100
-  line [0, 20, 35, 45, 50, 55, 60, 60, 65, 65, 65, 65, 65, 65, 65]
-  line [0, 15, 25, 30, 30, 30, 30, 30, 30, 30, 35, 35, 35, 35, 35]
-  line [0, 30, 40, 45, 50, 50, 55, 55, 55, 60, 60, 60, 60, 60, 60]
+  line [0, 20, 35, 45, 50, 55, 60, 60, 65, 65, 65, 65, 65, 65, 65, 65]
+  line [0, 15, 25, 30, 30, 30, 30, 30, 30, 30, 35, 35, 35, 35, 35, 35]
+  line [0, 30, 40, 45, 50, 50, 55, 55, 55, 60, 60, 60, 60, 60, 60, 60]
 ```
 
 **Linhas:** azul para simulador, laranja para estratégias NTSL e verde para dados.
@@ -39,6 +39,7 @@ xychart-beta
 | 12 | 24/11/2026 | Pullback em 20 pregões reais | 65 | 35 · v1.1: 54,8% (23/42), v1.3: 35,7% (15/42) | 60 | Candidata rejeitada. Líquido v1.1 −R$ 286 e v1.3 −R$ 331. [Relatório](https://github.com/thiagozonda1989-stack/simuladorCotacao/blob/aec29307c67f1b837d7532fde4fe9d51c2f02b71/docs/colaboracao/evidencias/estrategia_pullback_20_pregoes_v1/README.md) |
 | 13 | 24/11/2026 | Busca de parâmetros da v1.3 | 65 | 35 · perfil curto: 39,6% (91/230) | 60 | 48 combinações em 19 pregões. Em 20 pregões já conhecidos, melhor perfil reavaliado fez 11,5 operações/dia, 1 min 51 s, −R$ 143 e drawdown de R$ 338. Meta diária não atingida. [Resultados](https://github.com/thiagozonda1989-stack/simuladorCotacao/blob/1aa8495327225755998605198c5a2f2236aeb5ed/docs/colaboracao/evidencias/estrategia_pullback_busca_curta_v1/resultado.json) |
 | 14 | 24/11/2026 | v1.4, dois contratos e alvo dinâmico | 65 | 35 · 41,3% (99/240) | 60 | 24 configurações em 19 pregões. Em 20 pregões conhecidos, alvo de 50 a 220 pts e 12 operações/dia. O controle com os mesmos filtros teve 12,45/dia e 38,2% de acerto. Líquido −R$ 1.284 no dinâmico e −R$ 590 no controle. [Resultados](https://github.com/thiagozonda1989-stack/simuladorCotacao/blob/ea7c8dbc9e8c6910d0f13f3603c996436fab0288/docs/colaboracao/evidencias/estrategia_pullback_alvo_dinamico_v1/resultado.json) |
+| 15 | 24/11/2026 | Stops adaptativos v1.5 e v1.6 | 65 | 35 · v1.5: 36,5% (84/230) · v1.6: 26,7% (12/45) | 60 | 12 configurações. Líquido de −R$ 480 e −R$ 504 em 20 pregões conhecidos. [Relatório](evidencias/estrategia_pullback_adaptativo_v1/README.md) |
 
 ## Cálculo da taxa de acerto
 
