@@ -1,0 +1,977 @@
+Ajuste experimental ao tick de saídas de venda | PR #2 | WINZ26
+Motor executado db9ace693c9396d87198e0973d9708ddeb7668d4
+Motor de referência d67a8731bfa1597b0bdfe4cc4064e6502822f81a
+Evidências G1/G2 723838af659a8a1e3145ba22e00468dd8feae6d8
+
+===== docs/colaboracao/evidencias/WINZ26_ajuste_tick_saidas_venda_20261026_v1/README.md =====
+# Ajuste experimental ao tick em saídas de venda OHLC
+
+Motor executado `db9ace693c9396d87198e0973d9708ddeb7668d4`. Motor de referência `d67a8731bfa1597b0bdfe4cc4064e6502822f81a`. Evidências G1/G2 `723838af659a8a1e3145ba22e00468dd8feae6d8`. [Revisão Claude](https://github.com/thiagozonda1989-stack/simuladorCotacao/pull/2#issuecomment-7117613311) · [Revisão Gemini](https://github.com/thiagozonda1989-stack/simuladorCotacao/pull/2#issuecomment-7117647718)
+
+## Escopo do motor
+
+`--ajuste-tick-saidas-venda` é experimental, exclusiva do OHLC e desligada por padrão. Com ela ligada, `Engine.place` ajusta ao `--tick` mais próximo o preço do alvo limite e o gatilho do stop somente quando a ação cadastrada é `exit_long`. O limite do stop-limit, as entradas, as saídas de posição vendida e as ordens genéricas `SendOrder` com ação `net_long` ou `net_short` conservam os preços brutos. Isso inclui uma ordem genérica que venha a reduzir posição ao preencher. O ajuste incide sobre o preço absoluto e a grade parte de zero.
+
+A comparação usa frações exatas a partir da representação decimal do preço e do tick. Um nível já na grade conserva o valor. No empate exato de meio tick, o preço solicitado é mantido e o caso entra no contador `empate_meio_tick`. Com `--rastrear-ordens`, há também um evento explícito. Um arredondamento que levaria a preço zero é rejeitado, respeitando a exigência de nível positivo. O gatilho ajustado e o limite bruto continuam sujeitos à regra de execução existente.
+
+O ajuste ocorre no cadastro, antes de comparar se o reenvio corresponde à mesma ordem. Se nível efetivo, limite bruto e quantidade forem iguais, o motor conserva `eligible_at` e `triggered`. Se mudar o nível efetivo, a substituição recebe nova elegibilidade e reinicia o estado de disparo. Isso é uma hipótese do simulador. As sondas do Profit mostram o comportamento efetivo no toque e no preenchimento. A etapa interna do ajuste e a semântica de renovação nativa seguem em aberto.
+
+Com a regra ligada, `eventos_ordens.csv` acrescenta `nivel_solicitado`, `nivel_efetivo`, `limite_solicitado`, `limite_efetivo` e `ajuste_tick`. As métricas registram as contagens `ajustado` e `empate_meio_tick` por solicitação, inclusive reenvios. Com a regra desligada, o formato anterior dos relatórios é preservado.
+
+## Sondas nativas de venda e controles
+
+| Caso | Solicitado | Profit | Simulador desligado | Simulador ligado |
+|---|---:|---:|---:|---:|
+| Controle 01 · alvo | +428 | 10:55, +430 | 10:55, +428 | 10:55, +430 |
+| G1 · alvo | +447 | 10:55, +445 | 10:58, −375, limpeza | 10:55, +445 |
+| Controle 03 · gatilho | −793 | 10:55, −795 | 10:55, −793 | 10:55, −795 |
+| G2 · gatilho | −877 | 10:55, −875 | 10:58, −375, limpeza | 10:55, −875 |
+
+Preços em pontos relativos à entrada. Os dois controles de saída a mercado permaneceram em +220 pontos, na abertura de 10:55, com ambos os modos da flag. Nos testes, a normalização funciona com proteção persistente e avaliação pós-preenchimento. A prioridade de zeragem na abertura continua executando uma única saída a mercado. [Matriz com horários, estado e níveis brutos/efetivos](matriz_sondas.csv)
+
+As barras de WINZ26 em 26/10/2026, 1 minuto, fuso America/Sao_Paulo, conferem no recorte 10:51–10:58. A abertura de 10:52 é a referência de entrada. Às 10:55, a abertura é +220, a máxima +445, a mínima −875 e o fechamento −260. [OHLC relativo](barras_referencia.csv) · [Insumos e hashes](insumos_privados.csv)
+
+## Regressões executadas no Windows
+
+Foram executados **32 replays privados** em 16 cenários pareados, com a opção desligada e ligada. Todos usaram a persistência de proteções e as mesmas bases preparadas, parâmetros e configuração de cada cenário anterior. A v5.7 foi rodada em padrão, proteção legada, pós-preenchimento, pós-preenchimento com continuidade e pós-preenchimento com continuidade/entrada pela lacuna. A v5.8 foi rodada em reinício, continuidade e continuidade/entrada pela lacuna, com o pregão anterior no histórico e corte de 63 barras por segmento na comparação de auditoria. [Matriz privada agregada](regressoes.csv)
+
+| Estratégia | 21/10 | 26/10 |
+|---|---|---|
+| v5.7 | 10/10 nos cinco cenários | 8/12 no padrão, 11/12 no legado e 12/12 nos três cenários pós-preenchimento, com a #182 exata |
+| v5.8 | 7/7 nos três cenários | 8/10 no reinício e 9/10 com continuidade, incluindo a combinação com entrada pela lacuna |
+
+Nenhuma solicitação em escopo precisou de ajuste e houve zero empates nesses 16 cenários. Com a opção desligada, os sete arquivos por cenário ficaram idênticos à referência (112 comparações). Com ela ligada, execuções, candles, console e NTSL ficaram idênticos byte a byte. O rastreio difere apenas pelas cinco colunas novas e as métricas JSON e HTML diferem apenas pela configuração e contadores. Os seis relatórios privados de comparação v5.8 ficaram idênticos com a opção ligada ou desligada. O replay mínimo da referência também foi executado e repetido nos dois modos, com o mesmo padrão de equivalência. [Replay mínimo](replay_minimo.csv)
+
+A saída v5.8 de 10:15 permanece ambígua no OHLC. O caso 2 da lacuna continua como divergência conhecida. A suíte local passou com **130 testes**, incluindo 22 novos casos, e os 12 avisos de fuso já conhecidos. O CLI rejeitou tick a tick com código 2. [Testes](../../../../tests/test_ajuste_tick_saidas_venda.py)
+
+## Reprodução
+
+Use destinos novos. As bases, parâmetros e estratégias são as da rodada anterior. Para as sondas, use os NTSLs do protocolo e transforme somente a formatação de console. Os controles 01 e 03 usam a sonda de prioridade com o painel 428/793/101. [Rodada da persistência das proteções](../WINZ26_v5_8_protecoes_ate_cancelar_20261026_v1/README.md#reprodução) · [NTSLs G1/G2](../WINZ26_grade_precos_g1_g2_20261026_v1/README.md)
+
+```powershell
+$base = @('--formato','ohlc','--segundos','60','--tick','5','--valor-ponto','0.2','--rastrear-ordens','--protecoes-ate-cancelar')
+$paridade = @('--volume-financeiro-ntsl','--agressao-referencia-injetada','--vwap-continuo-lacunas')
+$flag = @('--ajuste-tick-saidas-venda') # Repetir com $flag = @().
+# $modo contém uma das configurações da matriz, incluindo --avaliacao-pos-preenchimento quando aplicável.
+py -3.11 estrategia.py --csv $barras --ntsl $ntsl --inputs $inputs --saida $saida @base @paridade @modo @flag
+py -3.11 -m tools.comparar_v5_8 --data $dia --aquecimento 63 --barras-profit $barrasProfit `
+  --operacoes-profit $operacoesProfit --console-profit $consoleProfit --barras-preparadas $barras `
+  --candles-simulador "$saida/candles.csv" --console-simulador "$saida/console.csv" `
+  --execucoes-simulador "$saida/execucoes.csv" --saida "$saida.comparacao.json"
+# Para sondas, omita @paridade, use --avaliacao-pos-preenchimento e copie a formatação de console para a versão local.
+py -3.11 estrategia.py --csv exemplos/replay_minimo/candles.csv --ntsl exemplos/replay_minimo/estrategia.ntsl `
+  --saida $saidaMinimo --segundos 5 --formato ohlc --tick 5 --rastrear-ordens @flag
+py -3.11 -m tools.publicar_ajuste_tick_saidas_venda --replays $replays --referencia $referencia `
+  --operacoes-v57 $operacoesV57 --evidencias-grade $grade --evidencias-prioridade $prioridade --saida $publicavel
+py -3.11 -m pytest -q
+```
+
+O extrator usa os nomes da matriz anterior para as pastas de referência. Use `${dia}-v57-${modo}-${off|on}`, `v58-${dia}-${modo}-${off|on}`, `minimo-ref`, `minimo-off`, `minimo-on`, `g1-off/on`, `g2-off/on`, `prioridade-${perna}-${mercado}-${off|on}`, `g3-bruto/grade` e `g4-bruto/grade` na rodada atual. Para a conversão de console local, substitua `FloatToString(expr, 0)` por `(expr)` e retire o argumento de cor `clYellow` das chamadas. Os dados brutos e os artefatos completos dos replays ficam no Windows.
+
+## Sondas de compra
+
+G3 e G4 estão prontas para compilar no Profit. A compilação e execução nativas ficam pendentes. O controle do gatilho e limite aceitos da sonda 03 está documentado à parte no procedimento de captura. [G3](g3_alvo_compra_grade_profit_v1_0.ntsl) · [G4](g4_stop_compra_grade_profit_v1_0.ntsl) · [Passo a passo de captura](captura_profit.md) · [Fontes para o Gemini](fontes_gemini.txt) · [Manifesto](SHA256SUMS.txt)
+
+===== docs/colaboracao/evidencias/WINZ26_ajuste_tick_saidas_venda_20261026_v1/captura_profit.md =====
+# Captura no Profit · G3, G4 e limite do stop-limit
+
+## G3 e G4 · posição vendida
+
+Use **Profit Backtest OHLC**, WINZ26, 1 minuto, análise de **26/10/2026 a 26/10/2026**. Configure quantidade e máxima em **1**, custos e slippage em **zero** e **Executar nos Limites** ativo. Deixe desativados os filtros e a zeragem por horário na janela de 10:51 a 10:58. Inicie cada execução zerado e sem pendências. A interface deve mostrar **OHLC** selecionado no seletor **OHLC/Tick a Tick**.
+
+| Parâmetro | G3 | G4 |
+|---|---:|---:|
+| `p_Data` | 1261026 | 1261026 |
+| `p_Entrada` | 1051 | 1051 |
+| `p_Protecao` | 1052 | 1052 |
+| `p_Cancela` | 1056 | 1056 |
+| `p_Zera` | 1057 | 1057 |
+| `p_Fim` | 1058 | 1058 |
+| `p_Alvo` | **877** | — |
+| `p_Gatilho` | — | **447** |
+| `p_Limite` | — | **1000** |
+
+1. Abra cada arquivo no Editor de Estratégias e compile como estratégia de execução. Compare o painel com a tabela antes de iniciar o Backtest. [G3](g3_alvo_compra_grade_profit_v1_0.ntsl) · [G4](g4_stop_compra_grade_profit_v1_0.ntsl)
+2. Execute cada sonda separadamente. A venda a mercado é solicitada no rótulo **10:51**; os quatro controles locais preencheram na abertura de **10:52**. A partir do preço da venda, no rótulo **10:52**, G3 envia uma única recompra limite `BuyToCoverLimit(SellPrice - 877, 1)`; G4 envia `BuyToCoverStop(SellPrice + 447, SellPrice + 1000, 1)`. Se necessário, a limpeza é solicitada em 10:56 e 10:57.
+3. Exporte o **console Debug completo** de cada execução. Preserve a ordem física, avisos e blocos repetidos. O console traz `GRADE_G3` ou `GRADE_G4`, data, hora, barra, sequência, posição, pendências, OHLC e os níveis solicitados com `SellPrice` de referência.
+4. Na aba **Operações**, exporte um **CSV** com ativo, lado, quantidade, horários de entrada e saída e preços. Exporte também o PDF do relatório e, se disponível, o CSV de barras de 10:51 a 10:58.
+5. Salve um **print de configuração por execução** com o seletor OHLC/Tick a Tick inteiro, OHLC selecionado, ativo, período, data, quantidade, parâmetros, custos e slippage. Se necessário, capture duas imagens da mesma execução. Identifique arquivos com `G3_877` e `G4_447_1000`, por exemplo `G3_877_console.txt`, `G3_877_operacoes.csv` e `G3_877_config.png`.
+
+A abertura de 10:55 fica **+220 pontos** acima do preço de entrada, a máxima é **+445** e a mínima é **−875**. A posição vendida só pode tocar os níveis em disputa a partir dessa barra. A hipótese de tick mais próximo prevê G3 a **−875** na mínima, com ganho de 875 pontos, e G4 a **+445** na máxima, com perda de 445 pontos. Nos controles locais, os níveis brutos permanecem pendentes às 10:55 e a recompra de limpeza ocorre às 10:58, a −375 pontos de preço relativo. Os controles na grade reproduzem a geometria esperada. A confirmação nativa está pendente. [OHLC relativo](barras_referencia.csv) · [Replays G3 e G4](sondas_g3_g4_simulador.csv)
+
+## Aceitação do gatilho −793 e do limite −894 da sonda 03
+
+1. Repita **03, stop controle**, com a sonda de prioridade já publicada. Use o Backtest OHLC acima, `p_Perna=2`, `p_SaidaMercado=0`, `p_Stop=793` e `p_Folga=101`. A compra é solicitada em 10:51 e a proteção em 10:52, sem zeragem concorrente. No console, confira o gatilho **−793** e o limite **−894**, ambos em relação ao preço real da compra. [NTSL da sonda 03](../WINZ26_v5_8_protecoes_ate_cancelar_20261026_v1/sonda_prioridade_mercado_protecao_profit_v1_0.ntsl)
+2. Procure no histórico de ordens **da mesma execução** o registro original do stop-limit enquanto pendente, antes de eventual conversão. Exporte o identificador, estado, hora e tipo da ordem, campos de gatilho e limite, e os registros de execução/cancelamento vinculados. Preserve a resolução original dos horários.
+3. Se a captura só estiver disponível no **Replay**, execute separadamente em simulação. Identifique os arquivos com `03_stop_793_894_replay`, guarde o console e as operações dessa rodada e exporte a lista que mostre os valores aceitos. Se possível, capture antes do disparo e depois dele, com os vínculos. Compare sempre os níveis em relação à entrada do **próprio Replay**.
+4. Registre os campos aceitos que estiverem presentes. O gatilho pode ser confrontado com −793 solicitado e os candidatos na grade. Para o limite, confronte o valor aceito com −894 e possíveis ticks vizinhos −895 ou −890. Se houver apenas o preço médio executado ou só o registro da ordem convertida sem os campos originais, o gatilho ou o limite aceito correspondente permanece indeterminado. A evidência do Replay caracteriza aquele modo.
+
+Conserve os originais no Windows para sanitização e publicação dos derivados.
+
+===== docs/colaboracao/evidencias/WINZ26_ajuste_tick_saidas_venda_20261026_v1/g3_alvo_compra_grade_profit_v1_0.ntsl =====
+{ G3: recompra limite fora da grade. Somente Backtest OHLC. }
+input
+  p_Data(1261026);
+  p_Entrada(1051);
+  p_Protecao(1052);
+  p_Cancela(1056);
+  p_Zera(1057);
+  p_Fim(1058);
+  p_Alvo(877);
+
+var
+  v_Seq, v_Pendentes : Integer;
+  v_EntradaEnviada, v_ProtecaoEnviada, v_Cancelou, v_Zerou : Boolean;
+  v_Limite : Float;
+
+begin
+  if (Date = p_Data) and (Time >= p_Entrada) and (Time <= p_Fim) then
+  begin
+    v_Seq := v_Seq + 1;
+    if HasPendingOrders then v_Pendentes := 1 else v_Pendentes := 0;
+    ConsoleLog("GRADE_G3;AVALIACAO"
+      + ";data=" + FloatToString(Date, 0)
+      + ";hora=" + FloatToString(Time, 0)
+      + ";barra=" + FloatToString(CurrentBar, 0)
+      + ";seq=" + FloatToString(v_Seq, 0)
+      + ";posicao=" + FloatToString(PositionQty, 0)
+      + ";pendentes=" + FloatToString(v_Pendentes, 0)
+      + ";abertura=" + FloatToString(Open, 0)
+      + ";maxima=" + FloatToString(High, 0)
+      + ";minima=" + FloatToString(Low, 0)
+      + ";fechamento=" + FloatToString(Close, 0), clYellow);
+
+    if (Time = p_Entrada) and not v_EntradaEnviada and not HasPosition and not HasPendingOrders then
+    begin
+      v_EntradaEnviada := True;
+      ConsoleLog("GRADE_G3;SOLICITA_VENDA;seq=" + FloatToString(v_Seq, 0), clYellow);
+      SellShortAtMarket(1);
+    end;
+
+    if (Time = p_Protecao) and IsSold and not v_ProtecaoEnviada then
+    begin
+      v_ProtecaoEnviada := True;
+      v_Limite := SellPrice - p_Alvo;
+      ConsoleLog("GRADE_G3;SOLICITA_ALVO;seq=" + FloatToString(v_Seq, 0)
+        + ";base=" + FloatToString(SellPrice, 0)
+        + ";limite=" + FloatToString(v_Limite, 0), clYellow);
+      BuyToCoverLimit(v_Limite, 1);
+    end;
+
+    if (Time = p_Cancela) and HasPendingOrders and not v_Cancelou then
+    begin
+      v_Cancelou := True;
+      ConsoleLog("GRADE_G3;SOLICITA_CANCELAMENTO_LIMPEZA;seq=" + FloatToString(v_Seq, 0), clYellow);
+      CancelPendingOrders;
+    end;
+
+    if (Time = p_Zera) and HasPosition and not v_Zerou then
+    begin
+      v_Zerou := True;
+      ConsoleLog("GRADE_G3;SOLICITA_ZERAGEM_LIMPEZA;seq=" + FloatToString(v_Seq, 0), clYellow);
+      ClosePosition;
+    end;
+  end;
+end;
+
+===== docs/colaboracao/evidencias/WINZ26_ajuste_tick_saidas_venda_20261026_v1/g4_stop_compra_grade_profit_v1_0.ntsl =====
+{ G4: gatilho de recompra fora da grade. Somente Backtest OHLC. }
+input
+  p_Data(1261026);
+  p_Entrada(1051);
+  p_Protecao(1052);
+  p_Cancela(1056);
+  p_Zera(1057);
+  p_Fim(1058);
+  p_Gatilho(447);
+  p_Limite(1000);
+
+var
+  v_Seq, v_Pendentes : Integer;
+  v_EntradaEnviada, v_ProtecaoEnviada, v_Cancelou, v_Zerou : Boolean;
+  v_Limite, v_Gatilho : Float;
+
+begin
+  if (Date = p_Data) and (Time >= p_Entrada) and (Time <= p_Fim) then
+  begin
+    v_Seq := v_Seq + 1;
+    if HasPendingOrders then v_Pendentes := 1 else v_Pendentes := 0;
+    ConsoleLog("GRADE_G4;AVALIACAO"
+      + ";data=" + FloatToString(Date, 0)
+      + ";hora=" + FloatToString(Time, 0)
+      + ";barra=" + FloatToString(CurrentBar, 0)
+      + ";seq=" + FloatToString(v_Seq, 0)
+      + ";posicao=" + FloatToString(PositionQty, 0)
+      + ";pendentes=" + FloatToString(v_Pendentes, 0)
+      + ";abertura=" + FloatToString(Open, 0)
+      + ";maxima=" + FloatToString(High, 0)
+      + ";minima=" + FloatToString(Low, 0)
+      + ";fechamento=" + FloatToString(Close, 0), clYellow);
+
+    if (Time = p_Entrada) and not v_EntradaEnviada and not HasPosition and not HasPendingOrders then
+    begin
+      v_EntradaEnviada := True;
+      ConsoleLog("GRADE_G4;SOLICITA_VENDA;seq=" + FloatToString(v_Seq, 0), clYellow);
+      SellShortAtMarket(1);
+    end;
+
+    if (Time = p_Protecao) and IsSold and not v_ProtecaoEnviada then
+    begin
+      v_ProtecaoEnviada := True;
+      v_Gatilho := SellPrice + p_Gatilho;
+      v_Limite := SellPrice + p_Limite;
+      ConsoleLog("GRADE_G4;SOLICITA_STOP;seq=" + FloatToString(v_Seq, 0)
+        + ";base=" + FloatToString(SellPrice, 0)
+        + ";gatilho=" + FloatToString(v_Gatilho, 0)
+        + ";limite=" + FloatToString(v_Limite, 0), clYellow);
+      BuyToCoverStop(v_Gatilho, v_Limite, 1);
+    end;
+
+    if (Time = p_Cancela) and HasPendingOrders and not v_Cancelou then
+    begin
+      v_Cancelou := True;
+      ConsoleLog("GRADE_G4;SOLICITA_CANCELAMENTO_LIMPEZA;seq=" + FloatToString(v_Seq, 0), clYellow);
+      CancelPendingOrders;
+    end;
+
+    if (Time = p_Zera) and HasPosition and not v_Zerou then
+    begin
+      v_Zerou := True;
+      ConsoleLog("GRADE_G4;SOLICITA_ZERAGEM_LIMPEZA;seq=" + FloatToString(v_Seq, 0), clYellow);
+      ClosePosition;
+    end;
+  end;
+end;
+
+===== docs/colaboracao/evidencias/WINZ26_ajuste_tick_saidas_venda_20261026_v1/barras_referencia.csv =====
+hora_barra;abertura_pts_entrada;maxima_pts_entrada;minima_pts_entrada;fechamento_pts_entrada
+10:51;110;375;-200;-5
+10:52;0;175;-425;-290
+10:53;-285;225;-355;35
+10:54;35;405;-85;220
+10:55;220;445;-875;-260
+10:56;-260;-70;-705;-90
+10:57;-95;200;-425;-375
+10:58;-375;-235;-615;-540
+
+===== docs/colaboracao/evidencias/WINZ26_ajuste_tick_saidas_venda_20261026_v1/insumos_privados.csv =====
+arquivo;bytes;sha256;uso
+WINZ26_20261021_profit_1min_privado.csv;64357;7b1e173400d7bd68f6198fbda51e0ef2026c3f289b7ea51e956e4c8d04066e60;replay v5.7 em 21/10
+WINZ26_20261026_profit_1min_privado.csv;62218;adace8f7c2ab691c3686e9e85533e2094b4bfd957ff7d377b3854fcb90fd92b9;replay v5.7 em 26/10 e controles S1, prioridade, V3
+2026-10-21-barras-historico.csv;127607;f1d85e4454e8c6c61e47c44832f5d9fc7280d60f44fa7ff49ff1d1bda9ffdf6b;replay v5.8 em 21/10 com pregão anterior
+2026-10-26-barras-historico.csv;125330;bd13dfa559bb6c26ff0c253d3414b8b9994fe699af3482a80b9129b66ab1ec13;replay v5.8 em 26/10 com pregão anterior
+inputs_v5_7_paridade.json;18;1b357e35a59c0fe6668e5763e93a4f3335ff8e5798f6b6160db6838bfd72a982;p_Lote=1
+operacoes_teste_v.csv;48497;da6261fcdcd58bb6313ab409bd220fae39766665b513da2a9b554c17511d0a97;comparação v5.7 com o Profit
+operacoes_v58.csv;43885;66cece48ff5c3e1aca3d42d4482665451d39195bf0be50fc497d302a77585c7d;comparação v5.8 com o Profit
+console_58.txt;1083641;38624ee2aab7c55ea12287f29736d7bfea3a3f0fce2140d833aeea8633e5bb69;avaliações do Profit na regressão v5.8
+barras_v58.csv;920086;1036ce183e5e0ff371ca10b21b2774e2f8420598c50d71b107cbe6a1eebf6863;referência OHLC nativa v5.8
+
+===== docs/colaboracao/evidencias/WINZ26_ajuste_tick_saidas_venda_20261026_v1/matriz_sondas.csv =====
+caso;ajuste;saida_profit;saida_profit_pts_entrada;coincide_profit;entrada_execucao;saida_execucao;posicao_1055;pendentes_1055;solicitado_pts_entrada;efetivo_pts_entrada;limite_stop_pts_entrada;saida_pts_entrada;pontos_contrato;ordem_simulador;ajuste_tick
+g1;off;10:55:00;445;0;10:52:00;10:58:00;1;1;447.0;447.0;;-375.0;-375.0;closeposition;
+g1;on;10:55:00;445;1;10:52:00;10:55:00;0;0;447.0;445.0;;445.0;445.0;selltocoverlimit;ajustado
+g2;off;10:55:00;-875;0;10:52:00;10:58:00;1;1;-877.0;-877.0;-1000.0;-375.0;-375.0;closeposition;
+g2;on;10:55:00;-875;1;10:52:00;10:55:00;0;0;-877.0;-875.0;-1000.0;-875.0;-875.0;selltocoverstop;ajustado
+prioridade-1-0;off;10:55:00;430.00;0;10:52:00;10:55:00;0;0;428.0;428.0;;428.0;428.0;selltocoverlimit;
+prioridade-1-0;on;10:55:00;430.00;1;10:52:00;10:55:00;0;0;428.0;430.0;;430.0;430.0;selltocoverlimit;ajustado
+prioridade-1-1;off;10:55:00;220.00;1;10:52:00;10:55:00;0;0;428.0;428.0;;220.0;220.0;selltocoveratmarket;
+prioridade-1-1;on;10:55:00;220.00;1;10:52:00;10:55:00;0;0;428.0;430.0;;220.0;220.0;selltocoveratmarket;ajustado
+prioridade-2-0;off;10:55:00;-795.00;0;10:52:00;10:55:00;0;0;-793.0;-793.0;-894.0;-793.0;-793.0;selltocoverstop;
+prioridade-2-0;on;10:55:00;-795.00;1;10:52:00;10:55:00;0;0;-793.0;-795.0;-894.0;-795.0;-795.0;selltocoverstop;ajustado
+prioridade-2-1;off;10:55:00;220.00;1;10:52:00;10:55:00;0;0;-793.0;-793.0;-894.0;220.0;220.0;selltocoveratmarket;
+prioridade-2-1;on;10:55:00;220.00;1;10:52:00;10:55:00;0;0;-793.0;-795.0;-894.0;220.0;220.0;selltocoveratmarket;ajustado
+
+===== docs/colaboracao/evidencias/WINZ26_ajuste_tick_saidas_venda_20261026_v1/regressoes.csv =====
+estrategia;pregao;modo;operacoes_profit;operacoes_simulador;operacoes_exatas;operacao_182_exata;arquivos_off_iguais_referencia;arquivos_on_iguais_off;rastreio_igual_sem_colunas_novas;metricas_html_iguais_sem_metadados_novos;solicitacoes_na_grade;solicitacoes_ajustadas;empates;preenchimentos;saidas;barras_ambiguas;resultado_liquido_brl
+v5.7;2026-10-21;padrao;10;10;10;;7;4;1;1;182;0;0;20;10;0;-109.0
+v5.7;2026-10-21;protecao-legada;10;10;10;;7;4;1;1;182;0;0;20;10;0;-109.0
+v5.7;2026-10-21;pos-preenchimento;10;10;10;;7;4;1;1;192;0;0;20;10;0;-109.0
+v5.7;2026-10-21;pareado-continuidade;10;10;10;;7;4;1;1;192;0;0;20;10;0;-109.0
+v5.7;2026-10-21;pareado-entrada;10;10;10;;7;4;1;1;192;0;0;20;10;0;-109.0
+v5.8;2026-10-21;reinicio;7;7;7;;7;4;1;1;276;0;0;28;14;0;-770.0
+v5.8;2026-10-21;continuidade;7;7;7;;7;4;1;1;276;0;0;28;14;0;-770.0
+v5.8;2026-10-21;entrada;7;7;7;;7;4;1;1;276;0;0;28;14;0;-770.0
+v5.7;2026-10-26;padrao;12;10;8;0;7;4;1;1;134;0;0;20;10;0;99.0
+v5.7;2026-10-26;protecao-legada;12;11;11;0;7;4;1;1;22;0;0;22;11;0;190.0
+v5.7;2026-10-26;pos-preenchimento;12;12;12;1;7;4;1;1;34;0;0;24;12;0;120.0
+v5.7;2026-10-26;pareado-continuidade;12;12;12;1;7;4;1;1;34;0;0;24;12;0;120.0
+v5.7;2026-10-26;pareado-entrada;12;12;12;1;7;4;1;1;34;0;0;24;12;0;120.0
+v5.8;2026-10-26;reinicio;10;10;8;;7;4;1;1;134;0;0;34;17;1;800.0
+v5.8;2026-10-26;continuidade;10;10;9;;7;4;1;1;140;0;0;34;17;1;800.0
+v5.8;2026-10-26;entrada;10;10;9;;7;4;1;1;140;0;0;34;17;1;800.0
+
+===== docs/colaboracao/evidencias/WINZ26_ajuste_tick_saidas_venda_20261026_v1/replay_minimo.csv =====
+arquivos_off_iguais_referencia;arquivos_on_iguais_off;rastreio_igual_sem_colunas_novas;metricas_html_iguais_sem_metadados_novos;solicitacoes_na_grade;solicitacoes_ajustadas;empates;preenchimentos;saidas;barras_ambiguas;resultado_liquido_brl
+7;4;1;1;2;0;0;2;1;1;-10.0
+
+===== docs/colaboracao/evidencias/WINZ26_ajuste_tick_saidas_venda_20261026_v1/sondas_g3_g4_simulador.csv =====
+sonda;perfil;profit;entrada_execucao;saida_execucao;posicao_1055;pendentes_1055;solicitado_pts_entrada;efetivo_pts_entrada;limite_stop_pts_entrada;saida_pts_entrada;pontos_contrato;ordem_simulador;ajuste_tick
+G3;bruto;pendente;10:52:00;10:58:00;-1;1;-877.0;-877.0;;-375.0;375.0;closeposition;
+G3;grade;pendente;10:52:00;10:55:00;0;0;-875.0;-875.0;;-875.0;875.0;buytocoverlimit;
+G4;bruto;pendente;10:52:00;10:58:00;-1;1;447.0;447.0;1000.0;-375.0;375.0;closeposition;
+G4;grade;pendente;10:52:00;10:55:00;0;0;445.0;445.0;1000.0;445.0;-445.0;buytocoverstop;
+
+===== docs/colaboracao/evidencias/WINZ26_ajuste_tick_saidas_venda_20261026_v1/SHA256SUMS.txt =====
+f650906a40b96804cae79c4f571e213075fda3e5903a195ec7adc8ffa5ee565c  README.md
+cf46b979d3de6c0fe31a5d254c25cec6a88cf4346170ff4394d1297e207fab10  captura_profit.md
+bbe5bad375f630e3bc257c6fb36a2c6144f0c18c32437ca7cc107e927e609622  g3_alvo_compra_grade_profit_v1_0.ntsl
+1d6657100062ba55aaabcb487c29fd498eaa6046d0abf7ebb9183669b29a76fb  g4_stop_compra_grade_profit_v1_0.ntsl
+fb7cc48f9e4fe23b78c361cd809b6d53152ada22856cacadf1e45ae52ee2f420  barras_referencia.csv
+1693eeb106efc13822e6bb563608a1978271da4449e972be36030d21f322aea0  insumos_privados.csv
+bfb1cf7e4da0f448bf691bf2463d3722313da5786dab08b01044a4bc2fb4908a  matriz_sondas.csv
+4337b90b2ba542214d6e8f6dc955e830e09685c84aadad4d9f907a954e522f5a  regressoes.csv
+c78d818d184d01e5d18221bfa647e50e085426343f974bf4cea89aa38bdd2d32  replay_minimo.csv
+39b8800020feacb889c58b90927d8183cf970223a080e30f91ff8329b5d5c2ff  sondas_g3_g4_simulador.csv
+
+===== docs/colaboracao/evidencias/WINZ26_grade_precos_g1_g2_profit_20261026_v1/matriz_profit_simulador.csv =====
+sonda;entrada_contexto;protecao_contexto;quantidade;abertura_1055_pts_entrada;maxima_1055_pts_entrada;minima_1055_pts_entrada;fonte;gatilho_pts_entrada;limite_pts_entrada;entrada_execucao;saida_execucao;posicao_1053;pendentes_1053;posicao_1054;pendentes_1054;posicao_1055;pendentes_1055;saida_pts_entrada;resultado_brl;ordem_simulador
+G1;10:51;10:52;1;220;445;-875;Profit;;447;10:52:00;10:55:00;1;1;1;1;0;0;445;89.00;
+G1;10:51;10:52;1;220;445;-875;Simulador bruto;;447;10:52:00;10:58:00;1;1;1;1;1;1;-375.0;-75.00;closeposition
+G1;10:51;10:52;1;220;445;-875;Simulador com níveis na grade;;445;10:52:00;10:55:00;1;1;1;1;0;0;445.0;89.00;selltocoverlimit
+G2;10:51;10:52;1;220;445;-875;Profit;-877;-1000;10:52:00;10:55:00;1;1;1;1;0;0;-875;-175.00;
+G2;10:51;10:52;1;220;445;-875;Simulador bruto;-877;-1000;10:52:00;10:58:00;1;1;1;1;1;1;-375.0;-75.00;closeposition
+G2;10:51;10:52;1;220;445;-875;Simulador com níveis na grade;-875;-1000;10:52:00;10:55:00;1;1;1;1;0;0;-875.0;-175.00;selltocoverstop
+
+===== docs/colaboracao/evidencias/WINZ26_grade_precos_g1_g2_profit_20261026_v1/console_profit.csv =====
+sonda;seq_console;evento;seq_avaliacao;data_ntsl;hora_contexto;currentbar;posicao;pendentes;gatilho_pts_entrada;limite_pts_entrada;linha_original;base_pts_entrada;abertura_pts_entrada;maxima_pts_entrada;minima_pts_entrada;fechamento_pts_entrada
+G1;1;AVALIACAO;1;1261026;10:51;26873;0;0;;;3;;110;375;-200;-5
+G1;2;SOLICITA_COMPRA;1;1261026;10:51;26873;0;0;;;4;;;;;
+G1;3;AVALIACAO;2;1261026;10:51;26873;1;0;;;5;;110;375;-200;-5
+G1;4;AVALIACAO;3;1261026;10:52;26874;1;0;;;6;;0;175;-425;-290
+G1;5;SOLICITA_ALVO;3;1261026;10:52;26874;1;0;;447;7;0;;;;
+G1;6;AVALIACAO;4;1261026;10:53;26875;1;1;;;8;;-285;225;-355;35
+G1;7;AVALIACAO;5;1261026;10:54;26876;1;1;;;9;;35;405;-85;220
+G1;8;AVALIACAO;6;1261026;10:55;26877;0;0;;;10;;220;445;-875;-260
+G1;9;AVALIACAO;7;1261026;10:56;26878;0;0;;;11;;-260;-70;-705;-90
+G1;10;AVALIACAO;8;1261026;10:57;26879;0;0;;;12;;-95;200;-425;-375
+G1;11;AVALIACAO;9;1261026;10:58;26880;0;0;;;13;;-375;-235;-615;-540
+G2;1;AVALIACAO;1;1261026;10:51;26873;0;0;;;3;;110;375;-200;-5
+G2;2;SOLICITA_COMPRA;1;1261026;10:51;26873;0;0;;;4;;;;;
+G2;3;AVALIACAO;2;1261026;10:51;26873;1;0;;;5;;110;375;-200;-5
+G2;4;AVALIACAO;3;1261026;10:52;26874;1;0;;;6;;0;175;-425;-290
+G2;5;SOLICITA_STOP;3;1261026;10:52;26874;1;0;-877;-1000;7;0;;;;
+G2;6;AVALIACAO;4;1261026;10:53;26875;1;1;;;8;;-285;225;-355;35
+G2;7;AVALIACAO;5;1261026;10:54;26876;1;1;;;9;;35;405;-85;220
+G2;8;AVALIACAO;6;1261026;10:55;26877;0;0;;;10;;220;445;-875;-260
+G2;9;AVALIACAO;7;1261026;10:56;26878;0;0;;;11;;-260;-70;-705;-90
+G2;10;AVALIACAO;8;1261026;10:57;26879;0;0;;;12;;-95;200;-425;-375
+G2;11;AVALIACAO;9;1261026;10:58;26880;0;0;;;13;;-375;-235;-615;-540
+
+===== docs/colaboracao/evidencias/WINZ26_v5_8_prioridade_protecao_profit_20261026_v1/matriz_profit_simulador.csv =====
+rodada;p_Perna;p_SaidaMercado;entrada_contexto;entrada_execucao;protecao_contexto;posicao_1054;pendentes_1054;solicita_mercado_contexto;abertura_1055_pts_entrada;saida_execucao;qtd_compra;qtd_venda;operacoes;posicao_1055;pendentes_1055;posicao_1058;pendentes_1058;alvo_ou_limite_solicitado_pts_entrada;gatilho_solicitado_pts_entrada;fonte;saida_pts_entrada;saida_menos_abertura_pts;resultado_liquido_brl;ordem_simulador;gatilhos_simulador;ambiguidades_simulador
+01_alvo_controle;1;0;10:51;10:52:00;10:52;1;1;;220.00;10:55:00;1;1;1;0;0;0;0;428.00;;Profit;430.00;210.00;86.00;;;
+01_alvo_controle;1;0;10:51;10:52:00;10:52;1;1;;220.00;10:55:00;1;1;1;0;0;0;0;428.00;;Simulador painel;428.0;208.00;85.60;selltocoverlimit;0;0
+01_alvo_controle;1;0;10:51;10:52:00;10:52;1;1;;220.00;10:55:00;1;1;1;0;0;0;0;430;;Simulador padrões;430.0;210.00;86.00;selltocoverlimit;0;0
+02_alvo_mercado;1;1;10:51;10:52:00;10:52;1;1;10:54;220.00;10:55:00;1;1;1;0;0;0;0;428.00;;Profit;220.00;0.00;44.00;;;
+02_alvo_mercado;1;1;10:51;10:52:00;10:52;1;1;10:54;220.00;10:55:00;1;1;1;0;0;0;0;428.00;;Simulador painel;220.0;0.00;44.00;selltocoveratmarket;0;0
+02_alvo_mercado;1;1;10:51;10:52:00;10:52;1;1;10:54;220.00;10:55:00;1;1;1;0;0;0;0;430;;Simulador padrões;220.0;0.00;44.00;selltocoveratmarket;0;0
+03_stop_controle;2;0;10:51;10:52:00;10:52;1;1;;220.00;10:55:00;1;1;1;0;0;0;0;-894.00;-793.00;Profit;-795.00;-1015.00;-159.00;;;
+03_stop_controle;2;0;10:51;10:52:00;10:52;1;1;;220.00;10:55:00;1;1;1;0;0;0;0;-894.00;-793.00;Simulador painel;-793.0;-1013.00;-158.60;selltocoverstop;1;0
+03_stop_controle;2;0;10:51;10:52:00;10:52;1;1;;220.00;10:55:00;1;1;1;0;0;0;0;-895;-795;Simulador padrões;-795.0;-1015.00;-159.00;selltocoverstop;1;0
+04_stop_mercado;2;1;10:51;10:52:00;10:52;1;1;10:54;220.00;10:55:00;1;1;1;0;0;0;0;-894.00;-793.00;Profit;220.00;0.00;44.00;;;
+04_stop_mercado;2;1;10:51;10:52:00;10:52;1;1;10:54;220.00;10:55:00;1;1;1;0;0;0;0;-894.00;-793.00;Simulador painel;220.0;0.00;44.00;selltocoveratmarket;0;0
+04_stop_mercado;2;1;10:51;10:52:00;10:52;1;1;10:54;220.00;10:55:00;1;1;1;0;0;0;0;-895;-795;Simulador padrões;220.0;0.00;44.00;selltocoveratmarket;0;0
+
+===== docs/colaboracao/evidencias/WINZ26_grade_precos_g1_g2_20261026_v1/g1_alvo_grade_profit_v1_0.ntsl =====
+{ G1: venda limite fora da grade. Somente Backtest OHLC. }
+input
+  p_Data(1261026);
+  p_Entrada(1051);
+  p_Protecao(1052);
+  p_Cancela(1056);
+  p_Zera(1057);
+  p_Fim(1058);
+  p_Alvo(447);
+
+var
+  v_Seq, v_Pendentes : Integer;
+  v_EntradaEnviada, v_ProtecaoEnviada, v_Cancelou, v_Zerou : Boolean;
+  v_Limite : Float;
+
+begin
+  if (Date = p_Data) and (Time >= p_Entrada) and (Time <= p_Fim) then
+  begin
+    v_Seq := v_Seq + 1;
+    if HasPendingOrders then v_Pendentes := 1 else v_Pendentes := 0;
+    ConsoleLog("GRADE_G1;AVALIACAO"
+      + ";data=" + FloatToString(Date, 0)
+      + ";hora=" + FloatToString(Time, 0)
+      + ";barra=" + FloatToString(CurrentBar, 0)
+      + ";seq=" + FloatToString(v_Seq, 0)
+      + ";posicao=" + FloatToString(PositionQty, 0)
+      + ";pendentes=" + FloatToString(v_Pendentes, 0)
+      + ";abertura=" + FloatToString(Open, 0)
+      + ";maxima=" + FloatToString(High, 0)
+      + ";minima=" + FloatToString(Low, 0)
+      + ";fechamento=" + FloatToString(Close, 0), clYellow);
+
+    if (Time = p_Entrada) and not v_EntradaEnviada and not HasPosition and not HasPendingOrders then
+    begin
+      v_EntradaEnviada := True;
+      ConsoleLog("GRADE_G1;SOLICITA_COMPRA;seq=" + FloatToString(v_Seq, 0), clYellow);
+      BuyAtMarket(1);
+    end;
+
+    if (Time = p_Protecao) and IsBought and not v_ProtecaoEnviada then
+    begin
+      v_ProtecaoEnviada := True;
+      v_Limite := BuyPrice + p_Alvo;
+      ConsoleLog("GRADE_G1;SOLICITA_ALVO;seq=" + FloatToString(v_Seq, 0)
+        + ";base=" + FloatToString(BuyPrice, 0)
+        + ";limite=" + FloatToString(v_Limite, 0), clYellow);
+      SellToCoverLimit(v_Limite, 1);
+    end;
+
+    if (Time = p_Cancela) and HasPendingOrders and not v_Cancelou then
+    begin
+      v_Cancelou := True;
+      ConsoleLog("GRADE_G1;SOLICITA_CANCELAMENTO_LIMPEZA;seq=" + FloatToString(v_Seq, 0), clYellow);
+      CancelPendingOrders;
+    end;
+
+    if (Time = p_Zera) and HasPosition and not v_Zerou then
+    begin
+      v_Zerou := True;
+      ConsoleLog("GRADE_G1;SOLICITA_ZERAGEM_LIMPEZA;seq=" + FloatToString(v_Seq, 0), clYellow);
+      ClosePosition;
+    end;
+  end;
+end;
+
+===== docs/colaboracao/evidencias/WINZ26_grade_precos_g1_g2_20261026_v1/g2_stop_grade_profit_v1_0.ntsl =====
+{ G2: gatilho de venda fora da grade. Somente Backtest OHLC. }
+input
+  p_Data(1261026);
+  p_Entrada(1051);
+  p_Protecao(1052);
+  p_Cancela(1056);
+  p_Zera(1057);
+  p_Fim(1058);
+  p_Gatilho(877);
+  p_Limite(1000);
+
+var
+  v_Seq, v_Pendentes : Integer;
+  v_EntradaEnviada, v_ProtecaoEnviada, v_Cancelou, v_Zerou : Boolean;
+  v_Limite, v_Gatilho : Float;
+
+begin
+  if (Date = p_Data) and (Time >= p_Entrada) and (Time <= p_Fim) then
+  begin
+    v_Seq := v_Seq + 1;
+    if HasPendingOrders then v_Pendentes := 1 else v_Pendentes := 0;
+    ConsoleLog("GRADE_G2;AVALIACAO"
+      + ";data=" + FloatToString(Date, 0)
+      + ";hora=" + FloatToString(Time, 0)
+      + ";barra=" + FloatToString(CurrentBar, 0)
+      + ";seq=" + FloatToString(v_Seq, 0)
+      + ";posicao=" + FloatToString(PositionQty, 0)
+      + ";pendentes=" + FloatToString(v_Pendentes, 0)
+      + ";abertura=" + FloatToString(Open, 0)
+      + ";maxima=" + FloatToString(High, 0)
+      + ";minima=" + FloatToString(Low, 0)
+      + ";fechamento=" + FloatToString(Close, 0), clYellow);
+
+    if (Time = p_Entrada) and not v_EntradaEnviada and not HasPosition and not HasPendingOrders then
+    begin
+      v_EntradaEnviada := True;
+      ConsoleLog("GRADE_G2;SOLICITA_COMPRA;seq=" + FloatToString(v_Seq, 0), clYellow);
+      BuyAtMarket(1);
+    end;
+
+    if (Time = p_Protecao) and IsBought and not v_ProtecaoEnviada then
+    begin
+      v_ProtecaoEnviada := True;
+      v_Gatilho := BuyPrice - p_Gatilho;
+      v_Limite := BuyPrice - p_Limite;
+      ConsoleLog("GRADE_G2;SOLICITA_STOP;seq=" + FloatToString(v_Seq, 0)
+        + ";base=" + FloatToString(BuyPrice, 0)
+        + ";gatilho=" + FloatToString(v_Gatilho, 0)
+        + ";limite=" + FloatToString(v_Limite, 0), clYellow);
+      SellToCoverStop(v_Gatilho, v_Limite, 1);
+    end;
+
+    if (Time = p_Cancela) and HasPendingOrders and not v_Cancelou then
+    begin
+      v_Cancelou := True;
+      ConsoleLog("GRADE_G2;SOLICITA_CANCELAMENTO_LIMPEZA;seq=" + FloatToString(v_Seq, 0), clYellow);
+      CancelPendingOrders;
+    end;
+
+    if (Time = p_Zera) and HasPosition and not v_Zerou then
+    begin
+      v_Zerou := True;
+      ConsoleLog("GRADE_G2;SOLICITA_ZERAGEM_LIMPEZA;seq=" + FloatToString(v_Seq, 0), clYellow);
+      ClosePosition;
+    end;
+  end;
+end;
+
+===== docs/colaboracao/evidencias/WINZ26_v5_8_protecoes_ate_cancelar_20261026_v1/sonda_prioridade_mercado_protecao_profit_v1_0.ntsl =====
+{ Sonda de prioridade: uma perna por execução. Somente Backtest OHLC. }
+input
+  p_Data(1261026);
+  p_Entrada(1051);
+  p_Protecao(1052);
+  p_EnvioMercado(1054);
+  p_Limpeza(1056);
+  p_Fim(1058);
+  p_Perna(1);
+  p_SaidaMercado(1);
+  p_Alvo(430);
+  p_Stop(795);
+  p_Folga(100);
+
+var
+  v_Seq, v_Pendentes : Integer;
+  v_EntradaEnviada, v_ProtecaoEnviada, v_MercadoEnviado, v_LimpezaEnviada : Boolean;
+  v_Limite, v_Gatilho : Float;
+
+begin
+  if (Date = p_Data) and (Time >= p_Entrada) and (Time <= p_Fim) then
+  begin
+    v_Seq := v_Seq + 1;
+    if HasPendingOrders then v_Pendentes := 1 else v_Pendentes := 0;
+    ConsoleLog("PRIORIDADE;AVALIACAO"
+      + ";data=" + FloatToString(Date, 0)
+      + ";hora=" + FloatToString(Time, 0)
+      + ";barra=" + FloatToString(CurrentBar, 0)
+      + ";seq=" + FloatToString(v_Seq, 0)
+      + ";posicao=" + FloatToString(PositionQty, 0)
+      + ";pendentes=" + FloatToString(v_Pendentes, 0)
+      + ";abertura=" + FloatToString(Open, 0)
+      + ";maxima=" + FloatToString(High, 0)
+      + ";minima=" + FloatToString(Low, 0)
+      + ";fechamento=" + FloatToString(Close, 0), clYellow);
+
+    if (Time = p_Entrada) and not v_EntradaEnviada and not HasPosition and not HasPendingOrders then
+    begin
+      v_EntradaEnviada := True;
+      ConsoleLog("PRIORIDADE;SOLICITA_COMPRA;seq=" + FloatToString(v_Seq, 0), clYellow);
+      BuyAtMarket(1);
+    end;
+
+    if (Time = p_Protecao) and IsBought and not v_ProtecaoEnviada then
+    begin
+      v_ProtecaoEnviada := True;
+      if p_Perna = 1 then
+      begin
+        v_Limite := BuyPrice + p_Alvo;
+        ConsoleLog("PRIORIDADE;SOLICITA_ALVO;seq=" + FloatToString(v_Seq, 0)
+          + ";limite=" + FloatToString(v_Limite, 0), clYellow);
+        SellToCoverLimit(v_Limite, 1);
+      end
+      else if p_Perna = 2 then
+      begin
+        v_Gatilho := BuyPrice - p_Stop;
+        v_Limite := v_Gatilho - p_Folga;
+        ConsoleLog("PRIORIDADE;SOLICITA_STOP;seq=" + FloatToString(v_Seq, 0)
+          + ";gatilho=" + FloatToString(v_Gatilho, 0)
+          + ";limite=" + FloatToString(v_Limite, 0), clYellow);
+        SellToCoverStop(v_Gatilho, v_Limite, 1);
+      end;
+    end;
+
+    if (p_SaidaMercado = 1) and (Time = p_EnvioMercado)
+      and IsBought and HasPendingOrders and not v_MercadoEnviado then
+    begin
+      v_MercadoEnviado := True;
+      ConsoleLog("PRIORIDADE;SOLICITA_MERCADO;seq=" + FloatToString(v_Seq, 0), clYellow);
+      SellToCoverAtMarket(1);
+    end;
+
+    if (Time = p_Limpeza) and (HasPosition or HasPendingOrders) and not v_LimpezaEnviada then
+    begin
+      v_LimpezaEnviada := True;
+      ConsoleLog("PRIORIDADE;SOLICITA_LIMPEZA;seq=" + FloatToString(v_Seq, 0), clYellow);
+      CancelPendingOrders;
+      if HasPosition then ClosePosition;
+    end;
+  end;
+end;
+
+===== tests/test_ajuste_tick_saidas_venda.py =====
+import pandas as pd
+import pytest
+
+from estrategia import Engine, ExecutionRules
+from ntsl import compile_ntsl
+from test_replay import run, run_ohlc
+
+
+ADJUST = {"ajuste_tick_saidas_venda": True, "rastrear_ordens": True}
+
+
+@pytest.mark.parametrize("order,requested,effective,raw_fill,limit", [
+    ("SellToCoverLimit(BuyPrice+428, 1)", 2428, 2430, 2428, ""),
+    ("SellToCoverLimit(BuyPrice+447, 1)", 2447, 2445, None, ""),
+    ("SellToCoverStop(BuyPrice-793, BuyPrice-894, 1)", 1207, 1205, 1207, 1106),
+    ("SellToCoverStop(BuyPrice-877, BuyPrice-1000, 1)", 1123, 1125, None, 1000),
+])
+@pytest.mark.parametrize("active", [False, True])
+def test_ajuste_reproduz_g1_g2_e_controles(order, requested, effective, raw_fill, limit, active):
+    source = f"""begin
+        if CurrentBar=1 then BuyAtMarket(1);
+        if CurrentBar=2 then {order};
+        if HasPendingOrders then Plot(1) else Plot(0);
+        if (CurrentBar=6) and HasPosition then ClosePosition;
+    end;"""
+    engine = run_ohlc(source, [2110, 2000, 1715, 2035, 2220, 1740, 1625],
+                      [2375, 2175, 2225, 2405, 2445, 1930, 1765],
+                      [1800, 1575, 1645, 1915, 1125, 1295, 1385],
+                      [1995, 1710, 2035, 2220, 1740, 1910, 1460],
+                      ADJUST | {"ajuste_tick_saidas_venda": active, "protecoes_ate_cancelar": True})
+    assert [row["plot"] for row in engine.trace[2:4]] == [1, 1]
+    fill = engine.fills[1]
+    price = effective if active else raw_fill
+    assert (fill["barra"], fill["preco"]) == ((5, price) if price is not None else (7, 1625))
+    if active:
+        submit, = [row for row in engine.order_events
+                   if row["evento"] == "solicitacao" and row["acao"] == "exit_long"]
+        execution, = [row for row in engine.order_events
+                      if row["evento"] == "preenchimento" and row["acao"] == "exit_long"]
+        for row in (submit, execution):
+            assert (row["nivel_solicitado"], row["nivel_efetivo"], row["ajuste_tick"]) == (
+                requested, effective, "ajustado")
+            assert row["limite_solicitado"] == row["limite_efetivo"] == limit
+    else:
+        assert all("nivel_solicitado" not in row for row in engine.order_events)
+
+
+def engine_for_orders(tick, position=1):
+    frame = pd.DataFrame(dict(pregao=["2026-10-02"] * 6, abertura=[100] * 6,
+                              maxima=[100] * 6, minima=[100] * 6,
+                              fechamento=[100] * 6, barra_ntsl=range(1, 7)))
+    engine = Engine(compile_ntsl("begin end;"), frame, tick, {}, 60, 1, regras=ADJUST)
+    engine.position = position
+    return engine
+
+
+@pytest.mark.parametrize("tick,requested,status,effective", [
+    (5, 105, "na_grade", 105),
+    (5, 102.5, "empate_meio_tick", 102.5),
+    (0.1, 104.15, "empate_meio_tick", 104.15),
+    (0.1, 104.16, "ajustado", 104.2),
+])
+def test_grade_e_meio_tick_exato(tick, requested, status, effective):
+    engine = engine_for_orders(tick)
+    engine.queue("selltocoverlimit", (requested,))
+    assert engine.orders["selltocoverlimit"].price == effective
+    event = engine.order_events[0]
+    assert (event["nivel_solicitado"], event["nivel_efetivo"], event["ajuste_tick"]) == (
+        requested, effective, status)
+    is_tie = status == "empate_meio_tick"
+    assert ("empate_meio_tick" in [e["evento"] for e in engine.order_events]) == is_tie
+    assert engine.tick_adjustments["empate_meio_tick"] == int(is_tie)
+    assert engine.tick_adjustments["ajustado"] == int(status == "ajustado")
+
+
+def test_renovacao_compara_gatilho_efetivo_e_limite_bruto():
+    engine = engine_for_orders(5)
+    name = "selltocoverstop"
+    engine.queue(name, (97, 93))
+    first = engine.orders[name]
+    assert engine.match(first, 90, 92, 88) is None
+    assert first.triggered and (first.price, first.limit, first.eligible_at) == (95, 93, 1)
+
+    engine.row = 2
+    engine.queue(name, (96, 93))
+    renewed = engine.orders[name]
+    assert renewed.triggered and (renewed.price, renewed.limit, renewed.eligible_at) == (95, 93, 1)
+    assert len(engine.orders) == 1
+    assert engine.order_events[-1]["evento"] == "solicitacao_renovada"
+    assert engine.order_events[-1]["nivel_solicitado"] == 96
+
+    engine.row = 3
+    engine.queue(name, (102, 93))
+    replacement = engine.orders[name]
+    assert not replacement.triggered and (replacement.price, replacement.limit, replacement.eligible_at) == (100, 93, 4)
+    assert engine.order_events[-1]["evento"] == "solicitacao"
+
+
+def test_gatilho_ajustado_ainda_respeita_limite_stop_bruto():
+    engine = engine_for_orders(5)
+    engine.queue("selltocoverstop", (97, 96))
+    order = engine.orders["selltocoverstop"]
+    assert (order.price, order.limit) == (95, 96)
+    assert engine.match(order, 95, 95, 94) is None
+    assert order.triggered
+    assert engine.match(order, 95, 96, 94) == 96
+
+
+@pytest.mark.parametrize("opening,order,price,limit", [
+    ("", "BuyAtLimit(98)", 98, ""),
+    ("", "SellShortAtStop(97, 92)", 97, 92),
+    ("SellShortAtMarket(1)", "BuyToCoverLimit(97)", 97, ""),
+    ("SellShortAtMarket(1)", "BuyToCoverStop(103, 107)", 103, 107),
+    ("BuyAtMarket(1)", "SendOrder(osSell, otLimit, 1, 103, 0)", 103, ""),
+    ("BuyAtMarket(1)", "SendOrder(osSell, otStopLimit, 1, 94, 97)", 97, 94),
+])
+def test_ordens_fora_do_escopo_preservam_precos(opening, order, price, limit):
+    entry = f"if CurrentBar=1 then {opening};" if opening else ""
+    source = f"begin {entry} if CurrentBar=2 then {order}; end;"
+    engine = run(source, [100] * 4, rules=ADJUST)
+    event, = [row for row in engine.order_events
+              if row["evento"] == "solicitacao" and row["tipo"] in {"limit", "stop"}]
+    assert (event["nivel_solicitado"], event["nivel_efetivo"], event["ajuste_tick"]) == (price, price, "")
+    assert event["limite_solicitado"] == event["limite_efetivo"] == limit
+    assert engine.tick_adjustments == {"ajustado": 0, "empate_meio_tick": 0}
+
+
+def test_protecao_pos_preenchimento_e_zeragem_a_mercado():
+    source = """begin
+        if CurrentBar=1 then BuyAtMarket(1);
+        if IsBought and (CurrentBar=1) then SellToCoverStop(BuyPrice-3, BuyPrice-12, 1);
+        if IsBought and (CurrentBar=2) then SellToCoverAtMarket(1);
+    end;"""
+    engine = run_ohlc(source, [100, 100, 101, 100], [105, 106, 110, 110],
+                      [98, 98, 92, 95], [100, 101, 100, 100],
+                      ADJUST | {"protecoes_ate_cancelar": True, "avaliacao_pos_preenchimento": True})
+    stop, = [row for row in engine.order_events if row["ordem"] == "selltocoverstop"]
+    assert (stop["barra"], stop["barra_contexto_ntsl"], stop["primeira_barra_elegivel"]) == (2, 1, 2)
+    assert (stop["nivel_solicitado"], stop["nivel_efetivo"], stop["limite_efetivo"]) == (97, 95, 88)
+    assert [(f["barra"], f["ordem"], f["preco"]) for f in engine.fills] == [
+        (2, "buyatmarket", 100), (3, "selltocoveratmarket", 101),
+    ]
+    assert engine.ambiguities == 0 and engine.trace[2]["posicao"] == 0
+
+
+def test_ajuste_de_saidas_de_venda_rejeita_tick_a_tick():
+    with pytest.raises(ValueError, match="só se aplica ao motor OHLC"):
+        ExecutionRules(ajuste_tick_saidas_venda=True, motor_ticks=True)
+
+===== tools/publicar_ajuste_tick_saidas_venda.py =====
+"""Compara replays da regra de grade e gera derivados sem cotações absolutas."""
+
+import argparse
+import html
+from decimal import Decimal
+from pathlib import Path
+
+import pandas as pd
+
+from tools.comparar_paridade_profit_win import (
+    compare_operations, local_round_trips, profit_round_trips, read_profit_operations,
+)
+from tools.publicar_protecoes_ohlc import DATA_FILES, DAYS, V57, V58, read_json, rows
+from tools.publicar_sonda_lacuna_profit import write_csv
+from tools.publicar_sondas_protecao_profit import normalize_console, read_csv
+
+
+FILES = (*DATA_FILES, "estrategia.ntsl", "metricas.json", "relatorio.html")
+AUDIT_FIELDS = {"nivel_solicitado", "nivel_efetivo", "limite_solicitado", "limite_efetivo", "ajuste_tick"}
+
+
+def assertion_metrics(off, on):
+    off_report, on_report = (read_json(path / "metricas.json") for path in (off, on))
+    counters = on_report.pop("ajustes_tick_saidas_venda")
+    assert on_report["regras_execucao"].pop("ajuste_tick_saidas_venda") is True
+    assert off_report == on_report and counters == {"ajustado": 0, "empate_meio_tick": 0}
+    return counters, off_report
+
+
+def check_artifacts(reference, off, on):
+    baseline_equal = [name for name in FILES if (reference / name).read_bytes() == (off / name).read_bytes()]
+    assert len(baseline_equal) == len(FILES), (off.name, set(FILES) - set(baseline_equal))
+    on_equal = [name for name in FILES if (on / name).read_bytes() == (off / name).read_bytes()]
+    assert set(on_equal) == {"execucoes.csv", "candles.csv", "console.csv", "estrategia.ntsl"}, on.name
+    counters, metric = assertion_metrics(off, on)
+    marker = ", &#x27;ajuste_tick_saidas_venda&#x27;: True"
+    counter_row = f"<tr><th>ajustes tick saidas venda</th><td>{html.escape(str(counters))}</td></tr>"
+    old_html = (off / "relatorio.html").read_text(encoding="utf-8")
+    new_html = (on / "relatorio.html").read_text(encoding="utf-8")
+    assert old_html == new_html.replace(marker, "").replace(counter_row, ""), on.name
+    old_events, new_events = (rows(folder / "eventos_ordens.csv") for folder in (off, on))
+    assert all(AUDIT_FIELDS <= event.keys() for event in new_events)
+    projected = [{key: value for key, value in event.items() if key not in AUDIT_FIELDS} for event in new_events]
+    assert projected == old_events, on.name
+    count_grade = sum(event["ajuste_tick"] == "na_grade" and event["evento"].startswith("solicitacao")
+                      for event in new_events)
+    return dict(
+        arquivos_off_iguais_referencia=len(baseline_equal), arquivos_on_iguais_off=len(on_equal),
+        rastreio_igual_sem_colunas_novas=1, metricas_html_iguais_sem_metadados_novos=1,
+        solicitacoes_na_grade=count_grade, solicitacoes_ajustadas=counters["ajustado"],
+        empates=counters["empate_meio_tick"], preenchimentos=metric["preenchimentos"],
+        saidas=metric["saidas"], barras_ambiguas=metric["barras_ambiguas"],
+        resultado_liquido_brl=metric["resultado_liquido_reais"],
+    )
+
+
+def regression(args):
+    result = []
+    for day in DAYS:
+        profit = profit_round_trips(read_profit_operations(args.operacoes_v57, day))
+        for version, modes in (("v5.7", V57), ("v5.8", V58)):
+            for mode in modes:
+                name = f"{day}-v57-{mode}" if version == "v5.7" else f"v58-{day}-{mode}"
+                off, on = (args.replays / f"{name}-{flag}" for flag in ("off", "on"))
+                comparison = check_artifacts(args.referencia / f"{name}-on", off, on)
+                exact_182 = ""
+                if version == "v5.7":
+                    local = local_round_trips(pd.read_csv(on / "execucoes.csv"), pd.read_csv(on / "candles.csv"))
+                    result_ops = compare_operations(profit, local)
+                    target = profit.loc[profit["numero_operacao"] == 182]
+                    if len(target):
+                        exact_182 = compare_operations(target, local)["correspondencias_exatas"]
+                else:
+                    off_comparison, on_comparison = (
+                        folder.with_suffix(".comparacao.json") for folder in (off, on)
+                    )
+                    assert off_comparison.read_bytes() == on_comparison.read_bytes()
+                    result_ops = read_json(on_comparison)["operacoes"]
+                result.append(dict(estrategia=version, pregao=day, modo=mode,
+                                   operacoes_profit=result_ops["operacoes_profit"],
+                                   operacoes_simulador=result_ops["operacoes_local"],
+                                   operacoes_exatas=result_ops["correspondencias_exatas"],
+                                   operacao_182_exata=exact_182) | comparison)
+    minimal = check_artifacts(*(args.replays / f"minimo-{mode}" for mode in ("ref", "off", "on")))
+    return result, [minimal]
+
+
+def probe(folder):
+    entry, closing = rows(folder / "execucoes.csv")
+    base = Decimal(entry["preco"])
+    candles = rows(folder / "candles.csv")
+    entry_time, exit_time = (candles[int(fill["barra"]) - 1]["timestamp"][11:19] for fill in (entry, closing))
+    assert entry_time == "10:52:00" and entry["quantidade"] == closing["quantidade"] == "1"
+    events = rows(folder / "eventos_ordens.csv")
+    protection, = [event for event in events if event["evento"] == "solicitacao"
+                   and event["acao"] in {"exit_long", "exit_short"} and event["tipo"] in {"stop", "limit"}]
+    assert protection["timestamp"][11:16] == "10:52"
+    messages = [line["mensagem"] for line in rows(folder / "console.csv")
+                if line["mensagem"].startswith(("GRADE_", "PRIORIDADE;"))]
+    logs = normalize_console(folder.name, messages, base, Decimal)
+    states = {row["hora_contexto"]: row for row in logs if row["evento"] == "AVALIACAO"}
+    pending = [states[hour]["pendentes"] for hour in ("10:53", "10:54", "10:55")]
+    assert pending[:2] == [1, 1]
+    raw = protection.get("nivel_solicitado") or protection["gatilho"]
+    limit = protection["limite"]
+    return dict(
+        entrada_execucao=entry_time, saida_execucao=exit_time, posicao_1055=states["10:55"]["posicao"],
+        pendentes_1055=pending[2], solicitado_pts_entrada=Decimal(raw) - base,
+        efetivo_pts_entrada=Decimal(protection["gatilho"]) - base,
+        limite_stop_pts_entrada=Decimal(limit) - base if limit else "",
+        saida_pts_entrada=Decimal(closing["preco"]) - base,
+        pontos_contrato=Decimal(closing["pontos_contrato"]),
+        ordem_simulador=closing["ordem"], ajuste_tick=protection.get("ajuste_tick", ""),
+    )
+
+
+def native_matrix(args):
+    native_grade = [row for row in read_csv(args.evidencias_grade / "matriz_profit_simulador.csv", ";")
+                    if row["fonte"] == "Profit"]
+    native_priority = [row for row in read_csv(args.evidencias_prioridade / "matriz_profit_simulador.csv", ";")
+                       if row["fonte"] == "Profit"]
+    sources = list(zip((f"g{i}" for i in (1, 2)), native_grade, strict=True)) + [
+        (f"prioridade-{row['p_Perna']}-{row['p_SaidaMercado']}", row) for row in native_priority]
+    matrix = []
+    for name, native in sources:
+        for flag in ("off", "on"):
+            row = probe(args.replays / f"{name}-{flag}")
+            observed = Decimal(native["saida_pts_entrada"])
+            equal = row["saida_pts_entrada"] == observed and row["saida_execucao"] == native["saida_execucao"]
+            assert row["ajuste_tick"] == ("ajustado" if flag == "on" else "")
+            assert equal == (flag == "on" or native.get("p_SaidaMercado") == "1")
+            matrix.append(dict(caso=name, ajuste=flag, saida_profit=native["saida_execucao"],
+                               saida_profit_pts_entrada=observed, coincide_profit=int(equal)) | row)
+    return matrix
+
+
+def buy_probes(args):
+    result = []
+    for name in ("g3", "g4"):
+        for profile in ("bruto", "grade"):
+            row = probe(args.replays / f"{name}-{profile}")
+            assert row["ajuste_tick"] == "" and row["solicitado_pts_entrada"] == row["efetivo_pts_entrada"]
+            expected_price = {"g3": -875, "g4": 445}[name] if profile == "grade" else -375
+            assert row["saida_pts_entrada"] == expected_price
+            assert row["saida_execucao"] == ("10:55:00" if profile == "grade" else "10:58:00")
+            assert row["posicao_1055"] == (0 if profile == "grade" else -1)
+            result.append(dict(sonda=name.upper(), perfil=profile, profit="pendente") | row)
+    return result
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    for key in ("replays", "referencia", "operacoes-v57", "evidencias-grade", "evidencias-prioridade", "saida"):
+        parser.add_argument(f"--{key}", type=Path, required=True)
+    args = parser.parse_args()
+    regressions, minimal = regression(args)
+    outputs = {"regressoes.csv": regressions, "replay_minimo.csv": minimal,
+               "matriz_sondas.csv": native_matrix(args), "sondas_g3_g4_simulador.csv": buy_probes(args)}
+    args.saida.mkdir()
+    for filename, table in outputs.items():
+        write_csv(args.saida / filename, table)
+
+
+if __name__ == "__main__":
+    main()
+
+===== Alteração do motor (estrategia.py) =====
+diff --git a/estrategia.py b/estrategia.py
+index a77d9ca..7843f18 100644
+--- a/estrategia.py
++++ b/estrategia.py
+@@ -5,0 +6 @@ from dataclasses import asdict, dataclass
++from fractions import Fraction
+@@ -111,0 +113,2 @@ class Order:
++    requested_price: float | None = None
++    tick_adjustment: str = ""
+@@ -134,0 +138 @@ class ExecutionRules:
++    ajuste_tick_saidas_venda: bool = False
+@@ -143,0 +148,2 @@ class ExecutionRules:
++        if self.ajuste_tick_saidas_venda and self.motor_ticks:
++            raise ValueError("--ajuste-tick-saidas-venda só se aplica ao motor OHLC.")
+@@ -167 +173 @@ class ExecutionRules:
+-                      self.protecoes_ate_cancelar):
++                      self.protecoes_ate_cancelar, self.ajuste_tick_saidas_venda):
+@@ -181,0 +188,2 @@ class Engine:
++        self.price_tick = Fraction(str(self.tick)) if self.rules.ajuste_tick_saidas_venda else None
++        self.tick_adjustments = {"ajustado": 0, "empate_meio_tick": 0}
+@@ -249,0 +258,9 @@ class Engine:
++        if self.rules.ajuste_tick_saidas_venda:
++            priced = order is not None and order.kind in {"limit", "stop"} and order.price > 0
++            requested = order.requested_price if priced and order.requested_price is not None else (
++                order.price if priced else ""
++            )
++            limit = order.limit if priced and order.limit is not None else ""
++            record.update(nivel_solicitado=requested, nivel_efetivo=order.price if priced else "",
++                          limite_solicitado=limit, limite_efetivo=limit,
++                          ajuste_tick=order.tick_adjustment if priced else "")
+@@ -563,0 +581,17 @@ class Engine:
++    def adjust_sell_exit(self, order):
++        order.requested_price = order.price
++        # As representações decimais passam a frações exatas para evitar erro na comparação do meio tick.
++        units, remainder = divmod(Fraction(str(order.price)), self.price_tick)
++        if remainder == 0:
++            order.tick_adjustment = "na_grade"
++            return
++        if 2 * remainder == self.price_tick:
++            order.tick_adjustment = "empate_meio_tick"
++        else:
++            nearest = units + (2 * remainder > self.price_tick)
++            if nearest == 0:
++                raise NTSLError("O nível ajustado ao tick precisa ser positivo.")
++            order.price = float(nearest * self.price_tick)
++            order.tick_adjustment = "ajustado"
++        self.tick_adjustments[order.tick_adjustment] += 1
++
+@@ -568,0 +603,2 @@ class Engine:
++        if self.price_tick is not None and order.action == "exit_long" and order.kind in {"limit", "stop"}:
++            self.adjust_sell_exit(order)
+@@ -586,0 +623,2 @@ class Engine:
++        if order.tick_adjustment == "empate_meio_tick":
++            self.audit_order("empate_meio_tick", order, key)
+@@ -730,0 +769,2 @@ class Engine:
++        if self.price_tick is not None:
++            state["ajustes_tick_saidas_venda"] = self.tick_adjustments.copy()
+@@ -766,0 +807 @@ class Engine:
++        self.tick_adjustments.update(state.get("ajustes_tick_saidas_venda", {}))
+@@ -975,0 +1017,4 @@ def run_strategy(csv, source, output, seconds, format_name, tick, overrides=None
++    if rules.ajuste_tick_saidas_venda:
++        summary["ajustes_tick_saidas_venda"] = engine.tick_adjustments
++    else:
++        del summary["regras_execucao"]["ajuste_tick_saidas_venda"]
+@@ -1036,0 +1082,2 @@ def main():
++    p.add_argument("--ajuste-tick-saidas-venda", action="store_true",
++                   help="OHLC experimental: aproxima alvo limite e gatilho de stop das saídas de posição comprada")

@@ -1,0 +1,5 @@
+sonda;perfil;profit;entrada_execucao;saida_execucao;posicao_1055;pendentes_1055;solicitado_pts_entrada;efetivo_pts_entrada;limite_stop_pts_entrada;saida_pts_entrada;pontos_contrato;ordem_simulador;ajuste_tick
+G3;bruto;pendente;10:52:00;10:58:00;-1;1;-877.0;-877.0;;-375.0;375.0;closeposition;
+G3;grade;pendente;10:52:00;10:55:00;0;0;-875.0;-875.0;;-875.0;875.0;buytocoverlimit;
+G4;bruto;pendente;10:52:00;10:58:00;-1;1;447.0;447.0;1000.0;-375.0;375.0;closeposition;
+G4;grade;pendente;10:52:00;10:55:00;0;0;445.0;445.0;1000.0;445.0;-445.0;buytocoverstop;
