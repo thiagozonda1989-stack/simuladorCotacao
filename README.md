@@ -1,5 +1,7 @@
 # simuladorCotacao 0.5.0
 
+**[Abrir gráfico dinâmico de acompanhamento](https://thiagozonda1989-stack.github.io/simuladorCotacao/colaboracao/ACOMPANHAMENTO_INTERATIVO.html)**
+
 [Histórico de alterações](CHANGELOG.md) · [Manutenção e hashes dos pacotes](MANUTENCAO.md)
 
 ## Integração ProfitRTD
