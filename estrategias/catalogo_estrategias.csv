@@ -26,3 +26,4 @@ sequencia;arquivo;versao;tipo;tempo_grafico;status_profit;status_simulador_0_4;e
 25;Modelo_Unificado_Refatorado_v5_7_Captura_Paridade.ntsl;5.7;execucao;1min;replay_profit;incompativel;Fonte da captura histórica de paridade WINZ26 em 26/10/2026;FloatToString, VWAP
 26;Modelo_Unificado_v5_8.ntsl;5.8;execucao;1min;rascunho;incompativel;Fonte original versionado para replay OHLC no simulador vigente com p_Exec_Tick=0;VWAP no simulador 0.4
 27;pullback_tendencia_v1_0.ntsl;1.0;pesquisa;1min;nao_testado;compativel;Protocolo fora da amostra em dados sintéticos: rejeitada (teste −R$ 457, sem vantagem sobre a taxa base);
+28;pullback_tendencia_v1_1.ntsl;1.1;pesquisa;1min;nao_testado;compativel;Melhora em dois pregões conhecidos e piora em sintéticos novos;
