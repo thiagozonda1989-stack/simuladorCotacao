@@ -17,6 +17,8 @@ Antes de solicitar parecer, siga a [diretriz de publicação de dados e logs do 
 
 Na publicação de cada rodada, atualize o [painel de acompanhamento](ACOMPANHAMENTO.md) com a data, o SHA da evidência, as operações avaliadas e as notas das três frentes. Registre também as rodadas em que as notas se mantêm e inclua o link do painel no fechamento do PR.
 
+O [painel interativo oficial no GitHub Pages](https://thiagozonda1989-stack.github.io/simuladorCotacao/colaboracao/ACOMPANHAMENTO_INTERATIVO.html) é publicado a partir de `research/estrategia-fora-amostra-sintetico`, na pasta `/docs`. Atualize o Markdown com as três séries e a tabela da rodada. O HTML lê as séries desse painel ao abrir. Ao fechar a rodada, confira a última rodada publicada e o nome da série, a rodada e o percentual na caixa do gráfico. Se o endereço de publicação mudar, atualize os links e a fonte de dados do HTML juntos.
+
 ## Parecer de revisão
 
 ```text
