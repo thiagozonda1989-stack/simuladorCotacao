@@ -14,11 +14,16 @@ CANDIDATE = ROOT / "estrategias/execucao/pullback_tendencia_v1_7.ntsl"
 PARAMETERS = {"p_rapida": 2, "p_lenta": 3, "p_janelaamplitude": 2, "p_tempomax": 5}
 
 
-def run(source=CANDIDATE, *, closes=(1000, 1020, 1020), short=False, gap=False, opening_evaluation=False, **params):
+def run(source=CANDIDATE, *, closes=(1000, 1020, 1020), short=False, gap=False, opening_evaluation=False, reentry_frame=False, **params):
     opening = [1000] * 7 + [1030, 1020, 1020, 1020, 1020]
     close = [1000] * 6 + [1030, *closes, 1020, 1020]
     high = [1005] * 6 + [1040] * 6
     low = [995] * 6 + [1000] + [990] * 5
+    if reentry_frame:
+        opening[8:10], high[8:10], low[8:10], close[8:10] = (
+            [1020, 1050], [1090, 1130], [1005, 1040], [1080, 1120])
+        opening[10:], high[10:], low[10:], close[10:] = (
+            [1120, 1120], [1130, 1130], [1110, 1110], [1120, 1120])
     if short:
         opening, high, low, close = ([2000 - p for p in column]
                                      for column in (opening, low, high, close))
@@ -94,3 +99,11 @@ def test_prazo_original_tem_prioridade_na_classificacao_da_saida():
     engine = run(p_ativarsaidafalha=1, p_tempomax=0)
     assert early_requests(engine) == []
     assert fills(engine)[1] == (9, "selltocoveratmarket", 1015, 2)
+
+
+@pytest.mark.parametrize("limit,signals", [(1, [7]), (2, [7, 10])])
+def test_espera_e_limite_diario_depois_da_saida_antecipada(limit, signals):
+    engine = run(reentry_frame=True, p_ativarsaidafalha=1, p_espera=1, p_maxentradasdia=limit)
+    assert fills(engine)[1] == (9, "selltocoveratmarket", 1015, 2)
+    assert [i for i, row in enumerate(engine.trace, 1) if row["sinal_compra"]] == signals
+    assert early_requests(engine) == [8]
