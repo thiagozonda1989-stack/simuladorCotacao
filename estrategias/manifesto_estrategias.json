@@ -157,6 +157,12 @@
       "sha256": "16ee74d277add73798e26cd9d2653d26b7b375eac37c9d23455dd64b3662b20a",
       "bytes": 7891,
       "origem_relativa": "Modelo_Unificado_v5_8.txt"
+    },
+    {
+      "arquivo": "pesquisa/pullback_tendencia_v1_0.ntsl",
+      "sha256": "9d5dd028907c3d4aed2b1fddc2a1a1631d6eee515b4c9096de5554d45b8a9dd7",
+      "bytes": 3219,
+      "origem_relativa": "criado no repositório (pesquisa sintética)"
     }
   ]
 }

@@ -12,6 +12,8 @@
 - Acrescenta `--entrada-mercado-atraves-lacuna` como opção experimental do replay OHLC para entradas elegíveis com posição zerada e histórico contínuo em lacunas.
 - Acrescenta `--protecoes-ate-cancelar` como opção experimental no OHLC, com proteção limitada à posição aberta e zeragem a mercado prioritária na abertura.
 - Experimenta `--ajuste-tick-saidas-venda` para alvos limite e gatilhos de stop de posições compradas no replay OHLC, com empate explícito e rastreio de preço solicitado e efetivo.
+- Adiciona `tools/avaliar_fora_amostra.py`: divisão cronológica congelada, 50 variações só no treino, seleção pré-definida, avaliação única no teste e diagnóstico posterior do viés de seleção, com matriz de confusão, precisão e sensibilidade com IC de Wilson, custo dos falsos positivos, exposição, drawdown e bootstrap por pregão.
+- Adiciona `tools/gerar_win_sintetico.py` (versões 1 e 2) e a estratégia de pesquisa `estrategias/pesquisa/pullback_tendencia_v1_0.ntsl`, rejeitada no protocolo com dados sintéticos.
 
 ## 0.14.0
 

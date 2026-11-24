@@ -1,0 +1,233 @@
+{
+  "protocolo_versao": "1.0",
+  "pregoes_treino": [
+    "2026-07-01",
+    "2026-08-27"
+  ],
+  "pregoes_teste": [
+    "2026-08-28",
+    "2026-09-22"
+  ],
+  "variacao_escolhida": 29,
+  "parametros_escolhidos": {
+    "p_Rapida": 20.0,
+    "p_Lenta": 34.0,
+    "p_Alvo": 400.0,
+    "p_Stop": 200.0,
+    "p_TempoMax": 30.0,
+    "p_MaxEntradasDia": 6.0,
+    "p_Espera": 5.0,
+    "p_HoraInicio": 1000.0
+  },
+  "treino": {
+    "pregoes": 42,
+    "barras": 23730,
+    "rotulos_validos": 22470,
+    "rotulos_ambiguos": 0,
+    "rotulos_invalidos": 1260,
+    "matriz_confusao": {
+      "C": {
+        "C": 55,
+        "V": 47,
+        "N": 9621
+      },
+      "V": {
+        "C": 45,
+        "V": 66,
+        "N": 10362
+      },
+      "N": {
+        "C": 23,
+        "V": 16,
+        "N": 2235
+      }
+    },
+    "por_classe": {
+      "C": {
+        "verdadeiros_positivos": 55,
+        "previstos": 123,
+        "reais": 9723,
+        "precisao": 0.4472,
+        "precisao_ic95": [
+          0.3622,
+          0.5353
+        ],
+        "sensibilidade": 0.0057,
+        "sensibilidade_ic95": [
+          0.0043,
+          0.0074
+        ],
+        "falsos_positivos": 68,
+        "resultado_falsos_positivos_reais": -1478.0
+      },
+      "V": {
+        "verdadeiros_positivos": 66,
+        "previstos": 129,
+        "reais": 10473,
+        "precisao": 0.5116,
+        "precisao_ic95": [
+          0.4263,
+          0.5963
+        ],
+        "sensibilidade": 0.0063,
+        "sensibilidade_ic95": [
+          0.005,
+          0.008
+        ],
+        "falsos_positivos": 63,
+        "resultado_falsos_positivos_reais": -1361.0
+      },
+      "N": {
+        "verdadeiros_positivos": 2235,
+        "previstos": 22218,
+        "reais": 2274,
+        "precisao": 0.1006,
+        "precisao_ic95": [
+          0.0967,
+          0.1046
+        ],
+        "sensibilidade": 0.9828,
+        "sensibilidade_ic95": [
+          0.9766,
+          0.9874
+        ]
+      }
+    },
+    "operacoes": 252,
+    "operacoes_por_pregao": 6.0,
+    "operacoes_compra": 123,
+    "operacoes_venda": 129,
+    "operacoes_positivas": 131,
+    "taxa_acerto_operacoes": 0.5198,
+    "exposicao_barras": 0.2542,
+    "resultado_liquido_reais": 1937.0,
+    "resultado_pontos": 10945.0,
+    "drawdown_liquido_reais": 865.0,
+    "pregoes_positivos": 20,
+    "pregoes_negativos": 22,
+    "media_diaria_reais": 46.12,
+    "desvio_diario_reais": 177.44,
+    "media_diaria_ic95_bootstrap": [
+      -3.94,
+      104.17
+    ],
+    "saidas_por_tipo": {
+      "buytocoveratmarket": 73,
+      "selltocoveratmarket": 71,
+      "buytocoverstop": 39,
+      "selltocoverstop": 34,
+      "selltocoverlimit": 18,
+      "buytocoverlimit": 17
+    },
+    "barras_ambiguas_execucao": 0
+  },
+  "teste": {
+    "pregoes": 18,
+    "barras": 10170,
+    "rotulos_validos": 9630,
+    "rotulos_ambiguos": 0,
+    "rotulos_invalidos": 540,
+    "matriz_confusao": {
+      "C": {
+        "C": 32,
+        "V": 19,
+        "N": 4138
+      },
+      "V": {
+        "C": 14,
+        "V": 31,
+        "N": 4840
+      },
+      "N": {
+        "C": 3,
+        "V": 6,
+        "N": 547
+      }
+    },
+    "por_classe": {
+      "C": {
+        "verdadeiros_positivos": 32,
+        "previstos": 49,
+        "reais": 4189,
+        "precisao": 0.6531,
+        "precisao_ic95": [
+          0.5131,
+          0.7708
+        ],
+        "sensibilidade": 0.0076,
+        "sensibilidade_ic95": [
+          0.0054,
+          0.0108
+        ],
+        "falsos_positivos": 17,
+        "resultado_falsos_positivos_reais": -392.0
+      },
+      "V": {
+        "verdadeiros_positivos": 31,
+        "previstos": 56,
+        "reais": 4885,
+        "precisao": 0.5536,
+        "precisao_ic95": [
+          0.4241,
+          0.6761
+        ],
+        "sensibilidade": 0.0063,
+        "sensibilidade_ic95": [
+          0.0045,
+          0.009
+        ],
+        "falsos_positivos": 25,
+        "resultado_falsos_positivos_reais": -553.0
+      },
+      "N": {
+        "verdadeiros_positivos": 547,
+        "previstos": 9525,
+        "reais": 556,
+        "precisao": 0.0574,
+        "precisao_ic95": [
+          0.0529,
+          0.0623
+        ],
+        "sensibilidade": 0.9838,
+        "sensibilidade_ic95": [
+          0.9695,
+          0.9915
+        ]
+      }
+    },
+    "operacoes": 105,
+    "operacoes_por_pregao": 5.83,
+    "operacoes_compra": 49,
+    "operacoes_venda": 56,
+    "operacoes_positivas": 71,
+    "taxa_acerto_operacoes": 0.6762,
+    "exposicao_barras": 0.243,
+    "resultado_liquido_reais": 2654.0,
+    "resultado_pontos": 13795.0,
+    "drawdown_liquido_reais": 409.0,
+    "pregoes_positivos": 12,
+    "pregoes_negativos": 6,
+    "media_diaria_reais": 147.44,
+    "desvio_diario_reais": 198.17,
+    "media_diaria_ic95_bootstrap": [
+      60.61,
+      236.45
+    ],
+    "saidas_por_tipo": {
+      "selltocoveratmarket": 27,
+      "buytocoveratmarket": 20,
+      "buytocoverlimit": 20,
+      "buytocoverstop": 16,
+      "selltocoverstop": 12,
+      "selltocoverlimit": 10
+    },
+    "barras_ambiguas_execucao": 0
+  },
+  "diagnostico_selecao": {
+    "correlacao_spearman_treino_teste": 0.6301,
+    "posicao_da_escolhida_no_teste": 3,
+    "total_variacoes": 50,
+    "variacoes_positivas_no_treino": 24,
+    "variacoes_positivas_no_teste": 50
+  }
+}
