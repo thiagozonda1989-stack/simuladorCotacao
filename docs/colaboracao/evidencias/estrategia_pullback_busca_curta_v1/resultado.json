@@ -1,0 +1,1147 @@
+{
+  "desenvolvimento": [
+    "2026-09-15",
+    "2026-09-16",
+    "2026-09-17",
+    "2026-09-23",
+    "2026-09-24",
+    "2026-09-25",
+    "2026-09-29",
+    "2026-09-30",
+    "2026-10-01",
+    "2026-10-02",
+    "2026-10-05",
+    "2026-10-06",
+    "2026-10-07",
+    "2026-10-08",
+    "2026-10-09",
+    "2026-10-13",
+    "2026-10-14",
+    "2026-10-15",
+    "2026-10-16"
+  ],
+  "reavaliacao": [
+    "2026-10-19",
+    "2026-10-20",
+    "2026-10-22",
+    "2026-10-23",
+    "2026-10-27",
+    "2026-10-28",
+    "2026-10-29",
+    "2026-10-30",
+    "2026-11-03",
+    "2026-11-04",
+    "2026-11-05",
+    "2026-11-06",
+    "2026-11-09",
+    "2026-11-10",
+    "2026-11-11",
+    "2026-11-12",
+    "2026-11-13",
+    "2026-11-16",
+    "2026-11-17",
+    "2026-11-18"
+  ],
+  "grade": [
+    {
+      "parametros": {
+        "p_Alvo": 60,
+        "p_Stop": 75,
+        "p_TempoMax": 2,
+        "p_MaxEntradasDia": 12,
+        "p_Espera": 1
+      },
+      "operacoes": 147,
+      "por_dia": 7.7368421052631575,
+      "acerto": 0.5034013605442177,
+      "diario": -2.3684210526315788,
+      "liquido": -45.0,
+      "drawdown": 284.0,
+      "minutos": 1.4489795918367347,
+      "dias_meta": 0,
+      "melhor_dia": 141.0,
+      "pior_dia": -165.0,
+      "maior_frequencia": 12
+    },
+    {
+      "parametros": {
+        "p_Alvo": 60,
+        "p_Stop": 75,
+        "p_TempoMax": 2,
+        "p_MaxEntradasDia": 24,
+        "p_Espera": 1
+      },
+      "operacoes": 167,
+      "por_dia": 8.789473684210526,
+      "acerto": 0.47904191616766467,
+      "diario": -11.473684210526315,
+      "liquido": -218.0,
+      "drawdown": 300.0,
+      "minutos": 1.4491017964071855,
+      "dias_meta": 0,
+      "melhor_dia": 141.0,
+      "pior_dia": -165.0,
+      "maior_frequencia": 19
+    },
+    {
+      "parametros": {
+        "p_Alvo": 60,
+        "p_Stop": 75,
+        "p_TempoMax": 5,
+        "p_MaxEntradasDia": 12,
+        "p_Espera": 1
+      },
+      "operacoes": 154,
+      "por_dia": 8.105263157894736,
+      "acerto": 0.525974025974026,
+      "diario": 12.421052631578947,
+      "liquido": 236.0,
+      "drawdown": 161.0,
+      "minutos": 1.5454545454545456,
+      "dias_meta": 0,
+      "melhor_dia": 142.0,
+      "pior_dia": -80.0,
+      "maior_frequencia": 12
+    },
+    {
+      "parametros": {
+        "p_Alvo": 60,
+        "p_Stop": 75,
+        "p_TempoMax": 5,
+        "p_MaxEntradasDia": 24,
+        "p_Espera": 1
+      },
+      "operacoes": 174,
+      "por_dia": 9.157894736842104,
+      "acerto": 0.5057471264367817,
+      "diario": 4.052631578947368,
+      "liquido": 77.0,
+      "drawdown": 199.0,
+      "minutos": 1.5344827586206897,
+      "dias_meta": 0,
+      "melhor_dia": 142.0,
+      "pior_dia": -155.0,
+      "maior_frequencia": 19
+    },
+    {
+      "parametros": {
+        "p_Alvo": 60,
+        "p_Stop": 100,
+        "p_TempoMax": 2,
+        "p_MaxEntradasDia": 12,
+        "p_Espera": 1
+      },
+      "operacoes": 146,
+      "por_dia": 7.684210526315789,
+      "acerto": 0.5205479452054794,
+      "diario": -10.368421052631579,
+      "liquido": -197.0,
+      "drawdown": 382.0,
+      "minutos": 1.4315068493150684,
+      "dias_meta": 0,
+      "melhor_dia": 141.0,
+      "pior_dia": -153.0,
+      "maior_frequencia": 12
+    },
+    {
+      "parametros": {
+        "p_Alvo": 60,
+        "p_Stop": 100,
+        "p_TempoMax": 2,
+        "p_MaxEntradasDia": 24,
+        "p_Espera": 1
+      },
+      "operacoes": 166,
+      "por_dia": 8.736842105263158,
+      "acerto": 0.5240963855421686,
+      "diario": -14.368421052631579,
+      "liquido": -273.0,
+      "drawdown": 382.0,
+      "minutos": 1.4518072289156627,
+      "dias_meta": 0,
+      "melhor_dia": 141.0,
+      "pior_dia": -172.0,
+      "maior_frequencia": 20
+    },
+    {
+      "parametros": {
+        "p_Alvo": 60,
+        "p_Stop": 100,
+        "p_TempoMax": 5,
+        "p_MaxEntradasDia": 12,
+        "p_Espera": 1
+      },
+      "operacoes": 154,
+      "por_dia": 8.105263157894736,
+      "acerto": 0.551948051948052,
+      "diario": 3.9473684210526314,
+      "liquido": 75.0,
+      "drawdown": 180.0,
+      "minutos": 1.5129870129870129,
+      "dias_meta": 0,
+      "melhor_dia": 142.0,
+      "pior_dia": -99.0,
+      "maior_frequencia": 12
+    },
+    {
+      "parametros": {
+        "p_Alvo": 60,
+        "p_Stop": 100,
+        "p_TempoMax": 5,
+        "p_MaxEntradasDia": 24,
+        "p_Espera": 1
+      },
+      "operacoes": 173,
+      "por_dia": 9.105263157894736,
+      "acerto": 0.5491329479768786,
+      "diario": 0.15789473684210525,
+      "liquido": 3.0,
+      "drawdown": 212.0,
+      "minutos": 1.5375722543352601,
+      "dias_meta": 0,
+      "melhor_dia": 142.0,
+      "pior_dia": -161.0,
+      "maior_frequencia": 19
+    },
+    {
+      "parametros": {
+        "p_Alvo": 60,
+        "p_Stop": 150,
+        "p_TempoMax": 2,
+        "p_MaxEntradasDia": 12,
+        "p_Espera": 1
+      },
+      "operacoes": 143,
+      "por_dia": 7.526315789473684,
+      "acerto": 0.5664335664335665,
+      "diario": -17.842105263157894,
+      "liquido": -339.0,
+      "drawdown": 377.0,
+      "minutos": 1.5664335664335665,
+      "dias_meta": 0,
+      "melhor_dia": 80.0,
+      "pior_dia": -163.0,
+      "maior_frequencia": 12
+    },
+    {
+      "parametros": {
+        "p_Alvo": 60,
+        "p_Stop": 150,
+        "p_TempoMax": 2,
+        "p_MaxEntradasDia": 24,
+        "p_Espera": 1
+      },
+      "operacoes": 157,
+      "por_dia": 8.263157894736842,
+      "acerto": 0.5668789808917197,
+      "diario": -22.36842105263158,
+      "liquido": -425.0,
+      "drawdown": 448.0,
+      "minutos": 1.5668789808917196,
+      "dias_meta": 0,
+      "melhor_dia": 116.0,
+      "pior_dia": -163.0,
+      "maior_frequencia": 19
+    },
+    {
+      "parametros": {
+        "p_Alvo": 60,
+        "p_Stop": 150,
+        "p_TempoMax": 5,
+        "p_MaxEntradasDia": 12,
+        "p_Espera": 1
+      },
+      "operacoes": 150,
+      "por_dia": 7.894736842105263,
+      "acerto": 0.6133333333333333,
+      "diario": -7.2631578947368425,
+      "liquido": -138.0,
+      "drawdown": 237.0,
+      "minutos": 1.8066666666666669,
+      "dias_meta": 0,
+      "melhor_dia": 108.0,
+      "pior_dia": -152.0,
+      "maior_frequencia": 12
+    },
+    {
+      "parametros": {
+        "p_Alvo": 60,
+        "p_Stop": 150,
+        "p_TempoMax": 5,
+        "p_MaxEntradasDia": 24,
+        "p_Espera": 1
+      },
+      "operacoes": 163,
+      "por_dia": 8.578947368421053,
+      "acerto": 0.6073619631901841,
+      "diario": -11.947368421052632,
+      "liquido": -227.0,
+      "drawdown": 265.0,
+      "minutos": 1.8282208588957054,
+      "dias_meta": 0,
+      "melhor_dia": 116.0,
+      "pior_dia": -152.0,
+      "maior_frequencia": 18
+    },
+    {
+      "parametros": {
+        "p_Alvo": 100,
+        "p_Stop": 75,
+        "p_TempoMax": 2,
+        "p_MaxEntradasDia": 12,
+        "p_Espera": 1
+      },
+      "operacoes": 147,
+      "por_dia": 7.7368421052631575,
+      "acerto": 0.46938775510204084,
+      "diario": 4.7894736842105265,
+      "liquido": 91.0,
+      "drawdown": 289.0,
+      "minutos": 1.5782312925170068,
+      "dias_meta": 0,
+      "melhor_dia": 171.0,
+      "pior_dia": -157.0,
+      "maior_frequencia": 12
+    },
+    {
+      "parametros": {
+        "p_Alvo": 100,
+        "p_Stop": 75,
+        "p_TempoMax": 2,
+        "p_MaxEntradasDia": 24,
+        "p_Espera": 1
+      },
+      "operacoes": 168,
+      "por_dia": 8.842105263157896,
+      "acerto": 0.44047619047619047,
+      "diario": -4.368421052631579,
+      "liquido": -83.0,
+      "drawdown": 289.0,
+      "minutos": 1.5833333333333333,
+      "dias_meta": 0,
+      "melhor_dia": 171.0,
+      "pior_dia": -164.0,
+      "maior_frequencia": 20
+    },
+    {
+      "parametros": {
+        "p_Alvo": 100,
+        "p_Stop": 75,
+        "p_TempoMax": 5,
+        "p_MaxEntradasDia": 12,
+        "p_Espera": 1
+      },
+      "operacoes": 154,
+      "por_dia": 8.105263157894736,
+      "acerto": 0.474025974025974,
+      "diario": 16.68421052631579,
+      "liquido": 317.0,
+      "drawdown": 207.0,
+      "minutos": 1.7402597402597404,
+      "dias_meta": 0,
+      "melhor_dia": 172.0,
+      "pior_dia": -158.0,
+      "maior_frequencia": 12
+    },
+    {
+      "parametros": {
+        "p_Alvo": 100,
+        "p_Stop": 75,
+        "p_TempoMax": 5,
+        "p_MaxEntradasDia": 24,
+        "p_Espera": 1
+      },
+      "operacoes": 167,
+      "por_dia": 8.789473684210526,
+      "acerto": 0.46107784431137727,
+      "diario": 12.736842105263158,
+      "liquido": 242.0,
+      "drawdown": 207.0,
+      "minutos": 1.748502994011976,
+      "dias_meta": 0,
+      "melhor_dia": 172.0,
+      "pior_dia": -158.0,
+      "maior_frequencia": 16
+    },
+    {
+      "parametros": {
+        "p_Alvo": 100,
+        "p_Stop": 100,
+        "p_TempoMax": 2,
+        "p_MaxEntradasDia": 12,
+        "p_Espera": 1
+      },
+      "operacoes": 147,
+      "por_dia": 7.7368421052631575,
+      "acerto": 0.47619047619047616,
+      "diario": -6.473684210526316,
+      "liquido": -123.0,
+      "drawdown": 368.0,
+      "minutos": 1.5850340136054422,
+      "dias_meta": 0,
+      "melhor_dia": 171.0,
+      "pior_dia": -167.0,
+      "maior_frequencia": 12
+    },
+    {
+      "parametros": {
+        "p_Alvo": 100,
+        "p_Stop": 100,
+        "p_TempoMax": 2,
+        "p_MaxEntradasDia": 24,
+        "p_Espera": 1
+      },
+      "operacoes": 167,
+      "por_dia": 8.789473684210526,
+      "acerto": 0.47305389221556887,
+      "diario": -9.526315789473685,
+      "liquido": -181.0,
+      "drawdown": 368.0,
+      "minutos": 1.622754491017964,
+      "dias_meta": 0,
+      "melhor_dia": 171.0,
+      "pior_dia": -167.0,
+      "maior_frequencia": 20
+    },
+    {
+      "parametros": {
+        "p_Alvo": 100,
+        "p_Stop": 100,
+        "p_TempoMax": 5,
+        "p_MaxEntradasDia": 12,
+        "p_Espera": 1
+      },
+      "operacoes": 153,
+      "por_dia": 8.052631578947368,
+      "acerto": 0.477124183006536,
+      "diario": 2.0526315789473686,
+      "liquido": 39.0,
+      "drawdown": 230.0,
+      "minutos": 1.777777777777778,
+      "dias_meta": 0,
+      "melhor_dia": 172.0,
+      "pior_dia": -162.0,
+      "maior_frequencia": 12
+    },
+    {
+      "parametros": {
+        "p_Alvo": 100,
+        "p_Stop": 100,
+        "p_TempoMax": 5,
+        "p_MaxEntradasDia": 24,
+        "p_Espera": 1
+      },
+      "operacoes": 165,
+      "por_dia": 8.68421052631579,
+      "acerto": 0.47878787878787876,
+      "diario": 1.7894736842105263,
+      "liquido": 34.0,
+      "drawdown": 230.0,
+      "minutos": 1.8181818181818181,
+      "dias_meta": 0,
+      "melhor_dia": 172.0,
+      "pior_dia": -162.0,
+      "maior_frequencia": 16
+    },
+    {
+      "parametros": {
+        "p_Alvo": 100,
+        "p_Stop": 150,
+        "p_TempoMax": 2,
+        "p_MaxEntradasDia": 12,
+        "p_Espera": 1
+      },
+      "operacoes": 146,
+      "por_dia": 7.684210526315789,
+      "acerto": 0.5205479452054794,
+      "diario": -12.421052631578947,
+      "liquido": -236.0,
+      "drawdown": 332.0,
+      "minutos": 1.7054794520547947,
+      "dias_meta": 0,
+      "melhor_dia": 84.0,
+      "pior_dia": -155.0,
+      "maior_frequencia": 12
+    },
+    {
+      "parametros": {
+        "p_Alvo": 100,
+        "p_Stop": 150,
+        "p_TempoMax": 2,
+        "p_MaxEntradasDia": 24,
+        "p_Espera": 1
+      },
+      "operacoes": 160,
+      "por_dia": 8.421052631578947,
+      "acerto": 0.51875,
+      "diario": -15.947368421052632,
+      "liquido": -303.0,
+      "drawdown": 360.0,
+      "minutos": 1.71875,
+      "dias_meta": 0,
+      "melhor_dia": 117.0,
+      "pior_dia": -161.0,
+      "maior_frequencia": 19
+    },
+    {
+      "parametros": {
+        "p_Alvo": 100,
+        "p_Stop": 150,
+        "p_TempoMax": 5,
+        "p_MaxEntradasDia": 12,
+        "p_Espera": 1
+      },
+      "operacoes": 153,
+      "por_dia": 8.052631578947368,
+      "acerto": 0.5359477124183006,
+      "diario": -9.894736842105264,
+      "liquido": -188.0,
+      "drawdown": 297.0,
+      "minutos": 2.065359477124183,
+      "dias_meta": 0,
+      "melhor_dia": 116.0,
+      "pior_dia": -167.0,
+      "maior_frequencia": 12
+    },
+    {
+      "parametros": {
+        "p_Alvo": 100,
+        "p_Stop": 150,
+        "p_TempoMax": 5,
+        "p_MaxEntradasDia": 24,
+        "p_Espera": 1
+      },
+      "operacoes": 160,
+      "por_dia": 8.421052631578947,
+      "acerto": 0.5375,
+      "diario": -9.105263157894736,
+      "liquido": -173.0,
+      "drawdown": 288.0,
+      "minutos": 2.1,
+      "dias_meta": 0,
+      "melhor_dia": 116.0,
+      "pior_dia": -167.0,
+      "maior_frequencia": 16
+    },
+    {
+      "parametros": {
+        "p_Alvo": 150,
+        "p_Stop": 75,
+        "p_TempoMax": 2,
+        "p_MaxEntradasDia": 12,
+        "p_Espera": 1
+      },
+      "operacoes": 151,
+      "por_dia": 7.947368421052632,
+      "acerto": 0.4370860927152318,
+      "diario": 10.736842105263158,
+      "liquido": 204.0,
+      "drawdown": 290.0,
+      "minutos": 1.7549668874172186,
+      "dias_meta": 0,
+      "melhor_dia": 153.0,
+      "pior_dia": -158.0,
+      "maior_frequencia": 12
+    },
+    {
+      "parametros": {
+        "p_Alvo": 150,
+        "p_Stop": 75,
+        "p_TempoMax": 2,
+        "p_MaxEntradasDia": 24,
+        "p_Espera": 1
+      },
+      "operacoes": 167,
+      "por_dia": 8.789473684210526,
+      "acerto": 0.41916167664670656,
+      "diario": 4.894736842105263,
+      "liquido": 93.0,
+      "drawdown": 290.0,
+      "minutos": 1.748502994011976,
+      "dias_meta": 0,
+      "melhor_dia": 153.0,
+      "pior_dia": -164.0,
+      "maior_frequencia": 16
+    },
+    {
+      "parametros": {
+        "p_Alvo": 150,
+        "p_Stop": 75,
+        "p_TempoMax": 5,
+        "p_MaxEntradasDia": 12,
+        "p_Espera": 1
+      },
+      "operacoes": 154,
+      "por_dia": 8.105263157894736,
+      "acerto": 0.44155844155844154,
+      "diario": 30.105263157894736,
+      "liquido": 572.0,
+      "drawdown": 172.0,
+      "minutos": 1.9545454545454544,
+      "dias_meta": 0,
+      "melhor_dia": 175.0,
+      "pior_dia": -138.0,
+      "maior_frequencia": 12
+    },
+    {
+      "parametros": {
+        "p_Alvo": 150,
+        "p_Stop": 75,
+        "p_TempoMax": 5,
+        "p_MaxEntradasDia": 24,
+        "p_Espera": 1
+      },
+      "operacoes": 167,
+      "por_dia": 8.789473684210526,
+      "acerto": 0.4251497005988024,
+      "diario": 25.68421052631579,
+      "liquido": 488.0,
+      "drawdown": 189.0,
+      "minutos": 1.970059880239521,
+      "dias_meta": 0,
+      "melhor_dia": 175.0,
+      "pior_dia": -155.0,
+      "maior_frequencia": 16
+    },
+    {
+      "parametros": {
+        "p_Alvo": 150,
+        "p_Stop": 100,
+        "p_TempoMax": 2,
+        "p_MaxEntradasDia": 12,
+        "p_Espera": 1
+      },
+      "operacoes": 147,
+      "por_dia": 7.7368421052631575,
+      "acerto": 0.4421768707482993,
+      "diario": -0.21052631578947367,
+      "liquido": -4.0,
+      "drawdown": 308.0,
+      "minutos": 1.7414965986394557,
+      "dias_meta": 0,
+      "melhor_dia": 153.0,
+      "pior_dia": -157.0,
+      "maior_frequencia": 12
+    },
+    {
+      "parametros": {
+        "p_Alvo": 150,
+        "p_Stop": 100,
+        "p_TempoMax": 2,
+        "p_MaxEntradasDia": 24,
+        "p_Espera": 1
+      },
+      "operacoes": 162,
+      "por_dia": 8.526315789473685,
+      "acerto": 0.4444444444444444,
+      "diario": -2.6315789473684212,
+      "liquido": -50.0,
+      "drawdown": 308.0,
+      "minutos": 1.7901234567901234,
+      "dias_meta": 0,
+      "melhor_dia": 153.0,
+      "pior_dia": -166.0,
+      "maior_frequencia": 16
+    },
+    {
+      "parametros": {
+        "p_Alvo": 150,
+        "p_Stop": 100,
+        "p_TempoMax": 5,
+        "p_MaxEntradasDia": 12,
+        "p_Espera": 1
+      },
+      "operacoes": 154,
+      "por_dia": 8.105263157894736,
+      "acerto": 0.44155844155844154,
+      "diario": 12.736842105263158,
+      "liquido": 242.0,
+      "drawdown": 215.0,
+      "minutos": 2.0064935064935066,
+      "dias_meta": 0,
+      "melhor_dia": 175.0,
+      "pior_dia": -169.0,
+      "maior_frequencia": 12
+    },
+    {
+      "parametros": {
+        "p_Alvo": 150,
+        "p_Stop": 100,
+        "p_TempoMax": 5,
+        "p_MaxEntradasDia": 24,
+        "p_Espera": 1
+      },
+      "operacoes": 166,
+      "por_dia": 8.736842105263158,
+      "acerto": 0.4397590361445783,
+      "diario": 10.526315789473685,
+      "liquido": 200.0,
+      "drawdown": 215.0,
+      "minutos": 2.0963855421686746,
+      "dias_meta": 0,
+      "melhor_dia": 175.0,
+      "pior_dia": -169.0,
+      "maior_frequencia": 16
+    },
+    {
+      "parametros": {
+        "p_Alvo": 150,
+        "p_Stop": 150,
+        "p_TempoMax": 2,
+        "p_MaxEntradasDia": 12,
+        "p_Espera": 1
+      },
+      "operacoes": 147,
+      "por_dia": 7.7368421052631575,
+      "acerto": 0.47619047619047616,
+      "diario": -8.052631578947368,
+      "liquido": -153.0,
+      "drawdown": 324.0,
+      "minutos": 1.8911564625850341,
+      "dias_meta": 0,
+      "melhor_dia": 87.0,
+      "pior_dia": -177.0,
+      "maior_frequencia": 12
+    },
+    {
+      "parametros": {
+        "p_Alvo": 150,
+        "p_Stop": 150,
+        "p_TempoMax": 2,
+        "p_MaxEntradasDia": 24,
+        "p_Espera": 1
+      },
+      "operacoes": 157,
+      "por_dia": 8.263157894736842,
+      "acerto": 0.47770700636942676,
+      "diario": -11.842105263157896,
+      "liquido": -225.0,
+      "drawdown": 330.0,
+      "minutos": 1.9171974522292994,
+      "dias_meta": 0,
+      "melhor_dia": 90.0,
+      "pior_dia": -177.0,
+      "maior_frequencia": 16
+    },
+    {
+      "parametros": {
+        "p_Alvo": 150,
+        "p_Stop": 150,
+        "p_TempoMax": 5,
+        "p_MaxEntradasDia": 12,
+        "p_Espera": 1
+      },
+      "operacoes": 152,
+      "por_dia": 8.0,
+      "acerto": 0.5,
+      "diario": 4.947368421052632,
+      "liquido": 94.0,
+      "drawdown": 247.0,
+      "minutos": 2.388157894736842,
+      "dias_meta": 0,
+      "melhor_dia": 134.0,
+      "pior_dia": -145.0,
+      "maior_frequencia": 12
+    },
+    {
+      "parametros": {
+        "p_Alvo": 150,
+        "p_Stop": 150,
+        "p_TempoMax": 5,
+        "p_MaxEntradasDia": 24,
+        "p_Espera": 1
+      },
+      "operacoes": 165,
+      "por_dia": 8.68421052631579,
+      "acerto": 0.4909090909090909,
+      "diario": -2.3684210526315788,
+      "liquido": -45.0,
+      "drawdown": 300.0,
+      "minutos": 2.490909090909091,
+      "dias_meta": 0,
+      "melhor_dia": 134.0,
+      "pior_dia": -173.0,
+      "maior_frequencia": 16
+    },
+    {
+      "parametros": {
+        "p_Alvo": 200,
+        "p_Stop": 75,
+        "p_TempoMax": 2,
+        "p_MaxEntradasDia": 12,
+        "p_Espera": 1
+      },
+      "operacoes": 146,
+      "por_dia": 7.684210526315789,
+      "acerto": 0.4246575342465753,
+      "diario": 19.210526315789473,
+      "liquido": 365.0,
+      "drawdown": 307.0,
+      "minutos": 1.863013698630137,
+      "dias_meta": 0,
+      "melhor_dia": 172.0,
+      "pior_dia": -175.0,
+      "maior_frequencia": 12
+    },
+    {
+      "parametros": {
+        "p_Alvo": 200,
+        "p_Stop": 75,
+        "p_TempoMax": 2,
+        "p_MaxEntradasDia": 24,
+        "p_Espera": 1
+      },
+      "operacoes": 162,
+      "por_dia": 8.526315789473685,
+      "acerto": 0.4074074074074074,
+      "diario": 13.947368421052632,
+      "liquido": 265.0,
+      "drawdown": 307.0,
+      "minutos": 1.8580246913580247,
+      "dias_meta": 0,
+      "melhor_dia": 172.0,
+      "pior_dia": -175.0,
+      "maior_frequencia": 16
+    },
+    {
+      "parametros": {
+        "p_Alvo": 200,
+        "p_Stop": 75,
+        "p_TempoMax": 5,
+        "p_MaxEntradasDia": 12,
+        "p_Espera": 1
+      },
+      "operacoes": 154,
+      "por_dia": 8.105263157894736,
+      "acerto": 0.4090909090909091,
+      "diario": 37.10526315789474,
+      "liquido": 705.0,
+      "drawdown": 168.0,
+      "minutos": 2.227272727272727,
+      "dias_meta": 0,
+      "melhor_dia": 166.0,
+      "pior_dia": -137.0,
+      "maior_frequencia": 12
+    },
+    {
+      "parametros": {
+        "p_Alvo": 200,
+        "p_Stop": 75,
+        "p_TempoMax": 5,
+        "p_MaxEntradasDia": 24,
+        "p_Espera": 1
+      },
+      "operacoes": 166,
+      "por_dia": 8.736842105263158,
+      "acerto": 0.39759036144578314,
+      "diario": 35.1578947368421,
+      "liquido": 668.0,
+      "drawdown": 185.0,
+      "minutos": 2.2228915662650603,
+      "dias_meta": 0,
+      "melhor_dia": 166.0,
+      "pior_dia": -154.0,
+      "maior_frequencia": 16
+    },
+    {
+      "parametros": {
+        "p_Alvo": 200,
+        "p_Stop": 100,
+        "p_TempoMax": 2,
+        "p_MaxEntradasDia": 12,
+        "p_Espera": 1
+      },
+      "operacoes": 146,
+      "por_dia": 7.684210526315789,
+      "acerto": 0.4315068493150685,
+      "diario": 7.947368421052632,
+      "liquido": 151.0,
+      "drawdown": 324.0,
+      "minutos": 1.86986301369863,
+      "dias_meta": 0,
+      "melhor_dia": 172.0,
+      "pior_dia": -180.0,
+      "maior_frequencia": 12
+    },
+    {
+      "parametros": {
+        "p_Alvo": 200,
+        "p_Stop": 100,
+        "p_TempoMax": 2,
+        "p_MaxEntradasDia": 24,
+        "p_Espera": 1
+      },
+      "operacoes": 161,
+      "por_dia": 8.473684210526315,
+      "acerto": 0.43478260869565216,
+      "diario": 6.105263157894737,
+      "liquido": 116.0,
+      "drawdown": 324.0,
+      "minutos": 1.9192546583850931,
+      "dias_meta": 0,
+      "melhor_dia": 172.0,
+      "pior_dia": -180.0,
+      "maior_frequencia": 16
+    },
+    {
+      "parametros": {
+        "p_Alvo": 200,
+        "p_Stop": 100,
+        "p_TempoMax": 5,
+        "p_MaxEntradasDia": 12,
+        "p_Espera": 1
+      },
+      "operacoes": 154,
+      "por_dia": 8.105263157894736,
+      "acerto": 0.4155844155844156,
+      "diario": 20.94736842105263,
+      "liquido": 398.0,
+      "drawdown": 200.0,
+      "minutos": 2.311688311688312,
+      "dias_meta": 0,
+      "melhor_dia": 169.0,
+      "pior_dia": -168.0,
+      "maior_frequencia": 12
+    },
+    {
+      "parametros": {
+        "p_Alvo": 200,
+        "p_Stop": 100,
+        "p_TempoMax": 5,
+        "p_MaxEntradasDia": 24,
+        "p_Espera": 1
+      },
+      "operacoes": 165,
+      "por_dia": 8.68421052631579,
+      "acerto": 0.4121212121212121,
+      "diario": 19.842105263157894,
+      "liquido": 377.0,
+      "drawdown": 231.0,
+      "minutos": 2.3696969696969696,
+      "dias_meta": 0,
+      "melhor_dia": 169.0,
+      "pior_dia": -168.0,
+      "maior_frequencia": 16
+    },
+    {
+      "parametros": {
+        "p_Alvo": 200,
+        "p_Stop": 150,
+        "p_TempoMax": 2,
+        "p_MaxEntradasDia": 12,
+        "p_Espera": 1
+      },
+      "operacoes": 146,
+      "por_dia": 7.684210526315789,
+      "acerto": 0.4657534246575342,
+      "diario": 2.210526315789474,
+      "liquido": 42.0,
+      "drawdown": 337.0,
+      "minutos": 2.0342465753424657,
+      "dias_meta": 0,
+      "melhor_dia": 114.0,
+      "pior_dia": -190.0,
+      "maior_frequencia": 12
+    },
+    {
+      "parametros": {
+        "p_Alvo": 200,
+        "p_Stop": 150,
+        "p_TempoMax": 2,
+        "p_MaxEntradasDia": 24,
+        "p_Espera": 1
+      },
+      "operacoes": 159,
+      "por_dia": 8.368421052631579,
+      "acerto": 0.4716981132075472,
+      "diario": -3.0,
+      "liquido": -57.0,
+      "drawdown": 337.0,
+      "minutos": 2.0628930817610063,
+      "dias_meta": 0,
+      "melhor_dia": 114.0,
+      "pior_dia": -190.0,
+      "maior_frequencia": 16
+    },
+    {
+      "parametros": {
+        "p_Alvo": 200,
+        "p_Stop": 150,
+        "p_TempoMax": 5,
+        "p_MaxEntradasDia": 12,
+        "p_Espera": 1
+      },
+      "operacoes": 152,
+      "por_dia": 8.0,
+      "acerto": 0.47368421052631576,
+      "diario": 16.63157894736842,
+      "liquido": 316.0,
+      "drawdown": 247.0,
+      "minutos": 2.730263157894737,
+      "dias_meta": 0,
+      "melhor_dia": 153.0,
+      "pior_dia": -164.0,
+      "maior_frequencia": 12
+    },
+    {
+      "parametros": {
+        "p_Alvo": 200,
+        "p_Stop": 150,
+        "p_TempoMax": 5,
+        "p_MaxEntradasDia": 24,
+        "p_Espera": 1
+      },
+      "operacoes": 161,
+      "por_dia": 8.473684210526315,
+      "acerto": 0.45962732919254656,
+      "diario": 9.052631578947368,
+      "liquido": 172.0,
+      "drawdown": 330.0,
+      "minutos": 2.7950310559006213,
+      "dias_meta": 0,
+      "melhor_dia": 153.0,
+      "pior_dia": -164.0,
+      "maior_frequencia": 15
+    }
+  ],
+  "perfis": {
+    "referencia": {
+      "parametros": {
+        "p_Alvo": 200,
+        "p_Stop": 150,
+        "p_TempoMax": 10
+      },
+      "desenvolvimento": {
+        "operacoes": 62,
+        "por_dia": 3.263157894736842,
+        "acerto": 0.5483870967741935,
+        "diario": 25.68421052631579,
+        "liquido": 488.0,
+        "drawdown": 182.0,
+        "minutos": 3.17741935483871,
+        "dias_meta": 0,
+        "melhor_dia": 156.0,
+        "pior_dia": -78.0,
+        "maior_frequencia": 8
+      },
+      "reavaliacao": {
+        "operacoes": 42,
+        "por_dia": 2.1,
+        "acerto": 0.35714285714285715,
+        "diario": -16.55,
+        "liquido": -331.0,
+        "drawdown": 331.0,
+        "minutos": 2.4047619047619047,
+        "dias_meta": 0,
+        "melhor_dia": 78.0,
+        "pior_dia": -128.0,
+        "maior_frequencia": 4
+      }
+    },
+    "maior_liquido": {
+      "parametros": {
+        "p_Alvo": 200,
+        "p_Stop": 75,
+        "p_TempoMax": 5,
+        "p_MaxEntradasDia": 12,
+        "p_Espera": 1
+      },
+      "desenvolvimento": {
+        "operacoes": 154,
+        "por_dia": 8.105263157894736,
+        "acerto": 0.4090909090909091,
+        "diario": 37.10526315789474,
+        "liquido": 705.0,
+        "drawdown": 168.0,
+        "minutos": 2.227272727272727,
+        "dias_meta": 0,
+        "melhor_dia": 166.0,
+        "pior_dia": -137.0,
+        "maior_frequencia": 12
+      },
+      "reavaliacao": {
+        "operacoes": 230,
+        "por_dia": 11.5,
+        "acerto": 0.3521739130434783,
+        "diario": -8.65,
+        "liquido": -173.0,
+        "drawdown": 413.0,
+        "minutos": 2.221739130434783,
+        "dias_meta": 0,
+        "melhor_dia": 148.0,
+        "pior_dia": -165.0,
+        "maior_frequencia": 12
+      }
+    },
+    "curto_risco": {
+      "parametros": {
+        "p_Alvo": 150,
+        "p_Stop": 75,
+        "p_TempoMax": 5,
+        "p_MaxEntradasDia": 12,
+        "p_Espera": 1
+      },
+      "desenvolvimento": {
+        "operacoes": 154,
+        "por_dia": 8.105263157894736,
+        "acerto": 0.44155844155844154,
+        "diario": 30.105263157894736,
+        "liquido": 572.0,
+        "drawdown": 172.0,
+        "minutos": 1.9545454545454544,
+        "dias_meta": 0,
+        "melhor_dia": 175.0,
+        "pior_dia": -138.0,
+        "maior_frequencia": 12
+      },
+      "reavaliacao": {
+        "operacoes": 230,
+        "por_dia": 11.5,
+        "acerto": 0.39565217391304347,
+        "diario": -7.15,
+        "liquido": -143.0,
+        "drawdown": 338.0,
+        "minutos": 1.8521739130434784,
+        "dias_meta": 0,
+        "melhor_dia": 144.0,
+        "pior_dia": -158.0,
+        "maior_frequencia": 12
+      }
+    },
+    "frequente_dd500": {
+      "parametros": {
+        "p_Alvo": 60,
+        "p_Stop": 75,
+        "p_TempoMax": 5,
+        "p_MaxEntradasDia": 24,
+        "p_Espera": 1
+      },
+      "desenvolvimento": {
+        "operacoes": 174,
+        "por_dia": 9.157894736842104,
+        "acerto": 0.5057471264367817,
+        "diario": 4.052631578947368,
+        "liquido": 77.0,
+        "drawdown": 199.0,
+        "minutos": 1.5344827586206897,
+        "dias_meta": 0,
+        "melhor_dia": 142.0,
+        "pior_dia": -155.0,
+        "maior_frequencia": 19
+      },
+      "reavaliacao": {
+        "operacoes": 328,
+        "por_dia": 16.4,
+        "acerto": 0.4634146341463415,
+        "diario": -51.45,
+        "liquido": -1029.0,
+        "drawdown": 1140.0,
+        "minutos": 1.4634146341463417,
+        "dias_meta": 0,
+        "melhor_dia": 89.0,
+        "pior_dia": -176.0,
+        "maior_frequencia": 24
+      }
+    }
+  }
+}
