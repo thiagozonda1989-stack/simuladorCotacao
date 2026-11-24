@@ -1,6 +1,6 @@
 # Acompanhamento do simuladorCotacao
 
-**Estado em 23/11/2026 — Simulador 65/100 · Estratégias 30/100 · Dados 60/100.**
+**Estado em 23/11/2026 — Simulador 65/100 · Estratégias 35/100 · Dados 60/100.**
 
 O eixo X segue a ordem das rodadas. O eixo Y vai de 0 (nenhum trabalho) a 100 (objetivo demonstrado). As notas são estimativas por marcos com evidência. Os números de operações da tabela se referem a cada rodada e podem reutilizar os mesmos pregões. As datas indicam a publicação das evidências no fuso America/Sao_Paulo. A rodada zero é uma referência sem data de publicação associada.
 
@@ -13,11 +13,11 @@ config:
 ---
 xychart-beta
   title "Evolução por rodada"
-  x-axis "Rodadas de validação" [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+  x-axis "Rodadas de validação" [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
   y-axis "Avanço" 0 --> 100
-  line [0, 20, 35, 45, 50, 55, 60, 60, 65, 65]
-  line [0, 15, 25, 30, 30, 30, 30, 30, 30, 30]
-  line [0, 30, 40, 45, 50, 50, 55, 55, 55, 60]
+  line [0, 20, 35, 45, 50, 55, 60, 60, 65, 65, 65]
+  line [0, 15, 25, 30, 30, 30, 30, 30, 30, 30, 35]
+  line [0, 30, 40, 45, 50, 50, 55, 55, 55, 60, 60]
 ```
 
 **Linhas:** azul para simulador, laranja para estratégias NTSL e verde para dados.
@@ -34,6 +34,7 @@ xychart-beta
 | 7 | 23/11/2026 | Grade G1/G2 | 60 | 30 | 55 | Duas sondas deram suporte ao tick mais próximo nas saídas de posição comprada. [723838a](https://github.com/thiagozonda1989-stack/simuladorCotacao/commit/723838af659a8a1e3145ba22e00468dd8feae6d8) |
 | 8 | 23/11/2026 | Ajuste experimental à grade | 65 | 30 | 55 | Opção OHLC para saída de posição comprada, 130 testes e 32 replays privados reportados. [ca1b602](https://github.com/thiagozonda1989-stack/simuladorCotacao/commit/ca1b602481e25802d0d5369afa159c677dc5316e) |
 | 9 | 23/11/2026 | Grade G3/G4 e 03 | 65 | 30 | 60 | Três operações nativas. G3/G4 confirmam os exemplos de recompra. Os níveis aceitos da 03 seguem pendentes. [d37a339](https://github.com/thiagozonda1989-stack/simuladorCotacao/commit/d37a339a6ea750b36b9aaf6d7afad9ca63698265) |
+| 10 | 23/11/2026 | Protocolo fora da amostra | 65 | 35 | 60 | Pullback de tendência v1.0 em 60 pregões **sintéticos**: 50 variações só no treino, escolha única avaliada no teste (36 operações, −R$ 457, IC da média diária −46,56 a −4,39). Estratégia rejeitada; o protocolo e as métricas do critério ficam implementados e testados. [f8098e5](https://github.com/thiagozonda1989-stack/simuladorCotacao/blob/f8098e50689df9c8e4e74e2cd31f91448eb2d4c3/docs/colaboracao/evidencias/estrategia_pullback_fora_amostra_sintetico_v1/README.md) |
 
 ## Critério para chegar a 100
 
@@ -45,4 +46,4 @@ xychart-beta
 
 Quem publica a rodada acrescenta uma linha com data local, marco, notas das três frentes, quantidade ou correspondência das operações quando disponível e link fixo para o SHA da evidência. Atualiza também as três séries e o resumo no topo. Se uma nota mudar, registra qual evidência motivou a mudança. Registra a rodada mesmo quando as notas permanecem iguais. Inclui o link deste painel no fechamento do PR. Os revisores conferem a coerência com as evidências.
 
-O ajuste implementado na rodada 8 justifica os cinco pontos adicionais do simulador. A captura nativa da rodada 9 justifica os cinco pontos adicionais dos dados. As estratégias mantêm a nota enquanto se aguarda nova evidência de desempenho fora da amostra.
+O ajuste implementado na rodada 8 justifica os cinco pontos adicionais do simulador. A captura nativa da rodada 9 justifica os cinco pontos adicionais dos dados. Na rodada 10, as estratégias sobem de 30 para 35 pela implementação do protocolo fora da amostra com todas as métricas do critério (matriz de confusão, precisão e sensibilidade com incerteza, custo dos falsos positivos, frequência, exposição, resultado líquido e drawdown). A nota não reflete desempenho: os dados são sintéticos e a estratégia testada foi rejeitada. Desempenho real exige aplicar o mesmo protocolo a pregões WIN reais.
