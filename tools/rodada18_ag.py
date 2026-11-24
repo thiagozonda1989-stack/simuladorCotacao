@@ -46,6 +46,8 @@ V_FAST = ["v_bid", "v_ask", "v_qtd_bid", "v_qtd_ask", "v_qtd_compra_book", "v_qt
           "v_agressao_compra", "v_agressao_venda", "v_trades_atual"]
 POP = 24
 GENERATIONS = 3
+FAST_GENERATIONS = 2
+FAST_POP = 8
 SEED = 18024
 MUTATION = 0.28
 TICK = 5
@@ -184,7 +186,7 @@ def add_source(rows, seen, selected, path, label, relative, kind, git_sha):
     raw_sha = sha256(raw).hexdigest()
     code = source_text(path)
     semantics_sha = sha256(code.replace("\r\n", "\n").encode()).hexdigest()
-    key = label + ":" + relative
+    key = label + ":" + relative + ("@" + raw_sha[:12] if kind == "windows" else "")
     info = dict(id=key, local=kind, commit=git_sha, arquivo=relative,
                 versao=re.search(r"v(\d+[._]\d+(?:[._]\d+)?)", path.name.lower()).group(1).replace("_", ".")
                 if re.search(r"v(\d+[._]\d+(?:[._]\d+)?)", path.name.lower()) else None,
@@ -326,7 +328,7 @@ def setup(args):
     public = dict(referencias=dict(pr2=HEADS[0], pesquisa=HEADS[1]),
                   regras_1min=mode_rules("win_60s", None), regras_subminuto=RULES,
                   win=dict(tick=TICK, valor_ponto=POINT), metas=dict(acerto=0.45, liquido_diario=3000),
-                  ag=dict(populacao=POP, geracoes=GENERATIONS, semente=SEED, mutacao=MUTATION,
+                  ag=dict(populacao=POP, geracoes=GENERATIONS, orcamento_1s=dict(populacao=FAST_POP, geracoes=FAST_GENERATIONS), semente=SEED, mutacao=MUTATION,
                           objetivo="líquido após custos; mínimo de operações e teto de drawdown"),
                   grupos=groups, elegibilidade="1 min: recortes conhecidos da R16 com junção OHLC exata. Subminuto: 98% de 565 minutos e cobertura da janela operacional.",
                   validacao_inedita="sem pregão posterior elegível e ineditismo demonstrado; a reserva permanece fechada",
@@ -495,10 +497,11 @@ def measured_optimize(program, data, subgroup, version, cfg, work, source_file, 
 
 
 def settings(version, workers, pilot=False):
+    pop, generations = (FAST_POP, FAST_GENERATIONS) if version["grupo"]=="win_1s_2c" else (POP, GENERATIONS)
     return dict(busca="genetica", classe_alvo="1C", pregoes_teste=0, cache_ram_mb=0, threads=workers,
                 regras_execucao=mode_rules(version["grupo"], None),
-                parametros=version["busca"], genetico=dict(populacao=24 if pilot else POP,
-                geracoes=1 if pilot else GENERATIONS, semente=SEED, mutacao=MUTATION,
+                parametros=version["busca"], genetico=dict(populacao=pop,
+                geracoes=1 if pilot else generations, semente=SEED, mutacao=MUTATION,
                 min_sinais=0, paciencia=0, metrica="resultado"))
 
 
@@ -526,12 +529,14 @@ def run(args):
         rules = mode_rules(family, None)
         dev = data[data.pregao.isin(group["desenvolvimento"])].reset_index(drop=True)
         if args.fase=="baseline":
-            if initial.exists():
+            if initial.exists() and not args.refazer_baseline:
                 continue
             results = {}
             for label, p in (("original",version["ranking_original"]), ("publicado",version["perfil_publicado"])):
                 if p is not None:
-                    results[label] = dict(parametros=p,metricas=evaluate(program,dev,group,rules,p,group["lote"]))
+                    same = results.get("original")
+                    m = same["metricas"] if same and same["parametros"]==p else evaluate(program,dev,group,rules,p,group["lote"])
+                    results[label] = dict(parametros=p,metricas=m)
             if "p_lote" in program.inputs:
                 p = version["modo_ohlc_original"]
                 if p["p_lote"] != group["lote"]:
@@ -571,7 +576,9 @@ def run(args):
             for k,r in baselines.items():
                 if k in {"original","publicado"}:
                     raw = r["parametros"]
-                    record["exploratorio"][k] = dict(parametros=raw,metricas=evaluate(program,exploration,group,rules,raw,group["lote"]))
+                    same = record["exploratorio"].get("original")
+                    m = same["metricas"] if same and same["parametros"]==raw else evaluate(program,exploration,group,rules,raw,group["lote"])
+                    record["exploratorio"][k] = dict(parametros=raw,metricas=m)
             if acceptable:
                 final = evaluate(program,exploration,group,rules,best,group["lote"])
                 record["exploratorio"]["otimizado"] = dict(parametros=best,metricas=final)
@@ -598,6 +605,7 @@ def main():
         parser.add_argument("--"+name, required=True, type=Path)
     parser.add_argument("--fontes-extras", type=Path)
     parser.add_argument("--filtro", nargs="+")
+    parser.add_argument("--refazer-baseline", action="store_true")
     parser.add_argument("--workers", type=int, nargs="+", default=[12])
     args=parser.parse_args()
     if args.saida.resolve().is_relative_to(REPO):

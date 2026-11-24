@@ -58,6 +58,10 @@
   "ag": {
     "populacao": 24,
     "geracoes": 3,
+    "orcamento_1s": {
+      "populacao": 8,
+      "geracoes": 2
+    },
     "semente": 18024,
     "mutacao": 0.28,
     "objetivo": "líquido após custos; mínimo de operações e teto de drawdown"
