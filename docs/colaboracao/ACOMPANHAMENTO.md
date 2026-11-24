@@ -1,6 +1,6 @@
 # Acompanhamento do simuladorCotacao
 
-**Estado em 24/11/2026 — Simulador 65/100 · Estratégias 35/100 (acerto v1.1 no recorte real: 50,0%, 2/4) · Dados 60/100.**
+**Estado em 24/11/2026 — Simulador 65/100 · Estratégias 35/100 (acerto em 20 pregões: v1.1 54,8%, v1.3 35,7%) · Dados 60/100.**
 
 O eixo X segue a ordem das rodadas. O eixo Y vai de 0 (nenhum trabalho) a 100 (objetivo demonstrado). As notas são estimativas por marcos com evidência. Os números de operações da tabela se referem a cada rodada e podem reutilizar os mesmos pregões. As datas indicam a publicação das evidências no fuso America/Sao_Paulo. A rodada zero é uma referência sem data de publicação associada.
 
@@ -13,11 +13,11 @@ config:
 ---
 xychart-beta
   title "Evolução por rodada"
-  x-axis "Rodadas de validação" [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
+  x-axis "Rodadas de validação" [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
   y-axis "Avanço" 0 --> 100
-  line [0, 20, 35, 45, 50, 55, 60, 60, 65, 65, 65, 65]
-  line [0, 15, 25, 30, 30, 30, 30, 30, 30, 30, 35, 35]
-  line [0, 30, 40, 45, 50, 50, 55, 55, 55, 60, 60, 60]
+  line [0, 20, 35, 45, 50, 55, 60, 60, 65, 65, 65, 65, 65]
+  line [0, 15, 25, 30, 30, 30, 30, 30, 30, 30, 35, 35, 35]
+  line [0, 30, 40, 45, 50, 50, 55, 55, 55, 60, 60, 60, 60]
 ```
 
 **Linhas:** azul para simulador, laranja para estratégias NTSL e verde para dados.
@@ -36,6 +36,7 @@ xychart-beta
 | 9 | 23/11/2026 | Grade G3/G4 e 03 | 65 | 30 · acerto — | 60 | Três operações nativas. G3/G4 confirmam os exemplos de recompra. Os níveis aceitos da 03 seguem pendentes. [d37a339](https://github.com/thiagozonda1989-stack/simuladorCotacao/commit/d37a339a6ea750b36b9aaf6d7afad9ca63698265) |
 | 10 | 23/11/2026 | Protocolo fora da amostra | 65 | 35 · acerto v1.0: 36,1% (13/36, sintético) | 60 | Pullback de tendência v1.0 em 60 pregões **sintéticos**: 50 variações só no treino, escolha única avaliada no teste (36 operações, −R$ 457, IC da média diária −46,56 a −4,39). Estratégia rejeitada; o protocolo e as métricas do critério ficam implementados e testados. [f8098e5](https://github.com/thiagozonda1989-stack/simuladorCotacao/blob/f8098e50689df9c8e4e74e2cd31f91448eb2d4c3/docs/colaboracao/evidencias/estrategia_pullback_fora_amostra_sintetico_v1/README.md) |
 | 11 | 24/11/2026 | Pullback v1.1 | 65 | 35 · acerto v1.1: 50,0% (2/4, real) e 43,5% (47/108, sintético novo) | 60 | 4 operações por versão no WIN real, com redução da perda. 108 por versão em sintéticos novos, com piora. [Relatório](evidencias/estrategia_pullback_confirmacao_v1_1/README.md) |
+| 12 | 24/11/2026 | Pullback em 20 pregões reais | 65 | 35 · v1.1: 54,8% (23/42), v1.3: 35,7% (15/42) | 60 | Candidata rejeitada. Líquido v1.1 −R$ 286 e v1.3 −R$ 331. [Relatório](https://github.com/thiagozonda1989-stack/simuladorCotacao/blob/aec29307c67f1b837d7532fde4fe9d51c2f02b71/docs/colaboracao/evidencias/estrategia_pullback_20_pregoes_v1/README.md) |
 
 ## Cálculo da taxa de acerto
 
