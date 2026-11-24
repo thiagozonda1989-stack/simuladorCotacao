@@ -6,7 +6,7 @@ O eixo X segue a ordem das rodadas. O eixo Y vai de 0 (nenhum trabalho) a 100 (o
 
 **Legenda** · 🔵 Simulador · 🟠 Estratégias NTSL · 🟢 Dados
 
-[Baixar gráfico interativo](ACOMPANHAMENTO_INTERATIVO.html) (use **Download raw file** no GitHub e abra o HTML no navegador). Passe o mouse sobre uma linha ou ponto para ver o nome da série, a rodada e o percentual.
+[Abrir painel interativo no GitHub Pages](https://thiagozonda1989-stack.github.io/simuladorCotacao/colaboracao/ACOMPANHAMENTO_INTERATIVO.html). Passe o mouse sobre uma linha ou ponto para ver o nome da série, a rodada e o percentual.
 
 ```mermaid
 ---
