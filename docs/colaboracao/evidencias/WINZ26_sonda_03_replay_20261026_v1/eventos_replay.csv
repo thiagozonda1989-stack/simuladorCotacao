@@ -1,0 +1,18 @@
+ordem_no_recorte;horario_painel;rotulo_ntsl;sequencia_ntsl;evento;posicao;pendentes;quantidade;gatilho_pts_entrada;limite_pts_entrada;preco_execucao_pts_entrada
+1;10:59:02.012;10:58;9;AVALIACAO;0;0;;;;
+2;10:57:59.893;10:57;8;AVALIACAO;0;0;;;;
+3;10:57:01.296;10:56;7;AVALIACAO;0;0;;;;
+4;10:56:02.130;10:55;6;AVALIACAO;0;0;;;;
+5;10:55:51.381;;;Venda Limite Executada;;;1;;;-795.00
+6;10:55:51.081;;;Posição Atualizada;0;;;;;
+7;10:55:01.948;10:54;5;AVALIACAO;1;1;;;;
+8;10:54:02.992;10:53;4;AVALIACAO;1;1;;;;
+9;10:53:02.524;;;Venda Stop Criada;;;1;-795.00;-895.00;
+10;10:53:02.024;10:52;3;SOLICITA_STOP;;;;-793.00;-894.00;
+11;10:53:02.024;10:52;3;AVALIACAO;1;0;;;;
+12;10:52:01.017;10:51;2;AVALIACAO;1;0;;;;
+13;10:52:01.127;;;Compra Limite Executada;;;1;;;0
+14;10:52:01.007;;;Posição Atualizada;1;;;;;
+15;10:52:00.247;;;Compra a Mercado Criada;;;1;;;
+16;10:52:00.167;10:51;1;SOLICITA_COMPRA;;;;;;
+17;10:52:00.167;10:51;1;AVALIACAO;0;0;;;;
