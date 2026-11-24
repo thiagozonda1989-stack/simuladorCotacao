@@ -1,6 +1,6 @@
 # Acompanhamento do simuladorCotacao
 
-**Estado em 24/11/2026 — Simulador 65/100 · Estratégias 35/100 · Dados 60/100.**
+**Estado em 24/11/2026 — Simulador 65/100 · Estratégias 35/100 (acerto v1.1 no recorte real: 50,0%, 2/4) · Dados 60/100.**
 
 O eixo X segue a ordem das rodadas. O eixo Y vai de 0 (nenhum trabalho) a 100 (objetivo demonstrado). As notas são estimativas por marcos com evidência. Os números de operações da tabela se referem a cada rodada e podem reutilizar os mesmos pregões. As datas indicam a publicação das evidências no fuso America/Sao_Paulo. A rodada zero é uma referência sem data de publicação associada.
 
@@ -22,21 +22,32 @@ xychart-beta
 
 **Linhas:** azul para simulador, laranja para estratégias NTSL e verde para dados.
 
-| Rodada | Publicação | Marco | Simulador | Estratégias | Dados | Evidência e operações |
+| Rodada | Publicação | Marco | Simulador | Estratégias (progresso e acerto) | Dados | Evidência e operações |
 |---:|---|---|---:|---:|---:|---|
-| 0 | — | Início | 0 | 0 | 0 | Marco zero do gráfico |
-| 1 | 19/11/2026 | Inventário WIN | 20 | 15 | 30 | 25 arquivos de cinco pregões e replay sintético. [fd7f7ef](https://github.com/thiagozonda1989-stack/simuladorCotacao/commit/fd7f7efffd47b3e8f1521a93bb01595eb1d3d679) |
-| 2 | 19/11/2026 | Paridade de 21/10 | 35 | 25 | 40 | 10/10 operações no recorte da v5.7. [a5a5420](https://github.com/thiagozonda1989-stack/simuladorCotacao/commit/a5a5420b4fe8a10e4016c62c4eb7660b472a6b50) |
-| 3 | 20/11/2026 | Proteção na entrada | 45 | 30 | 45 | 26/10 passou de 8/12 para 11/12 no modo intermediário. [ec7b644](https://github.com/thiagozonda1989-stack/simuladorCotacao/commit/ec7b6442359367e1e92abe79d9321894ce442583) |
-| 4 | 20/11/2026 | Avaliação pós-preenchimento | 50 | 30 | 50 | 26/10 chegou a 12/12 no modo experimental, incluindo a #182. [742b093](https://github.com/thiagozonda1989-stack/simuladorCotacao/commit/742b093e29cab338c9345cbe5b42e5de0e4c6f8d) |
-| 5 | 21/11/2026 | Sondas v5.8 | 55 | 30 | 50 | S1 e S2 investigaram persistência e stop-limit. [a1f693e](https://github.com/thiagozonda1989-stack/simuladorCotacao/commit/a1f693e8c73e4fce272d2c8b213a743b568a5f32) |
-| 6 | 23/11/2026 | Prioridade de saída | 60 | 30 | 55 | Quatro cenários nativos compararam proteção isolada e saída a mercado. [7fca120](https://github.com/thiagozonda1989-stack/simuladorCotacao/commit/7fca12005a319a4feeb859054e7cfcffe3ec4926) |
-| 7 | 23/11/2026 | Grade G1/G2 | 60 | 30 | 55 | Duas sondas deram suporte ao tick mais próximo nas saídas de posição comprada. [723838a](https://github.com/thiagozonda1989-stack/simuladorCotacao/commit/723838af659a8a1e3145ba22e00468dd8feae6d8) |
-| 8 | 23/11/2026 | Ajuste experimental à grade | 65 | 30 | 55 | Opção OHLC para saída de posição comprada, 130 testes e 32 replays privados reportados. [ca1b602](https://github.com/thiagozonda1989-stack/simuladorCotacao/commit/ca1b602481e25802d0d5369afa159c677dc5316e) |
-| 9 | 23/11/2026 | Grade G3/G4 e 03 | 65 | 30 | 60 | Três operações nativas. G3/G4 confirmam os exemplos de recompra. Os níveis aceitos da 03 seguem pendentes. [d37a339](https://github.com/thiagozonda1989-stack/simuladorCotacao/commit/d37a339a6ea750b36b9aaf6d7afad9ca63698265) |
-| 10 | 23/11/2026 | Protocolo fora da amostra | 65 | 35 | 60 | Pullback de tendência v1.0 em 60 pregões **sintéticos**: 50 variações só no treino, escolha única avaliada no teste (36 operações, −R$ 457, IC da média diária −46,56 a −4,39). Estratégia rejeitada; o protocolo e as métricas do critério ficam implementados e testados. [f8098e5](https://github.com/thiagozonda1989-stack/simuladorCotacao/blob/f8098e50689df9c8e4e74e2cd31f91448eb2d4c3/docs/colaboracao/evidencias/estrategia_pullback_fora_amostra_sintetico_v1/README.md) |
+| 0 | — | Início | 0 | 0 · acerto — | 0 | Marco zero do gráfico |
+| 1 | 19/11/2026 | Inventário WIN | 20 | 15 · acerto — | 30 | 25 arquivos de cinco pregões e replay sintético. [fd7f7ef](https://github.com/thiagozonda1989-stack/simuladorCotacao/commit/fd7f7efffd47b3e8f1521a93bb01595eb1d3d679) |
+| 2 | 19/11/2026 | Paridade de 21/10 | 35 | 25 · acerto — | 40 | 10/10 operações no recorte da v5.7. [a5a5420](https://github.com/thiagozonda1989-stack/simuladorCotacao/commit/a5a5420b4fe8a10e4016c62c4eb7660b472a6b50) |
+| 3 | 20/11/2026 | Proteção na entrada | 45 | 30 · acerto — | 45 | 26/10 passou de 8/12 para 11/12 no modo intermediário. [ec7b644](https://github.com/thiagozonda1989-stack/simuladorCotacao/commit/ec7b6442359367e1e92abe79d9321894ce442583) |
+| 4 | 20/11/2026 | Avaliação pós-preenchimento | 50 | 30 · acerto — | 50 | 26/10 chegou a 12/12 no modo experimental, incluindo a #182. [742b093](https://github.com/thiagozonda1989-stack/simuladorCotacao/commit/742b093e29cab338c9345cbe5b42e5de0e4c6f8d) |
+| 5 | 21/11/2026 | Sondas v5.8 | 55 | 30 · acerto — | 50 | S1 e S2 investigaram persistência e stop-limit. [a1f693e](https://github.com/thiagozonda1989-stack/simuladorCotacao/commit/a1f693e8c73e4fce272d2c8b213a743b568a5f32) |
+| 6 | 23/11/2026 | Prioridade de saída | 60 | 30 · acerto — | 55 | Quatro cenários nativos compararam proteção isolada e saída a mercado. [7fca120](https://github.com/thiagozonda1989-stack/simuladorCotacao/commit/7fca12005a319a4feeb859054e7cfcffe3ec4926) |
+| 7 | 23/11/2026 | Grade G1/G2 | 60 | 30 · acerto — | 55 | Duas sondas deram suporte ao tick mais próximo nas saídas de posição comprada. [723838a](https://github.com/thiagozonda1989-stack/simuladorCotacao/commit/723838af659a8a1e3145ba22e00468dd8feae6d8) |
+| 8 | 23/11/2026 | Ajuste experimental à grade | 65 | 30 · acerto — | 55 | Opção OHLC para saída de posição comprada, 130 testes e 32 replays privados reportados. [ca1b602](https://github.com/thiagozonda1989-stack/simuladorCotacao/commit/ca1b602481e25802d0d5369afa159c677dc5316e) |
+| 9 | 23/11/2026 | Grade G3/G4 e 03 | 65 | 30 · acerto — | 60 | Três operações nativas. G3/G4 confirmam os exemplos de recompra. Os níveis aceitos da 03 seguem pendentes. [d37a339](https://github.com/thiagozonda1989-stack/simuladorCotacao/commit/d37a339a6ea750b36b9aaf6d7afad9ca63698265) |
+| 10 | 23/11/2026 | Protocolo fora da amostra | 65 | 35 · acerto v1.0: 36,1% (13/36, sintético) | 60 | Pullback de tendência v1.0 em 60 pregões **sintéticos**: 50 variações só no treino, escolha única avaliada no teste (36 operações, −R$ 457, IC da média diária −46,56 a −4,39). Estratégia rejeitada; o protocolo e as métricas do critério ficam implementados e testados. [f8098e5](https://github.com/thiagozonda1989-stack/simuladorCotacao/blob/f8098e50689df9c8e4e74e2cd31f91448eb2d4c3/docs/colaboracao/evidencias/estrategia_pullback_fora_amostra_sintetico_v1/README.md) |
+| 11 | 24/11/2026 | Pullback v1.1 | 65 | 35 · acerto v1.1: 50,0% (2/4, real) e 43,5% (47/108, sintético novo) | 60 | 4 operações por versão no WIN real, com redução da perda. 108 por versão em sintéticos novos, com piora. [Relatório](evidencias/estrategia_pullback_confirmacao_v1_1/README.md) |
 
-| 11 | 24/11/2026 | Pullback v1.1 | 65 | 35 | 60 | 4 operações por versão no WIN real, com redução da perda. 108 por versão em sintéticos novos, com piora. [Relatório](../colaboracao/evidencias/estrategia_pullback_confirmacao_v1_1/README.md) |
+## Cálculo da taxa de acerto
+
+Taxa de acerto = operações encerradas com resultado líquido positivo ÷ total de operações encerradas × 100. O resultado líquido inclui os custos e o slippage do protocolo. Operações no zero ficam no denominador. Para combinar pregões da mesma amostra, some os acertos e as operações antes de dividir. Sem amostra, use “—”. Calcule separadamente para dados reais e sintéticos.
+
+| Amostra | v1.0 | v1.1 | Variação |
+|---|---:|---:|---:|
+| WINZ26 real, 21 e 26/10 | 25,0% (1/4) | 50,0% (2/4) | +25,0 p.p. |
+| Sintético original | 36,1% (13/36) | 36,1% (13/36) | 0,0 p.p. |
+| Sintético novo | 47,2% (51/108) | 43,5% (47/108) | −3,7 p.p. |
+
+A linha laranja do gráfico representa o progresso do projeto, hoje em 35/100. A taxa de acerto mede operações lucrativas. A meta de 95% por classe mede a classificação dos sinais e continua sendo avaliada separadamente.
 
 ## Critério para chegar a 100
 
