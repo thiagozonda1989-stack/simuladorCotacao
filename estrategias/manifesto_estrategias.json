@@ -163,6 +163,12 @@
       "sha256": "9d5dd028907c3d4aed2b1fddc2a1a1631d6eee515b4c9096de5554d45b8a9dd7",
       "bytes": 3219,
       "origem_relativa": "criado no repositório (pesquisa sintética)"
+    },
+    {
+      "arquivo": "pesquisa/pullback_tendencia_v1_1.ntsl",
+      "sha256": "38b368998b3885beaaab1eadfc0dec1ece0bdba75ab9b33548b4113fb9aa643e",
+      "bytes": 3046,
+      "origem_relativa": "criado no repositório (pesquisa)"
     }
   ]
 }
