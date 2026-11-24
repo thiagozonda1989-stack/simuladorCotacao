@@ -13,11 +13,11 @@ config:
 ---
 xychart-beta
   title "Evolução por rodada"
-  x-axis "Rodadas de validação" [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
+  x-axis "Rodadas de validação" [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
   y-axis "Avanço" 0 --> 100
-  line [0, 20, 35, 45, 50, 55, 60, 60, 65, 65, 65, 65, 65]
-  line [0, 15, 25, 30, 30, 30, 30, 30, 30, 30, 35, 35, 35]
-  line [0, 30, 40, 45, 50, 50, 55, 55, 55, 60, 60, 60, 60]
+  line [0, 20, 35, 45, 50, 55, 60, 60, 65, 65, 65, 65, 65, 65]
+  line [0, 15, 25, 30, 30, 30, 30, 30, 30, 30, 35, 35, 35, 35]
+  line [0, 30, 40, 45, 50, 50, 55, 55, 55, 60, 60, 60, 60, 60]
 ```
 
 **Linhas:** azul para simulador, laranja para estratégias NTSL e verde para dados.
@@ -37,6 +37,7 @@ xychart-beta
 | 10 | 23/11/2026 | Protocolo fora da amostra | 65 | 35 · acerto v1.0: 36,1% (13/36, sintético) | 60 | Pullback de tendência v1.0 em 60 pregões **sintéticos**: 50 variações só no treino, escolha única avaliada no teste (36 operações, −R$ 457, IC da média diária −46,56 a −4,39). Estratégia rejeitada; o protocolo e as métricas do critério ficam implementados e testados. [f8098e5](https://github.com/thiagozonda1989-stack/simuladorCotacao/blob/f8098e50689df9c8e4e74e2cd31f91448eb2d4c3/docs/colaboracao/evidencias/estrategia_pullback_fora_amostra_sintetico_v1/README.md) |
 | 11 | 24/11/2026 | Pullback v1.1 | 65 | 35 · acerto v1.1: 50,0% (2/4, real) e 43,5% (47/108, sintético novo) | 60 | 4 operações por versão no WIN real, com redução da perda. 108 por versão em sintéticos novos, com piora. [Relatório](evidencias/estrategia_pullback_confirmacao_v1_1/README.md) |
 | 12 | 24/11/2026 | Pullback em 20 pregões reais | 65 | 35 · v1.1: 54,8% (23/42), v1.3: 35,7% (15/42) | 60 | Candidata rejeitada. Líquido v1.1 −R$ 286 e v1.3 −R$ 331. [Relatório](https://github.com/thiagozonda1989-stack/simuladorCotacao/blob/aec29307c67f1b837d7532fde4fe9d51c2f02b71/docs/colaboracao/evidencias/estrategia_pullback_20_pregoes_v1/README.md) |
+| 13 | 24/11/2026 | Busca de parâmetros da v1.3 | 65 | 35 · perfil curto: 39,6% (91/230) | 60 | 48 combinações em 19 pregões. Em 20 pregões já conhecidos, melhor perfil reavaliado fez 11,5 operações/dia, 1 min 51 s, −R$ 143 e drawdown de R$ 338. Meta diária não atingida. [Resultados](https://github.com/thiagozonda1989-stack/simuladorCotacao/blob/1aa8495327225755998605198c5a2f2236aeb5ed/docs/colaboracao/evidencias/estrategia_pullback_busca_curta_v1/resultado.json) |
 
 ## Cálculo da taxa de acerto
 
