@@ -1,0 +1,33 @@
+# Rodada 20 · decisão de elegibilidade da reserva
+
+**Decisão em 25/11/2026, horário de São Paulo. Piloto bloqueado por cobertura.** Foram executados zero replays sobre dados inéditos. A lista de datas e hashes autorizados para execução segue vazia. Os originais continuam no Windows. [Manifesto com as fontes candidatas](manifesto.json) · [Protocolo e flags](protocolo.json)
+
+| Data | Decisão | Evidência |
+|---|---|---|
+| 19/11/2026 | Conhecido, fora da reserva | 565 barras, OHLC idêntico em 565 timestamps. Não substitui o pregão imediatamente anterior a 24/11. |
+| 23/11/2026 | Pendente para teste ou aquecimento | 562 barras, 09:03–18:24, sem lacunas internas. As fontes começam às 09:03. Em 552 timestamps comuns, 551 OHLC coincidem. Na barra das 18:14, a nova mínima é 10 pontos menor e o novo fechamento é 45 pontos menor. |
+| 24/11/2026 | Candidato a piloto, condicionado ao aquecimento | 565 barras, 09:00–18:24, sem lacunas internas ou duplicidades. A origem WINZ26 1 minuto foi corroborada no print. O pregão imediatamente anterior, 23/11, segue pendente. |
+
+O coletor capturou OHLC, Trades, Quantity, volume financeiro, agressão e VWAP. Todos esses campos estão presentes nas barras dos dias auditados. O preço médio implícito por volume e quantidade está dentro do OHLC em todas elas. Nenhum OHLC saiu da grade de 5 pontos. A nova fonte tem 86/86 barras consecutivas na janela de aquecimento de 23/11, das 16:59 às 18:24. A fonte anterior cobre 76/86. O candle divergente está dentro da janela. [Auditoria inicial e diagnóstico](https://github.com/thiagozonda1989-stack/simuladorCotacao/blob/cfc6bc2cd40f9f5dbb44bb7c66e7cbc08496f8dd/docs/colaboracao/evidencias/WINZ26_protocolo_rodada20_v1/README.md)
+
+Para 24/11, comparei com o print o último rótulo, **24/11/2026 18:24**, o OHLC e as cinco séries. No Windows, a última gravação do CSV consta como **25/11/2026 00:45:30 −03:00**. O relógio no print indica 00:59:38 de 25/11. São registros de arquivo e de tela. O horário exato em que o comando de exportação foi acionado permanece indeterminado. [Conferência do print](https://github.com/thiagozonda1989-stack/simuladorCotacao/blob/d335f2016130471de4ca933113324f96c956cf3b/docs/colaboracao/evidencias/WINZ26_protocolo_rodada20_v1/CONFIRMACAO_CAPTURA_24_11.md)
+
+O Profit estava aberto. A ferramenta de controle de aplicativos retornou **os error 3** ao iniciar o kernel, também após reconexão. A busca local não encontrou nova exportação independente que cobrisse as janelas pendentes. O aviso da B3 confirma que não houve negociação em derivativos em 20/11 e que a negociação voltou em 23/11. [Comunicado da B3](https://www.b3.com.br/pt_br/noticias/confira-o-funcionamento-da-b3-no-feriado-do-dia-nacional-de-zumbi-e-da-consciencia-negra.htm)
+
+## Evidência para fechar a cobertura
+
+1. **23/11/2026, das 09:00:00 às 09:03:59.** No histórico do Profit, exporte os candles WINZ26 de **1 minuto** com Data/Hora e OHLC e os Negócios (Time & Sales) do mesmo intervalo com **ativo, timestamp, preço e quantidade**. Preserve o filtro e a janela consultada em um print, inclusive se o trecho 09:00–09:02 estiver vazio. Se for visível, registre o estado de leilão ou abertura. A primeira barra às 09:03, sozinha, não distingue abertura tardia de truncamento.
+2. **23/11/2026, das 18:14:00 às 18:14:59.** Exporte o candle histórico **já fechado** de 18:14, com o resumo de Data/Hora e OHLC. Exporte também os Negócios do minuto com **timestamp, preço, quantidade e sequência**, se disponível, para conferir a mínima e o último negócio. A janela usada para reconstrução precisa corresponder ao rótulo do Profit.
+3. **24/11/2026, das 09:00 às 18:24.** A origem já tem evidência visual do coletor, ativo e periodicidade. Para completar o cruzamento independente solicitado na revisão, guarde a exportação histórica de WINZ26 de 1 minuto com **ativo, Data/Hora, OHLC, quantidade e volume financeiro**, se esses campos estiverem disponíveis no mesmo exportador. O CSV do coletor já fornece Trades, saldo de agressão e VWAP.
+
+Os três itens são verificações de dados de mercado. Os CSVs, prints e negócios detalhados ficam no Windows.
+
+## Pareceres e critérios
+
+Claude aprovou com ressalvas o desenho de um piloto de **24/11**, tendo **23/11** como aquecimento imediatamente anterior. Reproduzimos a sonda que demonstra por que uma lacuna tardia no aquecimento altera o ATR do dia seguinte. Gemini aprovou com ressalvas o desenho pré-replay e pediu o fechamento documental de 23/11 antes de usar o aquecimento. A decisão desta rodada mantém essa pendência como bloqueio. Se a cobertura for confirmada e o piloto liberado, registre previamente os hashes e as datas, aplique o mesmo aquecimento aos dois perfis e exclua 23/11 e 24/11 da futura coorte inédita caso ambos sejam expostos na execução. [Parecer Claude](https://github.com/thiagozonda1989-stack/simuladorCotacao/pull/2#issuecomment-7152416269) · [Parecer Gemini](https://github.com/thiagozonda1989-stack/simuladorCotacao/pull/2#issuecomment-7152494885)
+
+A v5.8 original (`p_Exec_Tick=0`) e a Scalper v1.1 otimizada preservam os inputs de `dda2cff06801218e8768e4e255295b683e3b18c1`. Execução OHLC de 1 minuto com 2 contratos, slippage de 1 tick e R$ 0,50 por contrato e lado. Motor `db9ace693c9396d87198e0973d9708ddeb7668d4`, com continuidade de VWAP e reinício de janelas após lacunas. As variantes de contador e continuidade permanecem no diagnóstico conhecido, com a auditoria anterior em `d20f07f8ed7793a182ef7b834b9fbc67cd7aa16e`. A v5.8 otimizada segue fora da seleção inédita.
+
+O mínimo formal continua sendo **20 pregões inéditos completos e 80 operações por perfil**, com amostra cronológica fixa, dias sem operações no denominador e sem extensão para atingir o piso. Um ou dois dias elegíveis serão usados apenas em uma comparação descritiva, condicionada à publicação prévia da amostra. O avaliador formal aplica o refinamento indicado pelo Gemini: a concentração soma só as contribuições positivas dos dois melhores dias. O P/L recebido pelo avaliador já inclui slippage no preço e custos explícitos. Os limites numéricos da versão anterior foram preservados. [Protocolo congelado](protocolo.json)
+
+Foram feitos **141 testes locais**, incluindo os casos de concentração com segundo melhor dia negativo, janela fixa, piloto descritivo e média com dias zerados. O piloto segue bloqueado e nenhum P/L inédito foi calculado. Não houve alteração no motor ou nos NTSLs congelados. [SHA-256 dos artefatos](SHA256SUMS.txt)
