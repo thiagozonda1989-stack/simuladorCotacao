@@ -143,3 +143,52 @@ def test_modelos_fisica_ligados_mudam_alvo_e_filtram(tmp_path):
     assert temp.fills != base.fills
     entradas = lambda m: sum(f["acao"] in ("long", "short") for f in m.fills)
     assert entradas(mola) < entradas(base)
+
+
+MODELOS_FISICA_V11 = [
+    (orig, fis.replace("v5_8_fisica_v1_0", "v5_8_fisica_v1_1").replace("v1_1_fisica_v1_0", "v1_1_fisica_v1_1")
+     .replace("pullback_tendencia_v1_1_fisica", "pullback_tendencia_v1_2_fisica"), par)
+    for orig, fis, par in MODELOS_FISICA
+]
+
+
+def test_fisica_v11_desligada_reproduz_original(tmp_path):
+    quadro = _quadro_micro(tmp_path)
+    for original, fisica, parametros in MODELOS_FISICA_V11:
+        fills = []
+        for fonte in (original, fisica):
+            motor = Engine(compile_ntsl(source_text(RAIZ / fonte)), quadro, 5, parametros, 60, 0.2, regras=REGRAS_MICRO)
+            motor.run(record_trace=False)
+            fills.append(motor.fills)
+        assert fills[0] == fills[1], fisica
+
+
+def test_fisica_v11_deriva_do_dia_e_mola_ajustada(tmp_path):
+    quadro = _quadro_micro(tmp_path)
+    original, fisica, parametros = MODELOS_FISICA_V11[0]
+    programa = compile_ntsl(source_text(RAIZ / fisica))
+
+    def rodar(extra):
+        m = Engine(programa, quadro, 5, {**parametros, **extra}, 60, 0.2, regras=REGRAS_MICRO)
+        m.run(record_trace=False)
+        return m
+
+    base = rodar({})
+    h = lambda n: base.history[:, programa.symbols[n].slot]
+    # z do dia = (Close - abertura do pregão) / (sigma * raiz(n)), com n contado desde a 1ª barra do pregão
+    primeira = quadro.groupby("pregao").head(1).index
+    abertura = quadro["abertura"].groupby(quadro["pregao"]).transform("first").to_numpy()
+    n = quadro.groupby("pregao").cumcount().to_numpy() + 1
+    esperado = (quadro["fechamento"].to_numpy() - abertura) / (h("v_fissigma") * np.sqrt(n))
+    linhas = np.flatnonzero(h("v_fissigma") > 0)
+    assert np.allclose(h("v_fiszdia")[linhas], esperado[linhas])
+    assert (h("v_fisn")[primeira] == 1).all()
+    entradas = lambda m: sum(f["acao"] in ("long", "short") for f in m.fills)
+    mola = rodar({"p_fismola": 1, "p_xmax": 0.0})
+    # deriva exigida impossível: a mola ajustada bloqueia o mesmo que a mola v1.0
+    ajustada_igual = rodar({"p_fismola": 1, "p_xmax": 0.0, "p_fismoladeriva": 1, "p_zdia": 1e9})
+    assert ajustada_igual.fills == mola.fills
+    # deriva exigida trivial: a mola ajustada libera tudo que vai a favor da deriva
+    ajustada_livre = rodar({"p_fismola": 1, "p_xmax": 0.0, "p_fismoladeriva": 1, "p_zdia": -1e9})
+    assert entradas(ajustada_livre) > entradas(mola)
+    assert entradas(rodar({"p_fisderiva": 1, "p_zdia": 1e9})) < entradas(base)

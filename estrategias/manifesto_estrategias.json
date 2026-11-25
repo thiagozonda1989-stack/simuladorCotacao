@@ -1,6 +1,6 @@
 {
   "versao_manifesto": 1,
-  "gerado_utc": "2026-11-25T12:18:56.753245+00:00",
+  "gerado_utc": "2026-11-25T12:34:56.176885+00:00",
   "arquivos": [
     {
       "arquivo": "execucao/modelo_1c_antecipado_profit_v1_0.ntsl",
@@ -193,6 +193,24 @@
       "sha256": "aaa0f07e88d10083f74a2ace325b49ebdd9b2ad8490d93d4a374832cfc7caa72",
       "bytes": 5079,
       "origem_relativa": "pesquisa_fisica_v1_modelos"
+    },
+    {
+      "arquivo": "pesquisa/Modelo_Unificado_v5_8_fisica_v1_1.ntsl",
+      "sha256": "cfdd97aa43dd89d596b0e7004c3c768721c9babb24af5ea56cd76fc4d2603e54",
+      "bytes": 10830,
+      "origem_relativa": "pesquisa_fisica_v1_mola_ajustada"
+    },
+    {
+      "arquivo": "pesquisa/modelo_scalper_v1_1_fisica_v1_1.ntsl",
+      "sha256": "8877e8cb68205c144673a166b8e1b5a1a0d75046e8649b5b352b90eb451b8762",
+      "bytes": 8316,
+      "origem_relativa": "pesquisa_fisica_v1_mola_ajustada"
+    },
+    {
+      "arquivo": "pesquisa/pullback_tendencia_v1_2_fisica.ntsl",
+      "sha256": "a2b858b95ed48f71e2f9bad21fa603342ae7f1fdb77d3dabc7cc024be47f5b76",
+      "bytes": 6163,
+      "origem_relativa": "pesquisa_fisica_v1_mola_ajustada"
     }
   ]
 }

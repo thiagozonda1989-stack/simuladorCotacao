@@ -1,0 +1,229 @@
+{
+  "modelo": "pullback_v1_0",
+  "fonte": "estrategias/pesquisa/pullback_tendencia_v1_2_fisica.ntsl",
+  "variantes": 35,
+  "replays_por_pregao": 35,
+  "escolhida_no_desenvolvimento": "sorteada_12",
+  "fisica_escolhida": {
+    "p_FisTemp": 1.0,
+    "p_FatorAlvoT": 1.5,
+    "p_FatorStopT": 1.5,
+    "p_HorizonteT": 20.0,
+    "p_FisMola": 1.0,
+    "p_XMax": 2.0,
+    "p_FisMolaDeriva": 1.0,
+    "p_FisDeriva": 1.0,
+    "p_ZDia": 1.5
+  },
+  "comparacoes": {
+    "desenvolvimento": {
+      "mola_v10": {
+        "operacoes": 240,
+        "acerto": 0.3708,
+        "liquido": -1423.0,
+        "drawdown": 1681.0,
+        "diferenca_diaria_media": -2.32,
+        "diferenca_diaria_ic95": [
+          -9.82,
+          4.73
+        ],
+        "pregoes_melhor": 4
+      },
+      "mola_ajustada": {
+        "operacoes": 240,
+        "acerto": 0.3625,
+        "liquido": -1583.0,
+        "drawdown": 1731.0,
+        "diferenca_diaria_media": -4.98,
+        "diferenca_diaria_ic95": [
+          -12.08,
+          0.93
+        ],
+        "pregoes_melhor": 1
+      },
+      "deriva": {
+        "operacoes": 238,
+        "acerto": 0.4622,
+        "liquido": 39.0,
+        "drawdown": 839.0,
+        "diferenca_diaria_media": 22.05,
+        "diferenca_diaria_ic95": [
+          3.67,
+          41.42
+        ],
+        "pregoes_melhor": 25
+      },
+      "mola_ajustada_deriva": {
+        "operacoes": 238,
+        "acerto": 0.4706,
+        "liquido": 193.0,
+        "drawdown": 789.0,
+        "diferenca_diaria_media": 24.62,
+        "diferenca_diaria_ic95": [
+          5.33,
+          44.76
+        ],
+        "pregoes_melhor": 26
+      },
+      "sorteada_12": {
+        "operacoes": 234,
+        "acerto": 0.5769,
+        "liquido": 1455.0,
+        "drawdown": 655.0,
+        "diferenca_diaria_media": 45.65,
+        "diferenca_diaria_ic95": [
+          24.03,
+          67.7
+        ],
+        "pregoes_melhor": 42
+      },
+      "original": {
+        "operacoes": 240,
+        "acerto": 0.3792,
+        "liquido_reais": -1284.0,
+        "drawdown_reais": 1432.0
+      }
+    },
+    "inedita": {
+      "mola_v10": {
+        "operacoes": 240,
+        "acerto": 0.3958,
+        "liquido": -1065.0,
+        "drawdown": 1261.0,
+        "diferenca_diaria_media": 5.27,
+        "diferenca_diaria_ic95": [
+          -0.0,
+          11.13
+        ],
+        "pregoes_melhor": 7
+      },
+      "mola_ajustada": {
+        "operacoes": 240,
+        "acerto": 0.3792,
+        "liquido": -1331.0,
+        "drawdown": 1448.0,
+        "diferenca_diaria_media": 0.83,
+        "diferenca_diaria_ic95": [
+          -2.72,
+          4.73
+        ],
+        "pregoes_melhor": 2
+      },
+      "deriva": {
+        "operacoes": 240,
+        "acerto": 0.4958,
+        "liquido": 508.0,
+        "drawdown": 551.0,
+        "diferenca_diaria_media": 31.48,
+        "diferenca_diaria_ic95": [
+          14.23,
+          49.39
+        ],
+        "pregoes_melhor": 27
+      },
+      "mola_ajustada_deriva": {
+        "operacoes": 240,
+        "acerto": 0.4917,
+        "liquido": 437.0,
+        "drawdown": 551.0,
+        "diferenca_diaria_media": 30.3,
+        "diferenca_diaria_ic95": [
+          13.51,
+          48.02
+        ],
+        "pregoes_melhor": 27
+      },
+      "sorteada_12": {
+        "operacoes": 237,
+        "acerto": 0.5274,
+        "liquido": -29.0,
+        "drawdown": 839.0,
+        "diferenca_diaria_media": 22.53,
+        "diferenca_diaria_ic95": [
+          -3.15,
+          47.75
+        ],
+        "pregoes_melhor": 36
+      },
+      "original": {
+        "operacoes": 240,
+        "acerto": 0.375,
+        "liquido_reais": -1381.0,
+        "drawdown_reais": 1498.0
+      }
+    },
+    "inedita_nula": {
+      "mola_v10": {
+        "operacoes": 240,
+        "acerto": 0.4667,
+        "liquido": 131.0,
+        "drawdown": 581.0,
+        "diferenca_diaria_media": 1.82,
+        "diferenca_diaria_ic95": [
+          -4.42,
+          8.38
+        ],
+        "pregoes_melhor": 7
+      },
+      "mola_ajustada": {
+        "operacoes": 240,
+        "acerto": 0.4667,
+        "liquido": 132.0,
+        "drawdown": 524.0,
+        "diferenca_diaria_media": 1.83,
+        "diferenca_diaria_ic95": [
+          -2.05,
+          6.23
+        ],
+        "pregoes_melhor": 4
+      },
+      "deriva": {
+        "operacoes": 240,
+        "acerto": 0.4625,
+        "liquido": 66.0,
+        "drawdown": 810.0,
+        "diferenca_diaria_media": 0.73,
+        "diferenca_diaria_ic95": [
+          -13.67,
+          16.02
+        ],
+        "pregoes_melhor": 15
+      },
+      "mola_ajustada_deriva": {
+        "operacoes": 240,
+        "acerto": 0.4667,
+        "liquido": 127.0,
+        "drawdown": 823.0,
+        "diferenca_diaria_media": 1.75,
+        "diferenca_diaria_ic95": [
+          -13.05,
+          16.8
+        ],
+        "pregoes_melhor": 16
+      },
+      "sorteada_12": {
+        "operacoes": 237,
+        "acerto": 0.4641,
+        "liquido": -834.0,
+        "drawdown": 1308.0,
+        "diferenca_diaria_media": -14.27,
+        "diferenca_diaria_ic95": [
+          -40.57,
+          12.72
+        ],
+        "pregoes_melhor": 24
+      },
+      "original": {
+        "operacoes": 240,
+        "acerto": 0.4625,
+        "liquido_reais": 22.0,
+        "drawdown_reais": 697.0
+      }
+    }
+  },
+  "diagnostico_inedita": {
+    "spearman_desenvolvimento_inedita": 0.5937,
+    "posicao_escolhida": 14,
+    "variantes_acima_do_original": 23
+  }
+}

@@ -1,0 +1,163 @@
+{ Física v1.1: mola condicionada à deriva do dia e filtro de deriva fraca, a partir de pullback_tendencia_v1_1_fisica.ntsl.
+  Versão de pesquisa com variáveis físicas (temperatura e mola), gerada a partir de pullback_tendencia_v1_0.ntsl.
+  Com p_FisTemp = 0 e p_FisMola = 0 reproduz o original. Evidências: docs/colaboracao/evidencias/estrategia_fisica_v1/modelos/ }
+{ Pullback de tendência v1.0 - WIN 1 min, 1 contrato, OHLC.
+  Pesquisa: protocolo fora da amostra em dados sintéticos (ver
+  docs/colaboracao/evidencias/estrategia_pullback_fora_amostra_sintetico_v1/).
+  Compra: média rápida acima da lenta e subindo, mínima toca a média rápida
+  e o fechamento volta acima dela com alta no candle. Venda simétrica.
+  Saídas: alvo limite, stop-limit, tempo máximo, zeragem por horário.
+  Riscos definidos antes do teste: 1 contrato, perda diária máxima,
+  máximo de entradas por dia e espera após cada saída. }
+
+input
+
+  { ---- Física v1.0: desligada por padrão (0 = modelo original) ---- }
+  p_FisTemp(0);          { 1 = alvo e stop pela temperatura: fator * sigma * raiz(horizonte) }
+  p_FatorAlvoT(1.5);
+  p_FatorStopT(1.0);
+  p_HorizonteT(20);
+  p_JanelaT(30);
+  p_MinT(50);
+  p_MaxT(400);
+  p_FisMola(0);          { 1 = bloqueia compra esticada (x > p_XMax) e venda esticada (x < -p_XMax) }
+  p_JanelaMola(60);
+  p_XMax(2.0);
+  p_FisMolaDeriva(0);    { 1 = a mola só bloqueia a entrada esticada se a deriva do dia a favor for < p_ZDia }
+  p_FisDeriva(0);        { 1 = bloqueia entrada com deriva do dia a favor fraca: 0 < z <= p_ZDia }
+  p_ZDia(1.0);           { deriva do dia em unidades de difusão: (Close - abertura) / (sigma * raiz(n)) }
+  p_Rapida(9);
+  p_Lenta(34);
+  p_Alvo(200);
+  p_Stop(150);
+  p_FolgaStop(50);
+  p_TempoMax(30);
+  p_MaxEntradasDia(4);
+  p_Espera(3);
+  p_PerdaMaxDia(150);        { em reais: DailyResult já aplica valor do ponto e custos }
+  p_HoraInicio(930);
+  p_HoraFimEntradas(1700);
+  p_HoraZeragem(1745);
+
+var
+
+  v_FisR, v_FisSigma, v_FisMediaM, v_FisDesvM, v_FisX : Float;
+  v_FisAlvo, v_FisStop, v_FisAlvoSinal, v_FisStopSinal : Float;
+  v_FisAbreDia, v_FisZDia : Float;
+  v_FisData, v_FisN : Integer;
+  v_Rapida, v_Lenta : Float;
+  v_Alvo, v_Stop, v_Folga : Float;
+  v_TendAlta, v_TendBaixa : Boolean;
+  v_SinalCompra, v_SinalVenda : Boolean;
+  v_Posicionado, v_EstavaPosicionado : Boolean;
+  v_PodeEntrar, v_Zerar : Boolean;
+  v_BarraEntrada, v_BarraSaida, v_EntradasDia : Integer;
+
+begin
+
+  { ---- Física v1.0: temperatura e mola (calculadas em toda barra) ---- }
+  v_FisR := Close - Close[1];
+  v_FisSigma := Sqrt(Media(p_JanelaT, v_FisR * v_FisR));
+  v_FisMediaM := Media(p_JanelaMola, Close);
+  v_FisDesvM := StdDevs(Close, p_JanelaMola);
+  if v_FisDesvM > 0 then
+    v_FisX := (Close - v_FisMediaM) / v_FisDesvM
+  else
+    v_FisX := 0;
+  v_FisAlvoSinal := Round(Min(Max(p_FatorAlvoT * v_FisSigma * Sqrt(p_HorizonteT), p_MinT), p_MaxT) / 5) * 5;
+  v_FisStopSinal := Round(Min(Max(p_FatorStopT * v_FisSigma * Sqrt(p_HorizonteT), p_MinT), p_MaxT) / 5) * 5;
+  if Date <> v_FisData then
+  begin
+    v_FisData := Date;
+    v_FisAbreDia := Open;
+    v_FisN := 0;
+  end;
+  v_FisN := v_FisN + 1;
+  if v_FisSigma > 0 then
+    v_FisZDia := (Close - v_FisAbreDia) / (v_FisSigma * Sqrt(v_FisN))
+  else
+    v_FisZDia := 0;
+  if p_FisTemp = 0 then
+  begin
+    v_FisAlvo := v_Alvo;
+    v_FisStop := v_Stop;
+  end;
+  v_Rapida := Media(p_Rapida, Close);
+  v_Lenta := Media(p_Lenta, Close);
+
+  { niveis sempre na grade de 5 pontos }
+  v_Alvo := Round(p_Alvo / 5) * 5;
+  v_Stop := Round(p_Stop / 5) * 5;
+  v_Folga := Round(p_FolgaStop / 5) * 5;
+
+  v_TendAlta := (v_Rapida > v_Lenta) and (v_Rapida > v_Rapida[1]);
+  v_TendBaixa := (v_Rapida < v_Lenta) and (v_Rapida < v_Rapida[1]);
+  v_SinalCompra := v_TendAlta and (Low <= v_Rapida) and (Close > v_Rapida) and (Close > Open);
+  v_SinalVenda := v_TendBaixa and (High >= v_Rapida) and (Close < v_Rapida) and (Close < Open);
+
+
+  { ---- Física v1.0: filtro da mola ---- }
+  if (p_FisMola = 1) and (v_FisX > p_XMax)
+     and ((p_FisMolaDeriva = 0) or (v_FisZDia < p_ZDia)) then
+    v_SinalCompra := False;
+  if (p_FisMola = 1) and (v_FisX < -p_XMax)
+     and ((p_FisMolaDeriva = 0) or (-v_FisZDia < p_ZDia)) then
+    v_SinalVenda := False;
+  if (p_FisDeriva = 1) and (v_FisZDia > 0) and (v_FisZDia <= p_ZDia) then
+    v_SinalCompra := False;
+  if (p_FisDeriva = 1) and (v_FisZDia < 0) and (-v_FisZDia <= p_ZDia) then
+    v_SinalVenda := False;
+  if Date <> Date[1] then
+    v_EntradasDia := 0;
+
+  v_Posicionado := IsBought or IsSold;
+  if v_Posicionado and (not v_EstavaPosicionado) then
+    v_BarraEntrada := CurrentBar;
+  if v_EstavaPosicionado and (not v_Posicionado) then
+    v_BarraSaida := CurrentBar;
+
+  v_Zerar := (Time >= p_HoraZeragem)
+             or (v_Posicionado and (CurrentBar - v_BarraEntrada >= p_TempoMax));
+
+  v_PodeEntrar := (not v_Posicionado)
+                  and (CurrentBar > p_Lenta + 2)
+                  and (Time >= p_HoraInicio) and (Time <= p_HoraFimEntradas)
+                  and (v_EntradasDia < p_MaxEntradasDia)
+                  and (CurrentBar >= v_BarraSaida + p_Espera)
+                  and (DailyResult > -p_PerdaMaxDia);
+
+  if v_Posicionado and v_Zerar then
+  begin
+    if IsBought then SellToCoverAtMarket(1)
+    else BuyToCoverAtMarket(1);
+  end
+  else if IsBought then
+  begin
+    SellToCoverLimit(BuyPrice + v_FisAlvo, 1);
+    SellToCoverStop(BuyPrice - v_FisStop, BuyPrice - v_FisStop - v_Folga, 1);
+  end
+  else if IsSold then
+  begin
+    BuyToCoverLimit(SellPrice - v_FisAlvo, 1);
+    BuyToCoverStop(SellPrice + v_FisStop, SellPrice + v_FisStop + v_Folga, 1);
+  end
+  else if v_PodeEntrar then
+  begin
+    if v_SinalCompra then
+    begin
+      if p_FisTemp = 1 then begin v_FisAlvo := v_FisAlvoSinal; v_FisStop := v_FisStopSinal; end;
+      BuyAtMarket(1);
+      v_EntradasDia := v_EntradasDia + 1;
+    end
+    else if v_SinalVenda then
+    begin
+      if p_FisTemp = 1 then begin v_FisAlvo := v_FisAlvoSinal; v_FisStop := v_FisStopSinal; end;
+      SellShortAtMarket(1);
+      v_EntradasDia := v_EntradasDia + 1;
+    end;
+  end;
+
+  v_EstavaPosicionado := v_Posicionado;
+  Plot(v_Rapida);
+  Plot2(v_Lenta);
+end;

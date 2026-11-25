@@ -97,6 +97,10 @@ Arquivos: `estudo_variaveis_treino_gerador_v2.json` e `estudo_variaveis_treino_n
 
 Temperatura e mola foram aplicadas à v5.8, à Scalper v1.1 e à Pullback, com 31 replays por pregão e por modelo. Nenhuma versão escolhida pelo treino melhorou o teste. Detalhes em [modelos/README.md](modelos/README.md).
 
+## Rodada 3: mola ajustada e reteste inédito
+
+A mola condicionada à deriva do dia não superou a mola v1.0. O filtro de deriva do dia, z = (Close − abertura) / (σ·√n), melhorou os três modelos em 60 pregões sintéticos inéditos e não teve efeito no controle nulo. Ainda falta a validação no WIN real. Detalhes em [mola_ajustada/README.md](mola_ajustada/README.md).
+
 ## Reprodução
 
 ```bash
