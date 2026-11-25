@@ -84,6 +84,20 @@ Detalhes da v5.8 na amostra inédita:
 - Validar primeiro no WINZ26 real, como cenário pareado com a v5.8 original congelada, pelo protocolo da rodada 20 e sem reotimizar `p_ZDia`.
 - A mola ajustada pode ser descartada.
 
+## Teste no WINZ26 real (preparado, aguardando execução local)
+
+`tools/testar_deriva_real.py` roda a v5.8 Física v1.1 sobre a base privada congelada. A ferramenta confere o SHA-256 da base contra o `base_conhecida_sha256` da rodada 20 e usa as regras e o perfil congelados da v5.8 original, com 2 contratos. Ela roda 12 variantes em cada pregão e grava só agregados.
+
+- **Variante primária, pré-registrada:** `deriva_z1`.
+- **Sensibilidade:** z de 0,5 a 2, mola v1.0, mola ajustada e temperatura.
+- **Recortes:** os 20 pregões conhecidos e os 19 de desenvolvimento da rodada 18. A reserva inédita não é tocada.
+
+```powershell
+py -3.11 -m tools.testar_deriva_real --base $basePrivada --saida $saidaAgregada
+```
+
+Publique `resultado_deriva_real.json` e `por_pregao_*.csv`. Eles contêm só resultados por pregão, sem preços.
+
 ## Reprodução
 
 ```bash

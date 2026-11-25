@@ -192,3 +192,18 @@ def test_fisica_v11_deriva_do_dia_e_mola_ajustada(tmp_path):
     ajustada_livre = rodar({"p_fismola": 1, "p_xmax": 0.0, "p_fismoladeriva": 1, "p_zdia": -1e9})
     assert entradas(ajustada_livre) > entradas(mola)
     assert entradas(rodar({"p_fisderiva": 1, "p_zdia": 1e9})) < entradas(base)
+
+
+def test_deriva_real_recortes_e_guarda_de_sha(tmp_path, monkeypatch):
+    import sys
+    import pytest
+    from tools import testar_deriva_real as tdr
+    r = tdr.recortes()
+    assert len(r["conhecidos"]) == 20 and len(r["desenvolvimento"]) == 19
+    assert not set(r["conhecidos"]) & set(r["desenvolvimento"])
+    assert tdr.PRIMARIA in tdr.VARIANTES and len(tdr.VARIANTES) >= 10
+    falsa = tmp_path / "base.csv"
+    falsa.write_text("timestamp;abertura;maxima;minima;fechamento;volume\n", encoding="utf-8")
+    monkeypatch.setattr(sys, "argv", ["x", "--base", str(falsa), "--saida", str(tmp_path / "s")])
+    with pytest.raises(SystemExit, match="congelada"):
+        tdr.main()

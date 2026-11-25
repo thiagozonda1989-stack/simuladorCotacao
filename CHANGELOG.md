@@ -11,6 +11,7 @@
 - Adiciona `microestrutura` ao gerador sintético (negócios, contratos, volume financeiro e saldo de agressão, sem mudar o OHLC) e `tools/testar_fisica_modelos.py`, com 31 replays por pregão e por modelo, seleção no treino e teste pareado com o original.
 - Evidências em `docs/colaboracao/evidencias/estrategia_fisica_v1/modelos/`: nenhuma versão física melhorou o teste; a v5.8 piorou de forma significativa.
 - Física v1.1: mola condicionada à deriva do dia (`p_FisMolaDeriva`) e filtro de deriva fraca (`p_FisDeriva`, `p_ZDia`) nas três versões de pesquisa, desligados por padrão.
+- Adiciona `tools/testar_deriva_real.py`: teste pareado do filtro de deriva na v5.8 com a base real congelada (SHA conferido), 12 variantes por pregão, só agregados.
 - Adiciona `tools/retestar_mola_holdout.py`: reteste em 60 pregões sintéticos inéditos (semente 20261202) e controle nulo, 35 replays por pregão e modelo. A mola ajustada não superou a v1.0; o filtro de deriva melhorou os três modelos na amostra inédita e não teve efeito no nulo. Evidências em `docs/colaboracao/evidencias/estrategia_fisica_v1/mola_ajustada/`.
 
 ## Não publicado — pesquisa de paridade da Etapa 2A
