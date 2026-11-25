@@ -1,5 +1,7 @@
 # Acompanhamento do simuladorCotacao
 
+[Ver cronograma de entrega · 25/11 a 04/12/2026](CRONOGRAMA_ENTREGA.md)
+
 **Estado em 25/11/2026 — Simulador 65/100 · Estratégias 35/100 (v5.8 OHLC: 51,7% · Scalper v1.1: 59,0% em 20 pregões conhecidos) · Dados 60/100.**
 
 O eixo X segue a ordem das rodadas. O eixo Y vai de 0 (nenhum trabalho) a 100 (objetivo demonstrado). As notas são estimativas por marcos com evidência. Os números de operações da tabela se referem a cada rodada e podem reutilizar os mesmos pregões. As datas indicam a publicação das evidências no fuso America/Sao_Paulo. A rodada zero é uma referência sem data de publicação associada.
