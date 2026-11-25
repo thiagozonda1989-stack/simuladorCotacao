@@ -1,6 +1,6 @@
 # Acompanhamento do simuladorCotacao
 
-**Estado em 24/11/2026 — Simulador 65/100 · Estratégias 35/100 (acerto v1.5 em 20 pregões conhecidos: 36,5%) · Dados 60/100.**
+**Estado em 25/11/2026 — Simulador 65/100 · Estratégias 35/100 (v5.8 OHLC: 51,7% · Scalper v1.1: 59,0% em 20 pregões conhecidos) · Dados 60/100.**
 
 O eixo X segue a ordem das rodadas. O eixo Y vai de 0 (nenhum trabalho) a 100 (objetivo demonstrado). As notas são estimativas por marcos com evidência. Os números de operações da tabela se referem a cada rodada e podem reutilizar os mesmos pregões. As datas indicam a publicação das evidências no fuso America/Sao_Paulo. A rodada zero é uma referência sem data de publicação associada.
 
@@ -17,11 +17,11 @@ config:
 ---
 xychart-beta
   title "Evolução por rodada"
-  x-axis "Rodadas de validação" [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18]
+  x-axis "Rodadas de validação" [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19]
   y-axis "Avanço" 0 --> 100
-  line [0, 20, 35, 45, 50, 55, 60, 60, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65]
-  line [0, 15, 25, 30, 30, 30, 30, 30, 30, 30, 35, 35, 35, 35, 35, 35, 35, 35, 35]
-  line [0, 30, 40, 45, 50, 50, 55, 55, 55, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60]
+  line [0, 20, 35, 45, 50, 55, 60, 60, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65]
+  line [0, 15, 25, 30, 30, 30, 30, 30, 30, 30, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35]
+  line [0, 30, 40, 45, 50, 50, 55, 55, 55, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60]
 ```
 
 | Rodada | Publicação | Marco | Simulador | Estratégias (progresso e acerto) | Dados | Evidência e operações |
@@ -45,6 +45,7 @@ xychart-beta
 | 16 | 24/11/2026 | Falha de rompimento v1.7 | 65 | 35 · controle v1.5: 36,5% (84/230) | 60 | 4 variantes rejeitadas em 19 pregões. Melhor Δ −R$ 254 e 149 operações. Controle OFF reproduziu −R$ 480 em 20 conhecidos. [Relatório](https://github.com/thiagozonda1989-stack/simuladorCotacao/blob/9e160857194084f6bf4bc945a0ab0f399f44f8e6/docs/colaboracao/evidencias/estrategia_pullback_falha_rompimento_v1/README.md) |
 | 17 | 24/11/2026 | Otimização v5.7 de R$ 5.745 | 65 | 35 · acerto da variação pendente | 60 | 43 operações informadas, pareamento pendente. Inventário, configuração e roteiro com 132 testes. [Relatório](https://github.com/thiagozonda1989-stack/simuladorCotacao/blob/d2429a4549b497fcdbdb0cfef04e02c01d6be997/docs/colaboracao/evidencias/WINZ26_v5_7_otimizacao_rodada17_v1/README.md) |
 | 18 | 24/11/2026 | Busca genética WINZ26 | 65 | 35 · Scalper v1.1 59,0% (49/83, exploratório) | 60 | 20 versões e 1.228 avaliações. Melhor candidato de 1 min e 2 contratos fez −R$ 58 em 20 pregões conhecidos. Reserva inédita preservada. [Relatório](https://github.com/thiagozonda1989-stack/simuladorCotacao/blob/4b195d9c6a0e3fd8e2e92eda71c0827dd9870cb5/docs/colaboracao/evidencias/WINZ26_ag_rodada18_v1/README.md) |
+| 19 | 25/11/2026 | Perfis congelados e diagnóstico WINZ26 | 65 | 35 · v5.8 51,7% (76/147) · Scalper v1.1 59,0% (49/83) | 60 | Em 20 conhecidos, v5.8 original R$ 1.902 e Scalper −R$ 58. Diagnóstico v5.8 otimizada −R$ 2.022 (86 operações). Reserva 23/11 só OHLC, sem replay. [Evidências](https://github.com/thiagozonda1989-stack/simuladorCotacao/blob/dda2cff06801218e8768e4e255295b683e3b18c1/docs/colaboracao/evidencias/WINZ26_congelamento_rodada19_v1/README.md) |
 
 ## Cálculo da taxa de acerto
 
