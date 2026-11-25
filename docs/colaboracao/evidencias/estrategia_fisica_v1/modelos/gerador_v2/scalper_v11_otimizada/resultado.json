@@ -1,0 +1,161 @@
+{
+  "modelo": "scalper_v11_otimizada",
+  "fonte": "estrategias/pesquisa/modelo_scalper_v1_1_fisica_v1_0.ntsl",
+  "contratos": 2,
+  "parametros_base": {
+    "p_alvopontos": 100,
+    "p_stoppontos": 150,
+    "p_offsetstop": 10,
+    "p_lote": 2,
+    "p_periodofluxo": 1.0,
+    "p_periodomediafluxo": 12,
+    "p_thresholdfluxo": 2.3,
+    "p_mintradesbarra": 400,
+    "p_maxbarrasposicao": 6,
+    "p_maxstopsconsecutivos": 3.0,
+    "p_cooldownminutos": 10,
+    "p_limiteperdadia": 300.0,
+    "p_horarioinicio": 905.0,
+    "p_horariofimentradas": 1655.0,
+    "p_horariozeragem": 1700.0
+  },
+  "variacoes": 31,
+  "replays_por_pregao": 31,
+  "minimo_operacoes_treino": 213.5,
+  "variacao_escolhida": 16,
+  "fisica_escolhida": {
+    "p_FisTemp": 1.0,
+    "p_FatorAlvoT": 1.0,
+    "p_FatorStopT": 2.0,
+    "p_HorizonteT": 30.0,
+    "p_JanelaT": 20.0,
+    "p_FisMola": 1.0,
+    "p_XMax": 1.5,
+    "p_JanelaMola": 40.0
+  },
+  "treino": {
+    "original": {
+      "operacoes": 427,
+      "operacoes_por_pregao": 10.17,
+      "acerto": 0.4309,
+      "liquido_reais": -4062.0,
+      "fator_lucro": 0.572,
+      "drawdown_reais": 4192.0,
+      "media_diaria_reais": -96.71,
+      "media_diaria_ic95": [
+        -136.72,
+        -58.56
+      ],
+      "pregoes_positivos": 10,
+      "saidas": {
+        "selltocoveratmarket": 115,
+        "buytocoveratmarket": 103,
+        "selltocoverlimit": 64,
+        "buytocoverlimit": 57,
+        "selltocoverstop": 49,
+        "buytocoverstop": 39
+      }
+    },
+    "escolhida": {
+      "operacoes": 301,
+      "operacoes_por_pregao": 7.17,
+      "acerto": 0.4219,
+      "liquido_reais": -2176.0,
+      "fator_lucro": 0.651,
+      "drawdown_reais": 2902.0,
+      "media_diaria_reais": -51.81,
+      "media_diaria_ic95": [
+        -95.15,
+        -11.38
+      ],
+      "pregoes_positivos": 15,
+      "saidas": {
+        "selltocoveratmarket": 150,
+        "buytocoveratmarket": 140,
+        "buytocoverlimit": 6,
+        "selltocoverlimit": 5
+      }
+    },
+    "diferenca_diaria_media": 44.9,
+    "diferenca_diaria_ic95": [
+      15.14,
+      76.48
+    ],
+    "pregoes_escolhida_melhor": 29,
+    "pregoes_iguais": 0
+  },
+  "teste": {
+    "original": {
+      "operacoes": 180,
+      "operacoes_por_pregao": 10.0,
+      "acerto": 0.4778,
+      "liquido_reais": -998.0,
+      "fator_lucro": 0.721,
+      "drawdown_reais": 1274.0,
+      "media_diaria_reais": -55.44,
+      "media_diaria_ic95": [
+        -100.12,
+        -7.77
+      ],
+      "pregoes_positivos": 7,
+      "saidas": {
+        "buytocoveratmarket": 47,
+        "selltocoveratmarket": 45,
+        "buytocoverlimit": 31,
+        "buytocoverstop": 24,
+        "selltocoverlimit": 23,
+        "selltocoverstop": 10
+      }
+    },
+    "escolhida": {
+      "operacoes": 116,
+      "operacoes_por_pregao": 6.44,
+      "acerto": 0.4138,
+      "liquido_reais": -1330.0,
+      "fator_lucro": 0.524,
+      "drawdown_reais": 1380.0,
+      "media_diaria_reais": -73.89,
+      "media_diaria_ic95": [
+        -112.45,
+        -31.32
+      ],
+      "pregoes_positivos": 3,
+      "saidas": {
+        "buytocoveratmarket": 63,
+        "selltocoveratmarket": 49,
+        "buytocoverlimit": 4
+      }
+    },
+    "diferenca_diaria_media": -18.44,
+    "diferenca_diaria_ic95": [
+      -54.78,
+      18.89
+    ],
+    "pregoes_escolhida_melhor": 6,
+    "pregoes_iguais": 0
+  },
+  "diagnostico": {
+    "spearman_treino_teste": 0.4782,
+    "posicao_escolhida_no_teste": 16,
+    "variacoes_acima_do_original_treino": 23,
+    "variacoes_acima_do_original_teste": 5,
+    "por_bloco_teste": {
+      "mola": {
+        "liquido_treino": -3350.0,
+        "liquido_teste": -1003.33
+      },
+      "original": {
+        "liquido_treino": -4062.0,
+        "liquido_teste": -998.0
+      },
+      "temperatura": {
+        "liquido_treino": -4114.44,
+        "liquido_teste": -1487.33
+      },
+      "temperatura+mola": {
+        "liquido_treino": -3405.17,
+        "liquido_teste": -1373.33
+      }
+    }
+  }
+}

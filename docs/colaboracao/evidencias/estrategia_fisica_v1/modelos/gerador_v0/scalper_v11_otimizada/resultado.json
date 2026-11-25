@@ -1,0 +1,166 @@
+{
+  "modelo": "scalper_v11_otimizada",
+  "fonte": "estrategias/pesquisa/modelo_scalper_v1_1_fisica_v1_0.ntsl",
+  "contratos": 2,
+  "parametros_base": {
+    "p_alvopontos": 100,
+    "p_stoppontos": 150,
+    "p_offsetstop": 10,
+    "p_lote": 2,
+    "p_periodofluxo": 1.0,
+    "p_periodomediafluxo": 12,
+    "p_thresholdfluxo": 2.3,
+    "p_mintradesbarra": 400,
+    "p_maxbarrasposicao": 6,
+    "p_maxstopsconsecutivos": 3.0,
+    "p_cooldownminutos": 10,
+    "p_limiteperdadia": 300.0,
+    "p_horarioinicio": 905.0,
+    "p_horariofimentradas": 1655.0,
+    "p_horariozeragem": 1700.0
+  },
+  "variacoes": 31,
+  "replays_por_pregao": 31,
+  "minimo_operacoes_treino": 223.0,
+  "variacao_escolhida": 17,
+  "fisica_escolhida": {
+    "p_FisTemp": 0.0,
+    "p_FatorAlvoT": 1.5,
+    "p_FatorStopT": 1.0,
+    "p_HorizonteT": 20.0,
+    "p_JanelaT": 30.0,
+    "p_FisMola": 1.0,
+    "p_XMax": 1.5,
+    "p_JanelaMola": 60.0
+  },
+  "treino": {
+    "original": {
+      "operacoes": 446,
+      "operacoes_por_pregao": 10.62,
+      "acerto": 0.4709,
+      "liquido_reais": -2880.0,
+      "fator_lucro": 0.687,
+      "drawdown_reais": 3076.0,
+      "media_diaria_reais": -68.57,
+      "media_diaria_ic95": [
+        -109.05,
+        -30.62
+      ],
+      "pregoes_positivos": 12,
+      "saidas": {
+        "selltocoveratmarket": 114,
+        "buytocoveratmarket": 101,
+        "selltocoverlimit": 78,
+        "buytocoverlimit": 67,
+        "selltocoverstop": 46,
+        "buytocoverstop": 40
+      }
+    },
+    "escolhida": {
+      "operacoes": 329,
+      "operacoes_por_pregao": 7.83,
+      "acerto": 0.4894,
+      "liquido_reais": -1616.0,
+      "fator_lucro": 0.754,
+      "drawdown_reais": 2104.0,
+      "media_diaria_reais": -38.48,
+      "media_diaria_ic95": [
+        -79.71,
+        0.0
+      ],
+      "pregoes_positivos": 18,
+      "saidas": {
+        "selltocoveratmarket": 79,
+        "buytocoveratmarket": 72,
+        "selltocoverlimit": 60,
+        "buytocoverlimit": 54,
+        "selltocoverstop": 33,
+        "buytocoverstop": 31
+      }
+    },
+    "diferenca_diaria_media": 30.1,
+    "diferenca_diaria_ic95": [
+      11.52,
+      49.0
+    ],
+    "pregoes_escolhida_melhor": 26,
+    "pregoes_iguais": 2
+  },
+  "teste": {
+    "original": {
+      "operacoes": 185,
+      "operacoes_por_pregao": 10.28,
+      "acerto": 0.4541,
+      "liquido_reais": -1402.0,
+      "fator_lucro": 0.63,
+      "drawdown_reais": 1454.0,
+      "media_diaria_reais": -77.89,
+      "media_diaria_ic95": [
+        -130.11,
+        -25.89
+      ],
+      "pregoes_positivos": 5,
+      "saidas": {
+        "buytocoveratmarket": 57,
+        "selltocoveratmarket": 43,
+        "buytocoverlimit": 26,
+        "buytocoverstop": 24,
+        "selltocoverlimit": 23,
+        "selltocoverstop": 12
+      }
+    },
+    "escolhida": {
+      "operacoes": 134,
+      "operacoes_por_pregao": 7.44,
+      "acerto": 0.4254,
+      "liquido_reais": -1296.0,
+      "fator_lucro": 0.566,
+      "drawdown_reais": 1382.0,
+      "media_diaria_reais": -72.0,
+      "media_diaria_ic95": [
+        -117.57,
+        -22.99
+      ],
+      "pregoes_positivos": 4,
+      "saidas": {
+        "buytocoveratmarket": 43,
+        "selltocoveratmarket": 28,
+        "buytocoverlimit": 20,
+        "buytocoverstop": 17,
+        "selltocoverlimit": 15,
+        "selltocoverstop": 11
+      }
+    },
+    "diferenca_diaria_media": 5.89,
+    "diferenca_diaria_ic95": [
+      -21.0,
+      33.22
+    ],
+    "pregoes_escolhida_melhor": 8,
+    "pregoes_iguais": 1
+  },
+  "diagnostico": {
+    "spearman_treino_teste": 0.8196,
+    "posicao_escolhida_no_teste": 3,
+    "variacoes_acima_do_original_treino": 12,
+    "variacoes_acima_do_original_teste": 7,
+    "por_bloco_teste": {
+      "mola": {
+        "liquido_treino": -2330.67,
+        "liquido_teste": -1377.33
+      },
+      "original": {
+        "liquido_treino": -2880.0,
+        "liquido_teste": -1402.0
+      },
+      "temperatura": {
+        "liquido_treino": -3044.44,
+        "liquido_teste": -1822.44
+      },
+      "temperatura+mola": {
+        "liquido_treino": -2840.67,
+        "liquido_teste": -1745.17
+      }
+    }
+  }
+}

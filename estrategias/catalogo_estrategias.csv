@@ -28,3 +28,6 @@ sequencia;arquivo;versao;tipo;tempo_grafico;status_profit;status_simulador_0_4;e
 27;indicador_coleta_reserva_winz26_1min_v1_0.ntsl;1.0;indicador;1min;rascunho;compativel;Coleta conjunta WINZ26 para a reserva da rodada 19;Trades, Quantity, Volume, AgressionVolBalance, VWAP(1)
 28;pullback_tendencia_v1_0.ntsl;1.0;pesquisa;1min;rascunho;compativel;Protocolo fora da amostra sintético, rejeitada no teste (branch research/estrategia-fora-amostra-sintetico);
 29;fisica_mercado_v1_0.ntsl;1.0;pesquisa;1min;rascunho;compativel;Física do Mercado: entropia, Hurst, energia, mola e pressão, protocolo fora da amostra sintético e controle nulo;
+30;Modelo_Unificado_v5_8_fisica_v1_0.ntsl;5.8-fisica-1.0;pesquisa;1min;rascunho;compativel;v5.8 com temperatura e mola opcionais, desligadas reproduzem o original;
+31;modelo_scalper_v1_1_fisica_v1_0.ntsl;1.1-fisica-1.0;pesquisa;1min;rascunho;compativel;Scalper v1.1 com temperatura e mola opcionais, desligadas reproduzem o original;
+32;pullback_tendencia_v1_1_fisica.ntsl;1.1;pesquisa;1min;rascunho;compativel;Pullback v1.0 com temperatura e mola opcionais, desligadas reproduzem o original;

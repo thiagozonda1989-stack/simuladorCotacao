@@ -1,0 +1,150 @@
+{
+  "modelo": "pullback_v1_0",
+  "fonte": "estrategias/pesquisa/pullback_tendencia_v1_1_fisica.ntsl",
+  "contratos": 1,
+  "parametros_base": {},
+  "variacoes": 31,
+  "replays_por_pregao": 31,
+  "minimo_operacoes_treino": 84.0,
+  "variacao_escolhida": 7,
+  "fisica_escolhida": {
+    "p_FisTemp": 1.0,
+    "p_FatorAlvoT": 1.0,
+    "p_FatorStopT": 0.75,
+    "p_HorizonteT": 10.0,
+    "p_JanelaT": 60.0,
+    "p_FisMola": 1.0,
+    "p_XMax": 3.0,
+    "p_JanelaMola": 40.0
+  },
+  "treino": {
+    "original": {
+      "operacoes": 168,
+      "operacoes_por_pregao": 4.0,
+      "acerto": 0.375,
+      "liquido_reais": -1014.0,
+      "fator_lucro": 0.685,
+      "drawdown_reais": 1310.0,
+      "media_diaria_reais": -24.14,
+      "media_diaria_ic95": [
+        -42.77,
+        -1.89
+      ],
+      "pregoes_positivos": 18,
+      "saidas": {
+        "buytocoverstop": 49,
+        "selltocoverstop": 49,
+        "selltocoverlimit": 27,
+        "buytocoverlimit": 25,
+        "selltocoveratmarket": 9,
+        "buytocoveratmarket": 9
+      }
+    },
+    "escolhida": {
+      "operacoes": 168,
+      "operacoes_por_pregao": 4.0,
+      "acerto": 0.4345,
+      "liquido_reais": -401.0,
+      "fator_lucro": 0.856,
+      "drawdown_reais": 1005.0,
+      "media_diaria_reais": -9.55,
+      "media_diaria_ic95": [
+        -29.72,
+        12.38
+      ],
+      "pregoes_positivos": 20,
+      "saidas": {
+        "buytocoverstop": 47,
+        "selltocoverstop": 44,
+        "buytocoverlimit": 31,
+        "selltocoverlimit": 30,
+        "selltocoveratmarket": 9,
+        "buytocoveratmarket": 7
+      }
+    },
+    "diferenca_diaria_media": 14.6,
+    "diferenca_diaria_ic95": [
+      1.45,
+      28.26
+    ],
+    "pregoes_escolhida_melhor": 31,
+    "pregoes_iguais": 1
+  },
+  "teste": {
+    "original": {
+      "operacoes": 72,
+      "operacoes_por_pregao": 4.0,
+      "acerto": 0.3889,
+      "liquido_reais": -270.0,
+      "fator_lucro": 0.799,
+      "drawdown_reais": 358.0,
+      "media_diaria_reais": -15.0,
+      "media_diaria_ic95": [
+        -38.0,
+        8.73
+      ],
+      "pregoes_positivos": 9,
+      "saidas": {
+        "buytocoverstop": 21,
+        "selltocoverstop": 20,
+        "buytocoverlimit": 16,
+        "selltocoverlimit": 11,
+        "buytocoveratmarket": 2,
+        "selltocoveratmarket": 2
+      }
+    },
+    "escolhida": {
+      "operacoes": 72,
+      "operacoes_por_pregao": 4.0,
+      "acerto": 0.3611,
+      "liquido_reais": -431.0,
+      "fator_lucro": 0.666,
+      "drawdown_reais": 510.0,
+      "media_diaria_reais": -23.94,
+      "media_diaria_ic95": [
+        -44.56,
+        -3.11
+      ],
+      "pregoes_positivos": 6,
+      "saidas": {
+        "buytocoverstop": 23,
+        "selltocoverstop": 20,
+        "buytocoverlimit": 16,
+        "selltocoverlimit": 8,
+        "selltocoveratmarket": 4,
+        "buytocoveratmarket": 1
+      }
+    },
+    "diferenca_diaria_media": -8.94,
+    "diferenca_diaria_ic95": [
+      -28.28,
+      9.78
+    ],
+    "pregoes_escolhida_melhor": 7,
+    "pregoes_iguais": 0
+  },
+  "diagnostico": {
+    "spearman_treino_teste": 0.3496,
+    "posicao_escolhida_no_teste": 30,
+    "variacoes_acima_do_original_treino": 18,
+    "variacoes_acima_do_original_teste": 20,
+    "por_bloco_teste": {
+      "mola": {
+        "liquido_treino": -1087.33,
+        "liquido_teste": -240.44
+      },
+      "original": {
+        "liquido_treino": -1014.0,
+        "liquido_teste": -270.0
+      },
+      "temperatura": {
+        "liquido_treino": -874.11,
+        "liquido_teste": -57.89
+      },
+      "temperatura+mola": {
+        "liquido_treino": -756.92,
+        "liquido_teste": 3.58
+      }
+    }
+  }
+}

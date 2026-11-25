@@ -7,6 +7,9 @@
 - Adiciona a versão 0 (controle nulo) ao gerador sintético e generaliza a restrição de variações do avaliador fora da amostra.
 - Traz a Pullback v1.0 e o protocolo dela para o mesmo ramo, catalogando as duas (29 NTSL no manifesto).
 - Evidências em `docs/colaboracao/evidencias/estrategia_fisica_v1/`: estratégia rejeitada no teste sintético (−R$ 489, escolhida em 49º de 50), controle nulo sem lucro.
+- Adiciona versões de pesquisa da v5.8, da Scalper v1.1 e da Pullback com temperatura (alvo e stop pela volatilidade) e mola (bloqueio de entrada esticada), desligadas por padrão e idênticas ao original nesse estado.
+- Adiciona `microestrutura` ao gerador sintético (negócios, contratos, volume financeiro e saldo de agressão, sem mudar o OHLC) e `tools/testar_fisica_modelos.py`, com 31 replays por pregão e por modelo, seleção no treino e teste pareado com o original.
+- Evidências em `docs/colaboracao/evidencias/estrategia_fisica_v1/modelos/`: nenhuma versão física melhorou o teste; a v5.8 piorou de forma significativa.
 
 ## Não publicado — pesquisa de paridade da Etapa 2A
 

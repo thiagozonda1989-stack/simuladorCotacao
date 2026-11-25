@@ -87,14 +87,40 @@ def gerar(pregoes=60, semente=20261124, inicio="2026-07-01", preco_inicial=125_0
     return frame
 
 
+def microestrutura(frame, semente=20261125):
+    """Acrescenta negócios, contratos, volume financeiro e saldo de agressão sem mudar os preços.
+
+    Usa um gerador aleatório próprio, então o OHLC e o volume ficam idênticos aos da versão escolhida.
+    A agressão da barra acompanha o corpo do candle (contemporânea, sem informação futura):
+    fração assinada = 0,6 * (C - O) / (H - L + 5) + ruído normal(0; 0,15), limitada a [-1, 1].
+    O saldo é acumulado no pregão, como o AgressionVolBalance do Profit.
+    """
+    rng = np.random.default_rng(semente)
+    saida = frame.copy()
+    contratos = saida["volume"].astype(int)
+    corpo = (saida["fechamento"] - saida["abertura"]) / (saida["maxima"] - saida["minima"] + TICK)
+    fracao = np.clip(0.6 * corpo + rng.normal(0, 0.15, len(saida)), -1, 1)
+    saldo_barra = np.round(contratos * fracao).astype(int)
+    pregao = pd.to_datetime(saida["timestamp"]).dt.date
+    saida["v_trades_atual"] = np.maximum(1, np.round(contratos * rng.uniform(0.45, 0.75, len(saida)))).astype(int)
+    saida["volume_contratos"] = contratos
+    saida["volume_financeiro"] = np.round(contratos * saida["fechamento"] * 0.2, 2)
+    saida["v_agressao_saldo_referencia"] = pd.Series(saldo_barra).groupby(pregao.values).cumsum().values
+    return saida
+
+
 def main():
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument("--saida", required=True)
     p.add_argument("--pregoes", type=int, default=60)
     p.add_argument("--semente", type=int, default=20261124)
     p.add_argument("--versao", type=int, default=2)
+    p.add_argument("--microestrutura", action="store_true",
+                   help="acrescenta negócios, contratos, volume financeiro e saldo de agressão")
     a = p.parse_args()
     frame = gerar(a.pregoes, a.semente, versao=a.versao)
+    if a.microestrutura:
+        frame = microestrutura(frame)
     destino = Path(a.saida)
     destino.parent.mkdir(parents=True, exist_ok=True)
     frame.to_csv(destino, sep=";", index=False)

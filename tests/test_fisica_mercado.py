@@ -96,3 +96,50 @@ def test_estrategia_executa_e_respeita_teto_diario(tmp_path):
     entradas = pd.Series([f["pregao"] for f in motor.fills if f["acao"] in ("long", "short")])
     assert len(entradas) > 0
     assert entradas.value_counts().max() <= 2
+
+
+MODELOS_FISICA = [
+    ("estrategias/execucao/Modelo_Unificado_v5_8.ntsl", "estrategias/pesquisa/Modelo_Unificado_v5_8_fisica_v1_0.ntsl",
+     {"p_exec_tick": 0, "p_lote": 2}),
+    ("estrategias/execucao/modelo_scalper_v1_1.ntsl", "estrategias/pesquisa/modelo_scalper_v1_1_fisica_v1_0.ntsl",
+     {"p_alvopontos": 100, "p_stoppontos": 150, "p_offsetstop": 10, "p_lote": 2, "p_periodomediafluxo": 12,
+      "p_thresholdfluxo": 2.3, "p_mintradesbarra": 400, "p_maxbarrasposicao": 6, "p_cooldownminutos": 10}),
+    ("estrategias/pesquisa/pullback_tendencia_v1_0.ntsl", "estrategias/pesquisa/pullback_tendencia_v1_1_fisica.ntsl", {}),
+]
+REGRAS_MICRO = {"custo_por_contrato_lado": 0.5, "slippage_ticks": 1, "volume_financeiro_ntsl": True,
+                "agressao_referencia_injetada": True, "historico_continuo": True, "vwap_continuo_lacunas": True}
+
+
+def _quadro_micro(tmp_path, pregoes=6):
+    from tools.gerar_win_sintetico import microestrutura
+    caminho = tmp_path / "micro.csv"
+    microestrutura(gerar(pregoes, 20261124, versao=2)).to_csv(caminho, sep=";", index=False)
+    return load_bars(caminho, 60, "ohlc")
+
+
+def test_modelos_fisica_desligados_reproduzem_original(tmp_path):
+    quadro = _quadro_micro(tmp_path)
+    for original, fisica, parametros in MODELOS_FISICA:
+        fills = []
+        for fonte in (original, fisica):
+            motor = Engine(compile_ntsl(source_text(RAIZ / fonte)), quadro, 5, parametros, 60, 0.2, regras=REGRAS_MICRO)
+            motor.run(record_trace=False)
+            fills.append(motor.fills)
+        assert len(fills[0]) > 0, original
+        assert fills[0] == fills[1], fisica
+
+
+def test_modelos_fisica_ligados_mudam_alvo_e_filtram(tmp_path):
+    quadro = _quadro_micro(tmp_path)
+    original, fisica, parametros = MODELOS_FISICA[0]
+    base = Engine(compile_ntsl(source_text(RAIZ / fisica)), quadro, 5, parametros, 60, 0.2, regras=REGRAS_MICRO)
+    base.run(record_trace=False)
+    temp = Engine(compile_ntsl(source_text(RAIZ / fisica)), quadro, 5,
+                  {**parametros, "p_fistemp": 1, "p_fatoralvot": 0.5, "p_fatorstopt": 0.5}, 60, 0.2, regras=REGRAS_MICRO)
+    temp.run(record_trace=False)
+    mola = Engine(compile_ntsl(source_text(RAIZ / fisica)), quadro, 5,
+                  {**parametros, "p_fismola": 1, "p_xmax": 0.0}, 60, 0.2, regras=REGRAS_MICRO)
+    mola.run(record_trace=False)
+    assert temp.fills != base.fills
+    entradas = lambda m: sum(f["acao"] in ("long", "short") for f in m.fills)
+    assert entradas(mola) < entradas(base)

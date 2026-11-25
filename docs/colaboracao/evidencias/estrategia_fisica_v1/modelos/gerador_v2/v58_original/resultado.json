@@ -1,0 +1,173 @@
+{
+  "modelo": "v58_original",
+  "fonte": "estrategias/pesquisa/Modelo_Unificado_v5_8_fisica_v1_0.ntsl",
+  "contratos": 2,
+  "parametros_base": {
+    "p_exec_tick": 0,
+    "p_periodo_atr": 14.0,
+    "p_periodo_regime_atr": 50.0,
+    "p_desvio_vwap": 2.1,
+    "p_modo_banda": 0.0,
+    "p_periodo_desvio": 20.0,
+    "p_zscore_vol": 1.5,
+    "p_stop_pontos": 350.0,
+    "p_alvo_pontos": 400.0,
+    "p_minimotrades": 100.0,
+    "p_lote": 2,
+    "p_offset_limite_stop": 50.0,
+    "p_barras_espera": 3.0,
+    "p_max_entradas_dia": 10.0,
+    "p_hora_inicio": 915.0,
+    "p_hora_fim_entradas": 1645.0,
+    "p_hora_zeragem": 1700.0,
+    "p_noticia1_ini": 1025.0,
+    "p_noticia1_fim": 1035.0,
+    "p_noticia2_ini": 1425.0,
+    "p_noticia2_fim": 1435.0,
+    "p_zerar_na_noticia": 1.0
+  },
+  "variacoes": 31,
+  "replays_por_pregao": 31,
+  "minimo_operacoes_treino": 84.5,
+  "variacao_escolhida": 26,
+  "fisica_escolhida": {
+    "p_FisTemp": 1.0,
+    "p_FatorAlvoT": 1.5,
+    "p_FatorStopT": 0.75,
+    "p_HorizonteT": 10.0,
+    "p_JanelaT": 20.0,
+    "p_FisMola": 1.0,
+    "p_XMax": 1.5,
+    "p_JanelaMola": 60.0
+  },
+  "treino": {
+    "original": {
+      "operacoes": 169,
+      "operacoes_por_pregao": 4.02,
+      "acerto": 0.3787,
+      "liquido_reais": -4436.0,
+      "fator_lucro": 0.592,
+      "drawdown_reais": 5046.0,
+      "media_diaria_reais": -105.62,
+      "media_diaria_ic95": [
+        -184.41,
+        -22.18
+      ],
+      "pregoes_positivos": 14,
+      "saidas": {
+        "selltocoveratmarket": 48,
+        "selltocoverstop": 32,
+        "buytocoveratmarket": 30,
+        "buytocoverstop": 29,
+        "selltocoverlimit": 15,
+        "buytocoverlimit": 15
+      }
+    },
+    "escolhida": {
+      "operacoes": 257,
+      "operacoes_por_pregao": 6.12,
+      "acerto": 0.358,
+      "liquido_reais": -486.0,
+      "fator_lucro": 0.931,
+      "drawdown_reais": 1812.0,
+      "media_diaria_reais": -11.57,
+      "media_diaria_ic95": [
+        -52.24,
+        30.53
+      ],
+      "pregoes_positivos": 18,
+      "saidas": {
+        "selltocoverstop": 91,
+        "buytocoverstop": 67,
+        "selltocoverlimit": 46,
+        "buytocoverlimit": 34,
+        "selltocoveratmarket": 11,
+        "buytocoveratmarket": 8
+      }
+    },
+    "diferenca_diaria_media": 94.05,
+    "diferenca_diaria_ic95": [
+      13.25,
+      170.71
+    ],
+    "pregoes_escolhida_melhor": 27,
+    "pregoes_iguais": 0
+  },
+  "teste": {
+    "original": {
+      "operacoes": 87,
+      "operacoes_por_pregao": 4.83,
+      "acerto": 0.5632,
+      "liquido_reais": 2022.0,
+      "fator_lucro": 1.533,
+      "drawdown_reais": 966.0,
+      "media_diaria_reais": 112.33,
+      "media_diaria_ic95": [
+        -44.23,
+        264.25
+      ],
+      "pregoes_positivos": 11,
+      "saidas": {
+        "buytocoverlimit": 22,
+        "selltocoveratmarket": 18,
+        "buytocoveratmarket": 16,
+        "selltocoverstop": 14,
+        "selltocoverlimit": 10,
+        "buytocoverstop": 7
+      }
+    },
+    "escolhida": {
+      "operacoes": 120,
+      "operacoes_por_pregao": 6.67,
+      "acerto": 0.3833,
+      "liquido_reais": -290.0,
+      "fator_lucro": 0.91,
+      "drawdown_reais": 638.0,
+      "media_diaria_reais": -16.11,
+      "media_diaria_ic95": [
+        -89.57,
+        48.34
+      ],
+      "pregoes_positivos": 10,
+      "saidas": {
+        "selltocoverstop": 41,
+        "buytocoverstop": 32,
+        "buytocoverlimit": 22,
+        "selltocoverlimit": 16,
+        "selltocoveratmarket": 5,
+        "buytocoveratmarket": 4
+      }
+    },
+    "diferenca_diaria_media": -128.44,
+    "diferenca_diaria_ic95": [
+      -246.78,
+      -16.43
+    ],
+    "pregoes_escolhida_melhor": 6,
+    "pregoes_iguais": 0
+  },
+  "diagnostico": {
+    "spearman_treino_teste": -0.2476,
+    "posicao_escolhida_no_teste": 29,
+    "variacoes_acima_do_original_treino": 22,
+    "variacoes_acima_do_original_teste": 1,
+    "por_bloco_teste": {
+      "mola": {
+        "liquido_treino": -3220.44,
+        "liquido_teste": 1580.22
+      },
+      "original": {
+        "liquido_treino": -4436.0,
+        "liquido_teste": 2022.0
+      },
+      "temperatura": {
+        "liquido_treino": -4594.0,
+        "liquido_teste": 801.78
+      },
+      "temperatura+mola": {
+        "liquido_treino": -2936.0,
+        "liquido_teste": 1002.83
+      }
+    }
+  }
+}

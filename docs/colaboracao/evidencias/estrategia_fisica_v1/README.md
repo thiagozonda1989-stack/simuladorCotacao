@@ -93,6 +93,10 @@ Arquivos: `estudo_variaveis_treino_gerador_v2.json` e `estudo_variaveis_treino_n
 2. Se a temperatura confirmar o poder sobre a amplitude, testar alvo e stop proporcionais a √T como um cenário pareado sobre a v5.8 original, sem novos sinais.
 3. Trocar o detector de regime: Hurst em 30 barras não serve. Os candidatos são a eficiência ou a entropia em janelas diárias, avaliadas primeiro pelo estudo e depois pelo protocolo.
 
+## Rodada 2: variáveis nos modelos conhecidos
+
+Temperatura e mola foram aplicadas à v5.8, à Scalper v1.1 e à Pullback, com 31 replays por pregão e por modelo. Nenhuma versão escolhida pelo treino melhorou o teste. Detalhes em [modelos/README.md](modelos/README.md).
+
 ## Reprodução
 
 ```bash
