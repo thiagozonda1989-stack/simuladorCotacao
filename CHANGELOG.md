@@ -12,6 +12,7 @@
 - Acrescenta `--entrada-mercado-atraves-lacuna` como opção experimental do replay OHLC para entradas elegíveis com posição zerada e histórico contínuo em lacunas.
 - Acrescenta `--protecoes-ate-cancelar` como opção experimental no OHLC, com proteção limitada à posição aberta e zeragem a mercado prioritária na abertura.
 - Experimenta `--ajuste-tick-saidas-venda` para alvos limite e gatilhos de stop de posições compradas no replay OHLC, com empate explícito e rastreio de preço solicitado e efetivo.
+- Versiona um indicador de coleta para exportar OHLC, negócios, volume, agressão nativa e VWAP da reserva WINZ26 em um CSV.
 
 ## 0.14.0
 

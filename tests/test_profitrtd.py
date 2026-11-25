@@ -16,7 +16,7 @@ HEADER = "timestamp_evento;sequencia_fonte;pregao;ativo_origem"
 
 def test_hashes_dos_ntsl_publicados():
     manifest = json.loads((ROOT/"estrategias/manifesto_estrategias.json").read_text())
-    assert len(manifest["arquivos"]) == 26
+    assert len(manifest["arquivos"]) == 27
     for file in manifest["arquivos"]:
         content = (ROOT/"estrategias"/file["arquivo"]).read_bytes()
         assert len(content) == file["bytes"]
@@ -116,3 +116,26 @@ def test_matriz_paridade(tmp_path):
     _, matrix = compare(left, right)
     assert matrix.loc["sinal", "igual"] == 1
     assert matrix.loc["execucao", "divergente"] == 1
+
+
+def test_coletor_reserva_exporta_series_do_mesmo_candle(tmp_path):
+    path = tmp_path / "candles.csv"
+    path.write_text(
+        "timestamp;abertura;maxima;minima;fechamento;v_trades_atual;"
+        "volume_contratos;volume_financeiro;v_agressao_saldo_referencia;v_vwap_barra\n"
+        "2026-11-23 09:00:00;100;105;95;100;6;10;200;-3;100\n"
+        "2026-11-23 09:01:00;110;115;105;110;12;20;440;5;110\n"
+    )
+    source = ROOT / "estrategias/indicadores/indicador_coleta_reserva_winz26_1min_v1_0.ntsl"
+    engine = Engine(
+        compile_ntsl(source.read_text(encoding="utf-8")),
+        load_bars(path, 60, "ohlc"), 5, {}, 60, 0.20,
+        regras={"volume_financeiro_ntsl": True, "agressao_referencia_injetada": True},
+    )
+    engine.run()
+
+    assert engine.fills == []
+    plots = ("plot", "plot2", "plot3", "plot4", "plot5")
+    values = [tuple(row[key] for key in plots) for row in engine.trace]
+    assert values[0] == (6, 10, 200, -3, 100)
+    assert values[1] == pytest.approx((12, 20, 440, 5, (100 * 10 + 110 * 20) / 30))

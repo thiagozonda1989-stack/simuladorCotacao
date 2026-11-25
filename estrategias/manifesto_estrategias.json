@@ -157,6 +157,12 @@
       "sha256": "16ee74d277add73798e26cd9d2653d26b7b375eac37c9d23455dd64b3662b20a",
       "bytes": 7891,
       "origem_relativa": "Modelo_Unificado_v5_8.txt"
+    },
+    {
+      "arquivo": "indicadores/indicador_coleta_reserva_winz26_1min_v1_0.ntsl",
+      "sha256": "b3a37c45bf9e04a15c6a833f32025752346be36c7f7b6a434b1918353aa1abcb",
+      "bytes": 577,
+      "origem_relativa": "coleta_reserva_rodada19"
     }
   ]
 }
