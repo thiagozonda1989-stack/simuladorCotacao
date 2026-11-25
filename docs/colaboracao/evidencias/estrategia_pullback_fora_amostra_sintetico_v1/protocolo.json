@@ -1,0 +1,63 @@
+{
+  "versao": "1.1",
+  "historico": "1.0 usou o gerador v1 (tendência irreal de ~5% ao dia), registrado em rodada1_gerador_v1/. 1.1 muda só a versão do gerador; estratégia, divisão, rótulos, variações e seleção são os mesmos.",
+  "objetivo": "Exercitar o protocolo fora da amostra da frente Estratégias. Dados sintéticos: o resultado não mede desempenho no mercado real.",
+  "estrategia": "estrategias/pesquisa/pullback_tendencia_v1_0.ntsl",
+  "dados": {
+    "gerador": "tools/gerar_win_sintetico.py",
+    "versao_gerador": 2,
+    "pregoes": 60,
+    "semente": 20261124,
+    "intervalo_segundos": 60,
+    "tick": 5,
+    "valor_ponto_reais": 0.2
+  },
+  "divisao_cronologica": {
+    "treino_pregoes": 42,
+    "teste_pregoes": 18,
+    "regra": "os 42 primeiros pregões em ordem de data formam o treino; os 18 últimos formam o teste, usado uma única vez depois da seleção"
+  },
+  "execucao": {
+    "contratos": 1,
+    "custo_por_contrato_lado_reais": 0.5,
+    "slippage_ticks": 1,
+    "regras": "padrão do motor OHLC (ordem só na barra seguinte, saída adversa em barra ambígua)"
+  },
+  "rotulos": {
+    "pontos": 150,
+    "horizonte_barras": 30,
+    "referencia": "abertura da barra seguinte à decisão (preço de entrada a mercado)",
+    "classes": "C se +150 for tocado antes de -150; V se -150 antes de +150; N se nenhum dentro do horizonte",
+    "ambiguo": "os dois níveis na mesma barra: excluído das matrizes e contado à parte",
+    "invalido": "horizonte sem barras suficientes no mesmo pregão: excluído"
+  },
+  "previsao": "C na barra em que a estratégia emite entrada de compra, V na de venda e N nas demais",
+  "variacoes": {
+    "quantidade": 50,
+    "semente": 7,
+    "primeira": "valores padrão do NTSL",
+    "espaco": {
+      "p_Rapida": [5, 7, 9, 12, 15, 20],
+      "p_Lenta": [21, 34, 50, 80],
+      "p_Alvo": [100, 150, 200, 250, 300, 350, 400],
+      "p_Stop": [100, 150, 200, 250, 300],
+      "p_TempoMax": [15, 30, 60],
+      "p_MaxEntradasDia": [2, 4, 6],
+      "p_Espera": [0, 3, 5],
+      "p_HoraInicio": [915, 930, 1000]
+    },
+    "restricao": "p_Rapida < p_Lenta"
+  },
+  "selecao": {
+    "criterio": "maior resultado líquido em reais no treino",
+    "minimo_operacoes_treino": 42,
+    "desempate": "menor drawdown líquido no treino"
+  },
+  "incerteza": {
+    "precisao": "intervalo de Wilson de 95%",
+    "resultado_diario": "bootstrap por pregão, intervalo de 95% da média",
+    "reamostragens": 2000,
+    "semente": 11
+  },
+  "diagnostico_pos_selecao": "depois de fixar a escolha, as 50 variações são rodadas no teste apenas para medir o viés de seleção; esse resultado não altera a escolha"
+}

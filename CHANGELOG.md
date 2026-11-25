@@ -1,5 +1,13 @@
 # Histórico de versões
 
+## Não publicado — pesquisa Física do Mercado v1.0
+
+- Adiciona `estrategias/pesquisa/fisica_mercado_v1_0.ntsl`: variáveis físicas (massa, momento, energia cinética, temperatura, entropia de Shannon, Hurst por razão de variância, eficiência, oscilador e pressão), regimes de ordem e de mola, alvo e stop pela escala de difusão e contador diário por data escalar.
+- Adiciona `tools/estudar_variaveis_fisicas.py`, que lê as variáveis do motor e mede direção, continuação e amplitude com bootstrap por pregão, com a fase da Lua como controle negativo. Grava só agregados.
+- Adiciona a versão 0 (controle nulo) ao gerador sintético e generaliza a restrição de variações do avaliador fora da amostra.
+- Traz a Pullback v1.0 e o protocolo dela para o mesmo ramo, catalogando as duas (29 NTSL no manifesto).
+- Evidências em `docs/colaboracao/evidencias/estrategia_fisica_v1/`: estratégia rejeitada no teste sintético (−R$ 489, escolhida em 49º de 50), controle nulo sem lucro.
+
 ## Não publicado — pesquisa de paridade da Etapa 2A
 
 - Adiciona rastreamento opt-in do ciclo de ordens OHLC em `eventos_ordens.csv`.

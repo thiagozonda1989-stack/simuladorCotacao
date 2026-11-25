@@ -26,3 +26,5 @@ sequencia;arquivo;versao;tipo;tempo_grafico;status_profit;status_simulador_0_4;e
 25;Modelo_Unificado_Refatorado_v5_7_Captura_Paridade.ntsl;5.7;execucao;1min;replay_profit;incompativel;Fonte da captura histórica de paridade WINZ26 em 26/10/2026;FloatToString, VWAP
 26;Modelo_Unificado_v5_8.ntsl;5.8;execucao;1min;rascunho;incompativel;Fonte original versionado para replay OHLC no simulador vigente com p_Exec_Tick=0;VWAP no simulador 0.4
 27;indicador_coleta_reserva_winz26_1min_v1_0.ntsl;1.0;indicador;1min;rascunho;compativel;Coleta conjunta WINZ26 para a reserva da rodada 19;Trades, Quantity, Volume, AgressionVolBalance, VWAP(1)
+28;pullback_tendencia_v1_0.ntsl;1.0;pesquisa;1min;rascunho;compativel;Protocolo fora da amostra sintético, rejeitada no teste (branch research/estrategia-fora-amostra-sintetico);
+29;fisica_mercado_v1_0.ntsl;1.0;pesquisa;1min;rascunho;compativel;Física do Mercado: entropia, Hurst, energia, mola e pressão, protocolo fora da amostra sintético e controle nulo;

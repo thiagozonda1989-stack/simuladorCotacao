@@ -1,0 +1,117 @@
+{
+  "versao": "1.0",
+  "objetivo": "Avaliar a estratégia Física do Mercado v1.0 com o mesmo protocolo fora da amostra da frente Estratégias. Dados sintéticos: o resultado não mede desempenho no mercado real.",
+  "estrategia": "estrategias/pesquisa/fisica_mercado_v1_0.ntsl",
+  "dados": {
+    "gerador": "tools/gerar_win_sintetico.py",
+    "versao_gerador": 2,
+    "pregoes": 60,
+    "semente": 20261124,
+    "intervalo_segundos": 60,
+    "tick": 5,
+    "valor_ponto_reais": 0.2
+  },
+  "divisao_cronologica": {
+    "treino_pregoes": 42,
+    "teste_pregoes": 18,
+    "regra": "os 42 primeiros pregões em ordem de data formam o treino; os 18 últimos formam o teste, usado uma única vez depois da seleção"
+  },
+  "execucao": {
+    "contratos": 1,
+    "custo_por_contrato_lado_reais": 0.5,
+    "slippage_ticks": 1,
+    "regras": "padrão do motor OHLC (ordem só na barra seguinte, saída adversa em barra ambígua)"
+  },
+  "rotulos": {
+    "pontos": 150,
+    "horizonte_barras": 30,
+    "referencia": "abertura da barra seguinte à decisão (preço de entrada a mercado)",
+    "classes": "C se +150 for tocado antes de -150; V se -150 antes de +150; N se nenhum dentro do horizonte",
+    "ambiguo": "os dois níveis na mesma barra: excluído das matrizes e contado à parte",
+    "invalido": "horizonte sem barras suficientes no mesmo pregão: excluído"
+  },
+  "previsao": "C na barra em que a estratégia emite entrada de compra, V na de venda e N nas demais",
+  "variacoes": {
+    "quantidade": 50,
+    "semente": 7,
+    "primeira": "valores padrão do NTSL",
+    "espaco": {
+      "p_Modo": [
+        0,
+        1,
+        2
+      ],
+      "p_Janela": [
+        20,
+        30,
+        45,
+        60
+      ],
+      "p_Q": [
+        3,
+        5,
+        8
+      ],
+      "p_JanelaMola": [
+        40,
+        60,
+        90
+      ],
+      "p_EntropiaMax": [
+        0.7,
+        0.75,
+        0.8,
+        0.9
+      ],
+      "p_HurstTend": [
+        0.5,
+        0.55,
+        0.6
+      ],
+      "p_EficMin": [
+        0.2,
+        0.3,
+        0.4
+      ],
+      "p_HurstMola": [
+        0.35,
+        0.4,
+        0.45,
+        0.5
+      ],
+      "p_Deslocamento": [
+        1.5,
+        2.0,
+        2.5
+      ],
+      "p_FatorAlvo": [
+        1.0,
+        1.5,
+        2.0
+      ],
+      "p_FatorStop": [
+        0.75,
+        1.0,
+        1.5
+      ],
+      "p_TempoMax": [
+        10,
+        20,
+        30
+      ]
+    },
+    "restricao": "nenhuma"
+  },
+  "selecao": {
+    "criterio": "maior resultado líquido em reais no treino",
+    "minimo_operacoes_treino": 42,
+    "desempate": "menor drawdown líquido no treino"
+  },
+  "incerteza": {
+    "precisao": "intervalo de Wilson de 95%",
+    "resultado_diario": "bootstrap por pregão, intervalo de 95% da média",
+    "reamostragens": 2000,
+    "semente": 11
+  },
+  "diagnostico_pos_selecao": "depois de fixar a escolha, as 50 variações são rodadas no teste apenas para medir o viés de seleção; esse resultado não altera a escolha"
+}

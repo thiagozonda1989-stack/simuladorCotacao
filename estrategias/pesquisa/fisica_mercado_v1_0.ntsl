@@ -1,0 +1,243 @@
+{ Física do Mercado v1.0 - WIN 1 min, OHLC + volume, 1 contrato por padrão.
+  Pesquisa: protocolo fora da amostra em dados sintéticos (ver
+  docs/colaboracao/evidencias/estrategia_fisica_v1/).
+
+  O preço é tratado como uma partícula num meio com atrito. As variáveis
+  usam só OHLC e volume do próprio gráfico, então rodam no Profit e no motor.
+
+  Variáveis (janela N = p_Janela):
+  - Massa m: volume da barra / volume médio.
+  - Momento p: m * r, com r = Close - Close[1] em pontos.
+  - Energia cinética K: média de 1/2 * m * r^2.
+  - Temperatura T: média de r^2 (variância por barra). Aquecimento = T curta / T longa.
+  - Entropia S: entropia de Shannon dos sinais de r (alta, baixa, parado),
+    normalizada entre 0 (ordem total) e 1 (desordem total).
+  - Hurst H: estimado pela razão de variância VR(q) = Var(Close - Close[q]) / (q * Var(r)).
+    H = 0,5 + ln(VR) / (2 ln q). H > 0,5 persistência, H < 0,5 reversão.
+  - Eficiência E: |deslocamento em N barras| / caminho percorrido (geodésica / trajetória).
+  - Mola: deslocamento x = (Close - média) / desvio, velocidade v = x - x[1],
+    energia potencial U = 1/2 * x^2.
+  - Pressão P: média de m * CLV, com CLV = (2C - H - L) / (H - L), posição do fechamento no candle.
+
+  Regras:
+  - Regime ordenado (tendência): S baixa, H alto, E alta, sistema aquecendo.
+    Entra no sentido do deslocamento se pressão e momento concordam.
+  - Regime restaurador (mola): H baixo e |x| grande com v apontando de volta
+    ao equilíbrio. Entra a favor do retorno; sai a mercado ao cruzar x = 0.
+  - Alvo e stop proporcionais a sqrt(T) * sqrt(p_TempoMax) (difusão), congelados no sinal.
+  - Contador diário por data guardada em variável (lição da rodada 20). }
+
+input
+  p_Modo(0);                 { 0 = tendência e mola, 1 = só tendência, 2 = só mola }
+  p_Janela(30);
+  p_JanelaCurta(5);
+  p_Q(5);
+  p_JanelaMola(60);
+  p_EntropiaMax(0.75);
+  p_HurstTend(0.55);
+  p_EficMin(0.30);
+  p_AquecMin(1.0);
+  p_HurstMola(0.40);
+  p_Deslocamento(2.0);
+  p_FatorAlvo(1.5);
+  p_FatorStop(1.0);
+  p_StopMin(50);
+  p_StopMax(300);
+  p_FolgaStop(50);
+  p_TempoMax(20);
+  p_Lote(1);
+  p_MaxEntradasDia(6);
+  p_Espera(3);
+  p_PerdaMaxDia(300);        { em reais: DailyResult já aplica valor do ponto e custos }
+  p_HoraInicio(930);
+  p_HoraFimEntradas(1630);
+  p_HoraZeragem(1700);
+
+var
+  v_R, v_Rq, v_Massa, v_MediaVol, v_Momento : Float;
+  v_Cinetica, v_TempLonga, v_TempCurta, v_Aquecimento, v_Sigma : Float;
+  v_Up, v_Down, v_Flat, v_PUp, v_PDown, v_PFlat, v_Entropia : Float;
+  v_SigmaQ, v_Sigma1, v_VR, v_Hurst : Float;
+  v_Caminho, v_Deslocamento, v_Eficiencia : Float;
+  v_MediaMola, v_DesvioMola, v_X, v_V, v_Potencial : Float;
+  v_CLV, v_Pressao : Float;
+  v_Escala, v_AlvoSinal, v_StopSinal, v_Alvo, v_Stop, v_Folga : Float;
+  v_Aquecido, v_RegimeOrdem, v_RegimeMola : Boolean;
+  v_SinalCompra, v_SinalVenda, v_SinalMola : Boolean;
+  v_TradeMola, v_Posicionado, v_EstavaPosicionado, v_PodeEntrar, v_Zerar : Boolean;
+  v_BarraEntrada, v_BarraSaida, v_EntradasDia, v_DataContagem : Integer;
+
+begin
+  { ---------- cinemática ---------- }
+  v_R := Close - Close[1];
+  v_Rq := Close - Close[p_Q];
+  v_MediaVol := Media(p_Janela, Volume);
+  if v_MediaVol > 0 then
+    v_Massa := Volume / v_MediaVol
+  else
+    v_Massa := 1;
+  v_Momento := Media(p_JanelaCurta, v_Massa * v_R);
+
+  { ---------- energia e temperatura ---------- }
+  v_Cinetica := Media(p_Janela, 0.5 * v_Massa * v_R * v_R);
+  v_TempLonga := Media(p_Janela, v_R * v_R);
+  v_TempCurta := Media(p_JanelaCurta, v_R * v_R);
+  if v_TempLonga > 0 then
+    v_Aquecimento := v_TempCurta / v_TempLonga
+  else
+    v_Aquecimento := 1;
+  v_Sigma := Sqrt(v_TempLonga);
+
+  { ---------- entropia de Shannon dos sinais (3 estados, normalizada) ---------- }
+  if v_R > 0 then v_Up := 1 else v_Up := 0;
+  if v_R < 0 then v_Down := 1 else v_Down := 0;
+  if v_R = 0 then v_Flat := 1 else v_Flat := 0;
+  v_PUp := Summation(v_Up, p_Janela) / p_Janela;
+  v_PDown := Summation(v_Down, p_Janela) / p_Janela;
+  v_PFlat := Summation(v_Flat, p_Janela) / p_Janela;
+  v_Entropia := 0;
+  if v_PUp > 0 then v_Entropia := v_Entropia - v_PUp * Log(v_PUp);
+  if v_PDown > 0 then v_Entropia := v_Entropia - v_PDown * Log(v_PDown);
+  if v_PFlat > 0 then v_Entropia := v_Entropia - v_PFlat * Log(v_PFlat);
+  v_Entropia := v_Entropia / Log(3);
+
+  { ---------- Hurst pela razão de variância ---------- }
+  v_SigmaQ := StdDevs(v_Rq, p_Janela);
+  v_Sigma1 := StdDevs(v_R, p_Janela);
+  if (v_Sigma1 > 0) and (v_SigmaQ > 0) then
+  begin
+    v_VR := (v_SigmaQ * v_SigmaQ) / (p_Q * v_Sigma1 * v_Sigma1);
+    v_Hurst := Min(Max(0.5 + Log(v_VR) / (2 * Log(p_Q)), 0), 1);
+  end
+  else if v_Sigma1 > 0 then
+  begin
+    { deslocamento de q barras constante: anti-persistência máxima }
+    v_VR := 0;
+    v_Hurst := 0;
+  end
+  else
+  begin
+    v_VR := 1;
+    v_Hurst := 0.5;
+  end;
+
+  { ---------- eficiência da trajetória ---------- }
+  v_Caminho := Summation(Abs(v_R), p_Janela);
+  v_Deslocamento := Close - Close[p_Janela];
+  if v_Caminho > 0 then
+    v_Eficiencia := Abs(v_Deslocamento) / v_Caminho
+  else
+    v_Eficiencia := 0;
+
+  { ---------- oscilador (mola) ---------- }
+  v_MediaMola := Media(p_JanelaMola, Close);
+  v_DesvioMola := StdDevs(Close, p_JanelaMola);
+  if v_DesvioMola > 0 then
+    v_X := (Close - v_MediaMola) / v_DesvioMola
+  else
+    v_X := 0;
+  v_V := v_X - v_X[1];
+  v_Potencial := 0.5 * v_X * v_X;
+
+  { ---------- pressão ---------- }
+  if High > Low then
+    v_CLV := (2 * Close - High - Low) / (High - Low)
+  else
+    v_CLV := 0;
+  v_Pressao := Media(p_Janela, v_Massa * v_CLV);
+
+  { ---------- regimes e sinais ---------- }
+  v_Aquecido := CurrentBar > (p_JanelaMola + p_Janela + p_Q + 2);
+  v_RegimeOrdem := (v_Entropia <= p_EntropiaMax) and (v_Hurst >= p_HurstTend)
+                   and (v_Eficiencia >= p_EficMin) and (v_Aquecimento >= p_AquecMin);
+  v_RegimeMola := (v_Hurst <= p_HurstMola) and (Abs(v_X) >= p_Deslocamento) and (v_X * v_V < 0);
+
+  v_SinalCompra := False;
+  v_SinalVenda := False;
+  v_SinalMola := False;
+  if (p_Modo <> 2) and v_RegimeOrdem then
+  begin
+    v_SinalCompra := (v_Deslocamento > 0) and (v_Pressao > 0) and (v_Momento > 0);
+    v_SinalVenda := (v_Deslocamento < 0) and (v_Pressao < 0) and (v_Momento < 0);
+  end;
+  if (p_Modo <> 1) and (not v_SinalCompra) and (not v_SinalVenda) and v_RegimeMola then
+  begin
+    v_SinalCompra := v_X < 0;
+    v_SinalVenda := v_X > 0;
+    v_SinalMola := True;
+  end;
+
+  { alvo e stop pela escala de difusão, na grade de 5 pontos }
+  v_Escala := v_Sigma * Sqrt(p_TempoMax);
+  v_AlvoSinal := Round(Min(Max(p_FatorAlvo * v_Escala, p_StopMin), 2 * p_StopMax) / 5) * 5;
+  v_StopSinal := Round(Min(Max(p_FatorStop * v_Escala, p_StopMin), p_StopMax) / 5) * 5;
+  v_Folga := Round(p_FolgaStop / 5) * 5;
+
+  { ---------- estado ---------- }
+  if Date <> v_DataContagem then
+  begin
+    v_EntradasDia := 0;
+    v_DataContagem := Date;
+  end;
+
+  v_Posicionado := IsBought or IsSold;
+  if v_Posicionado and (not v_EstavaPosicionado) then
+    v_BarraEntrada := CurrentBar;
+  if v_EstavaPosicionado and (not v_Posicionado) then
+    v_BarraSaida := CurrentBar;
+  if not v_Posicionado then
+    v_TradeMola := False;
+
+  v_Zerar := (Time >= p_HoraZeragem)
+             or (v_Posicionado and (CurrentBar - v_BarraEntrada >= p_TempoMax))
+             or (IsBought and v_TradeMola and (v_X >= 0))
+             or (IsSold and v_TradeMola and (v_X <= 0));
+
+  v_PodeEntrar := (not v_Posicionado) and v_Aquecido
+                  and (Time >= p_HoraInicio) and (Time <= p_HoraFimEntradas)
+                  and (v_EntradasDia < p_MaxEntradasDia)
+                  and (CurrentBar >= v_BarraSaida + p_Espera)
+                  and (DailyResult > -p_PerdaMaxDia);
+
+  { ---------- ordens ---------- }
+  if v_Posicionado and v_Zerar then
+  begin
+    if IsBought then SellToCoverAtMarket(p_Lote)
+    else BuyToCoverAtMarket(p_Lote);
+  end
+  else if IsBought then
+  begin
+    SellToCoverLimit(BuyPrice + v_Alvo, p_Lote);
+    SellToCoverStop(BuyPrice - v_Stop, BuyPrice - v_Stop - v_Folga, p_Lote);
+  end
+  else if IsSold then
+  begin
+    BuyToCoverLimit(SellPrice - v_Alvo, p_Lote);
+    BuyToCoverStop(SellPrice + v_Stop, SellPrice + v_Stop + v_Folga, p_Lote);
+  end
+  else if v_PodeEntrar then
+  begin
+    if v_SinalCompra then
+    begin
+      v_Alvo := v_AlvoSinal;
+      v_Stop := v_StopSinal;
+      v_TradeMola := v_SinalMola;
+      BuyAtMarket(p_Lote);
+      v_EntradasDia := v_EntradasDia + 1;
+    end
+    else if v_SinalVenda then
+    begin
+      v_Alvo := v_AlvoSinal;
+      v_Stop := v_StopSinal;
+      v_TradeMola := v_SinalMola;
+      SellShortAtMarket(p_Lote);
+      v_EntradasDia := v_EntradasDia + 1;
+    end;
+  end;
+
+  v_EstavaPosicionado := v_Posicionado;
+  Plot(v_Entropia);
+  Plot2(v_Hurst);
+  Plot3(v_Eficiencia);
+  Plot4(v_X);
+end;

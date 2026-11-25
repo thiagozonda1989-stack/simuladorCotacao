@@ -1,6 +1,6 @@
 {
   "versao_manifesto": 1,
-  "gerado_utc": "2026-11-19T03:01:07.203662+00:00",
+  "gerado_utc": "2026-11-25T11:39:49.173886+00:00",
   "arquivos": [
     {
       "arquivo": "execucao/modelo_1c_antecipado_profit_v1_0.ntsl",
@@ -163,6 +163,18 @@
       "sha256": "b3a37c45bf9e04a15c6a833f32025752346be36c7f7b6a434b1918353aa1abcb",
       "bytes": 577,
       "origem_relativa": "coleta_reserva_rodada19"
+    },
+    {
+      "arquivo": "pesquisa/pullback_tendencia_v1_0.ntsl",
+      "sha256": "9d5dd028907c3d4aed2b1fddc2a1a1631d6eee515b4c9096de5554d45b8a9dd7",
+      "bytes": 3219,
+      "origem_relativa": "pesquisa_fora_amostra_sintetico"
+    },
+    {
+      "arquivo": "pesquisa/fisica_mercado_v1_0.ntsl",
+      "sha256": "eafbfb1a406ace66c4cf97e99b6b5ee1af74529641b99b00fea759669817a9f2",
+      "bytes": 8811,
+      "origem_relativa": "pesquisa_fisica_v1"
     }
   ]
 }
