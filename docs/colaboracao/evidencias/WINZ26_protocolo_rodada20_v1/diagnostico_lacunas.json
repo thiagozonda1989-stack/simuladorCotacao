@@ -1,0 +1,1065 @@
+{
+  "sha_executado": "d20f07f8ed7793a182ef7b834b9fbc67cd7aa16e",
+  "barras": 11288,
+  "replays_na_reserva": 0,
+  "perfis": {
+    "v58_original": {
+      "congelado": {
+        "operacoes": 147,
+        "acertos": 76,
+        "liquido": 1902.0,
+        "media_operacao": 12.93878,
+        "fator_lucro_liquido": 1.21237,
+        "drawdown_max": 2352.0,
+        "duracao_mediana_s": 900.0,
+        "duracao_p90_s": 3180.0
+      },
+      "contador_escalar": {
+        "operacoes": 147,
+        "acertos": 76,
+        "liquido": 1902.0,
+        "media_operacao": 12.93878,
+        "fator_lucro_liquido": 1.21237,
+        "drawdown_max": 2352.0,
+        "duracao_mediana_s": 900.0,
+        "duracao_p90_s": 3180.0
+      },
+      "pregoes": {
+        "2026-10-19": {
+          "congelado": {
+            "operacoes": 6,
+            "acertos": 0,
+            "liquido": -864.0,
+            "media_operacao": -144.0,
+            "fator_lucro_liquido": 0.0,
+            "drawdown_max": 864.0,
+            "duracao_mediana_s": 420.0,
+            "duracao_p90_s": 4890.0
+          },
+          "contador_escalar": {
+            "operacoes": 6,
+            "acertos": 0,
+            "liquido": -864.0,
+            "media_operacao": -144.0,
+            "fator_lucro_liquido": 0.0,
+            "drawdown_max": 864.0,
+            "duracao_mediana_s": 420.0,
+            "duracao_p90_s": 4890.0
+          }
+        },
+        "2026-10-20": {
+          "congelado": {
+            "operacoes": 7,
+            "acertos": 2,
+            "liquido": -404.0,
+            "media_operacao": -57.71429,
+            "fator_lucro_liquido": 0.43889,
+            "drawdown_max": 576.0,
+            "duracao_mediana_s": 1080.0,
+            "duracao_p90_s": 2772.0000000000005
+          },
+          "contador_escalar": {
+            "operacoes": 7,
+            "acertos": 2,
+            "liquido": -404.0,
+            "media_operacao": -57.71429,
+            "fator_lucro_liquido": 0.43889,
+            "drawdown_max": 576.0,
+            "duracao_mediana_s": 1080.0,
+            "duracao_p90_s": 2772.0000000000005
+          }
+        },
+        "2026-10-22": {
+          "congelado": {
+            "operacoes": 8,
+            "acertos": 4,
+            "liquido": 188.0,
+            "media_operacao": 23.5,
+            "fator_lucro_liquido": 1.42342,
+            "drawdown_max": 444.0,
+            "duracao_mediana_s": 1080.0,
+            "duracao_p90_s": 3060.0
+          },
+          "contador_escalar": {
+            "operacoes": 8,
+            "acertos": 4,
+            "liquido": 188.0,
+            "media_operacao": 23.5,
+            "fator_lucro_liquido": 1.42342,
+            "drawdown_max": 444.0,
+            "duracao_mediana_s": 1080.0,
+            "duracao_p90_s": 3060.0
+          }
+        },
+        "2026-10-23": {
+          "congelado": {
+            "operacoes": 9,
+            "acertos": 4,
+            "liquido": -226.0,
+            "media_operacao": -25.11111,
+            "fator_lucro_liquido": 0.68611,
+            "drawdown_max": 288.0,
+            "duracao_mediana_s": 660.0,
+            "duracao_p90_s": 1056.0
+          },
+          "contador_escalar": {
+            "operacoes": 9,
+            "acertos": 4,
+            "liquido": -226.0,
+            "media_operacao": -25.11111,
+            "fator_lucro_liquido": 0.68611,
+            "drawdown_max": 288.0,
+            "duracao_mediana_s": 660.0,
+            "duracao_p90_s": 1056.0
+          }
+        },
+        "2026-10-27": {
+          "congelado": {
+            "operacoes": 10,
+            "acertos": 1,
+            "liquido": -1046.0,
+            "media_operacao": -104.6,
+            "fator_lucro_liquido": 0.13123,
+            "drawdown_max": 1046.0,
+            "duracao_mediana_s": 600.0,
+            "duracao_p90_s": 1877.9999999999995
+          },
+          "contador_escalar": {
+            "operacoes": 10,
+            "acertos": 1,
+            "liquido": -1046.0,
+            "media_operacao": -104.6,
+            "fator_lucro_liquido": 0.13123,
+            "drawdown_max": 1046.0,
+            "duracao_mediana_s": 600.0,
+            "duracao_p90_s": 1877.9999999999995
+          }
+        },
+        "2026-10-28": {
+          "congelado": {
+            "operacoes": 9,
+            "acertos": 6,
+            "liquido": 386.0,
+            "media_operacao": 42.88889,
+            "fator_lucro_liquido": 1.89352,
+            "drawdown_max": 144.0,
+            "duracao_mediana_s": 180.0,
+            "duracao_p90_s": 984.0
+          },
+          "contador_escalar": {
+            "operacoes": 9,
+            "acertos": 6,
+            "liquido": 386.0,
+            "media_operacao": 42.88889,
+            "fator_lucro_liquido": 1.89352,
+            "drawdown_max": 144.0,
+            "duracao_mediana_s": 180.0,
+            "duracao_p90_s": 984.0
+          }
+        },
+        "2026-10-29": {
+          "congelado": {
+            "operacoes": 10,
+            "acertos": 7,
+            "liquido": 778.0,
+            "media_operacao": 77.8,
+            "fator_lucro_liquido": 3.37195,
+            "drawdown_max": 144.0,
+            "duracao_mediana_s": 630.0,
+            "duracao_p90_s": 1667.9999999999993
+          },
+          "contador_escalar": {
+            "operacoes": 10,
+            "acertos": 7,
+            "liquido": 778.0,
+            "media_operacao": 77.8,
+            "fator_lucro_liquido": 3.37195,
+            "drawdown_max": 144.0,
+            "duracao_mediana_s": 630.0,
+            "duracao_p90_s": 1667.9999999999993
+          }
+        },
+        "2026-10-30": {
+          "congelado": {
+            "operacoes": 6,
+            "acertos": 4,
+            "liquido": 244.0,
+            "media_operacao": 40.66667,
+            "fator_lucro_liquido": 1.84722,
+            "drawdown_max": 288.0,
+            "duracao_mediana_s": 1140.0,
+            "duracao_p90_s": 2220.0
+          },
+          "contador_escalar": {
+            "operacoes": 6,
+            "acertos": 4,
+            "liquido": 244.0,
+            "media_operacao": 40.66667,
+            "fator_lucro_liquido": 1.84722,
+            "drawdown_max": 288.0,
+            "duracao_mediana_s": 1140.0,
+            "duracao_p90_s": 2220.0
+          }
+        },
+        "2026-11-03": {
+          "congelado": {
+            "operacoes": 6,
+            "acertos": 3,
+            "liquido": 148.0,
+            "media_operacao": 24.66667,
+            "fator_lucro_liquido": 1.45399,
+            "drawdown_max": 288.0,
+            "duracao_mediana_s": 2130.0,
+            "duracao_p90_s": 4860.0
+          },
+          "contador_escalar": {
+            "operacoes": 6,
+            "acertos": 3,
+            "liquido": 148.0,
+            "media_operacao": 24.66667,
+            "fator_lucro_liquido": 1.45399,
+            "drawdown_max": 288.0,
+            "duracao_mediana_s": 2130.0,
+            "duracao_p90_s": 4860.0
+          }
+        },
+        "2026-11-04": {
+          "congelado": {
+            "operacoes": 5,
+            "acertos": 4,
+            "liquido": 488.0,
+            "media_operacao": 97.6,
+            "fator_lucro_liquido": 4.38889,
+            "drawdown_max": 144.0,
+            "duracao_mediana_s": 720.0,
+            "duracao_p90_s": 1428.0
+          },
+          "contador_escalar": {
+            "operacoes": 5,
+            "acertos": 4,
+            "liquido": 488.0,
+            "media_operacao": 97.6,
+            "fator_lucro_liquido": 4.38889,
+            "drawdown_max": 144.0,
+            "duracao_mediana_s": 720.0,
+            "duracao_p90_s": 1428.0
+          }
+        },
+        "2026-11-05": {
+          "congelado": {
+            "operacoes": 6,
+            "acertos": 4,
+            "liquido": 472.0,
+            "media_operacao": 78.66667,
+            "fator_lucro_liquido": 3.95,
+            "drawdown_max": 144.0,
+            "duracao_mediana_s": 1380.0,
+            "duracao_p90_s": 1620.0
+          },
+          "contador_escalar": {
+            "operacoes": 6,
+            "acertos": 4,
+            "liquido": 472.0,
+            "media_operacao": 78.66667,
+            "fator_lucro_liquido": 3.95,
+            "drawdown_max": 144.0,
+            "duracao_mediana_s": 1380.0,
+            "duracao_p90_s": 1620.0
+          }
+        },
+        "2026-11-06": {
+          "congelado": {
+            "operacoes": 9,
+            "acertos": 5,
+            "liquido": 264.0,
+            "media_operacao": 29.33333,
+            "fator_lucro_liquido": 1.60829,
+            "drawdown_max": 434.0,
+            "duracao_mediana_s": 600.0,
+            "duracao_p90_s": 3804.000000000001
+          },
+          "contador_escalar": {
+            "operacoes": 9,
+            "acertos": 5,
+            "liquido": 264.0,
+            "media_operacao": 29.33333,
+            "fator_lucro_liquido": 1.60829,
+            "drawdown_max": 434.0,
+            "duracao_mediana_s": 600.0,
+            "duracao_p90_s": 3804.000000000001
+          }
+        },
+        "2026-11-09": {
+          "congelado": {
+            "operacoes": 6,
+            "acertos": 5,
+            "liquido": 582.0,
+            "media_operacao": 97.0,
+            "fator_lucro_liquido": 5.04167,
+            "drawdown_max": 144.0,
+            "duracao_mediana_s": 960.0,
+            "duracao_p90_s": 4650.0
+          },
+          "contador_escalar": {
+            "operacoes": 6,
+            "acertos": 5,
+            "liquido": 582.0,
+            "media_operacao": 97.0,
+            "fator_lucro_liquido": 5.04167,
+            "drawdown_max": 144.0,
+            "duracao_mediana_s": 960.0,
+            "duracao_p90_s": 4650.0
+          }
+        },
+        "2026-11-10": {
+          "congelado": {
+            "operacoes": 6,
+            "acertos": 3,
+            "liquido": 296.0,
+            "media_operacao": 49.33333,
+            "fator_lucro_liquido": 2.66292,
+            "drawdown_max": 172.0,
+            "duracao_mediana_s": 1830.0,
+            "duracao_p90_s": 2640.0
+          },
+          "contador_escalar": {
+            "operacoes": 6,
+            "acertos": 3,
+            "liquido": 296.0,
+            "media_operacao": 49.33333,
+            "fator_lucro_liquido": 2.66292,
+            "drawdown_max": 172.0,
+            "duracao_mediana_s": 1830.0,
+            "duracao_p90_s": 2640.0
+          }
+        },
+        "2026-11-11": {
+          "congelado": {
+            "operacoes": 5,
+            "acertos": 2,
+            "liquido": 112.0,
+            "media_operacao": 22.4,
+            "fator_lucro_liquido": 1.54902,
+            "drawdown_max": 144.0,
+            "duracao_mediana_s": 1860.0,
+            "duracao_p90_s": 4008.0
+          },
+          "contador_escalar": {
+            "operacoes": 5,
+            "acertos": 2,
+            "liquido": 112.0,
+            "media_operacao": 22.4,
+            "fator_lucro_liquido": 1.54902,
+            "drawdown_max": 144.0,
+            "duracao_mediana_s": 1860.0,
+            "duracao_p90_s": 4008.0
+          }
+        },
+        "2026-11-12": {
+          "congelado": {
+            "operacoes": 6,
+            "acertos": 2,
+            "liquido": -370.0,
+            "media_operacao": -61.66667,
+            "fator_lucro_liquido": 0.35764,
+            "drawdown_max": 576.0,
+            "duracao_mediana_s": 900.0,
+            "duracao_p90_s": 4020.0
+          },
+          "contador_escalar": {
+            "operacoes": 6,
+            "acertos": 2,
+            "liquido": -370.0,
+            "media_operacao": -61.66667,
+            "fator_lucro_liquido": 0.35764,
+            "drawdown_max": 576.0,
+            "duracao_mediana_s": 900.0,
+            "duracao_p90_s": 4020.0
+          }
+        },
+        "2026-11-13": {
+          "congelado": {
+            "operacoes": 8,
+            "acertos": 6,
+            "liquido": 418.0,
+            "media_operacao": 52.25,
+            "fator_lucro_liquido": 2.45139,
+            "drawdown_max": 144.0,
+            "duracao_mediana_s": 1740.0,
+            "duracao_p90_s": 4608.0
+          },
+          "contador_escalar": {
+            "operacoes": 8,
+            "acertos": 6,
+            "liquido": 418.0,
+            "media_operacao": 52.25,
+            "fator_lucro_liquido": 2.45139,
+            "drawdown_max": 144.0,
+            "duracao_mediana_s": 1740.0,
+            "duracao_p90_s": 4608.0
+          }
+        },
+        "2026-11-16": {
+          "congelado": {
+            "operacoes": 7,
+            "acertos": 4,
+            "liquido": 200.0,
+            "media_operacao": 28.57143,
+            "fator_lucro_liquido": 1.46296,
+            "drawdown_max": 144.0,
+            "duracao_mediana_s": 1980.0,
+            "duracao_p90_s": 2412.0
+          },
+          "contador_escalar": {
+            "operacoes": 7,
+            "acertos": 4,
+            "liquido": 200.0,
+            "media_operacao": 28.57143,
+            "fator_lucro_liquido": 1.46296,
+            "drawdown_max": 144.0,
+            "duracao_mediana_s": 1980.0,
+            "duracao_p90_s": 2412.0
+          }
+        },
+        "2026-11-17": {
+          "congelado": {
+            "operacoes": 10,
+            "acertos": 8,
+            "liquido": 796.0,
+            "media_operacao": 79.6,
+            "fator_lucro_liquido": 3.76389,
+            "drawdown_max": 144.0,
+            "duracao_mediana_s": 1080.0,
+            "duracao_p90_s": 2735.9999999999995
+          },
+          "contador_escalar": {
+            "operacoes": 10,
+            "acertos": 8,
+            "liquido": 796.0,
+            "media_operacao": 79.6,
+            "fator_lucro_liquido": 3.76389,
+            "drawdown_max": 144.0,
+            "duracao_mediana_s": 1080.0,
+            "duracao_p90_s": 2735.9999999999995
+          }
+        },
+        "2026-11-18": {
+          "congelado": {
+            "operacoes": 8,
+            "acertos": 2,
+            "liquido": -560.0,
+            "media_operacao": -70.0,
+            "fator_lucro_liquido": 0.28389,
+            "drawdown_max": 624.0,
+            "duracao_mediana_s": 1230.0,
+            "duracao_p90_s": 3474.0
+          },
+          "contador_escalar": {
+            "operacoes": 8,
+            "acertos": 2,
+            "liquido": -560.0,
+            "media_operacao": -70.0,
+            "fator_lucro_liquido": 0.28389,
+            "drawdown_max": 624.0,
+            "duracao_mediana_s": 1230.0,
+            "duracao_p90_s": 3474.0
+          }
+        }
+      },
+      "fills_identicos": true,
+      "ambiguidades": {
+        "congelado": 0,
+        "contador_escalar": 0
+      },
+      "lacunas_por_pregao": {
+        "2026-10-23": 1,
+        "2026-10-28": 1
+      },
+      "estados_lacunas": {
+        "congelado": [
+          {
+            "pregao": "2026-10-23",
+            "antes": 9,
+            "depois": 0,
+            "date_1": 0,
+            "barra": 12415,
+            "barras_no_segmento": 1,
+            "aquecido": true,
+            "posicao": 0,
+            "solicitacao": false,
+            "atr_igual_media_atr": true
+          },
+          {
+            "pregao": "2026-10-28",
+            "antes": 7,
+            "depois": 0,
+            "date_1": 0,
+            "barra": 13371,
+            "barras_no_segmento": 1,
+            "aquecido": true,
+            "posicao": 0,
+            "solicitacao": false,
+            "atr_igual_media_atr": true
+          }
+        ],
+        "contador_escalar": [
+          {
+            "pregao": "2026-10-23",
+            "antes": 9,
+            "depois": 9,
+            "date_1": 0,
+            "barra": 12415,
+            "barras_no_segmento": 1,
+            "aquecido": true,
+            "posicao": 0,
+            "solicitacao": false,
+            "atr_igual_media_atr": true
+          },
+          {
+            "pregao": "2026-10-28",
+            "antes": 7,
+            "depois": 7,
+            "date_1": 0,
+            "barra": 13371,
+            "barras_no_segmento": 1,
+            "aquecido": true,
+            "posicao": 0,
+            "solicitacao": false,
+            "atr_igual_media_atr": true
+          }
+        ]
+      },
+      "barras_aquecido_antes_de_janela_completa": 116,
+      "entradas_solicitadas_nessas_barras": 2
+    },
+    "v58_otimizada_diagnostico": {
+      "congelado": {
+        "operacoes": 86,
+        "acertos": 36,
+        "liquido": -2022.0,
+        "media_operacao": -23.51163,
+        "fator_lucro_liquido": 0.73147,
+        "drawdown_max": 2056.0,
+        "duracao_mediana_s": 1500.0,
+        "duracao_p90_s": 5640.0
+      },
+      "contador_escalar": {
+        "operacoes": 85,
+        "acertos": 35,
+        "liquido": -2240.0,
+        "media_operacao": -26.35294,
+        "fator_lucro_liquido": 0.70252,
+        "drawdown_max": 2274.0,
+        "duracao_mediana_s": 1500.0,
+        "duracao_p90_s": 5640.0
+      },
+      "pregoes": {
+        "2026-10-19": {
+          "congelado": {
+            "operacoes": 5,
+            "acertos": 2,
+            "liquido": -242.0,
+            "media_operacao": -48.4,
+            "fator_lucro_liquido": 0.56159,
+            "drawdown_max": 276.0,
+            "duracao_mediana_s": 780.0,
+            "duracao_p90_s": 4764.0
+          },
+          "contador_escalar": {
+            "operacoes": 5,
+            "acertos": 2,
+            "liquido": -242.0,
+            "media_operacao": -48.4,
+            "fator_lucro_liquido": 0.56159,
+            "drawdown_max": 276.0,
+            "duracao_mediana_s": 780.0,
+            "duracao_p90_s": 4764.0
+          }
+        },
+        "2026-10-20": {
+          "congelado": {
+            "operacoes": 5,
+            "acertos": 1,
+            "liquido": -358.0,
+            "media_operacao": -71.6,
+            "fator_lucro_liquido": 0.37847,
+            "drawdown_max": 392.0,
+            "duracao_mediana_s": 2400.0,
+            "duracao_p90_s": 4344.0
+          },
+          "contador_escalar": {
+            "operacoes": 5,
+            "acertos": 1,
+            "liquido": -358.0,
+            "media_operacao": -71.6,
+            "fator_lucro_liquido": 0.37847,
+            "drawdown_max": 392.0,
+            "duracao_mediana_s": 2400.0,
+            "duracao_p90_s": 4344.0
+          }
+        },
+        "2026-10-22": {
+          "congelado": {
+            "operacoes": 5,
+            "acertos": 2,
+            "liquido": -126.0,
+            "media_operacao": -25.2,
+            "fator_lucro_liquido": 0.75294,
+            "drawdown_max": 326.0,
+            "duracao_mediana_s": 1500.0,
+            "duracao_p90_s": 5028.0
+          },
+          "contador_escalar": {
+            "operacoes": 5,
+            "acertos": 2,
+            "liquido": -126.0,
+            "media_operacao": -25.2,
+            "fator_lucro_liquido": 0.75294,
+            "drawdown_max": 326.0,
+            "duracao_mediana_s": 1500.0,
+            "duracao_p90_s": 5028.0
+          }
+        },
+        "2026-10-23": {
+          "congelado": {
+            "operacoes": 4,
+            "acertos": 1,
+            "liquido": -136.0,
+            "media_operacao": -34.0,
+            "fator_lucro_liquido": 0.61582,
+            "drawdown_max": 254.0,
+            "duracao_mediana_s": 1710.0,
+            "duracao_p90_s": 5754.000000000001
+          },
+          "contador_escalar": {
+            "operacoes": 4,
+            "acertos": 1,
+            "liquido": -136.0,
+            "media_operacao": -34.0,
+            "fator_lucro_liquido": 0.61582,
+            "drawdown_max": 254.0,
+            "duracao_mediana_s": 1710.0,
+            "duracao_p90_s": 5754.000000000001
+          }
+        },
+        "2026-10-27": {
+          "congelado": {
+            "operacoes": 5,
+            "acertos": 1,
+            "liquido": -386.0,
+            "media_operacao": -77.2,
+            "fator_lucro_liquido": 0.36093,
+            "drawdown_max": 604.0,
+            "duracao_mediana_s": 660.0,
+            "duracao_p90_s": 2244.0
+          },
+          "contador_escalar": {
+            "operacoes": 5,
+            "acertos": 1,
+            "liquido": -386.0,
+            "media_operacao": -77.2,
+            "fator_lucro_liquido": 0.36093,
+            "drawdown_max": 604.0,
+            "duracao_mediana_s": 660.0,
+            "duracao_p90_s": 2244.0
+          }
+        },
+        "2026-10-28": {
+          "congelado": {
+            "operacoes": 6,
+            "acertos": 3,
+            "liquido": 102.0,
+            "media_operacao": 17.0,
+            "fator_lucro_liquido": 1.18478,
+            "drawdown_max": 184.0,
+            "duracao_mediana_s": 720.0,
+            "duracao_p90_s": 1230.0
+          },
+          "contador_escalar": {
+            "operacoes": 5,
+            "acertos": 2,
+            "liquido": -116.0,
+            "media_operacao": -23.2,
+            "fator_lucro_liquido": 0.78986,
+            "drawdown_max": 184.0,
+            "duracao_mediana_s": 960.0,
+            "duracao_p90_s": 1248.0
+          }
+        },
+        "2026-10-29": {
+          "congelado": {
+            "operacoes": 5,
+            "acertos": 2,
+            "liquido": 28.0,
+            "media_operacao": 5.6,
+            "fator_lucro_liquido": 1.06863,
+            "drawdown_max": 368.0,
+            "duracao_mediana_s": 1500.0,
+            "duracao_p90_s": 2856.0
+          },
+          "contador_escalar": {
+            "operacoes": 5,
+            "acertos": 2,
+            "liquido": 28.0,
+            "media_operacao": 5.6,
+            "fator_lucro_liquido": 1.06863,
+            "drawdown_max": 368.0,
+            "duracao_mediana_s": 1500.0,
+            "duracao_p90_s": 2856.0
+          }
+        },
+        "2026-10-30": {
+          "congelado": {
+            "operacoes": 3,
+            "acertos": 0,
+            "liquido": -394.0,
+            "media_operacao": -131.33333,
+            "fator_lucro_liquido": 0.0,
+            "drawdown_max": 394.0,
+            "duracao_mediana_s": 1680.0,
+            "duracao_p90_s": 2112.0
+          },
+          "contador_escalar": {
+            "operacoes": 3,
+            "acertos": 0,
+            "liquido": -394.0,
+            "media_operacao": -131.33333,
+            "fator_lucro_liquido": 0.0,
+            "drawdown_max": 394.0,
+            "duracao_mediana_s": 1680.0,
+            "duracao_p90_s": 2112.0
+          }
+        },
+        "2026-11-03": {
+          "congelado": {
+            "operacoes": 3,
+            "acertos": 2,
+            "liquido": -84.0,
+            "media_operacao": -28.0,
+            "fator_lucro_liquido": 0.54348,
+            "drawdown_max": 184.0,
+            "duracao_mediana_s": 2220.0,
+            "duracao_p90_s": 6012.0
+          },
+          "contador_escalar": {
+            "operacoes": 3,
+            "acertos": 2,
+            "liquido": -84.0,
+            "media_operacao": -28.0,
+            "fator_lucro_liquido": 0.54348,
+            "drawdown_max": 184.0,
+            "duracao_mediana_s": 2220.0,
+            "duracao_p90_s": 6012.0
+          }
+        },
+        "2026-11-04": {
+          "congelado": {
+            "operacoes": 3,
+            "acertos": 2,
+            "liquido": 248.0,
+            "media_operacao": 82.66667,
+            "fator_lucro_liquido": 5.59259,
+            "drawdown_max": 54.0,
+            "duracao_mediana_s": 780.0,
+            "duracao_p90_s": 2364.0
+          },
+          "contador_escalar": {
+            "operacoes": 3,
+            "acertos": 2,
+            "liquido": 248.0,
+            "media_operacao": 82.66667,
+            "fator_lucro_liquido": 5.59259,
+            "drawdown_max": 54.0,
+            "duracao_mediana_s": 780.0,
+            "duracao_p90_s": 2364.0
+          }
+        },
+        "2026-11-05": {
+          "congelado": {
+            "operacoes": 4,
+            "acertos": 2,
+            "liquido": -110.0,
+            "media_operacao": -27.5,
+            "fator_lucro_liquido": 0.70109,
+            "drawdown_max": 368.0,
+            "duracao_mediana_s": 2010.0,
+            "duracao_p90_s": 6402.000000000001
+          },
+          "contador_escalar": {
+            "operacoes": 4,
+            "acertos": 2,
+            "liquido": -110.0,
+            "media_operacao": -27.5,
+            "fator_lucro_liquido": 0.70109,
+            "drawdown_max": 368.0,
+            "duracao_mediana_s": 2010.0,
+            "duracao_p90_s": 6402.000000000001
+          }
+        },
+        "2026-11-06": {
+          "congelado": {
+            "operacoes": 3,
+            "acertos": 2,
+            "liquido": 224.0,
+            "media_operacao": 74.66667,
+            "fator_lucro_liquido": 4.73333,
+            "drawdown_max": 60.0,
+            "duracao_mediana_s": 4380.0,
+            "duracao_p90_s": 7836.0
+          },
+          "contador_escalar": {
+            "operacoes": 3,
+            "acertos": 2,
+            "liquido": 224.0,
+            "media_operacao": 74.66667,
+            "fator_lucro_liquido": 4.73333,
+            "drawdown_max": 60.0,
+            "duracao_mediana_s": 4380.0,
+            "duracao_p90_s": 7836.0
+          }
+        },
+        "2026-11-09": {
+          "congelado": {
+            "operacoes": 5,
+            "acertos": 3,
+            "liquido": 174.0,
+            "media_operacao": 34.8,
+            "fator_lucro_liquido": 1.60417,
+            "drawdown_max": 288.0,
+            "duracao_mediana_s": 1860.0,
+            "duracao_p90_s": 4992.0
+          },
+          "contador_escalar": {
+            "operacoes": 5,
+            "acertos": 3,
+            "liquido": 174.0,
+            "media_operacao": 34.8,
+            "fator_lucro_liquido": 1.60417,
+            "drawdown_max": 288.0,
+            "duracao_mediana_s": 1860.0,
+            "duracao_p90_s": 4992.0
+          }
+        },
+        "2026-11-10": {
+          "congelado": {
+            "operacoes": 4,
+            "acertos": 2,
+            "liquido": 224.0,
+            "media_operacao": 56.0,
+            "fator_lucro_liquido": 2.0566,
+            "drawdown_max": 212.0,
+            "duracao_mediana_s": 2970.0,
+            "duracao_p90_s": 4026.0
+          },
+          "contador_escalar": {
+            "operacoes": 4,
+            "acertos": 2,
+            "liquido": 224.0,
+            "media_operacao": 56.0,
+            "fator_lucro_liquido": 2.0566,
+            "drawdown_max": 212.0,
+            "duracao_mediana_s": 2970.0,
+            "duracao_p90_s": 4026.0
+          }
+        },
+        "2026-11-11": {
+          "congelado": {
+            "operacoes": 4,
+            "acertos": 1,
+            "liquido": -338.0,
+            "media_operacao": -84.5,
+            "fator_lucro_liquido": 0.17961,
+            "drawdown_max": 368.0,
+            "duracao_mediana_s": 2550.0,
+            "duracao_p90_s": 5316.0
+          },
+          "contador_escalar": {
+            "operacoes": 4,
+            "acertos": 1,
+            "liquido": -338.0,
+            "media_operacao": -84.5,
+            "fator_lucro_liquido": 0.17961,
+            "drawdown_max": 368.0,
+            "duracao_mediana_s": 2550.0,
+            "duracao_p90_s": 5316.0
+          }
+        },
+        "2026-11-12": {
+          "congelado": {
+            "operacoes": 4,
+            "acertos": 2,
+            "liquido": -250.0,
+            "media_operacao": -62.5,
+            "fator_lucro_liquido": 0.32065,
+            "drawdown_max": 368.0,
+            "duracao_mediana_s": 930.0,
+            "duracao_p90_s": 4362.000000000001
+          },
+          "contador_escalar": {
+            "operacoes": 4,
+            "acertos": 2,
+            "liquido": -250.0,
+            "media_operacao": -62.5,
+            "fator_lucro_liquido": 0.32065,
+            "drawdown_max": 368.0,
+            "duracao_mediana_s": 930.0,
+            "duracao_p90_s": 4362.000000000001
+          }
+        },
+        "2026-11-13": {
+          "congelado": {
+            "operacoes": 3,
+            "acertos": 3,
+            "liquido": 296.0,
+            "media_operacao": 98.66667,
+            "fator_lucro_liquido": null,
+            "drawdown_max": 0.0,
+            "duracao_mediana_s": 4920.0,
+            "duracao_p90_s": 6024.0
+          },
+          "contador_escalar": {
+            "operacoes": 3,
+            "acertos": 3,
+            "liquido": 296.0,
+            "media_operacao": 98.66667,
+            "fator_lucro_liquido": null,
+            "drawdown_max": 0.0,
+            "duracao_mediana_s": 4920.0,
+            "duracao_p90_s": 6024.0
+          }
+        },
+        "2026-11-16": {
+          "congelado": {
+            "operacoes": 5,
+            "acertos": 2,
+            "liquido": -156.0,
+            "media_operacao": -31.2,
+            "fator_lucro_liquido": 0.61386,
+            "drawdown_max": 404.0,
+            "duracao_mediana_s": 2580.0,
+            "duracao_p90_s": 4428.0
+          },
+          "contador_escalar": {
+            "operacoes": 5,
+            "acertos": 2,
+            "liquido": -156.0,
+            "media_operacao": -31.2,
+            "fator_lucro_liquido": 0.61386,
+            "drawdown_max": 404.0,
+            "duracao_mediana_s": 2580.0,
+            "duracao_p90_s": 4428.0
+          }
+        },
+        "2026-11-17": {
+          "congelado": {
+            "operacoes": 5,
+            "acertos": 3,
+            "liquido": 124.0,
+            "media_operacao": 24.8,
+            "fator_lucro_liquido": 1.33696,
+            "drawdown_max": 368.0,
+            "duracao_mediana_s": 2400.0,
+            "duracao_p90_s": 3264.0
+          },
+          "contador_escalar": {
+            "operacoes": 5,
+            "acertos": 3,
+            "liquido": 124.0,
+            "media_operacao": 24.8,
+            "fator_lucro_liquido": 1.33696,
+            "drawdown_max": 368.0,
+            "duracao_mediana_s": 2400.0,
+            "duracao_p90_s": 3264.0
+          }
+        },
+        "2026-11-18": {
+          "congelado": {
+            "operacoes": 5,
+            "acertos": 0,
+            "liquido": -862.0,
+            "media_operacao": -172.4,
+            "fator_lucro_liquido": 0.0,
+            "drawdown_max": 862.0,
+            "duracao_mediana_s": 2580.0,
+            "duracao_p90_s": 3768.0
+          },
+          "contador_escalar": {
+            "operacoes": 5,
+            "acertos": 0,
+            "liquido": -862.0,
+            "media_operacao": -172.4,
+            "fator_lucro_liquido": 0.0,
+            "drawdown_max": 862.0,
+            "duracao_mediana_s": 2580.0,
+            "duracao_p90_s": 3768.0
+          }
+        }
+      },
+      "fills_identicos": false,
+      "ambiguidades": {
+        "congelado": 0,
+        "contador_escalar": 0
+      },
+      "lacunas_por_pregao": {
+        "2026-10-23": 1,
+        "2026-10-28": 1
+      },
+      "estados_lacunas": {
+        "congelado": [
+          {
+            "pregao": "2026-10-23",
+            "antes": 4,
+            "depois": 0,
+            "date_1": 0,
+            "barra": 12415,
+            "barras_no_segmento": 1,
+            "aquecido": true,
+            "posicao": 0,
+            "solicitacao": false,
+            "atr_igual_media_atr": true
+          },
+          {
+            "pregao": "2026-10-28",
+            "antes": 5,
+            "depois": 0,
+            "date_1": 0,
+            "barra": 13371,
+            "barras_no_segmento": 1,
+            "aquecido": true,
+            "posicao": 0,
+            "solicitacao": false,
+            "atr_igual_media_atr": true
+          }
+        ],
+        "contador_escalar": [
+          {
+            "pregao": "2026-10-23",
+            "antes": 4,
+            "depois": 4,
+            "date_1": 0,
+            "barra": 12415,
+            "barras_no_segmento": 1,
+            "aquecido": true,
+            "posicao": 0,
+            "solicitacao": false,
+            "atr_igual_media_atr": true
+          },
+          {
+            "pregao": "2026-10-28",
+            "antes": 5,
+            "depois": 5,
+            "date_1": 0,
+            "barra": 13371,
+            "barras_no_segmento": 1,
+            "aquecido": true,
+            "posicao": 0,
+            "solicitacao": false,
+            "atr_igual_media_atr": true
+          }
+        ]
+      },
+      "barras_aquecido_antes_de_janela_completa": 137,
+      "entradas_solicitadas_nessas_barras": 1
+    }
+  }
+}

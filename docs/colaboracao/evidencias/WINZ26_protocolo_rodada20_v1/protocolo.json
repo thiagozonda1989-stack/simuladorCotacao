@@ -1,0 +1,176 @@
+{
+  "rodada": 20,
+  "sha_rodada18": "4b195d9c6a0e3fd8e2e92eda71c0827dd9870cb5",
+  "sha_ultimo_commit_motor": "db9ace693c9396d87198e0973d9708ddeb7668d4",
+  "sha_ultimo_commit_ntsl": "e3f474453e4186c9df83392af9f6fd7284a3e234",
+  "ativo": "WINZ26",
+  "timezone": "America/Sao_Paulo",
+  "lote": 2,
+  "segundos": 60,
+  "tick_pontos": 5,
+  "reais_por_ponto_contrato": 0.2,
+  "regras_execucao": {
+    "custo_por_contrato_lado": 0.5,
+    "slippage_ticks": 1,
+    "limite_exige_ultrapassar": false,
+    "ordem_so_proxima_barra": true,
+    "historico_continuo": true,
+    "latencia_barras": 0,
+    "motor_ticks": false,
+    "latencia_ticks_ms": 0,
+    "lacuna_ticks_ms": 5000,
+    "volume_financeiro_ntsl": true,
+    "agressao_por_barra": false,
+    "agressao_referencia_injetada": true,
+    "vwap_continuo_lacunas": true,
+    "protecao_no_candle_entrada": false,
+    "rastrear_ordens": false,
+    "avaliacao_pos_preenchimento": false,
+    "historico_continuo_lacunas": false,
+    "entrada_mercado_atraves_lacuna": false,
+    "protecoes_ate_cancelar": false,
+    "ajuste_tick_saidas_venda": false
+  },
+  "pregoes_conhecidos": [
+    "2026-10-19",
+    "2026-10-20",
+    "2026-10-22",
+    "2026-10-23",
+    "2026-10-27",
+    "2026-10-28",
+    "2026-10-29",
+    "2026-10-30",
+    "2026-11-03",
+    "2026-11-04",
+    "2026-11-05",
+    "2026-11-06",
+    "2026-11-09",
+    "2026-11-10",
+    "2026-11-11",
+    "2026-11-12",
+    "2026-11-13",
+    "2026-11-16",
+    "2026-11-17",
+    "2026-11-18"
+  ],
+  "perfis": {
+    "v58_original": {
+      "uso": "congelado",
+      "arquivo": "estrategias/execucao/Modelo_Unificado_v5_8.ntsl",
+      "sha_git_fonte": "e54a729150b736173c4fdea16d65579759df6dde",
+      "sha256": "16ee74d277add73798e26cd9d2653d26b7b375eac37c9d23455dd64b3662b20a",
+      "parametros": {
+        "p_exec_tick": 0,
+        "p_periodo_atr": 14.0,
+        "p_periodo_regime_atr": 50.0,
+        "p_desvio_vwap": 2.1,
+        "p_modo_banda": 0.0,
+        "p_periodo_desvio": 20.0,
+        "p_zscore_vol": 1.5,
+        "p_stop_pontos": 350.0,
+        "p_alvo_pontos": 400.0,
+        "p_minimotrades": 100.0,
+        "p_lote": 2,
+        "p_offset_limite_stop": 50.0,
+        "p_barras_espera": 3.0,
+        "p_max_entradas_dia": 10.0,
+        "p_hora_inicio": 915.0,
+        "p_hora_fim_entradas": 1645.0,
+        "p_hora_zeragem": 1700.0,
+        "p_noticia1_ini": 1025.0,
+        "p_noticia1_fim": 1035.0,
+        "p_noticia2_ini": 1425.0,
+        "p_noticia2_fim": 1435.0,
+        "p_zerar_na_noticia": 1.0
+      },
+      "referencia_rodada18": {
+        "operacoes": 147,
+        "acertos": 76,
+        "liquido": 1902.0,
+        "drawdown_max": 2352.0,
+        "barras": 11288
+      }
+    },
+    "scalper_v11_otimizada": {
+      "uso": "congelado",
+      "arquivo": "estrategias/execucao/modelo_scalper_v1_1.ntsl",
+      "sha_git_fonte": "f5c2c14e34fedc62df026d1d7a8dffc8cd805f82",
+      "sha256": "64d74abc6dda857582351fd8c797d1801a457fc4cc40b95c6c1d754a1899cf0c",
+      "parametros": {
+        "p_alvopontos": 100,
+        "p_stoppontos": 150,
+        "p_offsetstop": 10,
+        "p_lote": 2,
+        "p_periodofluxo": 1.0,
+        "p_periodomediafluxo": 12,
+        "p_thresholdfluxo": 2.3,
+        "p_mintradesbarra": 400,
+        "p_maxbarrasposicao": 6,
+        "p_maxstopsconsecutivos": 3.0,
+        "p_cooldownminutos": 10,
+        "p_limiteperdadia": 300.0,
+        "p_horarioinicio": 905.0,
+        "p_horariofimentradas": 1655.0,
+        "p_horariozeragem": 1700.0
+      },
+      "referencia_rodada18": {
+        "operacoes": 83,
+        "acertos": 49,
+        "liquido": -58.0,
+        "drawdown_max": 456.0,
+        "barras": 11288
+      }
+    }
+  },
+  "base_conhecida_sha256": "ed9230c941c186e81fb06a50c79755d4f4b0317d76ddf6bdf84be2e6773cd9d7",
+  "sha_evidencias_rodada19": "dda2cff06801218e8768e4e255295b683e3b18c1",
+  "sha_diagnostico": "d20f07f8ed7793a182ef7b834b9fbc67cd7aa16e",
+  "sha_fonte_coletor": "7de604c8bb928974409c53e30b5e2ce0db7b5354",
+  "pareceres_anteriores": {
+    "sha_revisado": "4b195d9c6a0e3fd8e2e92eda71c0827dd9870cb5",
+    "claude": "https://github.com/thiagozonda1989-stack/simuladorCotacao/pull/2#issuecomment-7151902058",
+    "gemini": "https://github.com/thiagozonda1989-stack/simuladorCotacao/pull/2#issuecomment-7151922744"
+  },
+  "validacao_inedita": {
+    "estado": "protocolo_publicado_reserva_fechada",
+    "replays_executados": 0,
+    "amostra_formal": {
+      "pregoes_cronologicos_fixos": 20,
+      "operacoes_encerradas_minimo_por_perfil": 80
+    },
+    "piloto": {
+      "pregoes": "menos de 20, inclusive um único pregão",
+      "pode_aprovar_perfil": false
+    },
+    "criterios_conjuntivos": {
+      "liquido_total_positivo": true,
+      "liquido_por_pregao_min_reais": 80,
+      "fator_lucro_liquido_min": 1.25,
+      "participacao_top2_dias_max": 0.4,
+      "drawdown_realizado_max_reais": 1500,
+      "liquido_sobre_drawdown_min": 1.0,
+      "pior_pregao_min_reais": -500,
+      "frequencia_minima_por_pregao": 2,
+      "frequencia_maxima_por_pregao": 12,
+      "exposicao_maxima_contratos": 2,
+      "acerto_min": {
+        "v58_original": 0.45,
+        "scalper_v11_otimizada": 0.55
+      }
+    },
+    "referencias_projeto": {
+      "acerto": 0.45,
+      "liquido_por_pregao_reais": 3000
+    },
+    "coorte_em_auditoria": [
+      {
+        "pregao": "2026-11-23",
+        "estado": "aguarda confirmação da borda e da divergência de OHLC"
+      },
+      {
+        "pregao": "2026-11-24",
+        "estado": "completo na captura, aguarda confirmação da origem e do histórico anterior"
+      }
+    ]
+  }
+}
