@@ -66,6 +66,25 @@ def coverage(day, data):
                 timestamps_duplicados=int(data["Data"].duplicated().sum()), series=fields)
 
 
+def audit_warmup_tail(stamps, end, bars):
+    """Confere os últimos minutos do pregão anterior, inclusive o seu fechamento."""
+    if bars < 1:
+        raise ValueError("O aquecimento exige pelo menos uma barra.")
+    end = pd.Timestamp(end)
+    expected = pd.date_range(end=end, periods=bars, freq="1min")
+    if expected[0].normalize() != end.normalize():
+        raise ValueError("A janela final precisa pertencer a um único pregão.")
+    observed = pd.DatetimeIndex(stamps)
+    tail = observed[(observed >= expected[0]) & (observed <= end)].sort_values()
+    missing = expected.difference(tail)
+    duplicates = int(tail.duplicated().sum())
+    return dict(
+        inicio=expected[0].isoformat(), fim=end.isoformat(), barras_esperadas=bars,
+        barras_observadas=len(tail), minutos_faltantes=len(missing),
+        timestamps_duplicados=duplicates, continua=tail.equals(expected),
+    )
+
+
 def compare(data, reference):
     # O relatório contém só os totais e a maior diferença por coluna.
     joined = data[["Data", *OHLC]].merge(reference[["Data", *OHLC]], on="Data",

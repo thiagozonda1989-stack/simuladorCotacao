@@ -2,8 +2,9 @@ from pathlib import Path
 
 import pandas as pd
 
-from estrategia import load_bars, source_text
+from estrategia import Engine, load_bars, source_text
 from ntsl import compile_ntsl
+from tools.auditar_reserva_rodada20 import audit_warmup_tail
 from tools.diagnosticar_lacunas_rodada20 import GapDiagnostic, counter_control
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -74,3 +75,56 @@ def test_v58_lacuna_reinicia_teto_mas_aquecimento_continua(tmp_path):
     assert continuous.gaps[0]["media_atr"] < 40
     assert sum(f["acao"] == "long" for f in baseline.fills if f["pregao"] == "2026-10-19") == 2
     assert sum(f["acao"] == "long" for f in scalar.fills if f["pregao"] == "2026-10-19") == 1
+
+def test_aquecimento_entre_pregoes_e_rejeicao_de_lacuna_tardia(tmp_path):
+    previous = pd.date_range("2026-10-19 16:45", "2026-10-19 18:24", freq="1min")
+    following = pd.date_range("2026-10-20 09:00", periods=87, freq="1min")
+    missing = pd.date_range("2026-10-19 18:00", periods=6, freq="1min")
+    gapped = previous.difference(missing)
+    assert audit_warmup_tail(previous, previous[-1], 86)["continua"]
+    rejected = audit_warmup_tail(gapped, previous[-1], 86)
+    assert not rejected["continua"]
+    assert rejected["minutos_faltantes"] == 6
+    assert not audit_warmup_tail(previous.append(previous[-1:]), previous[-1], 86)["continua"]
+
+    source = source_text(ROOT / "estrategias/execucao/Modelo_Unificado_v5_8.ntsl")
+    program = compile_ntsl(source)
+    slots = {name: program.symbols[name].slot
+             for name in ("v_media_atr", "v_aquecido", "v_entradas_dia")}
+    rules = {"volume_financeiro_ntsl": True, "agressao_referencia_injetada": True,
+             "historico_continuo": True}
+    path = tmp_path / "base_aquecimento.csv"
+
+    def run(prior, continuous):
+        stamps = prior.append(following)
+        high = [1025 if stamp.hour == 18 else 1050 for stamp in stamps]
+        pd.DataFrame(dict(timestamp=stamps, abertura=1000, maxima=high, minima=980,
+                          fechamento=1000, v_trades_atual=200, volume_contratos=300,
+                          volume_financeiro=60000, v_agressao_saldo_referencia=1)).to_csv(
+                              path, sep=";", index=False)
+        engine = Engine(program, load_bars(path, 60, "ohlc"), 5,
+                        {"p_exec_tick": 0, "p_lote": 2}, 60, 0.20,
+                        regras={**rules, "historico_continuo_lacunas": continuous})
+        engine.run()
+        return engine
+
+    full, full_continuous = run(previous, False), run(previous, True)
+    first = len(previous)
+    assert not full.gap[first]
+    full.cursor = first
+    assert full.series("date", 1) == 1261019
+    assert full.history[first, slots["v_entradas_dia"]] == 0
+    assert full.history[first, slots["v_aquecido"]] == 1
+    assert full.history[first, slots["v_media_atr"]] == full_continuous.history[first, slots["v_media_atr"]]
+
+    interrupted, uninterrupted = run(gapped, False), run(gapped, True)
+    first_after_gap = len(gapped)
+    assert interrupted.history[first_after_gap, slots["v_aquecido"]] == 1
+    assert interrupted.history[first_after_gap, slots["v_media_atr"]] != (
+        uninterrupted.history[first_after_gap, slots["v_media_atr"]]
+    )
+
+    without_warmup = run(previous[:0], False)
+    assert not without_warmup.history[:86, slots["v_aquecido"]].any()
+    assert without_warmup.history[86, slots["v_aquecido"]] == 1
+    assert all(fill["barra"] > 86 for fill in without_warmup.fills)
