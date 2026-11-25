@@ -17,11 +17,11 @@ config:
 ---
 xychart-beta
   title "Evolução por rodada"
-  x-axis "Rodadas de validação" [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17]
+  x-axis "Rodadas de validação" [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18]
   y-axis "Avanço" 0 --> 100
-  line [0, 20, 35, 45, 50, 55, 60, 60, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65]
-  line [0, 15, 25, 30, 30, 30, 30, 30, 30, 30, 35, 35, 35, 35, 35, 35, 35, 35]
-  line [0, 30, 40, 45, 50, 50, 55, 55, 55, 60, 60, 60, 60, 60, 60, 60, 60, 60]
+  line [0, 20, 35, 45, 50, 55, 60, 60, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65]
+  line [0, 15, 25, 30, 30, 30, 30, 30, 30, 30, 35, 35, 35, 35, 35, 35, 35, 35, 35]
+  line [0, 30, 40, 45, 50, 50, 55, 55, 55, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60]
 ```
 
 | Rodada | Publicação | Marco | Simulador | Estratégias (progresso e acerto) | Dados | Evidência e operações |
@@ -44,6 +44,7 @@ xychart-beta
 | 15 | 24/11/2026 | Stops adaptativos v1.5 e v1.6 | 65 | 35 · v1.5: 36,5% (84/230) · v1.6: 26,7% (12/45) | 60 | 12 configurações. Líquido de −R$ 480 e −R$ 504 em 20 pregões conhecidos. [Relatório](evidencias/estrategia_pullback_adaptativo_v1/README.md) |
 | 16 | 24/11/2026 | Falha de rompimento v1.7 | 65 | 35 · controle v1.5: 36,5% (84/230) | 60 | 4 variantes rejeitadas em 19 pregões. Melhor Δ −R$ 254 e 149 operações. Controle OFF reproduziu −R$ 480 em 20 conhecidos. [Relatório](https://github.com/thiagozonda1989-stack/simuladorCotacao/blob/9e160857194084f6bf4bc945a0ab0f399f44f8e6/docs/colaboracao/evidencias/estrategia_pullback_falha_rompimento_v1/README.md) |
 | 17 | 24/11/2026 | Otimização v5.7 de R$ 5.745 | 65 | 35 · acerto da variação pendente | 60 | 43 operações informadas, pareamento pendente. Inventário, configuração e roteiro com 132 testes. [Relatório](https://github.com/thiagozonda1989-stack/simuladorCotacao/blob/d2429a4549b497fcdbdb0cfef04e02c01d6be997/docs/colaboracao/evidencias/WINZ26_v5_7_otimizacao_rodada17_v1/README.md) |
+| 18 | 24/11/2026 | Busca genética WINZ26 | 65 | 35 · Scalper v1.1 59,0% (49/83, exploratório) | 60 | 20 versões e 1.228 avaliações. Melhor candidato de 1 min e 2 contratos fez −R$ 58 em 20 pregões conhecidos. Reserva inédita preservada. [Relatório](https://github.com/thiagozonda1989-stack/simuladorCotacao/blob/4b195d9c6a0e3fd8e2e92eda71c0827dd9870cb5/docs/colaboracao/evidencias/WINZ26_ag_rodada18_v1/README.md) |
 
 ## Cálculo da taxa de acerto
 
