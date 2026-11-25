@@ -1,0 +1,167 @@
+{
+  "janela": "WINZ26, 1 minuto, America/Sao_Paulo",
+  "fontes": {
+    "SONDA_S1_STOP_barras.csv": {
+      "sha256": "530d7efaed5c29d0973c9343ba55629915685cd4528e4e885ca3d5424935b8b5",
+      "bytes": 920086,
+      "campos": [
+        "Data",
+        "Abertura",
+        "Máxima",
+        "Mínima",
+        "Fechamento"
+      ],
+      "ordem_fisica_descendente": true,
+      "pregoes": 36,
+      "primeiro_pregao": "2026-09-30",
+      "ultimo_pregao": "2026-11-23",
+      "barras": 20001,
+      "cobertura_recente": {
+        "2026-11-19": {
+          "barras": 565,
+          "primeiro_rotulo": "09:00",
+          "ultimo_rotulo": "18:24",
+          "duplicatas_timestamp": 0,
+          "minutos_ausentes_no_intervalo": 0,
+          "ohlc_invalidos": 0,
+          "por_campo_nao_nulo": {}
+        },
+        "2026-11-23": {
+          "barras": 552,
+          "primeiro_rotulo": "09:03",
+          "ultimo_rotulo": "18:14",
+          "duplicatas_timestamp": 0,
+          "minutos_ausentes_no_intervalo": 0,
+          "ohlc_invalidos": 0,
+          "por_campo_nao_nulo": {}
+        }
+      }
+    },
+    "SONDA_S1_ALVO_barras.csv": {
+      "sha256": "1036ce183e5e0ff371ca10b21b2774e2f8420598c50d71b107cbe6a1eebf6863",
+      "bytes": 920086,
+      "campos": [
+        "Data",
+        "Abertura",
+        "Máxima",
+        "Mínima",
+        "Fechamento"
+      ],
+      "ordem_fisica_descendente": true,
+      "pregoes": 36,
+      "primeiro_pregao": "2026-09-29",
+      "ultimo_pregao": "2026-11-19",
+      "barras": 20001,
+      "cobertura_recente": {
+        "2026-11-19": {
+          "barras": 565,
+          "primeiro_rotulo": "09:00",
+          "ultimo_rotulo": "18:24",
+          "duplicatas_timestamp": 0,
+          "minutos_ausentes_no_intervalo": 0,
+          "ohlc_invalidos": 0,
+          "por_campo_nao_nulo": {}
+        }
+      }
+    },
+    "barras_v58.csv": {
+      "sha256": "1036ce183e5e0ff371ca10b21b2774e2f8420598c50d71b107cbe6a1eebf6863",
+      "bytes": 920086,
+      "campos": [
+        "Data",
+        "Abertura",
+        "Máxima",
+        "Mínima",
+        "Fechamento"
+      ],
+      "ordem_fisica_descendente": true,
+      "pregoes": 36,
+      "primeiro_pregao": "2026-09-29",
+      "ultimo_pregao": "2026-11-19",
+      "barras": 20001,
+      "cobertura_recente": {
+        "2026-11-19": {
+          "barras": 565,
+          "primeiro_rotulo": "09:00",
+          "ultimo_rotulo": "18:24",
+          "duplicatas_timestamp": 0,
+          "minutos_ausentes_no_intervalo": 0,
+          "ohlc_invalidos": 0,
+          "por_campo_nao_nulo": {}
+        }
+      }
+    },
+    "profit_WINZ26_20261021_barras_1min.csv": {
+      "sha256": "3726e7dd9a821a109120765e4115e6eb352079e9402d9370ae7565ac9555bb2a",
+      "bytes": 1952280,
+      "campos": [
+        "Data",
+        "Abertura",
+        "Máxima",
+        "Mínima",
+        "Fechamento",
+        "Trades",
+        "Quantity",
+        "Volume"
+      ],
+      "ordem_fisica_descendente": true,
+      "pregoes": 59,
+      "primeiro_pregao": "2026-08-26",
+      "ultimo_pregao": "2026-11-19",
+      "barras": 30964,
+      "cobertura_recente": {
+        "2026-11-19": {
+          "barras": 461,
+          "primeiro_rotulo": "09:00",
+          "ultimo_rotulo": "16:40",
+          "duplicatas_timestamp": 0,
+          "minutos_ausentes_no_intervalo": 0,
+          "ohlc_invalidos": 0,
+          "por_campo_nao_nulo": {
+            "Trades": 461,
+            "Quantity": 461,
+            "Volume": 461
+          }
+        }
+      }
+    },
+    "profit_WINZ26_20261021_indicadores_v5_7.csv": {
+      "sha256": "76b79ef839ab6b142a0976c7c3ef1a6b7bb7dc2d013434551e861c892a56b946",
+      "bytes": 2666570,
+      "campos": [
+        "Data",
+        "Abertura",
+        "Máxima",
+        "Mínima",
+        "Fechamento",
+        "v_VWAP_Diaria",
+        "v_Desvio_Padrao",
+        "v_ATR",
+        "v_Media_ATR",
+        "v_Saldo_Agressao",
+        "v_Volume_ZScore",
+        "v_Regime_Mercado",
+        "v_Sinal"
+      ],
+      "ordem_fisica_descendente": true,
+      "pregoes": 57,
+      "primeiro_pregao": "2026-08-28",
+      "ultimo_pregao": "2026-11-19",
+      "barras": 29983,
+      "cobertura_recente": {
+        "2026-11-19": {
+          "barras": 472,
+          "primeiro_rotulo": "09:00",
+          "ultimo_rotulo": "16:51",
+          "duplicatas_timestamp": 0,
+          "minutos_ausentes_no_intervalo": 0,
+          "ohlc_invalidos": 0,
+          "por_campo_nao_nulo": {
+            "v_Saldo_Agressao": 472
+          }
+        }
+      }
+    }
+  },
+  "replays_na_reserva": 0
+}
