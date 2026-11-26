@@ -1,0 +1,2016 @@
+{
+  "protocolo_sha256": "b2030a1fa97f12f208771d0ba796d82e1685760d33cedc68dfb794ac0de3b38c",
+  "base_sha256": "ed9230c941c186e81fb06a50c79755d4f4b0317d76ddf6bdf84be2e6773cd9d7",
+  "estrategias": {
+    "lit01_orb": {
+      "titulo": "Rompimento da faixa de abertura (ORB)",
+      "familia": "tendência",
+      "referencia": "Crabel, T. (1990). Day Trading with Short Term Price Patterns and Opening Range Breakout. Zarattini, C., Barbon, A. & Aziz, A. (2024). A Profitable Day Trading Strategy for the U.S. Equity Market. SSRN 4729284.",
+      "fonte_sha256": "db60dd4e6a65e3a09d44d2aad8c2ae33201789edcdd0d890c96808819dd96db9",
+      "variacao_escolhida": 8,
+      "parametros_escolhidos": {
+        "p_BarrasAbertura": 30.0,
+        "p_AlvoATR": 1.5,
+        "p_StopATR": 2.0,
+        "p_TempoMax": 30.0
+      },
+      "literatura": {
+        "desenvolvimento": {
+          "operacoes": 24,
+          "operacoes_por_pregao": 1.26,
+          "acerto": 0.4167,
+          "liquido_reais": 359.0,
+          "fator_lucro": 1.422,
+          "drawdown_reais": 205.0,
+          "media_diaria": 18.89,
+          "media_diaria_ic95": [
+            -26.21,
+            68.05
+          ],
+          "p_unilateral": 0.2245,
+          "pregoes_positivos": 9
+        },
+        "conhecidos": {
+          "operacoes": 28,
+          "operacoes_por_pregao": 1.4,
+          "acerto": 0.3214,
+          "liquido_reais": -146.0,
+          "fator_lucro": 0.855,
+          "drawdown_reais": 484.0,
+          "media_diaria": -7.3,
+          "media_diaria_ic95": [
+            -41.7,
+            28.5
+          ],
+          "p_unilateral": 0.6541,
+          "pregoes_positivos": 9
+        }
+      },
+      "escolhida": {
+        "desenvolvimento": {
+          "operacoes": 23,
+          "operacoes_por_pregao": 1.21,
+          "acerto": 0.6522,
+          "liquido_reais": 407.0,
+          "fator_lucro": 1.819,
+          "drawdown_reais": 164.0,
+          "media_diaria": 21.42,
+          "media_diaria_ic95": [
+            -14.37,
+            57.16
+          ],
+          "p_unilateral": 0.1224,
+          "pregoes_positivos": 12
+        },
+        "conhecidos": {
+          "operacoes": 26,
+          "operacoes_por_pregao": 1.3,
+          "acerto": 0.5385,
+          "liquido_reais": -159.0,
+          "fator_lucro": 0.808,
+          "drawdown_reais": 341.0,
+          "media_diaria": -7.95,
+          "media_diaria_ic95": [
+            -41.65,
+            23.5
+          ],
+          "p_unilateral": 0.6843,
+          "pregoes_positivos": 10
+        },
+        "nulo": {
+          "operacoes": 91,
+          "operacoes_por_pregao": 1.52,
+          "acerto": 0.4835,
+          "liquido_reais": -506.0,
+          "fator_lucro": 0.623,
+          "drawdown_reais": 574.0,
+          "media_diaria": -8.43,
+          "media_diaria_ic95": [
+            -16.87,
+            -0.18
+          ],
+          "p_unilateral": 0.9778,
+          "pregoes_positivos": 23
+        }
+      },
+      "spearman_dev_conhecidos": -0.2797,
+      "variacoes_positivas_conhecidos": 0,
+      "p_holm": 1.0,
+      "status": "rejeitada",
+      "criterios": {
+        "basicos": false,
+        "nulo_sem_lucro": true,
+        "holm": false
+      }
+    },
+    "lit02_bollinger_reversao": {
+      "titulo": "Reversão às bandas de Bollinger",
+      "familia": "reversão",
+      "referencia": "Bollinger, J. (2001). Bollinger on Bollinger Bands. McGraw-Hill.",
+      "fonte_sha256": "93cb50b131812c9cada757737f01586786970f0d49bd0547ff4b653a65077081",
+      "variacao_escolhida": 8,
+      "parametros_escolhidos": {
+        "p_Periodo": 40.0,
+        "p_Desvios": 2.5,
+        "p_AlvoATR": 2.0,
+        "p_StopATR": 2.0,
+        "p_TempoMax": 60.0
+      },
+      "literatura": {
+        "desenvolvimento": {
+          "operacoes": 114,
+          "operacoes_por_pregao": 6.0,
+          "acerto": 0.5,
+          "liquido_reais": -101.0,
+          "fator_lucro": 0.969,
+          "drawdown_reais": 920.0,
+          "media_diaria": -5.32,
+          "media_diaria_ic95": [
+            -69.26,
+            55.47
+          ],
+          "p_unilateral": 0.5511,
+          "pregoes_positivos": 11
+        },
+        "conhecidos": {
+          "operacoes": 120,
+          "operacoes_por_pregao": 6.0,
+          "acerto": 0.5583,
+          "liquido_reais": -444.0,
+          "fator_lucro": 0.847,
+          "drawdown_reais": 831.0,
+          "media_diaria": -22.2,
+          "media_diaria_ic95": [
+            -77.5,
+            31.45
+          ],
+          "p_unilateral": 0.7808,
+          "pregoes_positivos": 10
+        }
+      },
+      "escolhida": {
+        "desenvolvimento": {
+          "operacoes": 83,
+          "operacoes_por_pregao": 4.37,
+          "acerto": 0.5904,
+          "liquido_reais": 1295.0,
+          "fator_lucro": 1.63,
+          "drawdown_reais": 377.0,
+          "media_diaria": 68.16,
+          "media_diaria_ic95": [
+            -1.74,
+            140.0
+          ],
+          "p_unilateral": 0.0286,
+          "pregoes_positivos": 13
+        },
+        "conhecidos": {
+          "operacoes": 117,
+          "operacoes_por_pregao": 5.85,
+          "acerto": 0.5641,
+          "liquido_reais": 515.0,
+          "fator_lucro": 1.171,
+          "drawdown_reais": 617.0,
+          "media_diaria": 25.75,
+          "media_diaria_ic95": [
+            -34.45,
+            89.25
+          ],
+          "p_unilateral": 0.212,
+          "pregoes_positivos": 10
+        },
+        "nulo": {
+          "operacoes": 351,
+          "operacoes_por_pregao": 5.85,
+          "acerto": 0.5128,
+          "liquido_reais": -428.0,
+          "fator_lucro": 0.895,
+          "drawdown_reais": 639.0,
+          "media_diaria": -7.13,
+          "media_diaria_ic95": [
+            -18.73,
+            4.28
+          ],
+          "p_unilateral": 0.8897,
+          "pregoes_positivos": 27
+        }
+      },
+      "spearman_dev_conhecidos": 0.1051,
+      "variacoes_positivas_conhecidos": 4,
+      "p_holm": 1.0,
+      "status": "promissora (não significativa após Holm)",
+      "criterios": {
+        "basicos": true,
+        "nulo_sem_lucro": true,
+        "holm": false
+      }
+    },
+    "lit03_bollinger_squeeze": {
+      "titulo": "Compressão das bandas de Bollinger (squeeze)",
+      "familia": "tendência",
+      "referencia": "Bollinger, J. (2001). Bollinger on Bollinger Bands, cap. 15 (The Squeeze).",
+      "fonte_sha256": "bb4c52db0387ec57ef13e4204d166df9fc77a7b41f926eeae93385e6867158a6",
+      "variacao_escolhida": 11,
+      "parametros_escolhidos": {
+        "p_Janela": 120.0,
+        "p_Tolerancia": 1.05,
+        "p_AlvoATR": 1.5,
+        "p_StopATR": 1.5,
+        "p_TempoMax": 15.0
+      },
+      "literatura": {
+        "desenvolvimento": {
+          "operacoes": 25,
+          "operacoes_por_pregao": 1.32,
+          "acerto": 0.2,
+          "liquido_reais": -527.0,
+          "fator_lucro": 0.346,
+          "drawdown_reais": 540.0,
+          "media_diaria": -27.74,
+          "media_diaria_ic95": [
+            -59.53,
+            -4.68
+          ],
+          "p_unilateral": 0.9982,
+          "pregoes_positivos": 3
+        },
+        "conhecidos": {
+          "operacoes": 59,
+          "operacoes_por_pregao": 2.95,
+          "acerto": 0.2712,
+          "liquido_reais": -474.0,
+          "fator_lucro": 0.586,
+          "drawdown_reais": 567.0,
+          "media_diaria": -23.7,
+          "media_diaria_ic95": [
+            -46.9,
+            -0.35
+          ],
+          "p_unilateral": 0.9765,
+          "pregoes_positivos": 6
+        }
+      },
+      "escolhida": {
+        "desenvolvimento": {
+          "operacoes": 21,
+          "operacoes_por_pregao": 1.11,
+          "acerto": 0.3333,
+          "liquido_reais": -342.0,
+          "fator_lucro": 0.451,
+          "drawdown_reais": 393.0,
+          "media_diaria": -18.0,
+          "media_diaria_ic95": [
+            -38.79,
+            -1.63
+          ],
+          "p_unilateral": 0.9871,
+          "pregoes_positivos": 2
+        },
+        "conhecidos": {
+          "operacoes": 49,
+          "operacoes_por_pregao": 2.45,
+          "acerto": 0.5102,
+          "liquido_reais": -62.0,
+          "fator_lucro": 0.916,
+          "drawdown_reais": 185.0,
+          "media_diaria": -3.1,
+          "media_diaria_ic95": [
+            -26.15,
+            20.25
+          ],
+          "p_unilateral": 0.6097,
+          "pregoes_positivos": 9
+        },
+        "nulo": {
+          "operacoes": 178,
+          "operacoes_por_pregao": 2.97,
+          "acerto": 0.4326,
+          "liquido_reais": -652.0,
+          "fator_lucro": 0.606,
+          "drawdown_reais": 693.0,
+          "media_diaria": -10.87,
+          "media_diaria_ic95": [
+            -18.25,
+            -3.8
+          ],
+          "p_unilateral": 0.9985,
+          "pregoes_positivos": 19
+        }
+      },
+      "spearman_dev_conhecidos": 0.3706,
+      "variacoes_positivas_conhecidos": 1,
+      "p_holm": 1.0,
+      "status": "rejeitada",
+      "criterios": {
+        "basicos": false,
+        "nulo_sem_lucro": true,
+        "holm": false
+      }
+    },
+    "lit04_rsi2": {
+      "titulo": "RSI(2) de Connors",
+      "familia": "reversão",
+      "referencia": "Connors, L. & Alvarez, C. (2009). Short Term Trading Strategies That Work. TradingMarkets.",
+      "fonte_sha256": "ff9471791096e725d02fa056328fc8d56908c1289e8462868c2f509626fbecc4",
+      "variacao_escolhida": 12,
+      "parametros_escolhidos": {
+        "p_Tendencia": 100.0,
+        "p_Limite": 10.0,
+        "p_AlvoATR": 3.0,
+        "p_StopATR": 1.5,
+        "p_TempoMax": 60.0
+      },
+      "literatura": {
+        "desenvolvimento": {
+          "operacoes": 112,
+          "operacoes_por_pregao": 5.89,
+          "acerto": 0.5625,
+          "liquido_reais": -414.0,
+          "fator_lucro": 0.822,
+          "drawdown_reais": 803.0,
+          "media_diaria": -21.79,
+          "media_diaria_ic95": [
+            -73.53,
+            27.63
+          ],
+          "p_unilateral": 0.7986,
+          "pregoes_positivos": 8
+        },
+        "conhecidos": {
+          "operacoes": 120,
+          "operacoes_por_pregao": 6.0,
+          "acerto": 0.5917,
+          "liquido_reais": -751.0,
+          "fator_lucro": 0.58,
+          "drawdown_reais": 803.0,
+          "media_diaria": -37.55,
+          "media_diaria_ic95": [
+            -80.0,
+            -2.05
+          ],
+          "p_unilateral": 0.9818,
+          "pregoes_positivos": 5
+        }
+      },
+      "escolhida": {
+        "desenvolvimento": {
+          "operacoes": 113,
+          "operacoes_por_pregao": 5.95,
+          "acerto": 0.5664,
+          "liquido_reais": -183.0,
+          "fator_lucro": 0.914,
+          "drawdown_reais": 565.0,
+          "media_diaria": -9.63,
+          "media_diaria_ic95": [
+            -52.37,
+            33.11
+          ],
+          "p_unilateral": 0.671,
+          "pregoes_positivos": 7
+        },
+        "conhecidos": {
+          "operacoes": 120,
+          "operacoes_por_pregao": 6.0,
+          "acerto": 0.6,
+          "liquido_reais": -619.0,
+          "fator_lucro": 0.631,
+          "drawdown_reais": 671.0,
+          "media_diaria": -30.95,
+          "media_diaria_ic95": [
+            -65.3,
+            1.95
+          ],
+          "p_unilateral": 0.9685,
+          "pregoes_positivos": 6
+        },
+        "nulo": {
+          "operacoes": 360,
+          "operacoes_por_pregao": 6.0,
+          "acerto": 0.5361,
+          "liquido_reais": -1235.0,
+          "fator_lucro": 0.603,
+          "drawdown_reais": 1235.0,
+          "media_diaria": -20.58,
+          "media_diaria_ic95": [
+            -31.83,
+            -9.42
+          ],
+          "p_unilateral": 0.9999,
+          "pregoes_positivos": 22
+        }
+      },
+      "spearman_dev_conhecidos": 0.0,
+      "variacoes_positivas_conhecidos": 0,
+      "p_holm": 1.0,
+      "status": "rejeitada",
+      "criterios": {
+        "basicos": false,
+        "nulo_sem_lucro": true,
+        "holm": false
+      }
+    },
+    "lit05_macd": {
+      "titulo": "Cruzamento do MACD",
+      "familia": "tendência",
+      "referencia": "Appel, G. (2005). Technical Analysis: Power Tools for Active Investors. FT Press (MACD criado em 1979).",
+      "fonte_sha256": "b40f625711618425453b4ba69a846094232d4f7d0092f39945888e830669340a",
+      "variacao_escolhida": 10,
+      "parametros_escolhidos": {
+        "p_Rapida": 6.0,
+        "p_Lenta": 26.0,
+        "p_Sinal": 9.0,
+        "p_AlvoATR": 2.0,
+        "p_StopATR": 2.0,
+        "p_TempoMax": 30.0
+      },
+      "literatura": {
+        "desenvolvimento": {
+          "operacoes": 113,
+          "operacoes_por_pregao": 5.95,
+          "acerto": 0.4248,
+          "liquido_reais": 538.0,
+          "fator_lucro": 1.157,
+          "drawdown_reais": 406.0,
+          "media_diaria": 28.32,
+          "media_diaria_ic95": [
+            -14.11,
+            71.0
+          ],
+          "p_unilateral": 0.0933,
+          "pregoes_positivos": 11
+        },
+        "conhecidos": {
+          "operacoes": 120,
+          "operacoes_por_pregao": 6.0,
+          "acerto": 0.3833,
+          "liquido_reais": -587.0,
+          "fator_lucro": 0.832,
+          "drawdown_reais": 793.0,
+          "media_diaria": -29.35,
+          "media_diaria_ic95": [
+            -75.4,
+            16.75
+          ],
+          "p_unilateral": 0.8908,
+          "pregoes_positivos": 8
+        }
+      },
+      "escolhida": {
+        "desenvolvimento": {
+          "operacoes": 114,
+          "operacoes_por_pregao": 6.0,
+          "acerto": 0.4561,
+          "liquido_reais": 652.0,
+          "fator_lucro": 1.2,
+          "drawdown_reais": 512.0,
+          "media_diaria": 34.32,
+          "media_diaria_ic95": [
+            -15.58,
+            90.79
+          ],
+          "p_unilateral": 0.0946,
+          "pregoes_positivos": 10
+        },
+        "conhecidos": {
+          "operacoes": 120,
+          "operacoes_por_pregao": 6.0,
+          "acerto": 0.375,
+          "liquido_reais": -877.0,
+          "fator_lucro": 0.732,
+          "drawdown_reais": 1180.0,
+          "media_diaria": -43.85,
+          "media_diaria_ic95": [
+            -89.3,
+            1.8
+          ],
+          "p_unilateral": 0.9701,
+          "pregoes_positivos": 8
+        },
+        "nulo": {
+          "operacoes": 360,
+          "operacoes_por_pregao": 6.0,
+          "acerto": 0.3861,
+          "liquido_reais": -1131.0,
+          "fator_lucro": 0.751,
+          "drawdown_reais": 1369.0,
+          "media_diaria": -18.85,
+          "media_diaria_ic95": [
+            -33.77,
+            -3.85
+          ],
+          "p_unilateral": 0.9935,
+          "pregoes_positivos": 22
+        }
+      },
+      "spearman_dev_conhecidos": 0.0,
+      "variacoes_positivas_conhecidos": 3,
+      "p_holm": 1.0,
+      "status": "rejeitada",
+      "criterios": {
+        "basicos": false,
+        "nulo_sem_lucro": true,
+        "holm": false
+      }
+    },
+    "lit06_medias_moveis": {
+      "titulo": "Cruzamento de médias móveis",
+      "familia": "tendência",
+      "referencia": "Brock, W., Lakonishok, J. & LeBaron, B. (1992). Simple Technical Trading Rules and the Stochastic Properties of Stock Returns. Journal of Finance 47(5).",
+      "fonte_sha256": "f36ed6d481cc47beb5a7c1595bdd9e29a9fd94d62785ed05294085c844589856",
+      "variacao_escolhida": 1,
+      "parametros_escolhidos": "padrão da literatura",
+      "literatura": {
+        "desenvolvimento": {
+          "operacoes": 76,
+          "operacoes_por_pregao": 4.0,
+          "acerto": 0.3684,
+          "liquido_reais": 345.0,
+          "fator_lucro": 1.124,
+          "drawdown_reais": 602.0,
+          "media_diaria": 18.16,
+          "media_diaria_ic95": [
+            -60.69,
+            96.0
+          ],
+          "p_unilateral": 0.3323,
+          "pregoes_positivos": 9
+        },
+        "conhecidos": {
+          "operacoes": 80,
+          "operacoes_por_pregao": 4.0,
+          "acerto": 0.35,
+          "liquido_reais": 28.0,
+          "fator_lucro": 1.011,
+          "drawdown_reais": 481.0,
+          "media_diaria": 1.4,
+          "media_diaria_ic95": [
+            -62.65,
+            65.11
+          ],
+          "p_unilateral": 0.4813,
+          "pregoes_positivos": 9
+        }
+      },
+      "escolhida": {
+        "desenvolvimento": {
+          "operacoes": 76,
+          "operacoes_por_pregao": 4.0,
+          "acerto": 0.3684,
+          "liquido_reais": 345.0,
+          "fator_lucro": 1.124,
+          "drawdown_reais": 602.0,
+          "media_diaria": 18.16,
+          "media_diaria_ic95": [
+            -60.69,
+            96.0
+          ],
+          "p_unilateral": 0.3323,
+          "pregoes_positivos": 9
+        },
+        "conhecidos": {
+          "operacoes": 80,
+          "operacoes_por_pregao": 4.0,
+          "acerto": 0.35,
+          "liquido_reais": 28.0,
+          "fator_lucro": 1.011,
+          "drawdown_reais": 481.0,
+          "media_diaria": 1.4,
+          "media_diaria_ic95": [
+            -62.65,
+            65.11
+          ],
+          "p_unilateral": 0.4813,
+          "pregoes_positivos": 9
+        },
+        "nulo": {
+          "operacoes": 240,
+          "operacoes_por_pregao": 4.0,
+          "acerto": 0.3375,
+          "liquido_reais": -394.0,
+          "fator_lucro": 0.88,
+          "drawdown_reais": 701.0,
+          "media_diaria": -6.57,
+          "media_diaria_ic95": [
+            -21.37,
+            8.02
+          ],
+          "p_unilateral": 0.8138,
+          "pregoes_positivos": 26
+        }
+      },
+      "spearman_dev_conhecidos": -0.014,
+      "variacoes_positivas_conhecidos": 5,
+      "p_holm": 1.0,
+      "status": "rejeitada",
+      "criterios": {
+        "basicos": false,
+        "nulo_sem_lucro": true,
+        "holm": false
+      }
+    },
+    "lit07_donchian": {
+      "titulo": "Canal de Donchian (Turtle)",
+      "familia": "tendência",
+      "referencia": "Donchian, R. (1960). High Finance in Copper. Financial Analysts Journal 16(6). Faith, C. (2007). Way of the Turtle. McGraw-Hill.",
+      "fonte_sha256": "3ccf792d6b38df9da1dba6adc38ab26dc0578d573cf81d4d37f011a563e32b76",
+      "variacao_escolhida": 10,
+      "parametros_escolhidos": {
+        "p_Entrada": 55.0,
+        "p_Saida": 10.0,
+        "p_AlvoATR": 3.0,
+        "p_StopATR": 1.0,
+        "p_TempoMax": 60.0
+      },
+      "literatura": {
+        "desenvolvimento": {
+          "operacoes": 76,
+          "operacoes_por_pregao": 4.0,
+          "acerto": 0.3289,
+          "liquido_reais": -803.0,
+          "fator_lucro": 0.759,
+          "drawdown_reais": 1144.0,
+          "media_diaria": -42.26,
+          "media_diaria_ic95": [
+            -133.68,
+            51.32
+          ],
+          "p_unilateral": 0.818,
+          "pregoes_positivos": 7
+        },
+        "conhecidos": {
+          "operacoes": 80,
+          "operacoes_por_pregao": 4.0,
+          "acerto": 0.2875,
+          "liquido_reais": -1028.0,
+          "fator_lucro": 0.684,
+          "drawdown_reais": 1056.0,
+          "media_diaria": -51.4,
+          "media_diaria_ic95": [
+            -113.1,
+            10.1
+          ],
+          "p_unilateral": 0.9456,
+          "pregoes_positivos": 6
+        }
+      },
+      "escolhida": {
+        "desenvolvimento": {
+          "operacoes": 75,
+          "operacoes_por_pregao": 3.95,
+          "acerto": 0.3867,
+          "liquido_reais": 988.0,
+          "fator_lucro": 1.513,
+          "drawdown_reais": 477.0,
+          "media_diaria": 52.0,
+          "media_diaria_ic95": [
+            -31.42,
+            134.26
+          ],
+          "p_unilateral": 0.1131,
+          "pregoes_positivos": 12
+        },
+        "conhecidos": {
+          "operacoes": 80,
+          "operacoes_por_pregao": 4.0,
+          "acerto": 0.25,
+          "liquido_reais": -548.0,
+          "fator_lucro": 0.774,
+          "drawdown_reais": 686.0,
+          "media_diaria": -27.4,
+          "media_diaria_ic95": [
+            -82.1,
+            28.0
+          ],
+          "p_unilateral": 0.832,
+          "pregoes_positivos": 9
+        },
+        "nulo": {
+          "operacoes": 240,
+          "operacoes_por_pregao": 4.0,
+          "acerto": 0.2458,
+          "liquido_reais": -741.0,
+          "fator_lucro": 0.732,
+          "drawdown_reais": 955.0,
+          "media_diaria": -12.35,
+          "media_diaria_ic95": [
+            -23.02,
+            -1.5
+          ],
+          "p_unilateral": 0.9868,
+          "pregoes_positivos": 16
+        }
+      },
+      "spearman_dev_conhecidos": -0.028,
+      "variacoes_positivas_conhecidos": 1,
+      "p_holm": 1.0,
+      "status": "rejeitada",
+      "criterios": {
+        "basicos": false,
+        "nulo_sem_lucro": true,
+        "holm": false
+      }
+    },
+    "lit08_keltner": {
+      "titulo": "Canal de Keltner",
+      "familia": "tendência",
+      "referencia": "Keltner, C. (1960). How to Make Money in Commodities. Raschke, L. & Connors, L. (1995). Street Smarts (versão com ATR).",
+      "fonte_sha256": "1029fe545e74ce4874138a7d2327c91e28ab6b6f4fd641d57f695633d9936ff5",
+      "variacao_escolhida": 10,
+      "parametros_escolhidos": {
+        "p_Periodo": 20.0,
+        "p_Mult": 1.5,
+        "p_AlvoATR": 3.0,
+        "p_StopATR": 1.0,
+        "p_TempoMax": 60.0
+      },
+      "literatura": {
+        "desenvolvimento": {
+          "operacoes": 94,
+          "operacoes_por_pregao": 4.95,
+          "acerto": 0.3936,
+          "liquido_reais": -671.0,
+          "fator_lucro": 0.795,
+          "drawdown_reais": 732.0,
+          "media_diaria": -35.32,
+          "media_diaria_ic95": [
+            -106.26,
+            33.11
+          ],
+          "p_unilateral": 0.8393,
+          "pregoes_positivos": 10
+        },
+        "conhecidos": {
+          "operacoes": 100,
+          "operacoes_por_pregao": 5.0,
+          "acerto": 0.4,
+          "liquido_reais": -359.0,
+          "fator_lucro": 0.878,
+          "drawdown_reais": 589.0,
+          "media_diaria": -17.95,
+          "media_diaria_ic95": [
+            -72.7,
+            36.45
+          ],
+          "p_unilateral": 0.7409,
+          "pregoes_positivos": 10
+        }
+      },
+      "escolhida": {
+        "desenvolvimento": {
+          "operacoes": 95,
+          "operacoes_por_pregao": 5.0,
+          "acerto": 0.3368,
+          "liquido_reais": 809.0,
+          "fator_lucro": 1.294,
+          "drawdown_reais": 668.0,
+          "media_diaria": 42.58,
+          "media_diaria_ic95": [
+            -35.26,
+            130.32
+          ],
+          "p_unilateral": 0.1554,
+          "pregoes_positivos": 9
+        },
+        "conhecidos": {
+          "operacoes": 100,
+          "operacoes_por_pregao": 5.0,
+          "acerto": 0.2,
+          "liquido_reais": -890.0,
+          "fator_lucro": 0.685,
+          "drawdown_reais": 1028.0,
+          "media_diaria": -44.5,
+          "media_diaria_ic95": [
+            -100.0,
+            12.4
+          ],
+          "p_unilateral": 0.9358,
+          "pregoes_positivos": 6
+        },
+        "nulo": {
+          "operacoes": 300,
+          "operacoes_por_pregao": 5.0,
+          "acerto": 0.2667,
+          "liquido_reais": -753.0,
+          "fator_lucro": 0.783,
+          "drawdown_reais": 923.0,
+          "media_diaria": -12.55,
+          "media_diaria_ic95": [
+            -25.23,
+            0.25
+          ],
+          "p_unilateral": 0.9721,
+          "pregoes_positivos": 21
+        }
+      },
+      "spearman_dev_conhecidos": -0.2168,
+      "variacoes_positivas_conhecidos": 1,
+      "p_holm": 1.0,
+      "status": "rejeitada",
+      "criterios": {
+        "basicos": false,
+        "nulo_sem_lucro": true,
+        "holm": false
+      }
+    },
+    "lit09_vwap_reversao": {
+      "titulo": "Reversão à VWAP",
+      "familia": "reversão",
+      "referencia": "Berkowitz, S., Logue, D. & Noser, E. (1988). The Total Cost of Transactions on the NYSE. Journal of Finance 43(1) (VWAP como preço justo do dia).",
+      "fonte_sha256": "0187300c52a271f6d4b00833d6047dfaa071b0d477b0e688abdd95845732ad92",
+      "variacao_escolhida": 2,
+      "parametros_escolhidos": {
+        "p_Janela": 120.0,
+        "p_Z": 2.0,
+        "p_AlvoATR": 3.0,
+        "p_StopATR": 2.0,
+        "p_TempoMax": 30.0
+      },
+      "literatura": {
+        "desenvolvimento": {
+          "operacoes": 114,
+          "operacoes_por_pregao": 6.0,
+          "acerto": 0.4211,
+          "liquido_reais": -128.0,
+          "fator_lucro": 0.968,
+          "drawdown_reais": 824.0,
+          "media_diaria": -6.74,
+          "media_diaria_ic95": [
+            -80.42,
+            70.53
+          ],
+          "p_unilateral": 0.5741,
+          "pregoes_positivos": 7
+        },
+        "conhecidos": {
+          "operacoes": 120,
+          "operacoes_por_pregao": 6.0,
+          "acerto": 0.425,
+          "liquido_reais": -307.0,
+          "fator_lucro": 0.916,
+          "drawdown_reais": 836.0,
+          "media_diaria": -15.35,
+          "media_diaria_ic95": [
+            -90.66,
+            60.9
+          ],
+          "p_unilateral": 0.6557,
+          "pregoes_positivos": 8
+        }
+      },
+      "escolhida": {
+        "desenvolvimento": {
+          "operacoes": 114,
+          "operacoes_por_pregao": 6.0,
+          "acerto": 0.4386,
+          "liquido_reais": 1015.0,
+          "fator_lucro": 1.249,
+          "drawdown_reais": 539.0,
+          "media_diaria": 53.42,
+          "media_diaria_ic95": [
+            -34.42,
+            151.63
+          ],
+          "p_unilateral": 0.1238,
+          "pregoes_positivos": 10
+        },
+        "conhecidos": {
+          "operacoes": 110,
+          "operacoes_por_pregao": 5.5,
+          "acerto": 0.3818,
+          "liquido_reais": -928.0,
+          "fator_lucro": 0.768,
+          "drawdown_reais": 1071.0,
+          "media_diaria": -46.4,
+          "media_diaria_ic95": [
+            -134.45,
+            38.6
+          ],
+          "p_unilateral": 0.8546,
+          "pregoes_positivos": 8
+        },
+        "nulo": {
+          "operacoes": 346,
+          "operacoes_por_pregao": 5.77,
+          "acerto": 0.4509,
+          "liquido_reais": 123.0,
+          "fator_lucro": 1.029,
+          "drawdown_reais": 342.0,
+          "media_diaria": 2.05,
+          "media_diaria_ic95": [
+            -12.85,
+            16.3
+          ],
+          "p_unilateral": 0.3824,
+          "pregoes_positivos": 34
+        }
+      },
+      "spearman_dev_conhecidos": -0.2308,
+      "variacoes_positivas_conhecidos": 3,
+      "p_holm": 1.0,
+      "status": "rejeitada",
+      "criterios": {
+        "basicos": false,
+        "nulo_sem_lucro": true,
+        "holm": false
+      }
+    },
+    "lit10_vwap_tendencia": {
+      "titulo": "Tendência pela VWAP",
+      "familia": "tendência",
+      "referencia": "Zarattini, C. & Aziz, A. (2023). Volume Weighted Average Price (VWAP): The Holy Grail for Day Trading Systems. SSRN 4631351.",
+      "fonte_sha256": "fdebb078a7790ed8d49633a95e71f43dad87e40145c24f477bb3b66635b39a53",
+      "variacao_escolhida": 6,
+      "parametros_escolhidos": {
+        "p_Confirmacao": 1.0,
+        "p_AlvoATR": 3.0,
+        "p_StopATR": 1.0,
+        "p_TempoMax": 30.0
+      },
+      "literatura": {
+        "desenvolvimento": {
+          "operacoes": 68,
+          "operacoes_por_pregao": 3.58,
+          "acerto": 0.3235,
+          "liquido_reais": 172.0,
+          "fator_lucro": 1.083,
+          "drawdown_reais": 562.0,
+          "media_diaria": 9.05,
+          "media_diaria_ic95": [
+            -36.89,
+            53.58
+          ],
+          "p_unilateral": 0.345,
+          "pregoes_positivos": 12
+        },
+        "conhecidos": {
+          "operacoes": 72,
+          "operacoes_por_pregao": 3.6,
+          "acerto": 0.3194,
+          "liquido_reais": 513.0,
+          "fator_lucro": 1.259,
+          "drawdown_reais": 272.0,
+          "media_diaria": 25.65,
+          "media_diaria_ic95": [
+            -21.55,
+            75.85
+          ],
+          "p_unilateral": 0.1499,
+          "pregoes_positivos": 13
+        }
+      },
+      "escolhida": {
+        "desenvolvimento": {
+          "operacoes": 69,
+          "operacoes_por_pregao": 3.63,
+          "acerto": 0.2754,
+          "liquido_reais": 274.0,
+          "fator_lucro": 1.174,
+          "drawdown_reais": 344.0,
+          "media_diaria": 14.42,
+          "media_diaria_ic95": [
+            -34.37,
+            61.16
+          ],
+          "p_unilateral": 0.2807,
+          "pregoes_positivos": 10
+        },
+        "conhecidos": {
+          "operacoes": 72,
+          "operacoes_por_pregao": 3.6,
+          "acerto": 0.1667,
+          "liquido_reais": -194.0,
+          "fator_lucro": 0.867,
+          "drawdown_reais": 472.0,
+          "media_diaria": -9.7,
+          "media_diaria_ic95": [
+            -45.85,
+            27.85
+          ],
+          "p_unilateral": 0.7004,
+          "pregoes_positivos": 8
+        },
+        "nulo": {
+          "operacoes": 215,
+          "operacoes_por_pregao": 3.58,
+          "acerto": 0.186,
+          "liquido_reais": -773.0,
+          "fator_lucro": 0.65,
+          "drawdown_reais": 779.0,
+          "media_diaria": -12.88,
+          "media_diaria_ic95": [
+            -22.93,
+            -2.55
+          ],
+          "p_unilateral": 0.9919,
+          "pregoes_positivos": 19
+        }
+      },
+      "spearman_dev_conhecidos": -0.3147,
+      "variacoes_positivas_conhecidos": 7,
+      "p_holm": 1.0,
+      "status": "rejeitada",
+      "criterios": {
+        "basicos": false,
+        "nulo_sem_lucro": true,
+        "holm": false
+      }
+    },
+    "lit11_momento_intradiario": {
+      "titulo": "Momento intradiário (primeira meia hora prevê a última)",
+      "familia": "momento",
+      "referencia": "Gao, L., Han, Y., Li, S. Z. & Zhou, G. (2018). Market Intraday Momentum. Journal of Financial Economics 129(2).",
+      "fonte_sha256": "0c42a1a3a8f23a16ca2103ecab79bc860dc0a253a1fd0108745d1928c5969542",
+      "variacao_escolhida": 1,
+      "parametros_escolhidos": "padrão da literatura",
+      "literatura": {
+        "desenvolvimento": {
+          "operacoes": 15,
+          "operacoes_por_pregao": 0.79,
+          "acerto": 0.4,
+          "liquido_reais": -21.0,
+          "fator_lucro": 0.938,
+          "drawdown_reais": 197.0,
+          "media_diaria": -1.11,
+          "media_diaria_ic95": [
+            -20.16,
+            20.32
+          ],
+          "p_unilateral": 0.5578,
+          "pregoes_positivos": 6
+        },
+        "conhecidos": {
+          "operacoes": 17,
+          "operacoes_por_pregao": 0.85,
+          "acerto": 0.4706,
+          "liquido_reais": -58.0,
+          "fator_lucro": 0.853,
+          "drawdown_reais": 200.0,
+          "media_diaria": -2.9,
+          "media_diaria_ic95": [
+            -20.9,
+            15.7
+          ],
+          "p_unilateral": 0.6245,
+          "pregoes_positivos": 8
+        }
+      },
+      "escolhida": {
+        "desenvolvimento": {
+          "operacoes": 15,
+          "operacoes_por_pregao": 0.79,
+          "acerto": 0.4,
+          "liquido_reais": -21.0,
+          "fator_lucro": 0.938,
+          "drawdown_reais": 197.0,
+          "media_diaria": -1.11,
+          "media_diaria_ic95": [
+            -20.16,
+            20.32
+          ],
+          "p_unilateral": 0.5578,
+          "pregoes_positivos": 6
+        },
+        "conhecidos": {
+          "operacoes": 17,
+          "operacoes_por_pregao": 0.85,
+          "acerto": 0.4706,
+          "liquido_reais": -58.0,
+          "fator_lucro": 0.853,
+          "drawdown_reais": 200.0,
+          "media_diaria": -2.9,
+          "media_diaria_ic95": [
+            -20.9,
+            15.7
+          ],
+          "p_unilateral": 0.6245,
+          "pregoes_positivos": 8
+        },
+        "nulo": {
+          "operacoes": 51,
+          "operacoes_por_pregao": 0.85,
+          "acerto": 0.2745,
+          "liquido_reais": -433.0,
+          "fator_lucro": 0.496,
+          "drawdown_reais": 528.0,
+          "media_diaria": -7.22,
+          "media_diaria_ic95": [
+            -12.92,
+            -1.27
+          ],
+          "p_unilateral": 0.991,
+          "pregoes_positivos": 14
+        }
+      },
+      "spearman_dev_conhecidos": 0.2028,
+      "variacoes_positivas_conhecidos": 3,
+      "p_holm": 1.0,
+      "status": "rejeitada",
+      "criterios": {
+        "basicos": false,
+        "nulo_sem_lucro": true,
+        "holm": false
+      }
+    },
+    "lit12_gap_reversao": {
+      "titulo": "Fechamento do gap de abertura",
+      "familia": "reversão",
+      "referencia": "Lou, D., Polk, C. & Skouras, S. (2019). A Tug of War: Overnight versus Intraday Expected Returns. Journal of Financial Economics 134(1) (reversão entre retorno noturno e intradiário).",
+      "fonte_sha256": "f79c58e7d7f571c9af2f52805f38d4a2a08d4c41b4c1bc98d6b1976a73fd4615",
+      "variacao_escolhida": 1,
+      "parametros_escolhidos": "padrão da literatura",
+      "literatura": {
+        "desenvolvimento": {
+          "operacoes": 10,
+          "operacoes_por_pregao": 0.53,
+          "acerto": 0.4,
+          "liquido_reais": 39.0,
+          "fator_lucro": 1.078,
+          "drawdown_reais": 337.0,
+          "media_diaria": 2.05,
+          "media_diaria_ic95": [
+            -31.63,
+            39.11
+          ],
+          "p_unilateral": 0.4702,
+          "pregoes_positivos": 4
+        },
+        "conhecidos": {
+          "operacoes": 11,
+          "operacoes_por_pregao": 0.55,
+          "acerto": 0.3636,
+          "liquido_reais": 2.0,
+          "fator_lucro": 1.004,
+          "drawdown_reais": 288.0,
+          "media_diaria": 0.1,
+          "media_diaria_ic95": [
+            -33.15,
+            36.85
+          ],
+          "p_unilateral": 0.5039,
+          "pregoes_positivos": 4
+        }
+      },
+      "escolhida": {
+        "desenvolvimento": {
+          "operacoes": 10,
+          "operacoes_por_pregao": 0.53,
+          "acerto": 0.4,
+          "liquido_reais": 39.0,
+          "fator_lucro": 1.078,
+          "drawdown_reais": 337.0,
+          "media_diaria": 2.05,
+          "media_diaria_ic95": [
+            -31.63,
+            39.11
+          ],
+          "p_unilateral": 0.4702,
+          "pregoes_positivos": 4
+        },
+        "conhecidos": {
+          "operacoes": 11,
+          "operacoes_por_pregao": 0.55,
+          "acerto": 0.3636,
+          "liquido_reais": 2.0,
+          "fator_lucro": 1.004,
+          "drawdown_reais": 288.0,
+          "media_diaria": 0.1,
+          "media_diaria_ic95": [
+            -33.15,
+            36.85
+          ],
+          "p_unilateral": 0.5039,
+          "pregoes_positivos": 4
+        },
+        "nulo": {
+          "operacoes": 18,
+          "operacoes_por_pregao": 0.3,
+          "acerto": 0.5556,
+          "liquido_reais": 29.0,
+          "fator_lucro": 1.102,
+          "drawdown_reais": 90.0,
+          "media_diaria": 0.48,
+          "media_diaria_ic95": [
+            -4.45,
+            5.45
+          ],
+          "p_unilateral": 0.4306,
+          "pregoes_positivos": 10
+        }
+      },
+      "spearman_dev_conhecidos": -0.2601,
+      "variacoes_positivas_conhecidos": 8,
+      "p_holm": 1.0,
+      "status": "rejeitada",
+      "criterios": {
+        "basicos": false,
+        "nulo_sem_lucro": true,
+        "holm": false
+      }
+    },
+    "lit13_estocastico": {
+      "titulo": "Oscilador estocástico",
+      "familia": "reversão",
+      "referencia": "Lane, G. (1984). Lane's Stochastics. Technical Analysis of Stocks & Commodities 2(3).",
+      "fonte_sha256": "355b093f86450d7577208942fcd1dcb1d726201471915e5063e71f35bf4a0a3c",
+      "variacao_escolhida": 1,
+      "parametros_escolhidos": "padrão da literatura",
+      "literatura": {
+        "desenvolvimento": {
+          "operacoes": 114,
+          "operacoes_por_pregao": 6.0,
+          "acerto": 0.4561,
+          "liquido_reais": 101.0,
+          "fator_lucro": 1.027,
+          "drawdown_reais": 1008.0,
+          "media_diaria": 5.32,
+          "media_diaria_ic95": [
+            -71.9,
+            87.16
+          ],
+          "p_unilateral": 0.4607,
+          "pregoes_positivos": 8
+        },
+        "conhecidos": {
+          "operacoes": 120,
+          "operacoes_por_pregao": 6.0,
+          "acerto": 0.525,
+          "liquido_reais": 67.0,
+          "fator_lucro": 1.021,
+          "drawdown_reais": 566.0,
+          "media_diaria": 3.35,
+          "media_diaria_ic95": [
+            -49.15,
+            59.7
+          ],
+          "p_unilateral": 0.4653,
+          "pregoes_positivos": 8
+        }
+      },
+      "escolhida": {
+        "desenvolvimento": {
+          "operacoes": 114,
+          "operacoes_por_pregao": 6.0,
+          "acerto": 0.4561,
+          "liquido_reais": 101.0,
+          "fator_lucro": 1.027,
+          "drawdown_reais": 1008.0,
+          "media_diaria": 5.32,
+          "media_diaria_ic95": [
+            -71.9,
+            87.16
+          ],
+          "p_unilateral": 0.4607,
+          "pregoes_positivos": 8
+        },
+        "conhecidos": {
+          "operacoes": 120,
+          "operacoes_por_pregao": 6.0,
+          "acerto": 0.525,
+          "liquido_reais": 67.0,
+          "fator_lucro": 1.021,
+          "drawdown_reais": 566.0,
+          "media_diaria": 3.35,
+          "media_diaria_ic95": [
+            -49.15,
+            59.7
+          ],
+          "p_unilateral": 0.4653,
+          "pregoes_positivos": 8
+        },
+        "nulo": {
+          "operacoes": 360,
+          "operacoes_por_pregao": 6.0,
+          "acerto": 0.4528,
+          "liquido_reais": -828.0,
+          "fator_lucro": 0.813,
+          "drawdown_reais": 828.0,
+          "media_diaria": -13.8,
+          "media_diaria_ic95": [
+            -26.35,
+            -1.52
+          ],
+          "p_unilateral": 0.9856,
+          "pregoes_positivos": 24
+        }
+      },
+      "spearman_dev_conhecidos": 0.4825,
+      "variacoes_positivas_conhecidos": 6,
+      "p_holm": 1.0,
+      "status": "rejeitada",
+      "criterios": {
+        "basicos": false,
+        "nulo_sem_lucro": true,
+        "holm": false
+      }
+    },
+    "lit14_williams_r": {
+      "titulo": "Williams %R",
+      "familia": "reversão",
+      "referencia": "Williams, L. (1973). How I Made One Million Dollars Last Year Trading Commodities.",
+      "fonte_sha256": "e820d9182847a170cd0ff49be5bcb8d8ba8c07e235b19eb0e09d51c9ae0a09fe",
+      "variacao_escolhida": 6,
+      "parametros_escolhidos": {
+        "p_Periodo": 28.0,
+        "p_Extremo": 90.0,
+        "p_Gatilho": 80.0,
+        "p_AlvoATR": 2.0,
+        "p_StopATR": 1.5,
+        "p_TempoMax": 30.0
+      },
+      "literatura": {
+        "desenvolvimento": {
+          "operacoes": 113,
+          "operacoes_por_pregao": 5.95,
+          "acerto": 0.5221,
+          "liquido_reais": -135.0,
+          "fator_lucro": 0.949,
+          "drawdown_reais": 743.0,
+          "media_diaria": -7.11,
+          "media_diaria_ic95": [
+            -66.89,
+            49.32
+          ],
+          "p_unilateral": 0.5883,
+          "pregoes_positivos": 9
+        },
+        "conhecidos": {
+          "operacoes": 120,
+          "operacoes_por_pregao": 6.0,
+          "acerto": 0.55,
+          "liquido_reais": -518.0,
+          "fator_lucro": 0.782,
+          "drawdown_reais": 614.0,
+          "media_diaria": -25.9,
+          "media_diaria_ic95": [
+            -74.8,
+            26.05
+          ],
+          "p_unilateral": 0.8365,
+          "pregoes_positivos": 9
+        }
+      },
+      "escolhida": {
+        "desenvolvimento": {
+          "operacoes": 113,
+          "operacoes_por_pregao": 5.95,
+          "acerto": 0.531,
+          "liquido_reais": 656.0,
+          "fator_lucro": 1.207,
+          "drawdown_reais": 350.0,
+          "media_diaria": 34.53,
+          "media_diaria_ic95": [
+            -35.53,
+            105.68
+          ],
+          "p_unilateral": 0.1692,
+          "pregoes_positivos": 10
+        },
+        "conhecidos": {
+          "operacoes": 120,
+          "operacoes_por_pregao": 6.0,
+          "acerto": 0.5417,
+          "liquido_reais": -374.0,
+          "fator_lucro": 0.877,
+          "drawdown_reais": 940.0,
+          "media_diaria": -18.7,
+          "media_diaria_ic95": [
+            -73.1,
+            33.35
+          ],
+          "p_unilateral": 0.7497,
+          "pregoes_positivos": 11
+        },
+        "nulo": {
+          "operacoes": 360,
+          "operacoes_por_pregao": 6.0,
+          "acerto": 0.4722,
+          "liquido_reais": -1121.0,
+          "fator_lucro": 0.726,
+          "drawdown_reais": 1336.0,
+          "media_diaria": -18.68,
+          "media_diaria_ic95": [
+            -32.23,
+            -4.92
+          ],
+          "p_unilateral": 0.9968,
+          "pregoes_positivos": 21
+        }
+      },
+      "spearman_dev_conhecidos": 0.042,
+      "variacoes_positivas_conhecidos": 4,
+      "p_holm": 1.0,
+      "status": "rejeitada",
+      "criterios": {
+        "basicos": false,
+        "nulo_sem_lucro": true,
+        "holm": false
+      }
+    },
+    "lit15_cci": {
+      "titulo": "Commodity Channel Index (CCI)",
+      "familia": "tendência",
+      "referencia": "Lambert, D. (1980). Commodity Channel Index: Tools for Trading Cyclical Trends. Commodities Magazine.",
+      "fonte_sha256": "5c2624f3ab8d128fbbe2fc800af6a0620281e7c346cc6c780a5de9a3de9ba0bf",
+      "variacao_escolhida": 4,
+      "parametros_escolhidos": {
+        "p_Periodo": 20.0,
+        "p_Nivel": 200.0,
+        "p_AlvoATR": 3.0,
+        "p_StopATR": 1.0,
+        "p_TempoMax": 30.0
+      },
+      "literatura": {
+        "desenvolvimento": {
+          "operacoes": 92,
+          "operacoes_por_pregao": 4.84,
+          "acerto": 0.4348,
+          "liquido_reais": -135.0,
+          "fator_lucro": 0.955,
+          "drawdown_reais": 606.0,
+          "media_diaria": -7.11,
+          "media_diaria_ic95": [
+            -89.89,
+            74.37
+          ],
+          "p_unilateral": 0.5625,
+          "pregoes_positivos": 10
+        },
+        "conhecidos": {
+          "operacoes": 100,
+          "operacoes_por_pregao": 5.0,
+          "acerto": 0.33,
+          "liquido_reais": -641.0,
+          "fator_lucro": 0.777,
+          "drawdown_reais": 790.0,
+          "media_diaria": -32.05,
+          "media_diaria_ic95": [
+            -83.65,
+            18.1
+          ],
+          "p_unilateral": 0.8932,
+          "pregoes_positivos": 9
+        }
+      },
+      "escolhida": {
+        "desenvolvimento": {
+          "operacoes": 21,
+          "operacoes_por_pregao": 1.11,
+          "acerto": 0.2857,
+          "liquido_reais": 32.0,
+          "fator_lucro": 1.07,
+          "drawdown_reais": 209.0,
+          "media_diaria": 1.68,
+          "media_diaria_ic95": [
+            -19.26,
+            24.95
+          ],
+          "p_unilateral": 0.456,
+          "pregoes_positivos": 4
+        },
+        "conhecidos": {
+          "operacoes": 35,
+          "operacoes_por_pregao": 1.75,
+          "acerto": 0.2857,
+          "liquido_reais": -201.0,
+          "fator_lucro": 0.727,
+          "drawdown_reais": 305.0,
+          "media_diaria": -10.05,
+          "media_diaria_ic95": [
+            -28.05,
+            6.05
+          ],
+          "p_unilateral": 0.8791,
+          "pregoes_positivos": 7
+        },
+        "nulo": {
+          "operacoes": 85,
+          "operacoes_por_pregao": 1.42,
+          "acerto": 0.3059,
+          "liquido_reais": -94.0,
+          "fator_lucro": 0.891,
+          "drawdown_reais": 335.0,
+          "media_diaria": -1.57,
+          "media_diaria_ic95": [
+            -8.0,
+            5.23
+          ],
+          "p_unilateral": 0.6884,
+          "pregoes_positivos": 18
+        }
+      },
+      "spearman_dev_conhecidos": 0.2517,
+      "variacoes_positivas_conhecidos": 2,
+      "p_holm": 1.0,
+      "status": "rejeitada",
+      "criterios": {
+        "basicos": false,
+        "nulo_sem_lucro": true,
+        "holm": false
+      }
+    },
+    "lit16_adx_dmi": {
+      "titulo": "ADX e DMI de Wilder",
+      "familia": "tendência",
+      "referencia": "Wilder, J. W. (1978). New Concepts in Technical Trading Systems. Trend Research.",
+      "fonte_sha256": "513693edc583dbbe6d0d6f98161d2f645772db16bd07a8f0272d4f4dfb3c2ca7",
+      "variacao_escolhida": 1,
+      "parametros_escolhidos": "padrão da literatura",
+      "literatura": {
+        "desenvolvimento": {
+          "operacoes": 80,
+          "operacoes_por_pregao": 4.21,
+          "acerto": 0.4125,
+          "liquido_reais": 422.0,
+          "fator_lucro": 1.257,
+          "drawdown_reais": 370.0,
+          "media_diaria": 22.21,
+          "media_diaria_ic95": [
+            -6.26,
+            50.89
+          ],
+          "p_unilateral": 0.0635,
+          "pregoes_positivos": 10
+        },
+        "conhecidos": {
+          "operacoes": 77,
+          "operacoes_por_pregao": 3.85,
+          "acerto": 0.2857,
+          "liquido_reais": -429.0,
+          "fator_lucro": 0.719,
+          "drawdown_reais": 567.0,
+          "media_diaria": -21.45,
+          "media_diaria_ic95": [
+            -53.7,
+            11.85
+          ],
+          "p_unilateral": 0.8969,
+          "pregoes_positivos": 8
+        }
+      },
+      "escolhida": {
+        "desenvolvimento": {
+          "operacoes": 80,
+          "operacoes_por_pregao": 4.21,
+          "acerto": 0.4125,
+          "liquido_reais": 422.0,
+          "fator_lucro": 1.257,
+          "drawdown_reais": 370.0,
+          "media_diaria": 22.21,
+          "media_diaria_ic95": [
+            -6.26,
+            50.89
+          ],
+          "p_unilateral": 0.0635,
+          "pregoes_positivos": 10
+        },
+        "conhecidos": {
+          "operacoes": 77,
+          "operacoes_por_pregao": 3.85,
+          "acerto": 0.2857,
+          "liquido_reais": -429.0,
+          "fator_lucro": 0.719,
+          "drawdown_reais": 567.0,
+          "media_diaria": -21.45,
+          "media_diaria_ic95": [
+            -53.7,
+            11.85
+          ],
+          "p_unilateral": 0.8969,
+          "pregoes_positivos": 8
+        },
+        "nulo": {
+          "operacoes": 246,
+          "operacoes_por_pregao": 4.1,
+          "acerto": 0.2846,
+          "liquido_reais": -363.0,
+          "fator_lucro": 0.842,
+          "drawdown_reais": 499.0,
+          "media_diaria": -6.05,
+          "media_diaria_ic95": [
+            -17.35,
+            5.43
+          ],
+          "p_unilateral": 0.8478,
+          "pregoes_positivos": 24
+        }
+      },
+      "spearman_dev_conhecidos": -0.7193,
+      "variacoes_positivas_conhecidos": 4,
+      "p_holm": 1.0,
+      "status": "rejeitada",
+      "criterios": {
+        "basicos": false,
+        "nulo_sem_lucro": true,
+        "holm": false
+      }
+    },
+    "lit17_fluxo_agressao": {
+      "titulo": "Desequilíbrio do fluxo de agressão (OFI)",
+      "familia": "microestrutura",
+      "referencia": "Cont, R., Kukanov, A. & Stoikov, S. (2014). The Price Impact of Order Book Events. Journal of Financial Econometrics 12(1). Chordia, T. & Subrahmanyam, A. (2004). Order Imbalance and Individual Stock Returns. Journal of Financial Economics 72(3).",
+      "fonte_sha256": "c5ed28d90987ead33a1f7e79f24efeaad29cf1188c8dd8aa264b48d9ab50b521",
+      "variacao_escolhida": 6,
+      "parametros_escolhidos": {
+        "p_Janela": 10.0,
+        "p_Z": 1.5,
+        "p_AlvoATR": 2.0,
+        "p_StopATR": 1.0,
+        "p_TempoMax": 60.0
+      },
+      "literatura": {
+        "desenvolvimento": {
+          "operacoes": 45,
+          "operacoes_por_pregao": 2.37,
+          "acerto": 0.3556,
+          "liquido_reais": -409.0,
+          "fator_lucro": 0.457,
+          "drawdown_reais": 409.0,
+          "media_diaria": -21.53,
+          "media_diaria_ic95": [
+            -45.37,
+            -0.11
+          ],
+          "p_unilateral": 0.9756,
+          "pregoes_positivos": 5
+        },
+        "conhecidos": {
+          "operacoes": 12,
+          "operacoes_por_pregao": 0.6,
+          "acerto": 0.5,
+          "liquido_reais": 68.0,
+          "fator_lucro": 2.015,
+          "drawdown_reais": 35.0,
+          "media_diaria": 3.4,
+          "media_diaria_ic95": [
+            -2.3,
+            10.65
+          ],
+          "p_unilateral": 0.1633,
+          "pregoes_positivos": 4
+        }
+      },
+      "escolhida": {
+        "desenvolvimento": {
+          "operacoes": 40,
+          "operacoes_por_pregao": 2.11,
+          "acerto": 0.45,
+          "liquido_reais": -142.0,
+          "fator_lucro": 0.735,
+          "drawdown_reais": 298.0,
+          "media_diaria": -7.47,
+          "media_diaria_ic95": [
+            -31.21,
+            14.68
+          ],
+          "p_unilateral": 0.7339,
+          "pregoes_positivos": 7
+        },
+        "conhecidos": {
+          "operacoes": 4,
+          "operacoes_por_pregao": 0.2,
+          "acerto": 0.0,
+          "liquido_reais": -42.0,
+          "fator_lucro": 0.0,
+          "drawdown_reais": 42.0,
+          "media_diaria": -2.1,
+          "media_diaria_ic95": [
+            -5.7,
+            0.0
+          ],
+          "p_unilateral": 1.0,
+          "pregoes_positivos": 0
+        },
+        "nulo": {
+          "operacoes": 360,
+          "operacoes_por_pregao": 6.0,
+          "acerto": 0.35,
+          "liquido_reais": -809.0,
+          "fator_lucro": 0.774,
+          "drawdown_reais": 809.0,
+          "media_diaria": -13.48,
+          "media_diaria_ic95": [
+            -24.07,
+            -2.87
+          ],
+          "p_unilateral": 0.9939,
+          "pregoes_positivos": 22
+        }
+      },
+      "spearman_dev_conhecidos": -0.4529,
+      "variacoes_positivas_conhecidos": 3,
+      "p_holm": 1.0,
+      "status": "rejeitada",
+      "criterios": {
+        "basicos": false,
+        "nulo_sem_lucro": true,
+        "holm": false
+      }
+    },
+    "lit18_volume_reversao": {
+      "titulo": "Reversão de movimento com volume anormal",
+      "familia": "reversão",
+      "referencia": "Campbell, J., Grossman, S. & Wang, J. (1993). Trading Volume and Serial Correlation in Stock Returns. Quarterly Journal of Economics 108(4).",
+      "fonte_sha256": "a0207f4bedd0df50529138a6cdfb9c19b1a66ef89e87a329fad8db65da053e82",
+      "variacao_escolhida": 12,
+      "parametros_escolhidos": {
+        "p_ZRet": 2.0,
+        "p_MultVol": 2.0,
+        "p_AlvoATR": 3.0,
+        "p_StopATR": 1.5,
+        "p_TempoMax": 60.0
+      },
+      "literatura": {
+        "desenvolvimento": {
+          "operacoes": 67,
+          "operacoes_por_pregao": 3.53,
+          "acerto": 0.5373,
+          "liquido_reais": 211.0,
+          "fator_lucro": 1.117,
+          "drawdown_reais": 396.0,
+          "media_diaria": 11.11,
+          "media_diaria_ic95": [
+            -31.42,
+            53.37
+          ],
+          "p_unilateral": 0.3057,
+          "pregoes_positivos": 8
+        },
+        "conhecidos": {
+          "operacoes": 101,
+          "operacoes_por_pregao": 5.05,
+          "acerto": 0.3861,
+          "liquido_reais": -1142.0,
+          "fator_lucro": 0.584,
+          "drawdown_reais": 1403.0,
+          "media_diaria": -57.1,
+          "media_diaria_ic95": [
+            -102.2,
+            -14.65
+          ],
+          "p_unilateral": 0.997,
+          "pregoes_positivos": 8
+        }
+      },
+      "escolhida": {
+        "desenvolvimento": {
+          "operacoes": 65,
+          "operacoes_por_pregao": 3.42,
+          "acerto": 0.3692,
+          "liquido_reais": 711.0,
+          "fator_lucro": 1.341,
+          "drawdown_reais": 479.0,
+          "media_diaria": 37.42,
+          "media_diaria_ic95": [
+            -28.84,
+            103.16
+          ],
+          "p_unilateral": 0.1336,
+          "pregoes_positivos": 10
+        },
+        "conhecidos": {
+          "operacoes": 99,
+          "operacoes_por_pregao": 4.95,
+          "acerto": 0.2727,
+          "liquido_reais": -642.0,
+          "fator_lucro": 0.787,
+          "drawdown_reais": 1293.0,
+          "media_diaria": -32.1,
+          "media_diaria_ic95": [
+            -99.0,
+            37.45
+          ],
+          "p_unilateral": 0.8236,
+          "pregoes_positivos": 7
+        },
+        "nulo": {
+          "operacoes": 333,
+          "operacoes_por_pregao": 5.55,
+          "acerto": 0.3213,
+          "liquido_reais": -1008.0,
+          "fator_lucro": 0.771,
+          "drawdown_reais": 1068.0,
+          "media_diaria": -16.8,
+          "media_diaria_ic95": [
+            -29.7,
+            -3.6
+          ],
+          "p_unilateral": 0.994,
+          "pregoes_positivos": 18
+        }
+      },
+      "spearman_dev_conhecidos": -0.3916,
+      "variacoes_positivas_conhecidos": 3,
+      "p_holm": 1.0,
+      "status": "rejeitada",
+      "criterios": {
+        "basicos": false,
+        "nulo_sem_lucro": true,
+        "holm": false
+      }
+    },
+    "lit19_reversao_curto_prazo": {
+      "titulo": "Reversão de curto prazo",
+      "familia": "reversão",
+      "referencia": "Jegadeesh, N. (1990). Evidence of Predictable Behavior of Security Returns. Journal of Finance 45(3). Lehmann, B. (1990). Fads, Martingales, and Market Efficiency. QJE 105(1).",
+      "fonte_sha256": "4cfca340cea404e91808a24ef52bd57cb64cc423f5ae30950495d9bc5a476d91",
+      "variacao_escolhida": 5,
+      "parametros_escolhidos": {
+        "p_Janela": 30.0,
+        "p_Z": 2.0,
+        "p_AlvoATR": 3.0,
+        "p_StopATR": 1.0,
+        "p_TempoMax": 30.0
+      },
+      "literatura": {
+        "desenvolvimento": {
+          "operacoes": 16,
+          "operacoes_por_pregao": 0.84,
+          "acerto": 0.5,
+          "liquido_reais": -6.0,
+          "fator_lucro": 0.986,
+          "drawdown_reais": 264.0,
+          "media_diaria": -0.32,
+          "media_diaria_ic95": [
+            -23.69,
+            22.79
+          ],
+          "p_unilateral": 0.5072,
+          "pregoes_positivos": 3
+        },
+        "conhecidos": {
+          "operacoes": 29,
+          "operacoes_por_pregao": 1.45,
+          "acerto": 0.4138,
+          "liquido_reais": -245.0,
+          "fator_lucro": 0.752,
+          "drawdown_reais": 330.0,
+          "media_diaria": -12.25,
+          "media_diaria_ic95": [
+            -30.8,
+            5.9
+          ],
+          "p_unilateral": 0.9072,
+          "pregoes_positivos": 6
+        }
+      },
+      "escolhida": {
+        "desenvolvimento": {
+          "operacoes": 22,
+          "operacoes_por_pregao": 1.16,
+          "acerto": 0.3182,
+          "liquido_reais": 1.0,
+          "fator_lucro": 1.002,
+          "drawdown_reais": 191.0,
+          "media_diaria": 0.05,
+          "media_diaria_ic95": [
+            -12.47,
+            13.37
+          ],
+          "p_unilateral": 0.5069,
+          "pregoes_positivos": 3
+        },
+        "conhecidos": {
+          "operacoes": 51,
+          "operacoes_por_pregao": 2.55,
+          "acerto": 0.3529,
+          "liquido_reais": -230.0,
+          "fator_lucro": 0.846,
+          "drawdown_reais": 652.0,
+          "media_diaria": -11.5,
+          "media_diaria_ic95": [
+            -66.0,
+            36.0
+          ],
+          "p_unilateral": 0.6557,
+          "pregoes_positivos": 8
+        },
+        "nulo": {
+          "operacoes": 213,
+          "operacoes_por_pregao": 3.55,
+          "acerto": 0.3005,
+          "liquido_reais": -158.0,
+          "fator_lucro": 0.926,
+          "drawdown_reais": 447.0,
+          "media_diaria": -2.63,
+          "media_diaria_ic95": [
+            -13.23,
+            8.0
+          ],
+          "p_unilateral": 0.6907,
+          "pregoes_positivos": 24
+        }
+      },
+      "spearman_dev_conhecidos": -0.4406,
+      "variacoes_positivas_conhecidos": 6,
+      "p_holm": 1.0,
+      "status": "rejeitada",
+      "criterios": {
+        "basicos": false,
+        "nulo_sem_lucro": true,
+        "holm": false
+      }
+    },
+    "lit20_momento_serie_temporal": {
+      "titulo": "Momento de série temporal",
+      "familia": "momento",
+      "referencia": "Moskowitz, T., Ooi, Y. H. & Pedersen, L. H. (2012). Time Series Momentum. Journal of Financial Economics 104(2).",
+      "fonte_sha256": "22c0bf31a7202a1fe142b85cc84f2ccbe22d0a0b4853cc17d165e20f54bddd40",
+      "variacao_escolhida": 8,
+      "parametros_escolhidos": {
+        "p_Janela": 60.0,
+        "p_Z": 1.0,
+        "p_AlvoATR": 2.0,
+        "p_StopATR": 2.0,
+        "p_TempoMax": 60.0
+      },
+      "literatura": {
+        "desenvolvimento": {
+          "operacoes": 55,
+          "operacoes_por_pregao": 2.89,
+          "acerto": 0.3818,
+          "liquido_reais": -67.0,
+          "fator_lucro": 0.959,
+          "drawdown_reais": 349.0,
+          "media_diaria": -3.53,
+          "media_diaria_ic95": [
+            -42.95,
+            38.95
+          ],
+          "p_unilateral": 0.574,
+          "pregoes_positivos": 8
+        },
+        "conhecidos": {
+          "operacoes": 80,
+          "operacoes_por_pregao": 4.0,
+          "acerto": 0.3875,
+          "liquido_reais": 54.0,
+          "fator_lucro": 1.021,
+          "drawdown_reais": 628.0,
+          "media_diaria": 2.7,
+          "media_diaria_ic95": [
+            -54.75,
+            58.4
+          ],
+          "p_unilateral": 0.4575,
+          "pregoes_positivos": 10
+        }
+      },
+      "escolhida": {
+        "desenvolvimento": {
+          "operacoes": 55,
+          "operacoes_por_pregao": 2.89,
+          "acerto": 0.4909,
+          "liquido_reais": -49.0,
+          "fator_lucro": 0.969,
+          "drawdown_reais": 327.0,
+          "media_diaria": -2.58,
+          "media_diaria_ic95": [
+            -39.11,
+            32.53
+          ],
+          "p_unilateral": 0.5545,
+          "pregoes_positivos": 11
+        },
+        "conhecidos": {
+          "operacoes": 80,
+          "operacoes_por_pregao": 4.0,
+          "acerto": 0.4375,
+          "liquido_reais": -630.0,
+          "fator_lucro": 0.77,
+          "drawdown_reais": 985.0,
+          "media_diaria": -31.5,
+          "media_diaria_ic95": [
+            -80.65,
+            17.35
+          ],
+          "p_unilateral": 0.895,
+          "pregoes_positivos": 7
+        },
+        "nulo": {
+          "operacoes": 240,
+          "operacoes_por_pregao": 4.0,
+          "acerto": 0.5,
+          "liquido_reais": -362.0,
+          "fator_lucro": 0.878,
+          "drawdown_reais": 549.0,
+          "media_diaria": -6.03,
+          "media_diaria_ic95": [
+            -17.73,
+            5.87
+          ],
+          "p_unilateral": 0.8424,
+          "pregoes_positivos": 25
+        }
+      },
+      "spearman_dev_conhecidos": 0.2587,
+      "variacoes_positivas_conhecidos": 2,
+      "p_holm": 1.0,
+      "status": "rejeitada",
+      "criterios": {
+        "basicos": false,
+        "nulo_sem_lucro": true,
+        "holm": false
+      }
+    }
+  }
+}

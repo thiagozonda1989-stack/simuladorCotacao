@@ -1,5 +1,11 @@
 # Histórico de versões
 
+## Não publicado — 20 estratégias da literatura
+
+- Adiciona `estrategias/literatura/` com 20 estratégias clássicas em NTSL: ORB, Bollinger (reversão e squeeze), RSI(2), MACD, médias móveis, Donchian, Keltner, VWAP (reversão e tendência), momento intradiário, gap, estocástico, Williams %R, CCI, ADX/DMI, fluxo de agressão, reversão com volume, reversão de curto prazo e momento de série temporal. Todas compartilham o mesmo bloco de risco e trazem a referência no cabeçalho.
+- Adiciona `tools/gerar_estrategias_literatura.py` e `tools/validar_estrategias_literatura.py`: seleção no desenvolvimento real, validação única nos 20 pregões conhecidos, controle nulo e correção de Holm, com 12 replays por pregão e estratégia.
+- Evidências em `docs/colaboracao/evidencias/estrategias_literatura_v1/`: nenhuma aprovada; a reversão às bandas de Bollinger ficou como promissora (R$ 515, fator 1,17, sem significância).
+
 ## Não publicado — pesquisa Física do Mercado v1.0
 
 - Adiciona `estrategias/pesquisa/fisica_mercado_v1_0.ntsl`: variáveis físicas (massa, momento, energia cinética, temperatura, entropia de Shannon, Hurst por razão de variância, eficiência, oscilador e pressão), regimes de ordem e de mola, alvo e stop pela escala de difusão e contador diário por data escalar.
