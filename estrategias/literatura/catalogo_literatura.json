@@ -1,0 +1,671 @@
+{
+  "lit01_orb": {
+    "titulo": "Rompimento da faixa de abertura (ORB)",
+    "referencia": "Crabel, T. (1990). Day Trading with Short Term Price Patterns and Opening Range Breakout. Zarattini, C., Barbon, A. & Aziz, A. (2024). A Profitable Day Trading Strategy for the U.S. Equity Market. SSRN 4729284.",
+    "ideia": "A faixa dos primeiros minutos concentra a descoberta de preço; o rompimento dela tende a continuar no dia.",
+    "familia": "tendência",
+    "arquivo": "estrategias/literatura/lit01_orb.ntsl",
+    "grade": {
+      "p_BarrasAbertura": [
+        5,
+        15,
+        30
+      ],
+      "p_AlvoATR": [
+        1.5,
+        2.0,
+        3.0
+      ],
+      "p_StopATR": [
+        1.0,
+        1.5,
+        2.0
+      ],
+      "p_TempoMax": [
+        15,
+        30,
+        60
+      ]
+    }
+  },
+  "lit02_bollinger_reversao": {
+    "titulo": "Reversão às bandas de Bollinger",
+    "referencia": "Bollinger, J. (2001). Bollinger on Bollinger Bands. McGraw-Hill.",
+    "ideia": "Fechamento que volta para dentro da banda depois de sair dela sinaliza excesso e retorno à média.",
+    "familia": "reversão",
+    "arquivo": "estrategias/literatura/lit02_bollinger_reversao.ntsl",
+    "grade": {
+      "p_Periodo": [
+        20,
+        40,
+        60
+      ],
+      "p_Desvios": [
+        2.0,
+        2.5,
+        3.0
+      ],
+      "p_AlvoATR": [
+        1.5,
+        2.0,
+        3.0
+      ],
+      "p_StopATR": [
+        1.0,
+        1.5,
+        2.0
+      ],
+      "p_TempoMax": [
+        15,
+        30,
+        60
+      ]
+    }
+  },
+  "lit03_bollinger_squeeze": {
+    "titulo": "Compressão das bandas de Bollinger (squeeze)",
+    "referencia": "Bollinger, J. (2001). Bollinger on Bollinger Bands, cap. 15 (The Squeeze).",
+    "ideia": "Volatilidade comprimida precede expansão; entra no lado do rompimento da banda.",
+    "familia": "tendência",
+    "arquivo": "estrategias/literatura/lit03_bollinger_squeeze.ntsl",
+    "grade": {
+      "p_Janela": [
+        60,
+        120,
+        240
+      ],
+      "p_Tolerancia": [
+        1.05,
+        1.1,
+        1.25
+      ],
+      "p_AlvoATR": [
+        1.5,
+        2.0,
+        3.0
+      ],
+      "p_StopATR": [
+        1.0,
+        1.5,
+        2.0
+      ],
+      "p_TempoMax": [
+        15,
+        30,
+        60
+      ]
+    }
+  },
+  "lit04_rsi2": {
+    "titulo": "RSI(2) de Connors",
+    "referencia": "Connors, L. & Alvarez, C. (2009). Short Term Trading Strategies That Work. TradingMarkets.",
+    "ideia": "RSI de 2 períodos extremo a favor da tendência longa marca recuo de curto prazo que costuma reverter.",
+    "familia": "reversão",
+    "arquivo": "estrategias/literatura/lit04_rsi2.ntsl",
+    "grade": {
+      "p_Tendencia": [
+        100,
+        200,
+        300
+      ],
+      "p_Limite": [
+        5,
+        10,
+        20
+      ],
+      "p_AlvoATR": [
+        1.5,
+        2.0,
+        3.0
+      ],
+      "p_StopATR": [
+        1.0,
+        1.5,
+        2.0
+      ],
+      "p_TempoMax": [
+        15,
+        30,
+        60
+      ]
+    }
+  },
+  "lit05_macd": {
+    "titulo": "Cruzamento do MACD",
+    "referencia": "Appel, G. (2005). Technical Analysis: Power Tools for Active Investors. FT Press (MACD criado em 1979).",
+    "ideia": "Cruzamento da diferença entre médias exponenciais com sua própria média indica mudança de momento.",
+    "familia": "tendência",
+    "arquivo": "estrategias/literatura/lit05_macd.ntsl",
+    "grade": {
+      "p_Rapida": [
+        6,
+        12
+      ],
+      "p_Lenta": [
+        26,
+        52
+      ],
+      "p_Sinal": [
+        9,
+        18
+      ],
+      "p_AlvoATR": [
+        1.5,
+        2.0,
+        3.0
+      ],
+      "p_StopATR": [
+        1.0,
+        1.5,
+        2.0
+      ],
+      "p_TempoMax": [
+        15,
+        30,
+        60
+      ]
+    }
+  },
+  "lit06_medias_moveis": {
+    "titulo": "Cruzamento de médias móveis",
+    "referencia": "Brock, W., Lakonishok, J. & LeBaron, B. (1992). Simple Technical Trading Rules and the Stochastic Properties of Stock Returns. Journal of Finance 47(5).",
+    "ideia": "Média curta acima da longa (com banda) indica tendência de alta; regra testada em 90 anos do DJIA.",
+    "familia": "tendência",
+    "arquivo": "estrategias/literatura/lit06_medias_moveis.ntsl",
+    "grade": {
+      "p_Curta": [
+        1,
+        5,
+        10
+      ],
+      "p_Longa": [
+        50,
+        150,
+        200
+      ],
+      "p_Banda": [
+        0.0,
+        0.0005
+      ],
+      "p_AlvoATR": [
+        1.5,
+        2.0,
+        3.0
+      ],
+      "p_StopATR": [
+        1.0,
+        1.5,
+        2.0
+      ],
+      "p_TempoMax": [
+        15,
+        30,
+        60
+      ]
+    }
+  },
+  "lit07_donchian": {
+    "titulo": "Canal de Donchian (Turtle)",
+    "referencia": "Donchian, R. (1960). High Finance in Copper. Financial Analysts Journal 16(6). Faith, C. (2007). Way of the Turtle. McGraw-Hill.",
+    "ideia": "Rompimento da máxima ou mínima de N barras segue a tendência; sai no canal de metade do período.",
+    "familia": "tendência",
+    "arquivo": "estrategias/literatura/lit07_donchian.ntsl",
+    "grade": {
+      "p_Entrada": [
+        20,
+        55,
+        120
+      ],
+      "p_Saida": [
+        10,
+        20
+      ],
+      "p_AlvoATR": [
+        1.5,
+        2.0,
+        3.0
+      ],
+      "p_StopATR": [
+        1.0,
+        1.5,
+        2.0
+      ],
+      "p_TempoMax": [
+        15,
+        30,
+        60
+      ]
+    }
+  },
+  "lit08_keltner": {
+    "titulo": "Canal de Keltner",
+    "referencia": "Keltner, C. (1960). How to Make Money in Commodities. Raschke, L. & Connors, L. (1995). Street Smarts (versão com ATR).",
+    "ideia": "Fechamento fora do canal de média exponencial ± ATR indica impulso direcional.",
+    "familia": "tendência",
+    "arquivo": "estrategias/literatura/lit08_keltner.ntsl",
+    "grade": {
+      "p_Periodo": [
+        20,
+        40
+      ],
+      "p_Mult": [
+        1.5,
+        2.0,
+        2.5
+      ],
+      "p_AlvoATR": [
+        1.5,
+        2.0,
+        3.0
+      ],
+      "p_StopATR": [
+        1.0,
+        1.5,
+        2.0
+      ],
+      "p_TempoMax": [
+        15,
+        30,
+        60
+      ]
+    }
+  },
+  "lit09_vwap_reversao": {
+    "titulo": "Reversão à VWAP",
+    "referencia": "Berkowitz, S., Logue, D. & Noser, E. (1988). The Total Cost of Transactions on the NYSE. Journal of Finance 43(1) (VWAP como preço justo do dia).",
+    "ideia": "Afastamento extremo da VWAP, medido em desvios, tende a voltar ao preço médio do dia.",
+    "familia": "reversão",
+    "arquivo": "estrategias/literatura/lit09_vwap_reversao.ntsl",
+    "grade": {
+      "p_Janela": [
+        30,
+        60,
+        120
+      ],
+      "p_Z": [
+        1.5,
+        2.0,
+        2.5
+      ],
+      "p_AlvoATR": [
+        1.5,
+        2.0,
+        3.0
+      ],
+      "p_StopATR": [
+        1.0,
+        1.5,
+        2.0
+      ],
+      "p_TempoMax": [
+        15,
+        30,
+        60
+      ]
+    }
+  },
+  "lit10_vwap_tendencia": {
+    "titulo": "Tendência pela VWAP",
+    "referencia": "Zarattini, C. & Aziz, A. (2023). Volume Weighted Average Price (VWAP): The Holy Grail for Day Trading Systems. SSRN 4631351.",
+    "ideia": "Estar comprado acima da VWAP e vendido abaixo dela captura a tendência do dia.",
+    "familia": "tendência",
+    "arquivo": "estrategias/literatura/lit10_vwap_tendencia.ntsl",
+    "grade": {
+      "p_Confirmacao": [
+        1,
+        3,
+        5,
+        10
+      ],
+      "p_AlvoATR": [
+        1.5,
+        2.0,
+        3.0
+      ],
+      "p_StopATR": [
+        1.0,
+        1.5,
+        2.0
+      ],
+      "p_TempoMax": [
+        15,
+        30,
+        60
+      ]
+    }
+  },
+  "lit11_momento_intradiario": {
+    "titulo": "Momento intradiário (primeira meia hora prevê a última)",
+    "referencia": "Gao, L., Han, Y., Li, S. Z. & Zhou, G. (2018). Market Intraday Momentum. Journal of Financial Economics 129(2).",
+    "ideia": "O retorno da primeira meia hora (incluindo a noite) prevê o retorno da última meia hora do pregão.",
+    "familia": "momento",
+    "arquivo": "estrategias/literatura/lit11_momento_intradiario.ntsl",
+    "grade": {
+      "p_HoraMedida": [
+        930,
+        1000,
+        1030
+      ],
+      "p_RetMin": [
+        0.0,
+        0.0005,
+        0.002
+      ],
+      "p_AlvoATR": [
+        1.5,
+        2.0,
+        3.0
+      ],
+      "p_StopATR": [
+        1.0,
+        1.5,
+        2.0
+      ],
+      "p_TempoMax": [
+        15,
+        30,
+        60
+      ]
+    }
+  },
+  "lit12_gap_reversao": {
+    "titulo": "Fechamento do gap de abertura",
+    "referencia": "Lou, D., Polk, C. & Skouras, S. (2019). A Tug of War: Overnight versus Intraday Expected Returns. Journal of Financial Economics 134(1) (reversão entre retorno noturno e intradiário).",
+    "ideia": "Gap de abertura grande tende a ser parcialmente devolvido durante o pregão.",
+    "familia": "reversão",
+    "arquivo": "estrategias/literatura/lit12_gap_reversao.ntsl",
+    "grade": {
+      "p_GapMin": [
+        0.001,
+        0.002,
+        0.004
+      ],
+      "p_AlvoATR": [
+        1.5,
+        2.0,
+        3.0
+      ],
+      "p_StopATR": [
+        1.0,
+        1.5,
+        2.0
+      ],
+      "p_TempoMax": [
+        15,
+        30,
+        60
+      ]
+    }
+  },
+  "lit13_estocastico": {
+    "titulo": "Oscilador estocástico",
+    "referencia": "Lane, G. (1984). Lane's Stochastics. Technical Analysis of Stocks & Commodities 2(3).",
+    "ideia": "Cruzamento de %K sobre %D em zona extrema indica reversão do excesso.",
+    "familia": "reversão",
+    "arquivo": "estrategias/literatura/lit13_estocastico.ntsl",
+    "grade": {
+      "p_Periodo": [
+        14,
+        28
+      ],
+      "p_Zona": [
+        10,
+        20,
+        30
+      ],
+      "p_AlvoATR": [
+        1.5,
+        2.0,
+        3.0
+      ],
+      "p_StopATR": [
+        1.0,
+        1.5,
+        2.0
+      ],
+      "p_TempoMax": [
+        15,
+        30,
+        60
+      ]
+    }
+  },
+  "lit14_williams_r": {
+    "titulo": "Williams %R",
+    "referencia": "Williams, L. (1973). How I Made One Million Dollars Last Year Trading Commodities.",
+    "ideia": "Saída da zona de sobrevenda ou sobrecompra do %R marca o fim do excesso.",
+    "familia": "reversão",
+    "arquivo": "estrategias/literatura/lit14_williams_r.ntsl",
+    "grade": {
+      "p_Periodo": [
+        14,
+        28
+      ],
+      "p_Extremo": [
+        90,
+        95
+      ],
+      "p_Gatilho": [
+        70,
+        80
+      ],
+      "p_AlvoATR": [
+        1.5,
+        2.0,
+        3.0
+      ],
+      "p_StopATR": [
+        1.0,
+        1.5,
+        2.0
+      ],
+      "p_TempoMax": [
+        15,
+        30,
+        60
+      ]
+    }
+  },
+  "lit15_cci": {
+    "titulo": "Commodity Channel Index (CCI)",
+    "referencia": "Lambert, D. (1980). Commodity Channel Index: Tools for Trading Cyclical Trends. Commodities Magazine.",
+    "ideia": "CCI acima de +100 indica início de tendência; o desvio médio é aproximado pelo desvio-padrão.",
+    "familia": "tendência",
+    "arquivo": "estrategias/literatura/lit15_cci.ntsl",
+    "grade": {
+      "p_Periodo": [
+        20,
+        40
+      ],
+      "p_Nivel": [
+        100,
+        150,
+        200
+      ],
+      "p_AlvoATR": [
+        1.5,
+        2.0,
+        3.0
+      ],
+      "p_StopATR": [
+        1.0,
+        1.5,
+        2.0
+      ],
+      "p_TempoMax": [
+        15,
+        30,
+        60
+      ]
+    }
+  },
+  "lit16_adx_dmi": {
+    "titulo": "ADX e DMI de Wilder",
+    "referencia": "Wilder, J. W. (1978). New Concepts in Technical Trading Systems. Trend Research.",
+    "ideia": "DI+ acima de DI− com ADX forte e subindo identifica tendência; a suavização de Wilder usa MediaExp(2n−1).",
+    "familia": "tendência",
+    "arquivo": "estrategias/literatura/lit16_adx_dmi.ntsl",
+    "grade": {
+      "p_Periodo": [
+        14,
+        28
+      ],
+      "p_ADXMin": [
+        20,
+        25,
+        30
+      ],
+      "p_AlvoATR": [
+        1.5,
+        2.0,
+        3.0
+      ],
+      "p_StopATR": [
+        1.0,
+        1.5,
+        2.0
+      ],
+      "p_TempoMax": [
+        15,
+        30,
+        60
+      ]
+    }
+  },
+  "lit17_fluxo_agressao": {
+    "titulo": "Desequilíbrio do fluxo de agressão (OFI)",
+    "referencia": "Cont, R., Kukanov, A. & Stoikov, S. (2014). The Price Impact of Order Book Events. Journal of Financial Econometrics 12(1). Chordia, T. & Subrahmanyam, A. (2004). Order Imbalance and Individual Stock Returns. Journal of Financial Economics 72(3).",
+    "ideia": "Desequilíbrio persistente entre agressão compradora e vendedora antecipa o movimento de curto prazo.",
+    "familia": "microestrutura",
+    "arquivo": "estrategias/literatura/lit17_fluxo_agressao.ntsl",
+    "grade": {
+      "p_Janela": [
+        3,
+        5,
+        10
+      ],
+      "p_Z": [
+        1.5,
+        2.0,
+        3.0
+      ],
+      "p_AlvoATR": [
+        1.5,
+        2.0,
+        3.0
+      ],
+      "p_StopATR": [
+        1.0,
+        1.5,
+        2.0
+      ],
+      "p_TempoMax": [
+        15,
+        30,
+        60
+      ]
+    }
+  },
+  "lit18_volume_reversao": {
+    "titulo": "Reversão de movimento com volume anormal",
+    "referencia": "Campbell, J., Grossman, S. & Wang, J. (1993). Trading Volume and Serial Correlation in Stock Returns. Quarterly Journal of Economics 108(4).",
+    "ideia": "Movimentos grandes acompanhados de volume alto refletem demanda por liquidez e tendem a reverter.",
+    "familia": "reversão",
+    "arquivo": "estrategias/literatura/lit18_volume_reversao.ntsl",
+    "grade": {
+      "p_ZRet": [
+        2.0,
+        2.5,
+        3.0
+      ],
+      "p_MultVol": [
+        1.5,
+        2.0,
+        3.0
+      ],
+      "p_AlvoATR": [
+        1.5,
+        2.0,
+        3.0
+      ],
+      "p_StopATR": [
+        1.0,
+        1.5,
+        2.0
+      ],
+      "p_TempoMax": [
+        15,
+        30,
+        60
+      ]
+    }
+  },
+  "lit19_reversao_curto_prazo": {
+    "titulo": "Reversão de curto prazo",
+    "referencia": "Jegadeesh, N. (1990). Evidence of Predictable Behavior of Security Returns. Journal of Finance 45(3). Lehmann, B. (1990). Fads, Martingales, and Market Efficiency. QJE 105(1).",
+    "ideia": "Retorno extremo numa janela curta, medido em desvios, tende a ser parcialmente devolvido.",
+    "familia": "reversão",
+    "arquivo": "estrategias/literatura/lit19_reversao_curto_prazo.ntsl",
+    "grade": {
+      "p_Janela": [
+        5,
+        15,
+        30
+      ],
+      "p_Z": [
+        2.0,
+        2.5,
+        3.0
+      ],
+      "p_AlvoATR": [
+        1.5,
+        2.0,
+        3.0
+      ],
+      "p_StopATR": [
+        1.0,
+        1.5,
+        2.0
+      ],
+      "p_TempoMax": [
+        15,
+        30,
+        60
+      ]
+    }
+  },
+  "lit20_momento_serie_temporal": {
+    "titulo": "Momento de série temporal",
+    "referencia": "Moskowitz, T., Ooi, Y. H. & Pedersen, L. H. (2012). Time Series Momentum. Journal of Financial Economics 104(2).",
+    "ideia": "O sinal do retorno passado, quando significativo frente à volatilidade, prevê o retorno seguinte.",
+    "familia": "momento",
+    "arquivo": "estrategias/literatura/lit20_momento_serie_temporal.ntsl",
+    "grade": {
+      "p_Janela": [
+        30,
+        60,
+        120
+      ],
+      "p_Z": [
+        0.5,
+        1.0,
+        1.5
+      ],
+      "p_AlvoATR": [
+        1.5,
+        2.0,
+        3.0
+      ],
+      "p_StopATR": [
+        1.0,
+        1.5,
+        2.0
+      ],
+      "p_TempoMax": [
+        15,
+        30,
+        60
+      ]
+    }
+  }
+}

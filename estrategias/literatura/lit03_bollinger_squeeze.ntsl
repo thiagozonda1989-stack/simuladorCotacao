@@ -1,0 +1,119 @@
+{ Compressão das bandas de Bollinger (squeeze) (lit03_bollinger_squeeze) - WIN 1 min, 1 contrato.
+  Referência: Bollinger, J. (2001). Bollinger on Bollinger Bands, cap. 15 (The Squeeze).
+  Ideia: Volatilidade comprimida precede expansão; entra no lado do rompimento da banda.
+  Família: tendência. Gerado por tools/gerar_estrategias_literatura.py; bloco de risco comum.
+  Validação: docs/colaboracao/evidencias/estrategias_literatura_v1/. }
+
+input
+  p_Periodo(20);
+  p_Desvios(2.0);
+  p_Janela(120);
+  p_Tolerancia(1.1);
+  p_AlvoATR(3.0);
+  p_StopATR(1.5);
+  p_PeriodoATR(14);
+  p_StopMin(50);
+  p_StopMax(400);
+  p_Folga(50);
+  p_TempoMax(60);
+  p_MaxEntradasDia(4);
+  p_Espera(3);
+  p_PerdaMaxDia(400);
+  p_Lote(1);
+  p_Aquecimento(150);
+  p_HoraInicio(915);
+  p_HoraFimEntradas(1630);
+  p_HoraZeragem(1700);
+
+var
+  v_Media, v_Desvio, v_Sup, v_Inf, v_Largura, v_MinLargura : Float;
+  v_Comprimido : Boolean;
+  v_SinalCompra, v_SinalVenda, v_SaiCompra, v_SaiVenda : Boolean;
+  v_ATR, v_AlvoSinal, v_StopSinal, v_Alvo, v_Stop, v_FolgaT : Float;
+  v_FechAnterior, v_UltimoFech, v_AberturaDia : Float;
+  v_Posicionado, v_EstavaPosicionado, v_PodeEntrar, v_Zerar : Boolean;
+  v_BarraEntrada, v_BarraSaida, v_EntradasDia, v_DataContagem, v_BarrasDia : Integer;
+
+begin
+  v_SinalCompra := False;
+  v_SinalVenda := False;
+  v_SaiCompra := False;
+  v_SaiVenda := False;
+  v_ATR := AvgTrueRange(p_PeriodoATR, 0);
+  if Date <> v_DataContagem then
+  begin
+    v_DataContagem := Date;
+    v_EntradasDia := 0;
+    v_FechAnterior := v_UltimoFech;
+    v_AberturaDia := Open;
+    v_BarrasDia := 0;
+  end;
+  v_BarrasDia := v_BarrasDia + 1;
+
+  { ---------------- sinal ---------------- }
+  v_Media := Media(p_Periodo, Close);
+  v_Desvio := StdDevs(Close, p_Periodo);
+  v_Sup := v_Media + p_Desvios * v_Desvio;
+  v_Inf := v_Media - p_Desvios * v_Desvio;
+  if v_Media > 0 then v_Largura := (v_Sup - v_Inf) / v_Media else v_Largura := 0;
+  v_MinLargura := Lowest(v_Largura, p_Janela);
+  v_Comprimido := v_Largura[1] <= p_Tolerancia * v_MinLargura[1];
+  v_SinalCompra := v_Comprimido and (Close > v_Sup);
+  v_SinalVenda := v_Comprimido and (Close < v_Inf);
+  v_SaiCompra := Close < v_Media;
+  v_SaiVenda := Close > v_Media;
+
+  { ---------------- bloco de risco comum ---------------- }
+  v_AlvoSinal := Round(Min(Max(p_AlvoATR * v_ATR, p_StopMin), 2 * p_StopMax) / 5) * 5;
+  v_StopSinal := Round(Min(Max(p_StopATR * v_ATR, p_StopMin), p_StopMax) / 5) * 5;
+  v_FolgaT := Round(p_Folga / 5) * 5;
+  v_Posicionado := IsBought or IsSold;
+  if v_Posicionado and (not v_EstavaPosicionado) then
+    v_BarraEntrada := CurrentBar;
+  if v_EstavaPosicionado and (not v_Posicionado) then
+    v_BarraSaida := CurrentBar;
+  v_Zerar := (Time >= p_HoraZeragem)
+             or (v_Posicionado and (CurrentBar - v_BarraEntrada >= p_TempoMax))
+             or (IsBought and v_SaiCompra) or (IsSold and v_SaiVenda);
+  v_PodeEntrar := (not v_Posicionado) and (CurrentBar > p_Aquecimento)
+                  and (Time >= p_HoraInicio) and (Time <= p_HoraFimEntradas)
+                  and (v_EntradasDia < p_MaxEntradasDia)
+                  and (CurrentBar >= v_BarraSaida + p_Espera)
+                  and (DailyResult > -p_PerdaMaxDia);
+
+  if v_Posicionado and v_Zerar then
+  begin
+    if IsBought then SellToCoverAtMarket(p_Lote)
+    else BuyToCoverAtMarket(p_Lote);
+  end
+  else if IsBought then
+  begin
+    SellToCoverLimit(BuyPrice + v_Alvo, p_Lote);
+    SellToCoverStop(BuyPrice - v_Stop, BuyPrice - v_Stop - v_FolgaT, p_Lote);
+  end
+  else if IsSold then
+  begin
+    BuyToCoverLimit(SellPrice - v_Alvo, p_Lote);
+    BuyToCoverStop(SellPrice + v_Stop, SellPrice + v_Stop + v_FolgaT, p_Lote);
+  end
+  else if v_PodeEntrar then
+  begin
+    if v_SinalCompra then
+    begin
+      v_Alvo := v_AlvoSinal;
+      v_Stop := v_StopSinal;
+      BuyAtMarket(p_Lote);
+      v_EntradasDia := v_EntradasDia + 1;
+    end
+    else if v_SinalVenda then
+    begin
+      v_Alvo := v_AlvoSinal;
+      v_Stop := v_StopSinal;
+      SellShortAtMarket(p_Lote);
+      v_EntradasDia := v_EntradasDia + 1;
+    end;
+  end;
+
+  v_EstavaPosicionado := v_Posicionado;
+  v_UltimoFech := Close;
+end;

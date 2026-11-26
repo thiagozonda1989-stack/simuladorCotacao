@@ -1,6 +1,6 @@
 {
   "versao_manifesto": 1,
-  "gerado_utc": "2026-11-25T12:34:56.176885+00:00",
+  "gerado_utc": "2026-11-26T02:19:10.084699+00:00",
   "arquivos": [
     {
       "arquivo": "execucao/modelo_1c_antecipado_profit_v1_0.ntsl",
@@ -211,6 +211,126 @@
       "sha256": "a2b858b95ed48f71e2f9bad21fa603342ae7f1fdb77d3dabc7cc024be47f5b76",
       "bytes": 6163,
       "origem_relativa": "pesquisa_fisica_v1_mola_ajustada"
+    },
+    {
+      "arquivo": "literatura/lit01_orb.ntsl",
+      "sha256": "db60dd4e6a65e3a09d44d2aad8c2ae33201789edcdd0d890c96808819dd96db9",
+      "bytes": 4269,
+      "origem_relativa": "estrategias_literatura_v1"
+    },
+    {
+      "arquivo": "literatura/lit02_bollinger_reversao.ntsl",
+      "sha256": "93cb50b131812c9cada757737f01586786970f0d49bd0547ff4b653a65077081",
+      "bytes": 3866,
+      "origem_relativa": "estrategias_literatura_v1"
+    },
+    {
+      "arquivo": "literatura/lit03_bollinger_squeeze.ntsl",
+      "sha256": "bb4c52db0387ec57ef13e4204d166df9fc77a7b41f926eeae93385e6867158a6",
+      "bytes": 4134,
+      "origem_relativa": "estrategias_literatura_v1"
+    },
+    {
+      "arquivo": "literatura/lit04_rsi2.ntsl",
+      "sha256": "ff9471791096e725d02fa056328fc8d56908c1289e8462868c2f509626fbecc4",
+      "bytes": 4114,
+      "origem_relativa": "estrategias_literatura_v1"
+    },
+    {
+      "arquivo": "literatura/lit05_macd.ntsl",
+      "sha256": "b40f625711618425453b4ba69a846094232d4f7d0092f39945888e830669340a",
+      "bytes": 3830,
+      "origem_relativa": "estrategias_literatura_v1"
+    },
+    {
+      "arquivo": "literatura/lit06_medias_moveis.ntsl",
+      "sha256": "f36ed6d481cc47beb5a7c1595bdd9e29a9fd94d62785ed05294085c844589856",
+      "bytes": 3959,
+      "origem_relativa": "estrategias_literatura_v1"
+    },
+    {
+      "arquivo": "literatura/lit07_donchian.ntsl",
+      "sha256": "3ccf792d6b38df9da1dba6adc38ab26dc0578d573cf81d4d37f011a563e32b76",
+      "bytes": 3838,
+      "origem_relativa": "estrategias_literatura_v1"
+    },
+    {
+      "arquivo": "literatura/lit08_keltner.ntsl",
+      "sha256": "1029fe545e74ce4874138a7d2327c91e28ab6b6f4fd641d57f695633d9936ff5",
+      "bytes": 3869,
+      "origem_relativa": "estrategias_literatura_v1"
+    },
+    {
+      "arquivo": "literatura/lit09_vwap_reversao.ntsl",
+      "sha256": "0187300c52a271f6d4b00833d6047dfaa071b0d477b0e688abdd95845732ad92",
+      "bytes": 3887,
+      "origem_relativa": "estrategias_literatura_v1"
+    },
+    {
+      "arquivo": "literatura/lit10_vwap_tendencia.ntsl",
+      "sha256": "fdebb078a7790ed8d49633a95e71f43dad87e40145c24f477bb3b66635b39a53",
+      "bytes": 3836,
+      "origem_relativa": "estrategias_literatura_v1"
+    },
+    {
+      "arquivo": "literatura/lit11_momento_intradiario.ntsl",
+      "sha256": "0c42a1a3a8f23a16ca2103ecab79bc860dc0a253a1fd0108745d1928c5969542",
+      "bytes": 3990,
+      "origem_relativa": "estrategias_literatura_v1"
+    },
+    {
+      "arquivo": "literatura/lit12_gap_reversao.ntsl",
+      "sha256": "f79c58e7d7f571c9af2f52805f38d4a2a08d4c41b4c1bc98d6b1976a73fd4615",
+      "bytes": 3882,
+      "origem_relativa": "estrategias_literatura_v1"
+    },
+    {
+      "arquivo": "literatura/lit13_estocastico.ntsl",
+      "sha256": "355b093f86450d7577208942fcd1dcb1d726201471915e5063e71f35bf4a0a3c",
+      "bytes": 3893,
+      "origem_relativa": "estrategias_literatura_v1"
+    },
+    {
+      "arquivo": "literatura/lit14_williams_r.ntsl",
+      "sha256": "e820d9182847a170cd0ff49be5bcb8d8ba8c07e235b19eb0e09d51c9ae0a09fe",
+      "bytes": 3913,
+      "origem_relativa": "estrategias_literatura_v1"
+    },
+    {
+      "arquivo": "literatura/lit15_cci.ntsl",
+      "sha256": "5c2624f3ab8d128fbbe2fc800af6a0620281e7c346cc6c780a5de9a3de9ba0bf",
+      "bytes": 3914,
+      "origem_relativa": "estrategias_literatura_v1"
+    },
+    {
+      "arquivo": "literatura/lit16_adx_dmi.ntsl",
+      "sha256": "513693edc583dbbe6d0d6f98161d2f645772db16bd07a8f0272d4f4dfb3c2ca7",
+      "bytes": 4470,
+      "origem_relativa": "estrategias_literatura_v1"
+    },
+    {
+      "arquivo": "literatura/lit17_fluxo_agressao.ntsl",
+      "sha256": "c5ed28d90987ead33a1f7e79f24efeaad29cf1188c8dd8aa264b48d9ab50b521",
+      "bytes": 4126,
+      "origem_relativa": "estrategias_literatura_v1"
+    },
+    {
+      "arquivo": "literatura/lit18_volume_reversao.ntsl",
+      "sha256": "a0207f4bedd0df50529138a6cdfb9c19b1a66ef89e87a329fad8db65da053e82",
+      "bytes": 3890,
+      "origem_relativa": "estrategias_literatura_v1"
+    },
+    {
+      "arquivo": "literatura/lit19_reversao_curto_prazo.ntsl",
+      "sha256": "4cfca340cea404e91808a24ef52bd57cb64cc423f5ae30950495d9bc5a476d91",
+      "bytes": 3882,
+      "origem_relativa": "estrategias_literatura_v1"
+    },
+    {
+      "arquivo": "literatura/lit20_momento_serie_temporal.ntsl",
+      "sha256": "22c0bf31a7202a1fe142b85cc84f2ccbe22d0a0b4853cc17d165e20f54bddd40",
+      "bytes": 3863,
+      "origem_relativa": "estrategias_literatura_v1"
     }
   ]
 }

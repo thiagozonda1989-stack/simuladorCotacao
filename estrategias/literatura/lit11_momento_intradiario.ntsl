@@ -1,0 +1,119 @@
+{ Momento intradiário (primeira meia hora prevê a última) (lit11_momento_intradiario) - WIN 1 min, 1 contrato.
+  Referência: Gao, L., Han, Y., Li, S. Z. & Zhou, G. (2018). Market Intraday Momentum. Journal of Financial Economics 129(2).
+  Ideia: O retorno da primeira meia hora (incluindo a noite) prevê o retorno da última meia hora do pregão.
+  Família: momento. Gerado por tools/gerar_estrategias_literatura.py; bloco de risco comum.
+  Validação: docs/colaboracao/evidencias/estrategias_literatura_v1/. }
+
+input
+  p_HoraMedida(930);
+  p_RetMin(0.0005);
+  p_AlvoATR(3.0);
+  p_StopATR(2.0);
+  p_PeriodoATR(14);
+  p_StopMin(50);
+  p_StopMax(400);
+  p_Folga(50);
+  p_TempoMax(60);
+  p_MaxEntradasDia(1);
+  p_Espera(3);
+  p_PerdaMaxDia(400);
+  p_Lote(1);
+  p_Aquecimento(10);
+  p_HoraInicio(1615);
+  p_HoraFimEntradas(1630);
+  p_HoraZeragem(1700);
+
+var
+  v_Ret, v_PrecoMedida : Float;
+  v_Medido : Boolean;
+  v_SinalCompra, v_SinalVenda, v_SaiCompra, v_SaiVenda : Boolean;
+  v_ATR, v_AlvoSinal, v_StopSinal, v_Alvo, v_Stop, v_FolgaT : Float;
+  v_FechAnterior, v_UltimoFech, v_AberturaDia : Float;
+  v_Posicionado, v_EstavaPosicionado, v_PodeEntrar, v_Zerar : Boolean;
+  v_BarraEntrada, v_BarraSaida, v_EntradasDia, v_DataContagem, v_BarrasDia : Integer;
+
+begin
+  v_SinalCompra := False;
+  v_SinalVenda := False;
+  v_SaiCompra := False;
+  v_SaiVenda := False;
+  v_ATR := AvgTrueRange(p_PeriodoATR, 0);
+  if Date <> v_DataContagem then
+  begin
+    v_DataContagem := Date;
+    v_EntradasDia := 0;
+    v_FechAnterior := v_UltimoFech;
+    v_AberturaDia := Open;
+    v_BarrasDia := 0;
+  end;
+  v_BarrasDia := v_BarrasDia + 1;
+
+  { ---------------- sinal ---------------- }
+  if v_BarrasDia = 1 then
+  begin
+    v_Medido := False;
+    v_Ret := 0;
+  end;
+  if (not v_Medido) and (Time >= p_HoraMedida) and (v_FechAnterior > 0) then
+  begin
+    v_PrecoMedida := Close;
+    v_Ret := (v_PrecoMedida - v_FechAnterior) / v_FechAnterior;
+    v_Medido := True;
+  end;
+  v_SinalCompra := v_Medido and (v_Ret > p_RetMin);
+  v_SinalVenda := v_Medido and (v_Ret < -p_RetMin);
+
+  { ---------------- bloco de risco comum ---------------- }
+  v_AlvoSinal := Round(Min(Max(p_AlvoATR * v_ATR, p_StopMin), 2 * p_StopMax) / 5) * 5;
+  v_StopSinal := Round(Min(Max(p_StopATR * v_ATR, p_StopMin), p_StopMax) / 5) * 5;
+  v_FolgaT := Round(p_Folga / 5) * 5;
+  v_Posicionado := IsBought or IsSold;
+  if v_Posicionado and (not v_EstavaPosicionado) then
+    v_BarraEntrada := CurrentBar;
+  if v_EstavaPosicionado and (not v_Posicionado) then
+    v_BarraSaida := CurrentBar;
+  v_Zerar := (Time >= p_HoraZeragem)
+             or (v_Posicionado and (CurrentBar - v_BarraEntrada >= p_TempoMax))
+             or (IsBought and v_SaiCompra) or (IsSold and v_SaiVenda);
+  v_PodeEntrar := (not v_Posicionado) and (CurrentBar > p_Aquecimento)
+                  and (Time >= p_HoraInicio) and (Time <= p_HoraFimEntradas)
+                  and (v_EntradasDia < p_MaxEntradasDia)
+                  and (CurrentBar >= v_BarraSaida + p_Espera)
+                  and (DailyResult > -p_PerdaMaxDia);
+
+  if v_Posicionado and v_Zerar then
+  begin
+    if IsBought then SellToCoverAtMarket(p_Lote)
+    else BuyToCoverAtMarket(p_Lote);
+  end
+  else if IsBought then
+  begin
+    SellToCoverLimit(BuyPrice + v_Alvo, p_Lote);
+    SellToCoverStop(BuyPrice - v_Stop, BuyPrice - v_Stop - v_FolgaT, p_Lote);
+  end
+  else if IsSold then
+  begin
+    BuyToCoverLimit(SellPrice - v_Alvo, p_Lote);
+    BuyToCoverStop(SellPrice + v_Stop, SellPrice + v_Stop + v_FolgaT, p_Lote);
+  end
+  else if v_PodeEntrar then
+  begin
+    if v_SinalCompra then
+    begin
+      v_Alvo := v_AlvoSinal;
+      v_Stop := v_StopSinal;
+      BuyAtMarket(p_Lote);
+      v_EntradasDia := v_EntradasDia + 1;
+    end
+    else if v_SinalVenda then
+    begin
+      v_Alvo := v_AlvoSinal;
+      v_Stop := v_StopSinal;
+      SellShortAtMarket(p_Lote);
+      v_EntradasDia := v_EntradasDia + 1;
+    end;
+  end;
+
+  v_EstavaPosicionado := v_Posicionado;
+  v_UltimoFech := Close;
+end;

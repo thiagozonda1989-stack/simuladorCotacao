@@ -1,0 +1,57 @@
+{
+  "versao": "1.0",
+  "registrado_antes_da_execucao": true,
+  "objetivo": "Testar e validar 20 estratégias clássicas da literatura no WIN de 1 minuto, com seleção só no desenvolvimento e validação única nos 20 pregões conhecidos.",
+  "base_sha256": "ed9230c941c186e81fb06a50c79755d4f4b0317d76ddf6bdf84be2e6773cd9d7",
+  "base": "win_60s.csv congelado da rodada 18 (privado, fora do Git)",
+  "recortes": {
+    "desenvolvimento": "19 pregões de desenvolvimento da rodada 18 (15/09 a 16/10, contrato ainda não principal, com lacunas)",
+    "conhecidos": "20 pregões conhecidos das rodadas 18 a 20 (19/10 a 18/11)",
+    "reserva": "não utilizada"
+  },
+  "regras_execucao": {
+    "custo_por_contrato_lado": 0.5,
+    "slippage_ticks": 1,
+    "limite_exige_ultrapassar": false,
+    "ordem_so_proxima_barra": true,
+    "historico_continuo": true,
+    "latencia_barras": 0,
+    "motor_ticks": false,
+    "latencia_ticks_ms": 0,
+    "lacuna_ticks_ms": 5000,
+    "volume_financeiro_ntsl": true,
+    "agressao_por_barra": false,
+    "agressao_referencia_injetada": true,
+    "vwap_continuo_lacunas": true,
+    "protecao_no_candle_entrada": false,
+    "rastrear_ordens": false,
+    "avaliacao_pos_preenchimento": false,
+    "historico_continuo_lacunas": false,
+    "entrada_mercado_atraves_lacuna": false,
+    "protecoes_ate_cancelar": false,
+    "ajuste_tick_saidas_venda": false
+  },
+  "contratos": 1,
+  "valor_ponto": 0.2,
+  "tick": 5,
+  "variacoes_por_estrategia": 12,
+  "semente_variacoes": 7,
+  "primeira_variacao": "parâmetros padrão da literatura (gerados no NTSL)",
+  "selecao": {
+    "criterio": "maior líquido no desenvolvimento",
+    "minimo_operacoes_dev": 19
+  },
+  "controle_nulo": {
+    "gerador_versao": 0,
+    "pregoes": 60,
+    "semente": 20261202,
+    "semente_micro": 20261203
+  },
+  "criterios": {
+    "alfa": 0.05,
+    "fator_lucro_minimo": 1.1,
+    "operacoes_por_pregao_minimo": 1.0,
+    "descricao": "Aprovada para a reserva: líquido > 0 no desenvolvimento e nos conhecidos, fator >= 1,1, >= 1 operação por pregão nos conhecidos, IC 95% inferior do nulo <= 0 e p unilateral (bootstrap por pregão, 10.000) ajustado por Holm < 0,05 nas 20 estratégias. Promissora: os mesmos critérios sem a significância de Holm. Rejeitada: os demais casos."
+  },
+  "estatistica": "Bootstrap da média diária por pregão (10.000 reamostragens, semente 11); p unilateral = fração das médias <= 0."
+}

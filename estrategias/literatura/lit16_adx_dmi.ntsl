@@ -1,0 +1,121 @@
+{ ADX e DMI de Wilder (lit16_adx_dmi) - WIN 1 min, 1 contrato.
+  Referência: Wilder, J. W. (1978). New Concepts in Technical Trading Systems. Trend Research.
+  Ideia: DI+ acima de DI− com ADX forte e subindo identifica tendência; a suavização de Wilder usa MediaExp(2n−1).
+  Família: tendência. Gerado por tools/gerar_estrategias_literatura.py; bloco de risco comum.
+  Validação: docs/colaboracao/evidencias/estrategias_literatura_v1/. }
+
+input
+  p_Periodo(14);
+  p_ADXMin(25);
+  p_AlvoATR(3.0);
+  p_StopATR(1.5);
+  p_PeriodoATR(14);
+  p_StopMin(50);
+  p_StopMax(400);
+  p_Folga(50);
+  p_TempoMax(60);
+  p_MaxEntradasDia(5);
+  p_Espera(3);
+  p_PerdaMaxDia(400);
+  p_Lote(1);
+  p_Aquecimento(60);
+  p_HoraInicio(915);
+  p_HoraFimEntradas(1630);
+  p_HoraZeragem(1700);
+
+var
+  v_SobeDM, v_DesceDM, v_DMMais, v_DMMenos, v_TR, v_DIMais, v_DIMenos, v_DX, v_ADX : Float;
+  v_SinalCompra, v_SinalVenda, v_SaiCompra, v_SaiVenda : Boolean;
+  v_ATR, v_AlvoSinal, v_StopSinal, v_Alvo, v_Stop, v_FolgaT : Float;
+  v_FechAnterior, v_UltimoFech, v_AberturaDia : Float;
+  v_Posicionado, v_EstavaPosicionado, v_PodeEntrar, v_Zerar : Boolean;
+  v_BarraEntrada, v_BarraSaida, v_EntradasDia, v_DataContagem, v_BarrasDia : Integer;
+
+begin
+  v_SinalCompra := False;
+  v_SinalVenda := False;
+  v_SaiCompra := False;
+  v_SaiVenda := False;
+  v_ATR := AvgTrueRange(p_PeriodoATR, 0);
+  if Date <> v_DataContagem then
+  begin
+    v_DataContagem := Date;
+    v_EntradasDia := 0;
+    v_FechAnterior := v_UltimoFech;
+    v_AberturaDia := Open;
+    v_BarrasDia := 0;
+  end;
+  v_BarrasDia := v_BarrasDia + 1;
+
+  { ---------------- sinal ---------------- }
+  v_SobeDM := High - High[1];
+  v_DesceDM := Low[1] - Low;
+  if (v_SobeDM > v_DesceDM) and (v_SobeDM > 0) then v_DMMais := v_SobeDM else v_DMMais := 0;
+  if (v_DesceDM > v_SobeDM) and (v_DesceDM > 0) then v_DMMenos := v_DesceDM else v_DMMenos := 0;
+  v_TR := MediaExp(2 * p_Periodo - 1, TrueRange);
+  if v_TR > 0 then
+  begin
+    v_DIMais := 100 * MediaExp(2 * p_Periodo - 1, v_DMMais) / v_TR;
+    v_DIMenos := 100 * MediaExp(2 * p_Periodo - 1, v_DMMenos) / v_TR;
+  end;
+  if v_DIMais + v_DIMenos > 0 then v_DX := 100 * Abs(v_DIMais - v_DIMenos) / (v_DIMais + v_DIMenos) else v_DX := 0;
+  v_ADX := MediaExp(2 * p_Periodo - 1, v_DX);
+  v_SinalCompra := (v_DIMais > v_DIMenos) and (v_DIMais[1] <= v_DIMenos[1]) and (v_ADX > p_ADXMin);
+  v_SinalVenda := (v_DIMenos > v_DIMais) and (v_DIMenos[1] <= v_DIMais[1]) and (v_ADX > p_ADXMin);
+  v_SaiCompra := v_DIMenos > v_DIMais;
+  v_SaiVenda := v_DIMais > v_DIMenos;
+
+  { ---------------- bloco de risco comum ---------------- }
+  v_AlvoSinal := Round(Min(Max(p_AlvoATR * v_ATR, p_StopMin), 2 * p_StopMax) / 5) * 5;
+  v_StopSinal := Round(Min(Max(p_StopATR * v_ATR, p_StopMin), p_StopMax) / 5) * 5;
+  v_FolgaT := Round(p_Folga / 5) * 5;
+  v_Posicionado := IsBought or IsSold;
+  if v_Posicionado and (not v_EstavaPosicionado) then
+    v_BarraEntrada := CurrentBar;
+  if v_EstavaPosicionado and (not v_Posicionado) then
+    v_BarraSaida := CurrentBar;
+  v_Zerar := (Time >= p_HoraZeragem)
+             or (v_Posicionado and (CurrentBar - v_BarraEntrada >= p_TempoMax))
+             or (IsBought and v_SaiCompra) or (IsSold and v_SaiVenda);
+  v_PodeEntrar := (not v_Posicionado) and (CurrentBar > p_Aquecimento)
+                  and (Time >= p_HoraInicio) and (Time <= p_HoraFimEntradas)
+                  and (v_EntradasDia < p_MaxEntradasDia)
+                  and (CurrentBar >= v_BarraSaida + p_Espera)
+                  and (DailyResult > -p_PerdaMaxDia);
+
+  if v_Posicionado and v_Zerar then
+  begin
+    if IsBought then SellToCoverAtMarket(p_Lote)
+    else BuyToCoverAtMarket(p_Lote);
+  end
+  else if IsBought then
+  begin
+    SellToCoverLimit(BuyPrice + v_Alvo, p_Lote);
+    SellToCoverStop(BuyPrice - v_Stop, BuyPrice - v_Stop - v_FolgaT, p_Lote);
+  end
+  else if IsSold then
+  begin
+    BuyToCoverLimit(SellPrice - v_Alvo, p_Lote);
+    BuyToCoverStop(SellPrice + v_Stop, SellPrice + v_Stop + v_FolgaT, p_Lote);
+  end
+  else if v_PodeEntrar then
+  begin
+    if v_SinalCompra then
+    begin
+      v_Alvo := v_AlvoSinal;
+      v_Stop := v_StopSinal;
+      BuyAtMarket(p_Lote);
+      v_EntradasDia := v_EntradasDia + 1;
+    end
+    else if v_SinalVenda then
+    begin
+      v_Alvo := v_AlvoSinal;
+      v_Stop := v_StopSinal;
+      SellShortAtMarket(p_Lote);
+      v_EntradasDia := v_EntradasDia + 1;
+    end;
+  end;
+
+  v_EstavaPosicionado := v_Posicionado;
+  v_UltimoFech := Close;
+end;
