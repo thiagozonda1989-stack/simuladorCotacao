@@ -84,7 +84,11 @@ Detalhes da v5.8 na amostra inédita:
 - Validar primeiro no WINZ26 real, como cenário pareado com a v5.8 original congelada, pelo protocolo da rodada 20 e sem reotimizar `p_ZDia`.
 - A mola ajustada pode ser descartada.
 
-## Teste no WINZ26 real (preparado, aguardando execução local)
+## Teste no WINZ26 real (executado: ver [../winz26_real/README.md](../winz26_real/README.md))
+
+Resultado: a variante primária `deriva_z1` não melhorou os 20 pregões conhecidos (−9,40 por dia, IC de −123,23 a 107,13). O filtro não é adotado.
+
+### Preparação
 
 `tools/testar_deriva_real.py` roda a v5.8 Física v1.1 sobre a base privada congelada. A ferramenta confere o SHA-256 da base contra o `base_conhecida_sha256` da rodada 20 e usa as regras e o perfil congelados da v5.8 original, com 2 contratos. Ela roda 12 variantes em cada pregão e grava só agregados.
 

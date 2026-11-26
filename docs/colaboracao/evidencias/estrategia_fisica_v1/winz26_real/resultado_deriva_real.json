@@ -1,0 +1,343 @@
+{
+  "pregoes_ausentes": [],
+  "replays_por_pregao": 12,
+  "variante_primaria": "deriva_z1",
+  "recortes": {
+    "conhecidos": {
+      "pregoes": 20,
+      "original": {
+        "operacoes": 147,
+        "acerto": 0.517,
+        "liquido_reais": 1902.0,
+        "fator_lucro": 1.212,
+        "drawdown_reais": 2352.0
+      },
+      "variantes": {
+        "deriva_z0_5": {
+          "operacoes": 126,
+          "acerto": 0.5635,
+          "liquido_reais": 3388.0,
+          "fator_lucro": 1.505,
+          "drawdown_reais": 1152.0,
+          "diferenca_diaria_media": 74.3,
+          "diferenca_diaria_ic95": [
+            -4.62,
+            158.43
+          ],
+          "pregoes_melhor": 8,
+          "pregoes_pior": 5
+        },
+        "deriva_z0_75": {
+          "operacoes": 119,
+          "acerto": 0.5378,
+          "liquido_reais": 2442.0,
+          "fator_lucro": 1.369,
+          "drawdown_reais": 1214.0,
+          "diferenca_diaria_media": 27.0,
+          "diferenca_diaria_ic95": [
+            -67.1,
+            129.6
+          ],
+          "pregoes_melhor": 7,
+          "pregoes_pior": 8
+        },
+        "deriva_z1": {
+          "operacoes": 113,
+          "acerto": 0.5221,
+          "liquido_reais": 1714.0,
+          "fator_lucro": 1.261,
+          "drawdown_reais": 1372.0,
+          "diferenca_diaria_media": -9.4,
+          "diferenca_diaria_ic95": [
+            -123.23,
+            107.13
+          ],
+          "pregoes_melhor": 6,
+          "pregoes_pior": 9
+        },
+        "deriva_z1_25": {
+          "operacoes": 107,
+          "acerto": 0.4953,
+          "liquido_reais": 840.0,
+          "fator_lucro": 1.125,
+          "drawdown_reais": 1536.0,
+          "diferenca_diaria_media": -53.1,
+          "diferenca_diaria_ic95": [
+            -193.21,
+            84.0
+          ],
+          "pregoes_melhor": 7,
+          "pregoes_pior": 8
+        },
+        "deriva_z1_5": {
+          "operacoes": 104,
+          "acerto": 0.5,
+          "liquido_reais": 944.0,
+          "fator_lucro": 1.146,
+          "drawdown_reais": 1392.0,
+          "diferenca_diaria_media": -47.9,
+          "diferenca_diaria_ic95": [
+            -195.41,
+            91.83
+          ],
+          "pregoes_melhor": 8,
+          "pregoes_pior": 8
+        },
+        "deriva_z2": {
+          "operacoes": 93,
+          "acerto": 0.5054,
+          "liquido_reais": 870.0,
+          "fator_lucro": 1.153,
+          "drawdown_reais": 1170.0,
+          "diferenca_diaria_media": -51.6,
+          "diferenca_diaria_ic95": [
+            -221.54,
+            122.51
+          ],
+          "pregoes_melhor": 8,
+          "pregoes_pior": 10
+        },
+        "mola_v10": {
+          "operacoes": 119,
+          "acerto": 0.5042,
+          "liquido_reais": 1172.0,
+          "fator_lucro": 1.157,
+          "drawdown_reais": 1996.0,
+          "diferenca_diaria_media": -36.5,
+          "diferenca_diaria_ic95": [
+            -156.1,
+            82.8
+          ],
+          "pregoes_melhor": 6,
+          "pregoes_pior": 10
+        },
+        "mola_ajustada": {
+          "operacoes": 129,
+          "acerto": 0.5194,
+          "liquido_reais": 1666.0,
+          "fator_lucro": 1.211,
+          "drawdown_reais": 2264.0,
+          "diferenca_diaria_media": -11.8,
+          "diferenca_diaria_ic95": [
+            -111.71,
+            87.7
+          ],
+          "pregoes_melhor": 6,
+          "pregoes_pior": 9
+        },
+        "mola_ajustada_deriva_z1": {
+          "operacoes": 104,
+          "acerto": 0.5481,
+          "liquido_reais": 2186.0,
+          "fator_lucro": 1.379,
+          "drawdown_reais": 1098.0,
+          "diferenca_diaria_media": 14.2,
+          "diferenca_diaria_ic95": [
+            -114.7,
+            142.21
+          ],
+          "pregoes_melhor": 9,
+          "pregoes_pior": 10
+        },
+        "temperatura": {
+          "operacoes": 157,
+          "acerto": 0.4586,
+          "liquido_reais": 134.0,
+          "fator_lucro": 1.013,
+          "drawdown_reais": 2570.0,
+          "diferenca_diaria_media": -88.4,
+          "diferenca_diaria_ic95": [
+            -151.01,
+            -30.5
+          ],
+          "pregoes_melhor": 4,
+          "pregoes_pior": 15
+        },
+        "deriva_z1_temperatura": {
+          "operacoes": 117,
+          "acerto": 0.4701,
+          "liquido_reais": 636.0,
+          "fator_lucro": 1.09,
+          "drawdown_reais": 1460.0,
+          "diferenca_diaria_media": -63.3,
+          "diferenca_diaria_ic95": [
+            -200.92,
+            74.53
+          ],
+          "pregoes_melhor": 6,
+          "pregoes_pior": 14
+        }
+      }
+    },
+    "desenvolvimento": {
+      "pregoes": 19,
+      "original": {
+        "operacoes": 91,
+        "acerto": 0.5055,
+        "liquido_reais": 342.0,
+        "fator_lucro": 1.055,
+        "drawdown_reais": 1230.0
+      },
+      "variantes": {
+        "deriva_z0_5": {
+          "operacoes": 72,
+          "acerto": 0.5278,
+          "liquido_reais": 842.0,
+          "fator_lucro": 1.177,
+          "drawdown_reais": 866.0,
+          "diferenca_diaria_media": 26.32,
+          "diferenca_diaria_ic95": [
+            -30.53,
+            81.27
+          ],
+          "pregoes_melhor": 7,
+          "pregoes_pior": 5
+        },
+        "deriva_z0_75": {
+          "operacoes": 66,
+          "acerto": 0.5455,
+          "liquido_reais": 1102.0,
+          "fator_lucro": 1.263,
+          "drawdown_reais": 548.0,
+          "diferenca_diaria_media": 40.0,
+          "diferenca_diaria_ic95": [
+            -27.16,
+            105.69
+          ],
+          "pregoes_melhor": 8,
+          "pregoes_pior": 6
+        },
+        "deriva_z1": {
+          "operacoes": 63,
+          "acerto": 0.5556,
+          "liquido_reais": 1232.0,
+          "fator_lucro": 1.316,
+          "drawdown_reais": 432.0,
+          "diferenca_diaria_media": 46.84,
+          "diferenca_diaria_ic95": [
+            -25.06,
+            121.27
+          ],
+          "pregoes_melhor": 8,
+          "pregoes_pior": 7
+        },
+        "deriva_z1_25": {
+          "operacoes": 60,
+          "acerto": 0.5167,
+          "liquido_reais": 790.0,
+          "fator_lucro": 1.2,
+          "drawdown_reais": 580.0,
+          "diferenca_diaria_media": 23.58,
+          "diferenca_diaria_ic95": [
+            -53.92,
+            104.0
+          ],
+          "pregoes_melhor": 7,
+          "pregoes_pior": 8
+        },
+        "deriva_z1_5": {
+          "operacoes": 55,
+          "acerto": 0.5455,
+          "liquido_reais": 1112.0,
+          "fator_lucro": 1.32,
+          "drawdown_reais": 432.0,
+          "diferenca_diaria_media": 40.53,
+          "diferenca_diaria_ic95": [
+            -34.63,
+            114.66
+          ],
+          "pregoes_melhor": 8,
+          "pregoes_pior": 7
+        },
+        "deriva_z2": {
+          "operacoes": 51,
+          "acerto": 0.5294,
+          "liquido_reais": 782.0,
+          "fator_lucro": 1.235,
+          "drawdown_reais": 432.0,
+          "diferenca_diaria_media": 23.16,
+          "diferenca_diaria_ic95": [
+            -54.74,
+            102.64
+          ],
+          "pregoes_melhor": 8,
+          "pregoes_pior": 7
+        },
+        "mola_v10": {
+          "operacoes": 68,
+          "acerto": 0.4853,
+          "liquido_reais": 34.0,
+          "fator_lucro": 1.007,
+          "drawdown_reais": 828.0,
+          "diferenca_diaria_media": -16.21,
+          "diferenca_diaria_ic95": [
+            -91.48,
+            67.28
+          ],
+          "pregoes_melhor": 3,
+          "pregoes_pior": 10
+        },
+        "mola_ajustada": {
+          "operacoes": 75,
+          "acerto": 0.5067,
+          "liquido_reais": 404.0,
+          "fator_lucro": 1.08,
+          "drawdown_reais": 726.0,
+          "diferenca_diaria_media": 3.26,
+          "diferenca_diaria_ic95": [
+            -73.37,
+            90.95
+          ],
+          "pregoes_melhor": 4,
+          "pregoes_pior": 8
+        },
+        "mola_ajustada_deriva_z1": {
+          "operacoes": 55,
+          "acerto": 0.5455,
+          "liquido_reais": 928.0,
+          "fator_lucro": 1.267,
+          "drawdown_reais": 506.0,
+          "diferenca_diaria_media": 30.84,
+          "diferenca_diaria_ic95": [
+            -48.33,
+            121.09
+          ],
+          "pregoes_melhor": 7,
+          "pregoes_pior": 8
+        },
+        "temperatura": {
+          "operacoes": 90,
+          "acerto": 0.5333,
+          "liquido_reais": 646.0,
+          "fator_lucro": 1.104,
+          "drawdown_reais": 940.0,
+          "diferenca_diaria_media": 16.0,
+          "diferenca_diaria_ic95": [
+            -34.53,
+            82.85
+          ],
+          "pregoes_melhor": 4,
+          "pregoes_pior": 12
+        },
+        "deriva_z1_temperatura": {
+          "operacoes": 63,
+          "acerto": 0.5873,
+          "liquido_reais": 1442.0,
+          "fator_lucro": 1.363,
+          "drawdown_reais": 524.0,
+          "diferenca_diaria_media": 57.89,
+          "diferenca_diaria_ic95": [
+            -20.32,
+            142.86
+          ],
+          "pregoes_melhor": 9,
+          "pregoes_pior": 8
+        }
+      }
+    }
+  },
+  "base_sha256": "ed9230c941c186e81fb06a50c79755d4f4b0317d76ddf6bdf84be2e6773cd9d7",
+  "fonte": "estrategias/pesquisa/Modelo_Unificado_v5_8_fisica_v1_1.ntsl",
+  "fonte_sha256": "cfdd97aa43dd89d596b0e7004c3c768721c9babb24af5ea56cd76fc4d2603e54",
+  "sha_codigo": "28fee16c3d5a18ed504d7ddec2bb8ad882065b34"
+}
