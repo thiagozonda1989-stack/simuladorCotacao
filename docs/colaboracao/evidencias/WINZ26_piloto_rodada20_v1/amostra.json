@@ -1,0 +1,38 @@
+{
+  "rodada": 20,
+  "natureza": "piloto_descritivo",
+  "fase": "pre_replay",
+  "ativo": "WINZ26",
+  "segundos": 60,
+  "fonte_1min_sha256": "eb9d86e58a6a32b4499657f0c4bb2163e3978b666daea2cd44b0c8e768aaa4c5",
+  "entrada_privada_preparada_sha256": "1fe860261fb9bee50a051b93cbe501462a1482973b6977fbbd3d6126e4324f33",
+  "protocolo_sha256": "674190d2253446dddcb6d901149c23ccb0406d015df64f8a7d3925c3c50ee6bd",
+  "perfis": [
+    "v58_original",
+    "scalper_v11_otimizada"
+  ],
+  "aquecimento": "2026-11-23",
+  "piloto": [
+    "2026-11-24"
+  ],
+  "barras": {
+    "2026-11-23": 562,
+    "2026-11-24": 565
+  },
+  "janela_final_aquecimento": {
+    "inicio": "2026-11-23T16:59:00",
+    "fim": "2026-11-23T18:24:00",
+    "barras_esperadas": 86,
+    "barras_observadas": 86,
+    "minutos_faltantes": 0,
+    "timestamps_duplicados": 0,
+    "continua": true
+  },
+  "excluidos_da_futura_coorte_formal": [
+    "2026-11-23",
+    "2026-11-24"
+  ],
+  "primeira_barra_replay_do_profit": "2026-11-23T09:03:30-03:00",
+  "fonte_horario": "Captura visual WINZ26 1 segundo em Replay, cruzada com a exportacao subminuto.",
+  "replays_executados": 0
+}
