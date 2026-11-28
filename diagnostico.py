@@ -118,11 +118,14 @@ def chart(history, series, title, percent=False, axis='Geração'):
 
 
 def charts(history, parameters, financial=False):
-    result = chart(history, [('accuracy','Acurácia'),('precision','Precisão dos sinais'),
-                             ('recall','Recall'),('f1','F1'),('balanced_accuracy','Acurácia balanceada')],
-                   'Métricas do melhor candidato na busca', True)
-    if financial:
-        result = chart(history, [('resultado','Resultado'),('drawdown','Drawdown')],
-                       'Execução em pontos × contratos')
+    result = ''
+    if not financial:
+        result = chart(history, [('accuracy','Acurácia'),('precision','Precisão dos sinais'),
+                                 ('recall','Taxa de VP'),('specificity','Taxa de VN'),
+                                 ('f1','F1'),('balanced_accuracy','Acurácia balanceada')],
+                       'Métricas do melhor candidato na busca', True)
+    if history and 'resultado_reais' in history[0]:
+        result += chart(history, [('resultado_reais','Resultado líquido'),('drawdown_reais','Drawdown')],
+                        'Resultado simulado em R$')
     return result + ''.join(chart(history, [(f"input:{name}",name)], name) for name in parameters
                             if history and isinstance(history[0][f"input:{name}"], (int,float)))

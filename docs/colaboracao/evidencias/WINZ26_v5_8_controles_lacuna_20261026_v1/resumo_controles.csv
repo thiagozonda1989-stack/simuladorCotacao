@@ -1,0 +1,9 @@
+fonte_barras;caso;modo;barra_anterior;barra_retomada;posicao_antes;ordens_canceladas_lacuna;posicao_regular_retomada;has_pending_orders_regular_retomada;preenchimentos_retomada;avaliacoes_extras_retomada;avaliacoes_regulares_retomada;barra_preenchimento_anterior;barra_extra_anterior;abertura_retomada_pontos_relativos;toque_alvo_retomada_se_elegivel;abertura_retomada_entre_limite_e_gatilho_do_stop;pendentes_na_avaliacao_09h29_antes_de_solicitar
+sintetico;1;reinicio;09:29;09:39;0;1;0;0;0;0;1;;;;;;0
+sintetico;1;continuidade;09:29;09:39;0;1;0;0;0;0;1;;;;;;0
+sintetico;2;reinicio;09:29;09:39;1;2;1;0;0;0;1;09:28;09:28;-10420;0;1;1
+sintetico;2;continuidade;09:29;09:39;1;2;1;0;0;0;1;09:28;09:28;-10420;0;1;1
+recorte_privado;1;reinicio;09:29;09:39;0;1;0;0;0;0;1;;;;;;0
+recorte_privado;1;continuidade;09:29;09:39;0;1;0;0;0;0;1;;;;;;0
+recorte_privado;2;reinicio;09:29;09:39;1;2;1;0;0;0;1;09:28;09:28;-10425;0;1;1
+recorte_privado;2;continuidade;09:29;09:39;1;2;1;0;0;0;1;09:28;09:28;-10425;0;1;1

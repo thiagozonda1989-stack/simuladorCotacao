@@ -1,0 +1,56 @@
+# Rodada 20 · cobertura da reserva e protocolo pré-replay
+
+PR #2 em rascunho, branch `research/piloto-ias-etapa1`. Os perfis vêm do SHA da rodada 19 `dda2cff06801218e8768e4e255295b683e3b18c1`. O motor OHLC é `db9ace693c9396d87198e0973d9708ddeb7668d4`, com o compilador NTSL de `e3f474453e4186c9df83392af9f6fd7284a3e234`. A auditoria, o diagnóstico e os testes executaram no SHA `d20f07f8ed7793a182ef7b834b9fbc67cd7aa16e`. [Configuração completa congelada](protocolo.json) · [Evidências da rodada 19](../WINZ26_congelamento_rodada19_v1/README.md)
+
+## Auditoria da exportação
+
+O arquivo `Coleta_Reserva_WINZ26_1Min_V1_0.csv` veio do coletor do SHA `7de604c8bb928974409c53e30b5e2ce0db7b5354`. São 20.001 linhas de dados em 36 pregões, de 01/10/2026 11:34 a 24/11/2026 18:24, em ordem física decrescente. O par de arquivos tinha 19.426 timestamps em comum e 19.425 OHLC idênticos. Os originais permanecem no Windows. [Cobertura detalhada, cabeçalhos, tamanhos e SHA-256](cobertura.json)
+
+| Pregão | Nova captura, rótulos de 1 min | Faltantes na janela 09:00–18:24 | Cruzamento com `SONDA_S1_STOP_barras.csv` | Situação |
+|---|---|---|---|---|
+| 19/11/2026 | 565, 09:00–18:24 | 0 | 565/565 OHLC iguais | Pregão já conhecido. Pode compor o histórico anterior. |
+| 23/11/2026 | 562, 09:03–18:24 | 3, às 09:00–09:02 | 551/552 OHLC iguais. Dez timestamps estão só na captura nova, de 18:15 a 18:24. | Candidato à reserva. Conferir a borda inicial e a barra de 18:14. |
+| 24/11/2026 | 565, 09:00–18:24 | 0 | A referência anterior termina em 23/11. | Completo nesta fonte. Confirmar metadados da captura e a cobertura do pregão de aquecimento. |
+
+A única divergência está às **18:14 de 23/11**, último rótulo da referência antiga. A abertura e a máxima coincidem. Na captura nova, mínima e fechamento estão 10 e 45 pontos abaixo, respectivamente. Um candle ainda em formação na exportação antiga é compatível com o padrão observado. O histórico disponível ainda não confirma essa hipótese. Não foi aplicado deslocamento de horário e as duas fontes foram mantidas intactas.
+
+Em 19, 23 e 24/11, as cinco colunas exportadas estão completas em todas as barras. `v_Trades` e `v_Quantidade_Contratos` trazem inteiros positivos, com Trades ≤ Quantity. O volume financeiro é positivo e `Volume / (Quantity × R$ 0,20)` cai dentro da faixa OHLC em todas as barras, com tolerância de 0,01 ponto. O saldo de agressão nativo registra valores assinados e a VWAP diária nativa está presente. Foram encontrados zero timestamps duplicados, zero linhas duplicadas, zero OHLC inválidos e zero lacunas internas nesses três dias. A validação confirma presença e consistência de unidade. As séries de agressão e VWAP dependem da fonte nativa e ficam identificadas como tal.
+
+## Diagnóstico do contador e do aquecimento
+
+A v5.8 zera `v_Entradas_Dia` quando `Date <> Date[1]`. No modo congelado (`historico_continuo_lacunas=false`), o primeiro candle após a lacuna lê `Date[1]=0`, embora o pregão seja o mesmo. O motor também reinicia as médias do segmento. O filtro `v_Aquecido` continua baseado no `CurrentBar` global. O limiar da original é `CurrentBar > 86`. Encontrar uma barra com `v_Aquecido=true` após a lacuna, portanto, não garante que as janelas ATR, média do ATR e desvio estejam completas.
+
+A sonda usa o NTSL da v5.8 com sinais determinísticos e teto sintético de uma entrada. A primeira compra encerra antes da lacuna. Na barra 101, a primeira do novo segmento, o contador vai de 1 a 0, `v_Aquecido=true` e as duas médias de ATR valem 40 pontos, obtidos de uma única barra. O cooldown pelo índice de barras ainda impede entrada nessa avaliação. Na barra seguinte, o congelado solicita uma segunda compra no mesmo dia. O controle com a data escalar preserva o contador, bloqueia essa compra e volta a permitir compra no pregão seguinte. Usar continuidade histórica no teste também preserva o contador, mas altera a média ATR e a referência de barra anterior. A data escalar fica em um controle experimental de teste e diagnóstico. O motor e o NTSL versionado da v5.8 foram preservados.
+
+Nos 20 conhecidos, a base congelada tem duas lacunas intradiárias, em 23/10 e 28/10. Em ambas, a v5.8 original estava zerada, leu `Date[1]=0`, zerou o contador (de 9 e de 7) e marcou aquecimento já na primeira barra do novo segmento. Em 116 barras após essas lacunas ainda dentro do limiar local de 86 barras, o filtro marcava aquecido. Houve duas solicitações de entrada nesse intervalo. Na v5.8 otimizada, usada apenas no diagnóstico, foram 137 barras dentro do limiar local de 107 e uma solicitação. O índice global da rodada 19 permaneceu exatamente como na base preparada, inclusive depois do recorte de datas.
+
+| Perfil nos 20 conhecidos | Congelado | Controle com data escalar | Efeito observado |
+|---|---:|---:|---|
+| v5.8 original | 147 operações, R$ 1.902 | 147 operações, R$ 1.902 | Fills idênticos. |
+| v5.8 otimizada, diagnóstico | 86 operações, −R$ 2.022 | 85 operações, −R$ 2.240 | Em 28/10, o teto de cinco volta a valer. O resultado do dia passa de R$ 102 para −R$ 116. |
+
+Os controles medem o contador mantendo as regras de aquecimento. Ajustar aquecimento, habilitar continuidade histórica ou alterar cancelamentos exigiria outro cenário com controles próprios de paridade e warmup. O impacto em outros pregões depende das entradas elegíveis depois da lacuna. [Diagnóstico agregado e estados do contador](diagnostico_lacunas.json)
+
+## Protocolo para a reserva
+
+1. **Perfis e custos.** v5.8 original com `p_Exec_Tick=0` e Scalper v1.1 otimizada, cada uma com 2 contratos, OHLC de 1 minuto do WINZ26, tick de 5 pontos, R$ 0,20/ponto/contrato, slippage de 1 tick e R$ 0,50 por contrato e lado. Ambas usam as flags da rodada 19. Os hashes de cada fonte e todos os inputs estão em `protocolo.json`. A v5.8 otimizada fica no diagnóstico conhecido.
+2. **Amostra.** Congele antes do primeiro replay a lista cronológica, os hashes dos arquivos elegíveis e o pregão de aquecimento. A validação formal usa 20 pregões inéditos completos, na mesma ordem para os dois perfis, com pelo menos 80 operações encerradas por perfil. Um pregão único ou qualquer amostra com menos de 20 datas é piloto descritivo e fica sem decisão de aprovação. Se um perfil fizer menos de 80 operações nos 20 dias fixos, marque amostra insuficiente para esse perfil. São contados os dias com zero operações. As datas vêm da cobertura e da novidade, sem usar resultados para escolher, excluir ou estender o recorte. Uma data avaliada em piloto fica fora da futura validação inédita.
+3. **Elegibilidade e lacunas.** Verifique contrato, relógio e sessão do gráfico, timestamps únicos e a presença de OHLC, Trades, Quantity, Volume e saldo nativo. Audite sobreposição pelas quatro colunas de preço sempre que houver referência. Confirme no Profit diferenças de borda ou de candle fechado antes de fixar a fonte canônica. Use o pregão anterior elegível como histórico de aquecimento, com operações e P/L dele excluídos das métricas da reserva. Mantenha os candles reais na ordem temporal. Dias com lacuna intradiária material ou sem cobertura confirmada ficam fora do teste formal por causa do reinício do contador e das médias. Qualquer sensibilidade com lacunas, continuidade ou correção de contador usa tabela própria. VWAP continua pelas lacunas conforme a flag congelada, reconstruída do volume e quantidade. VWAP nativa fica para auditoria e o saldo de agressão nativo entra sem recálculo. A prioridade conservadora do OHLC, a elegibilidade de ordens, cancelamentos e registro de ambiguidades seguem o motor congelado.
+4. **Aceite formal.** A aprovação exige em conjunto líquido positivo, média diária ≥ R$ 80, fator de lucro líquido ≥ 1,25, os dois melhores dias ≤ 40% do líquido, drawdown realizado ≤ R$ 1.500, líquido/drawdown ≥ 1, pior dia ≥ −R$ 500, frequência de 2 a 12 operações/dia e exposição máxima de dois contratos. Acerto mínimo de 45% na v5.8 e 55% na Scalper. A amostra fixa de 20 dias e o mínimo de 80 operações tornam o piso efetivo de frequência 4 operações/dia. O fator de lucro usa ganhos e perdas líquidos por operação. Com perda total zero e ganhos positivos, registre a razão como ilimitada. O mesmo vale para líquido/drawdown com drawdown zero e líquido positivo. Com zero operações a amostra é insuficiente. Avanços frente a 45% e R$ 3 mil/dia ficam como referências do projeto. A associação dos limiares de acerto aos dois perfis foi fixada antes do teste para evitar classificá-los pelo payoff que vier a ser observado.
+5. **Agregados depois da execução.** Publique por perfil e pregão barras, operações, acertos, bruto realizado ao preço já preenchido, custos explícitos, líquido, drawdown intradiário realizado, saldo acumulado, ambiguidades e zeragens de fim de pregão. Identifique slippage incorporado ao preço para evitar descontá-lo duas vezes. Publique os totais, duração mediana e P90, frequência, acerto numerador/denominador, concentração e decisão de cada critério. Use cenário pareado à v5.8 original congelada e atualize o painel no fechamento. Os originais ficam no Windows.
+
+**Pareceres incorporados.** Do Claude, preservar a referência original, tratar reinício do contador e aquecimento como hipóteses distintas e manter mudanças de lacunas como controles diagnósticos. Do Gemini, 20 pregões completos e 80 operações, critérios conjuntos de resultado, risco e concentração, relatórios diários e reserva sem reotimização. Os pareceres disponíveis revisaram a rodada 18 no SHA `4b195d9c6a0e3fd8e2e92eda71c0827dd9870cb5`. O comentário da rodada solicita revisão dos critérios e da elegibilidade no SHA novo antes da execução. [Claude](https://github.com/thiagozonda1989-stack/simuladorCotacao/pull/2#issuecomment-7151902058) · [Gemini](https://github.com/thiagozonda1989-stack/simuladorCotacao/pull/2#issuecomment-7151922744)
+
+**Estado da reserva.** Zero replays. Para fechar a elegibilidade de 23/11, exporte ou confira no WINZ26 de 1 minuto, após o fechamento, os rótulos 09:00–09:03 e o candle fechado de 18:14. Se os três primeiros rótulos estiverem ausentes também no histórico do Profit, registre a evidência de abertura às 09:03. Confirme o gráfico e o período de 24/11, idealmente com exportação OHLC independente. A captura completa de 24/11 está preservada com os campos exigidos.
+
+## Reprodução
+
+No SHA executado, aponte as variáveis abaixo para os originais locais e para a base privada congelada da rodada 18. O cache evita reler pares com SHA-256 já registrado. A auditoria lê a reserva apenas para validar dados. O diagnóstico aceita somente a base conhecida de SHA-256 congelado e filtra as 20 datas conhecidas.
+
+```powershell
+py -3.11 -m tools.auditar_reserva_rodada20 --captura $captura --referencia $barrasRef --cache $cachePrivado --saida $cobertura
+py -3.11 -m tools.diagnosticar_lacunas_rodada20 --base-conhecida $basePrivada --saida $diagnosticoPrivado
+py -3.11 -m pytest -q
+```
+
+O diagnóstico publicado mantém os estados do contador e o indicador de igualdade entre ATR e média do ATR. Os valores das médias por candle permanecem no diagnóstico local. 137 testes passaram com 12 avisos de timestamps já existentes. Os três artefatos de evidência e o README têm [SHA-256 publicado](SHA256SUMS.txt).

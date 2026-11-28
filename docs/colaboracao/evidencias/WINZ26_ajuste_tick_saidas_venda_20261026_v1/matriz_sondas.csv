@@ -1,0 +1,13 @@
+caso;ajuste;saida_profit;saida_profit_pts_entrada;coincide_profit;entrada_execucao;saida_execucao;posicao_1055;pendentes_1055;solicitado_pts_entrada;efetivo_pts_entrada;limite_stop_pts_entrada;saida_pts_entrada;pontos_contrato;ordem_simulador;ajuste_tick
+g1;off;10:55:00;445;0;10:52:00;10:58:00;1;1;447.0;447.0;;-375.0;-375.0;closeposition;
+g1;on;10:55:00;445;1;10:52:00;10:55:00;0;0;447.0;445.0;;445.0;445.0;selltocoverlimit;ajustado
+g2;off;10:55:00;-875;0;10:52:00;10:58:00;1;1;-877.0;-877.0;-1000.0;-375.0;-375.0;closeposition;
+g2;on;10:55:00;-875;1;10:52:00;10:55:00;0;0;-877.0;-875.0;-1000.0;-875.0;-875.0;selltocoverstop;ajustado
+prioridade-1-0;off;10:55:00;430.00;0;10:52:00;10:55:00;0;0;428.0;428.0;;428.0;428.0;selltocoverlimit;
+prioridade-1-0;on;10:55:00;430.00;1;10:52:00;10:55:00;0;0;428.0;430.0;;430.0;430.0;selltocoverlimit;ajustado
+prioridade-1-1;off;10:55:00;220.00;1;10:52:00;10:55:00;0;0;428.0;428.0;;220.0;220.0;selltocoveratmarket;
+prioridade-1-1;on;10:55:00;220.00;1;10:52:00;10:55:00;0;0;428.0;430.0;;220.0;220.0;selltocoveratmarket;ajustado
+prioridade-2-0;off;10:55:00;-795.00;0;10:52:00;10:55:00;0;0;-793.0;-793.0;-894.0;-793.0;-793.0;selltocoverstop;
+prioridade-2-0;on;10:55:00;-795.00;1;10:52:00;10:55:00;0;0;-793.0;-795.0;-894.0;-795.0;-795.0;selltocoverstop;ajustado
+prioridade-2-1;off;10:55:00;220.00;1;10:52:00;10:55:00;0;0;-793.0;-793.0;-894.0;220.0;220.0;selltocoveratmarket;
+prioridade-2-1;on;10:55:00;220.00;1;10:52:00;10:55:00;0;0;-793.0;-795.0;-894.0;220.0;220.0;selltocoveratmarket;ajustado

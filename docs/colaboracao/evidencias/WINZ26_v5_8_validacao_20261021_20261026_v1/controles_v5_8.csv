@@ -1,0 +1,17 @@
+cenario;ordem_origem;evento;data_ntsl;barra;hora_barra;posicao;estado_sintetico
+limite_reinicio_normal;10;solicitacao_compra;1261021;9;09:23;;
+limite_reinicio_normal;14;avaliacao_contexto;1261021;10;09:24;0;entradas=1|ultima_saida=10|pode=0
+limite_reinicio_normal;18;solicitacao_compra;1261021;13;09:27;;
+limite_reinicio_normal;29;solicitacao_compra;1261026;20;09:15;;
+limite_reinicio_normal;37;solicitacao_compra;1261026;24;09:19;;
+limite_reinicio_repetido;10;solicitacao_compra;1261021;9;09:23;;
+limite_reinicio_repetido;14;avaliacao_contexto;1261021;10;09:24;0;entradas=1|ultima_saida=10|pode=0
+limite_reinicio_repetido;18;solicitacao_compra;1261021;13;09:27;;
+limite_reinicio_repetido;27;avaliacao_contexto;1261026;19;09:15;0;entradas=0|ultima_saida=14|pode=1
+limite_reinicio_repetido;28;solicitacao_compra;1261026;19;09:15;;
+limite_reinicio_repetido;29;avaliacao_contexto;1261026;19;09:15;2;entradas=0|ultima_saida=14|pode=0
+limite_reinicio_repetido;36;solicitacao_compra;1261026;23;09:19;;
+limite_reinicio_repetido;44;solicitacao_compra;1261026;27;09:23;;
+stop_limit_gap;11;preenchimento;1261021;10;09:24;2;qtd=2|gatilho=0|limite=|preco_execucao=1005.0
+stop_limit_gap;18;gatilho_stop;1261021;11;09:25;2;qtd=2|gatilho=655.0|limite=605.0|preco_execucao=
+stop_limit_gap;22;preenchimento;1261021;12;09:26;0;qtd=2|gatilho=655.0|limite=605.0|preco_execucao=605.0

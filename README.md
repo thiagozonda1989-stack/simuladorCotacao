@@ -1,20 +1,17 @@
-# simuladorCotacao 0.5.0
+# simuladorCotacao 0.14.0
 
 **[Abrir gráfico dinâmico de acompanhamento](https://thiagozonda1989-stack.github.io/simuladorCotacao/colaboracao/ACOMPANHAMENTO_INTERATIVO.html)**
 
 [Histórico de alterações](CHANGELOG.md) · [Manutenção e hashes dos pacotes](MANUTENCAO.md)
 
-## Integração ProfitRTD
 
-O repositório inclui agora um catálogo versionado das estratégias desenvolvidas no projeto ProfitRTD, indicadores para geração de datasets, diretrizes de validação e um contrato canônico para integrar Negócios, Preços e Ofertas.
+## Salvar e retomar uma execução
 
-- [Diretrizes do projeto](DIRETRIZES_PROJETO.md)
-- [Estratégias e matriz de compatibilidade](estrategias/README.md)
-- [Dados de entrada](docs/DADOS_ENTRADA_PROFITRTD.md)
-- [Arquitetura de unificação](docs/ARQUITETURA_UNIFICACAO.md)
-- [Prompt para continuidade por outra IA](docs/PROMPT_IA_UNIFICACAO.md)
-
-Os dados reais de mercado não são publicados. `dados/exemplos` contém somente registros sintéticos.
+- Antes de iniciar, configure **Salvar sessão a cada N minutos**. Use `0` para desativar o salvamento automático.
+- Durante a execução ou a pausa, clique em **Salvar sessão** e aguarde a confirmação. Use **Baixar última sessão salva** para copiar o arquivo antes de cancelar ou fechar o programa.
+- O simulador também grava automaticamente a última sessão no subdiretório `sessoes` da pasta de saída do aplicativo. Cada execução tem seu próprio `.sessao.zip`.
+- Em outra execução do aplicativo, clique em **Carregar sessão** e escolha o ZIP completo. O arquivo da sessão já contém o CSV e o código NTSL.
+- No replay, a retomada começa na barra seguinte à salva. Na otimização, candidatos com resultados já gravados são reaproveitados. Avaliações em andamento e a validação final podem ser refeitas. O ZIP inclui os dados originais e deve ser tratado como o CSV de origem.
 
 ## Abrir no Windows
 
@@ -26,7 +23,7 @@ Os dados reais de mercado não são publicados. `dados/exemplos` contém somente
 
 Para testar a instalação com dados pequenos, selecione `exemplos/replay_minimo/candles.csv`, formato **Candles OHLC com timestamp**, e o `estrategia.ntsl` da mesma pasta. Com os valores padrão, o relatório deve mostrar dois preenchimentos e uma barra ambígua.
 
-O campo **Substituição de inputs (JSON)** pode permanecer como `{}`. Por exemplo, `{"p_Lote": 2}` substitui um input do código. Os nomes de inputs são comparados sem distinção entre maiúsculas e minúsculas. O incremento de preço alimenta `MinPriceIncrement`. O **valor por ponto e contrato** multiplica o resultado bruto e alimenta `DailyResult`. Configure esse valor para que os limites da estratégia usem a unidade desejada.
+O campo **Substituição de inputs (JSON)** pode permanecer como `{}`. Por exemplo, `{"p_Lote": 2}` substitui um input do código. Os nomes de inputs são comparados sem distinção entre maiúsculas e minúsculas. O incremento de preço alimenta `MinPriceIncrement`. O **valor por ponto e contrato** converte pontos em reais. Com taxas configuradas, `DailyResult` devolve o resultado após os custos já cobrados no pregão. Configure esse valor para que os limites da estratégia usem a unidade desejada.
 
 ## Formatos do CSV
 
@@ -54,35 +51,54 @@ Estratégias que dependem de alguma dessas séries exigem a respectiva coluna. N
 Compila `input`, `const`, `var`, `begin/end`, `if/then/else`, `for to/downto`, `while`, `repeat until`, arrays estáticos escalares, funções e procedimentos definidos no código, atribuições e operadores aritméticos, relacionais e booleanos. Aceita referências históricas com `[n]`, OHLC, horário, posição, médias simples e exponenciais, máximas e mínimas de janela, soma móvel e funções matemáticas, incluindo `Mod`. A biblioteca inclui `TrueRange`, `AvgTrueRange` e acesso histórico em funções puras suportadas. Implementa entradas e saídas a mercado, limite e stop, `SendOrder` com constantes simbólicas, `ReversePosition`, cancelamento, zeragem, `Plot`, `PaintBar` e `ConsoleLog`. O arquivo `exemplo_cruzamento.ntsl` demonstra uma estratégia simples. A estratégia do pacote pode ser carregada pelo botão na tela.
 
 - Rotinas aceitam parâmetros escalares por valor, variáveis locais escalares e retorno via `Result`. Histórico de séries locais em rotinas, múltiplos ativos, parâmetros por referência, arrays multidimensionais e o catálogo integral de indicadores permanecem fora do subconjunto. Identificadores incompatíveis geram erro com a linha do código. Laços compartilham um limite de 100 mil iterações por barra.
-- `Asset(GetAsset, ...)` permite ligar as chamadas de book aos snapshots exportados. O replay não reconstrói os níveis do book ou séries independentes por ativo ou intervalo. O parâmetro de profundidade é representado pelo agregado já existente no CSV.
-- As séries históricas se restringem ao pregão. No início do pregão, referências sem histórico acessível retornam zero para dados de mercado e o valor padrão para variáveis. As médias usam o histórico disponível no pregão. A estratégia pode definir aquecimento próprio.
+- A declaração `Asset(GetAsset, ...)` é reconhecida pelo compilador. As funções de book leem as colunas exportadas do CSV, como `v_bid`, `v_ask`, `v_qtd_compra_book` e `v_qtd_venda_book`. O replay usa os agregados fornecidos, sem reconstruir a profundidade ou carregar séries independentes por ativo e intervalo.
+- No Replay NTSL, médias e referências históricas usam candles disponíveis de pregões anteriores por padrão, enquanto o saldo diário e as ordens encerram no pregão. Referências anteriores ao primeiro candle retornam zero para dados de mercado e o valor padrão para variáveis. Desmarque **Carregar histórico de candles entre pregões** para reproduzir o comportamento anterior. Nesse modo, implemente o aquecimento por pregão no código se necessário, pois `CurrentBar` conta desde o início da série.
 - `Date` e `Time` usam a data do candle e a hora HHMM. O intervalo da interface organiza os dados e fica registrado no relatório. Altere explicitamente os inputs temporais do seu código quando forem diferentes do intervalo analisado.
 
 ## Preenchimentos e limitações do replay
 
-O código é avaliado uma vez, no **fechamento**. Ordens emitidas no fechamento podem executar a partir da próxima barra disponível. Ordens a mercado usam a abertura seguinte. Limites e stops usam os extremos da barra com ajuste de gap. Um stop com limite que sofre gap além do limite pode permanecer pendente para a barra seguinte.
+Por padrão, o código é avaliado uma vez, no **fechamento**. Ordens emitidas no fechamento podem executar a partir da próxima barra disponível. Ordens a mercado usam a abertura seguinte. Limites e stops usam os extremos da barra com ajuste de gap. Limites e stops não executados expiram no fim da barra seguinte ao envio, salvo se reenviados ou editados naquele fechamento. Desmarque **Expirar ordens** para manter a ordem até execução, cancelamento ou fim do pregão.
 
 Se alvo e stop forem tocados na mesma barra, o relatório registra ambiguidade e aplica o preenchimento menos favorável entre as saídas tocadas. Uma ordem a mercado já pendente tem prioridade na abertura. O replay mantém uma posição líquida, substitui ordens pendentes da mesma função e limita saídas ao saldo da posição. Ao fim de cada pregão, cancela ordens pendentes e encerra a posição restante no último fechamento disponível.
 
-O simulador usa hipóteses de preenchimento por OHLC, sem reproduzir fila, custos, latência, timestamps intrabar ou reprocessamento no mesmo candle após entrada. As novas funções de ordens usam essas regras locais. A caixa de ferramentas foi conferida com o [manual NTSL da Nelogica](https://www.nelogica.com.br/manualntsl). A estratégia das 150 árvores pode ser analisada pelo classificador na abertura via modo **Otimização genética**, ou executada no fechamento via **Replay da estratégia**. Os dois modos têm unidades de avaliação e regras de execução próprias.
+O simulador usa hipóteses de preenchimento por OHLC, sem reconstruir posição na fila, latência ou a sequência intrabar. A caixa de ferramentas foi conferida com o [manual NTSL da Nelogica](https://www.nelogica.com.br/manualntsl). A estratégia das 150 árvores pode ser analisada pelo classificador na abertura via modo **Otimização genética**, ou executada no fechamento via **Replay da estratégia**. Os dois modos têm unidades de avaliação e regras de execução próprias.
+
+No replay OHLC com barras exportadas do Profit, `--historico-continuo-lacunas` preserva as janelas móveis e a leitura de séries e variáveis com `[n]` na retomada intradiária. Por padrão, ambos reiniciam na lacuna. `CurrentBar` conta uma barra por registro recebido nos dois modos. `BarrasNoSegmento` e o corte de aquecimento por segmento dos comparadores continuam contando a partir da retomada. O replay preserva os escalares e a posição e registra lacunas com exposição nos dois modos. O cancelamento de ordens pendentes segue a política de execução da lacuna. A opção mantém a política de sessão de `--historico-continuo`. Para a configuração de paridade da v5.8, use também `--vwap-continuo-lacunas`, que controla a acumulação da VWAP separadamente. A agressão injetada continua seguindo o valor exportado.
+
+Em OHLC, `--entrada-mercado-atraves-lacuna` é uma opção experimental desativada por padrão e exige `--historico-continuo-lacunas`. Com posição zerada na retomada, mantém entradas a mercado para preenchimento na abertura da primeira barra existente em que forem elegíveis. Limites, stops, proteções pendentes e a mudança de pregão seguem a política de cancelamento. Com `--avaliacao-pos-preenchimento`, a avaliação extra usa a última barra fechada antes da lacuna como contexto e a execução fica registrada na barra de retomada. A opção preserva a contagem de cancelamentos efetivos e de posições expostas.
+
+A opção experimental `--protecoes-ate-cancelar` é exclusiva do OHLC e vem desligada. Mantém entre barras consecutivas as saídas limite e stop-limit do lado da posição aberta. Cancelamento explícito, zeragem, mudança de pregão e lacuna continuam limpando as proteções. Entradas e stops sem limite conservam a validade normal. Com a opção ativa, uma saída a mercado elegível que zera na abertura encerra a exposição antes de testar os toques da barra. A regra usa a abertura com slippage e independe de uma hipótese de caminho intrabar. O diagnóstico global `--no-ordem-so-proxima-barra` mantém sua política original quando combinado com a opção.
+
+Em OHLC, `--ajuste-tick-saidas-venda` experimenta ajustar ao tick mais próximo o alvo limite e o gatilho de stop das saídas de posição comprada. A opção vem desligada. O limite do stop-limit conserva o valor solicitado. Em meio tick exato, o preço é preservado e o caso fica registrado nas métricas e, com `--rastrear-ordens`, em `eventos_ordens.csv`. A decisão do simulador ocorre no cadastro da ordem. A evidência do Profit cobre a execução, com o momento interno do ajuste ainda em aberto.
+
+Na CLI de replay OHLC, `--avaliacao-pos-preenchimento` experimenta uma avaliação adicional após entrada a mercado na abertura a partir de posição zerada. Ela usa a barra fechada anterior do mesmo segmento e pode criar alvo ou stop para a nova posição. As atribuições a variáveis escalares chegam à avaliação regular do fechamento. Arrays e janelas móveis ficam isolados na avaliação extra, e o fechamento é o único que grava o histórico da sua barra. O motor testa as novas proteções elegíveis na barra de entrada e avalia o fechamento com a posição resultante. Use a opção por si só. O modo legado `--protecao-no-candle-entrada` avalia o fechamento antes de testar as proteções e é incompatível com o experimento.
 
 ### Relatórios
 
 - `relatorio.html` e `metricas.json` resumem preenchimentos, saídas, pontos × contratos, drawdown realizado, inputs, hash do código e ambiguidades.
 - `execucoes.csv` lista preenchimentos. `candles.csv` contém OHLC, intenções de entrada, posição, pontos acumulados e chamadas de plot.
 - `console.csv` contém as primeiras 10 mil mensagens de `ConsoleLog`.
+- `--rastrear-ordens` gera `eventos_ordens.csv`. No experimento, `barra` refere-se à barra do evento no simulador e `barra_contexto_ntsl` indica a barra lida na avaliação.
 - `estrategia.ntsl` guarda o código efetivamente executado. Os inputs aplicados ficam em `metricas.json`.
 
 ## Otimizador genético
 
 Em **Otimização genética**, o motor padrão da interface é **Replay NTSL**. Todos os inputs reconhecidos do código podem receber mínimo, máximo e passo ou uma lista de valores. Cada candidato roda a estratégia com seus valores. A busca pelo objetivo financeiro usa as próprias ordens, incluindo alvo, stop, quantidade e filtros configurados no NTSL. Entradas sem uso no código podem ser selecionadas e naturalmente produzem o mesmo resultado.
 
-- **Resultado** maximiza os pontos multiplicados pelos contratos. **Resultado menos drawdown** subtrai a maior queda da curva acumulada por barra. Ambos são brutos e independem da coluna `classe`.
+- **Resultado** maximiza o saldo após taxas em pontos × contratos. **Resultado menos drawdown** subtrai a maior queda da curva líquida acumulada por barra. Ambos independem da coluna `classe`.
 - **F1, precisão, recall e acurácia** usam o alvo escolhido, considerando preenchimentos de entrada a mercado na abertura da barra. Para ordens limite e stop, use o objetivo operacional para avaliar seus preenchimentos.
 - O modo **Ensemble · avaliação na abertura** mantém a otimização anterior, específica para as features das árvores. Nele, somente os genes do classificador entram na busca. Configurações antigas de CLI sem `motor` continuam usando esse modo.
 - Para usar o replay na CLI, acrescente `"motor": "ntsl"` ao JSON. Use `"valores": [false, true]` para booleanos e uma lista de textos para entradas de texto. As melhores entradas são gravadas em `inputs_otimizados.json`, pronto para carregar no replay.
 
 Um exemplo sintético com laços, funções, `SendOrder` e três inputs configuráveis está em `exemplos/otimizacao_ntsl`.
+
+### Usar recursos máximos
+
+Ative **Usar recursos máximos** na tela de otimização genética ou defina `"recursos_maximos": true` no JSON. O simulador mede os núcleos lógicos disponíveis ao processo e a RAM livre no início da busca. A população e a estimativa de memória por trabalhador limitam o paralelismo. A reserva para o sistema é de pelo menos 512 MiB ou 20% da RAM que estava disponível, o que for maior.
+
+No **Replay NTSL**, candidatos são avaliados em processos separados. Cada processo recebe os candles e compila a estratégia uma vez, enviando apenas métricas ao processo principal. No **Ensemble**, o programa continua usando threads para compartilhar a base em memória. A opção substitui os valores manuais de `threads` e `cache_ram_mb` durante a execução. Desmarcada, a configuração anterior segue aplicável.
+
+A interface mostra o limite de trabalhadores selecionado e o relatório registra núcleos, RAM disponível, estimativa por trabalhador e modo de paralelismo. O uso pode cair quando há poucos candidatos, na geração do relatório ou quando o Ensemble compartilha o mesmo cálculo entre vários candidatos.
 
 ### Alvos e acompanhamento
 
@@ -117,7 +133,122 @@ Em Linux, use Python 3.11+ e um toolchain MinGW-w64 x64. Baixe a distribuição 
 
 ```bash
 python -m pip download --only-binary=:all: --platform win_amd64 --python-version 312 -r windows/requirements.lock -d wheels
-python windows/package.py --python-win python-3.12.10-embed-amd64.zip --wheels wheels --saida simuladorCotacao-v0.4.0-win64.zip
+python windows/package.py --python-win python-3.12.10-embed-amd64.zip --wheels wheels --saida simuladorCotacao-v0.14.0-win64.zip
 ```
 
 Para desenvolver ou testar com o seu Python local, instale `requirements.txt` e rode `python app.py`. Para um comando de terminal no código-fonte, use `python app.py --cli estrategia --help`.
+
+### Conexão com a interface local
+
+Se uma aba antiga perder a conexão, abra novamente o executável e use a nova aba que ele abrir. O CSV é enviado em blocos com indicação de progresso. A interface tenta novamente após uma interrupção transitória e identifica a etapa da falha.
+
+### Acompanhamento durante a execução
+
+Na busca genética, acompanhe a geração, os candidatos concluídos e os melhores parâmetros assim que termina cada avaliação. As métricas parciais usam o conjunto de busca. A validação cronológica tem uma etapa separada e seus resultados aparecem no relatório. No replay direto, acompanhe as barras processadas, as ordens executadas e o resultado bruto realizado.
+
+### Pausar, retomar e cancelar
+
+Durante a busca ou o replay, os controles ficam junto ao progresso. A pausa mantém a execução e os resultados parciais na memória e não conta para o limite de tempo da busca. Cancelar interrompe a execução e mantém as métricas parciais na tela. As ações são aplicadas no próximo ponto de parada do motor. Leitura de arquivos, cálculos vetorizados e escrita de relatórios podem levar alguns instantes para responder.
+
+Em **Usar recursos máximos**, cada processo NTSL reaproveita as séries numéricas do CSV e a matriz de histórico entre candidatos. O Ensemble destina a RAM restante ao cache de scores, depois de calcular a reserva do sistema e a memória estimada dos trabalhadores. A RAM ocupada depende do tamanho do CSV, do modelo e da quantidade de avaliações úteis.
+
+### Base de cotações
+
+Em **Dados**, abra **Cadastrar CSV na base de cotações**. Informe o papel, a periodicidade e, se desejar, as datas e a observação. O simulador reconhece os formatos já aceitos pelo replay e detecta as datas do arquivo. A base SQLite e as cópias dos CSVs ficam na pasta `cotacoes`, ao lado de `resultados`. Faça backup dessa pasta inteira para levar a base a outro computador.
+
+Selecione a série em **Origem dos dados** e ajuste o intervalo de pregões, se necessário. Os dois limites são inclusivos. A periodicidade de candles prontos é mantida. Para negócios com timestamp, você pode ajustar o intervalo de agregação dos candles no teste.
+
+### Finalizar a busca e exportar
+
+**Finalizar busca agora** deixa as avaliações em andamento terminarem, encerra a busca e valida o melhor candidato encontrado pelo objetivo original. O relatório indica quando a parada foi antecipada. No painel **Parâmetros otimizados**, escolha um critério, receba os parâmetros em JSON ou baixe o código NTSL com os valores aplicados às declarações de inputs. A escolha usa os candidatos já avaliados na amostra de busca que cumpriram o mínimo de sinais. A troca de critério não executa uma nova busca. O replay completo NTSL exporta o código parametrizado. No Ensemble, a exportação segue as condições indicadas no relatório.
+
+### Classificação e resultado em reais
+
+Em uma otimização de compra, escolha como alvo a classe positiva de compra ou uma regra de alta por barras ou pontos. A sensibilidade mede **VP ÷ (VP + FN)**. A especificidade mede **VN ÷ (VN + FP)**. O valor preditivo negativo mede **VN ÷ (VN + FN)**. A tela mostra as contagens e taxas durante a busca classificatória.
+
+Informe o valor em reais por ponto e contrato. Para o WIN, o campo começa em R$ 0,20. No replay NTSL, o resultado bruto em reais é a soma realizada de pontos × contratos multiplicada por esse valor. O cálculo usa as quantidades executadas pela estratégia e aparece no progresso e no relatório. O líquido deduz as taxas configuradas e o bruto já incorpora o slippage nos preços executados. O Ensemble mede classificação. Use o motor Replay NTSL para obter resultado financeiro simulado.
+
+### Busca aleatória adaptativa
+
+Em **Otimização**, selecione **Aleatória adaptativa**. O CSV deve ter uma coluna `classe`. Informe a classe positiva, por exemplo `1C`, e as metas de sensibilidade e especificidade. O programa começa com combinações da faixa de inputs, sorteia novas combinações e explora variações próximas às que mais se aproximaram das duas metas. Cada combinação é avaliada uma vez. A busca termina ao cumprir simultaneamente as duas metas na amostra de busca, ao esgotar o espaço, ao atingir os limites de lotes ou tempo, ou por solicitação do usuário. O relatório mostra separadamente se as metas também foram atingidas nos pregões cronológicos reservados para teste.
+
+### Base de estratégias
+
+Carregue um arquivo NTSL ou cole o código no editor. Em **Base de estratégias NTSL**, informe o nome e clique em **Salvar estratégia na base**. Selecione uma estratégia cadastrada e clique em **Carregar no editor** para reutilizá-la. O mesmo nome com código diferente salva uma versão adicional. O mesmo nome com código idêntico atualiza a observação. A pasta de backup da base de cotações também contém o cadastro das estratégias.
+
+### Histórico, reprodução e publicação de execuções
+
+O aplicativo cria um registro em `resultados/historico/<id>/` ao aceitar uma execução. Ao terminar, registra o estado, a duração e o motivo da parada. Mostra controles, etapas e gerações no log, e guarda um ZIP local mesmo com a opção GitHub desmarcada. Após erro ou cancelamento, o pacote inclui os dados completos e as avaliações que já estiverem disponíveis. Uma interrupção abrupta do processo pode deixar apenas o registro de início e os eventos escritos até aquele momento. Na CLI, o log de início e parada fica ao lado da saída como `<nome-da-saida>.execucao.jsonl`.
+
+Na tela **Histórico de execuções**, abra os indicadores, baixe o ZIP ou carregue os dados, estratégia e configuração no formulário. Quando houver NTSL parametrizado, também é possível usá-lo como ponto de partida. Ajuste as faixas de busca, o método ou a fonte dos dados e execute novamente. Para um pacote externo, use **Importar ZIP de execução**. Sessões de pausa continuam usando **Carregar sessão**.
+
+O contrato para análise automatizada é identificado por `schema: simuladorCotacao.execucao/1` em `resumo.json`. O ZIP contém a configuração efetiva, estratégia original, entrada CSV usada, log em JSON Lines e os relatórios disponíveis. Em otimizações, `avaliacoes.csv` registra cada combinação concluída, com os inputs, a aptidão e as métricas em JSON. Geração 0 identifica avaliações trazidas de uma sessão restaurada. `evolucao.csv` registra a liderança de cada geração, `candidatos.csv` contém o ranking da execução concluída e `metricas.json` distingue busca e teste cronológico. Ferramentas externas podem ler esses arquivos para comparar execuções e sugerir parâmetros.
+
+Para compartilhar um teste, configure a variável de ambiente `SIMULADOR_GITHUB_TOKEN` antes de abrir o aplicativo, usando um token com permissão **Contents: Read and write** no repositório oficial. Marque **Publicar esta execução no GitHub do projeto** antes de iniciar. O ZIP, limitado a menos de 2 GiB para envio, é anexado a uma pré-release. Em caso de falha, o pacote local e a mensagem no histórico ficam disponíveis. Em repositório público, estratégia, resultados e dados de entrada ficam acessíveis publicamente. Em repositório privado, o download pelo navegador exige acesso ao repositório. A tela **Consultar GitHub** mostra os resumos publicados e oferece os links para baixar e importar os pacotes.
+
+
+### Custos e regras de preenchimento
+
+Em **Custos e preenchimento no Replay NTSL**, informe a soma das taxas em reais por contrato e lado e o slippage adverso em ticks. Por exemplo, R$ 0,25 por lado resulta em R$ 0,50 por contrato para uma entrada e uma saída completas. O preço de ordens a mercado, stops recém-disparados e da zeragem de fim de pregão incorpora o slippage. Um stop com preço limite aguarda se o preço simulado violar esse limite. Ordens limite passivas podem exigir que o candle negocie pelo menos um tick além do limite. Essa regra reduz preenchimentos por simples toque e permanece uma aproximação sem posição de fila.
+
+O replay apresenta bruto, taxas, líquido e drawdown líquido. A otimização financeira usa o líquido. Taxas e slippage vêm zerados. A ultrapassagem de limite começa desmarcada. Para configurar pela CLI de replay, use `--custo-por-contrato-lado`, `--slippage-ticks` e `--limite-exige-ultrapassar`. Na CLI de otimização NTSL, configure os campos correspondentes em `regras_execucao` no JSON.
+
+O subconjunto NTSL aceita arrays unidimensionais e rotinas com parâmetros escalares por valor. Arrays multidimensionais, parâmetros por referência, histórico de variáveis locais e funções ausentes no compilador geram diagnóstico com a linha do código.
+
+
+### Indicadores do Replay NTSL
+
+- `VWAP(0..3)` calcula VWAP por barra, pregão, semana ou mês. Com negócios e quantidade, usa preço × quantidade. Em OHLC, usa `v_vwap_barra` se fornecido ou aproxima cada barra pelo preço típico (máxima + mínima + fechamento) ÷ 3, ponderado por `volume_contratos` ou `volume`.
+- `StdDevs(Serie, Periodo)` usa desvio padrão populacional na janela de barras disponíveis. `AgressionVolBalance()` lê `v_agressao_saldo_acumulado` ou acumula, por pregão, a diferença entre `v_agressao_compra` e `v_agressao_venda`. Sem os dados exigidos, o replay informa quais colunas faltam.
+- Para comparar o v5.8 no replay local, use `p_Exec_Tick = 0`. Mesmo com o CSV de negócios, a estratégia executa no fechamento dos candles agregados.
+
+### Validar um modelo parametrizado
+
+Selecione **Validar modelo**, carregue o NTSL com os parâmetros finais e escolha o CSV ou um recorte da base de cotações. Também é possível usar **Validar estratégia otimizada** no histórico para carregar o NTSL exportado e, em seguida, trocar os dados de entrada. Informe o ativo no demonstrativo, se desejado. O modo executa o modelo com os parâmetros informados, sem busca.
+
+O resultado mostra operações, volume em contratos, acerto, fator de lucro, bruto, taxas, líquido, drawdown e gráficos da curva líquida, drawdown e resultado por pregão. Uma operação vai da primeira entrada até a zeragem. Aumentos de posição e saídas parciais ficam vinculados à mesma operação. O acerto e o fator de lucro são calculados por operação líquida, incluindo as taxas da entrada e da saída. O fator fica indefinido se não há perdas.
+
+O **CSV de conferência** registra cada execução, com data e hora de referência, identificação da operação, lado, volume, preço, preço médio de entrada, posição, resultado, taxas e saldo acumulado. A **nota de corretagem simulada em PDF** traz o balanço por pregão e as execuções detalhadas. É um demonstrativo da simulação, sem validade fiscal. Os horários são do candle de referência, não de negócios reais. Se a origem Profit só contém a hora até o minuto, o exportador deixa a precisão em minutos. O ZIP do histórico inclui ambos os arquivos.
+
+## Catálogo ProfitRTD
+
+Consulte o [catálogo de estratégias NTSL](estrategias/catalogo_estrategias.csv),
+o [contrato de dados](docs/DADOS_ENTRADA_PROFITRTD.md) e a
+[arquitetura de unificação](docs/ARQUITETURA_UNIFICACAO.md).
+O catálogo tem metadados e versionamento próprios em `estrategias/VERSION`.
+
+### Lacunas, latência e validação cronológica
+
+Em um buraco intradiário, o Replay NTSL cancela ordens pendentes antes da primeira barra disponível e reinicia as janelas e referências históricas.
+Posições abertas continuam expostas e são registradas em `lacunas_com_posicao`. A simulação não cria negócios no trecho ausente.
+`candles.csv` registra segmento, flag de lacuna, idade em barras e intervalo em segundos entre timestamps de referência. Para dados Profit sem
+timestamp por segundo, o intervalo usa os minutos de origem e pode ser zero entre barras do mesmo minuto.
+`BarrasNoSegmento`, `IntervaloBarraSegundos` e `SegundosDoDiaBarra` são extensões locais.
+A última exige candles cuja fonte tenha horário por segundo. `CalcTime(HHMM, minutos)` está disponível.
+
+A latência adicional em barras começa em zero. Com valor 1, uma ordem enviada no fechamento da barra 1 fica elegível na barra 3.
+Ordens idênticas renovadas preservam o prazo já contado e ordens alteradas ganham novo prazo.
+A latência é uma aproximação por barra. O replay já calcula resultado líquido com taxas por contrato/lado e slippage configuráveis.
+O objetivo **Resultado menos drawdown e instabilidade diária** desconta do resultado líquido o drawdown e um desvio padrão populacional
+do resultado líquido por pregão. Paralelismo NTSL com mais de um trabalhador usa processos persistentes; `threads=0` continua em um por padrão.
+A opção de recursos máximos continua dimensionando processos e memória.
+
+Para walk-forward pela CLI, inclua no JSON de otimização `"walk_forward": {"pregoes_busca": 5, "pregoes_teste": 2, "pregoes_reservados": 2}`.
+O motor reajusta parâmetros em cada janela e usa blocos de teste cronológicos disjuntos. A soma dos testes e os pregões reservados constam de
+`walk_forward.json`. Os dias reservados ficam para validação final posterior e não entram nessa soma. A GUI continua usando a divisão cronológica de uma janela.
+
+Para comparar um replay já exportado pelo Profit, normalize os dois arquivos com `timestamp;sequencia;etapa` e os mesmos campos comparáveis.
+Use as etapas `sinal`, `ordem`, `execucao` e `posicao`. O utilitário `python tools/comparar_paridade.py --profit profit.csv --simulador local.csv --saida paridade`
+gera uma matriz por etapa e a lista de divergências. A comparação exige os dois rastros normalizados e não assume paridade de execução.
+
+### Replay tick a tick por negócios
+
+Em **Custos e preenchimento no Replay NTSL**, escolha **Tick a tick (negócios)** para replay, validação ou otimização NTSL. Carregue um CSV de negócios com `timestamp;preco;quantidade;sequencia` ou um CSV canônico de eventos do integrador ProfitRTD. A sequência é obrigatória quando houver timestamps empatados. Timestamps sem fuso são lidos em America/Sao_Paulo.
+
+Cada negócio é uma observação da série NTSL. `CurrentBar`, OHLC, referências `[n]`, médias e janelas contam negócios nesse modo. Use **Por candle** quando os períodos do modelo precisarem continuar contando candles de tempo. Para estratégias que oferecem `p_Exec_Tick`, o modo tick permite testar o valor 1.
+
+O motor processa as ordens pendentes antes de avaliar a estratégia no evento. Uma ordem enviada no evento atual fica elegível a partir do próximo, após a latência configurada em milissegundos. Negócios empatados em horário são ordenados pela sequência. O preenchimento é limitado à quantidade observada e pode ser parcial. Ordens de saída têm prioridade, e os empates usam a ordem de envio simulada. A sobra da ordem continua pendente até execução, alteração, cancelamento, lacuna configurada ou fim de pregão. O relatório marca a zeragem sintética do fim do pregão, que pode exceder o volume desse último evento.
+
+O modelo usa preço e volume observados nos negócios e pode ler o topo do livro sincronizado no CSV integrado. Ele não infere a posição real na fila ou o caminho das ordens dentro do book. O CSV de execuções conserva timestamp, sequência do evento e indicação de zeragem sintética. Na validação, PDF e CSV registram o horário com milissegundos.
+
+Pela CLI de replay, use `--motor-ticks --latencia-ticks-ms 20 --lacuna-ticks-ms 5000`. Para otimização pela CLI, use no JSON `"regras_execucao": {"motor_ticks":true,"latencia_ticks_ms":20,"lacuna_ticks_ms":5000}`.

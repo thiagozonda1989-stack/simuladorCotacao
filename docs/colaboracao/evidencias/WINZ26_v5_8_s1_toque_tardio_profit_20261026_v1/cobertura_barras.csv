@@ -1,0 +1,3 @@
+sonda;registros;menor_timestamp;maior_timestamp;timestamps_duplicados;lacunas_intradiarias_maiores_60s;lacunas_janela_sonda
+s1_alvo;20001;2026-09-29 10:15:00;2026-11-19 18:24:00;0;173;0
+s1_stop;20001;2026-09-30 10:55:00;2026-11-23 18:14:00;0;137;0

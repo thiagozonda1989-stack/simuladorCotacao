@@ -1,0 +1,115 @@
+{
+  "fonte": {
+    "arquivo": "dados_pregrao_varios_dias.csv",
+    "bytes": 2351452,
+    "sha256": "146dcab678fcc9a6259333bf526693ec7fd758518d581bef01847ce12446826b",
+    "codificacao": "cp1252",
+    "separador": ";",
+    "cabecalho_original": [
+      "Data",
+      "Abertura",
+      "Máxima",
+      "Mínima",
+      "Fechamento",
+      "Coleta_Reserva_WINZ26_1Min_V1_0",
+      "Coleta_Reserva_WINZ26_1Min_V1_0",
+      "Coleta_Reserva_WINZ26_1Min_V1_0",
+      "Coleta_Reserva_WINZ26_1Min_V1_0",
+      "Coleta_Reserva_WINZ26_1Min_V1_0"
+    ],
+    "barras": 30001,
+    "colunas": [
+      "Data",
+      "Abertura",
+      "Máxima",
+      "Mínima",
+      "Fechamento",
+      "v_Trades",
+      "v_Quantidade_Contratos",
+      "v_Volume_Financeiro",
+      "v_Saldo_Agressao",
+      "v_VWAP_Diaria"
+    ],
+    "pregoes": 56,
+    "primeiro_timestamp": "2026-09-08T10:51:00",
+    "ultimo_timestamp": "2026-11-27T18:24:00",
+    "fisicamente_descendente": true,
+    "datas_invalidas": 0,
+    "timestamps_duplicados": 0,
+    "linhas_duplicadas": 0,
+    "ausentes_ou_invalidos_por_campo": {
+      "Abertura": 0,
+      "Máxima": 0,
+      "Mínima": 0,
+      "Fechamento": 0,
+      "v_Trades": 0,
+      "v_Quantidade_Contratos": 0,
+      "v_Volume_Financeiro": 0,
+      "v_Saldo_Agressao": 0,
+      "v_VWAP_Diaria": 0
+    }
+  },
+  "referencia": {
+    "arquivo": "Coleta_Reserva_WINZ26_1Min_V1_0.csv",
+    "bytes": 1621285,
+    "sha256": "eb9d86e58a6a32b4499657f0c4bb2163e3978b666daea2cd44b0c8e768aaa4c5"
+  },
+  "ativo_indicado": "WINZ26",
+  "ativo_em_coluna": false,
+  "minutos_por_barra": 1,
+  "janela_de_referencia": "09:00-18:24 America/Sao_Paulo, incluindo os dois rotulos",
+  "dias_por_mes": {
+    "2026-09": 17,
+    "2026-10": 21,
+    "2026-11": 18
+  },
+  "dias_por_cobertura": {
+    "lacuna_interna": 27,
+    "janela_completa": 20,
+    "borda_diferente": 9
+  },
+  "minutos_ausentes_internos_total": 1269,
+  "maior_lacuna_interna_minutos": 9,
+  "comparacao": {
+    "timestamps_comuns": 19786,
+    "comuns_ohlc_iguais": 19786,
+    "comuns_todos_campos_iguais": 19786,
+    "somente_novo": 10215,
+    "somente_referencia": 215
+  },
+  "diferencas_por_campo_em_timestamps_comuns": {
+    "Abertura": 0,
+    "Máxima": 0,
+    "Mínima": 0,
+    "Fechamento": 0,
+    "v_Trades": 0,
+    "v_Quantidade_Contratos": 0,
+    "v_Volume_Financeiro": 0,
+    "v_Saldo_Agressao": 0,
+    "v_VWAP_Diaria": 0
+  },
+  "datas_somente_na_nova_fonte": [
+    "2026-09-08",
+    "2026-09-09",
+    "2026-09-10",
+    "2026-09-11",
+    "2026-09-14",
+    "2026-09-15",
+    "2026-09-16",
+    "2026-09-17",
+    "2026-09-18",
+    "2026-09-21",
+    "2026-09-22",
+    "2026-09-23",
+    "2026-09-24",
+    "2026-09-25",
+    "2026-09-28",
+    "2026-09-29",
+    "2026-09-30",
+    "2026-11-25",
+    "2026-11-26",
+    "2026-11-27"
+  ],
+  "datas_somente_na_referencia": [],
+  "replays_executados": 0
+}

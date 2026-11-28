@@ -1,0 +1,2683 @@
+{
+  "grupo": "win_60s_2c",
+  "identificacao": "Modelo_Unificado_v5_8",
+  "chave": "pr2:estrategias/execucao/Modelo_Unificado_v5_8.ntsl",
+  "configuracao": {
+    "busca": "genetica",
+    "classe_alvo": "1C",
+    "pregoes_teste": 0,
+    "cache_ram_mb": 0,
+    "threads": 8,
+    "regras_execucao": {
+      "custo_por_contrato_lado": 0.5,
+      "slippage_ticks": 1,
+      "limite_exige_ultrapassar": false,
+      "ordem_so_proxima_barra": true,
+      "historico_continuo": true,
+      "latencia_barras": 0,
+      "motor_ticks": false,
+      "latencia_ticks_ms": 0,
+      "lacuna_ticks_ms": 5000,
+      "volume_financeiro_ntsl": true,
+      "agressao_por_barra": false,
+      "agressao_referencia_injetada": true,
+      "vwap_continuo_lacunas": true,
+      "protecao_no_candle_entrada": false,
+      "rastrear_ordens": false,
+      "avaliacao_pos_preenchimento": false,
+      "historico_continuo_lacunas": false,
+      "entrada_mercado_atraves_lacuna": false,
+      "protecoes_ate_cancelar": false,
+      "ajuste_tick_saidas_venda": false
+    },
+    "parametros": {
+      "p_alvo_pontos": {
+        "valores": [
+          250,
+          350,
+          400,
+          450,
+          550
+        ]
+      },
+      "p_barras_espera": {
+        "valores": [
+          1,
+          3,
+          5
+        ]
+      },
+      "p_desvio_vwap": {
+        "valores": [
+          1.6,
+          2.1,
+          2.6
+        ]
+      },
+      "p_exec_tick": {
+        "valores": [
+          0
+        ]
+      },
+      "p_hora_fim_entradas": {
+        "valores": [
+          1550,
+          1615,
+          1645
+        ]
+      },
+      "p_hora_inicio": {
+        "valores": [
+          915,
+          930,
+          1000
+        ]
+      },
+      "p_lote": {
+        "valores": [
+          2
+        ]
+      },
+      "p_max_entradas_dia": {
+        "valores": [
+          5,
+          10,
+          15
+        ]
+      },
+      "p_minimotrades": {
+        "valores": [
+          50,
+          100,
+          150,
+          250
+        ]
+      },
+      "p_modo_banda": {
+        "valores": [
+          0,
+          1
+        ]
+      },
+      "p_offset_limite_stop": {
+        "valores": [
+          5,
+          25,
+          50,
+          100
+        ]
+      },
+      "p_periodo_atr": {
+        "valores": [
+          10,
+          14,
+          20
+        ]
+      },
+      "p_periodo_desvio": {
+        "valores": [
+          15,
+          20,
+          30
+        ]
+      },
+      "p_periodo_regime_atr": {
+        "valores": [
+          35,
+          50,
+          65
+        ]
+      },
+      "p_stop_pontos": {
+        "valores": [
+          200,
+          275,
+          350,
+          450
+        ]
+      },
+      "p_zscore_vol": {
+        "valores": [
+          1.0,
+          1.5,
+          2.0
+        ]
+      }
+    },
+    "genetico": {
+      "populacao": 24,
+      "geracoes": 3,
+      "semente": 18024,
+      "mutacao": 0.28,
+      "min_sinais": 0,
+      "paciencia": 0,
+      "metrica": "resultado"
+    }
+  },
+  "recursos": {
+    "paginacao_contadores_sistema_delta": {
+      "PagesInputPersec": 95,
+      "PagesOutputPersec": 0,
+      "PageReadsPersec": 14
+    },
+    "trabalhadores": 8,
+    "nucleos_logicos": 24,
+    "modo": "processos",
+    "segundos": 13.687,
+    "avaliados": 70,
+    "segundos_ag": 13.52,
+    "avaliacoes_minuto": 310.65,
+    "rss_somado_pico_mib": 673.2,
+    "memoria_disponivel_min_mib": 41571.6,
+    "cpu_total_media_pct": 29.6,
+    "arquivo_paginacao_variacao_mib": 0.0,
+    "base_worker_mib": 1.94,
+    "atende_restricoes": true
+  },
+  "congelado": {
+    "parametros": {
+      "p_exec_tick": 0,
+      "p_periodo_atr": 20,
+      "p_periodo_regime_atr": 65,
+      "p_desvio_vwap": 2.6,
+      "p_modo_banda": 0,
+      "p_periodo_desvio": 20,
+      "p_zscore_vol": 2.0,
+      "p_stop_pontos": 450,
+      "p_alvo_pontos": 550,
+      "p_minimotrades": 100,
+      "p_lote": 2,
+      "p_offset_limite_stop": 100,
+      "p_barras_espera": 5,
+      "p_max_entradas_dia": 5,
+      "p_hora_inicio": 915,
+      "p_hora_fim_entradas": 1645,
+      "p_hora_zeragem": 1700.0,
+      "p_noticia1_ini": 1025.0,
+      "p_noticia1_fim": 1035.0,
+      "p_noticia2_ini": 1425.0,
+      "p_noticia2_fim": 1435.0,
+      "p_zerar_na_noticia": 1.0
+    },
+    "apta": true,
+    "semente": 18024,
+    "grupo": "win_60s_2c",
+    "sha256": "16ee74d277add73798e26cd9d2653d26b7b375eac37c9d23455dd64b3662b20a",
+    "objetivo": "resultado após custos",
+    "referencia_exploratoria_sem_reselecao": [
+      "2026-10-19",
+      "2026-10-20",
+      "2026-10-22",
+      "2026-10-23",
+      "2026-10-27",
+      "2026-10-28",
+      "2026-10-29",
+      "2026-10-30",
+      "2026-11-03",
+      "2026-11-04",
+      "2026-11-05",
+      "2026-11-06",
+      "2026-11-09",
+      "2026-11-10",
+      "2026-11-11",
+      "2026-11-12",
+      "2026-11-13",
+      "2026-11-16",
+      "2026-11-17",
+      "2026-11-18"
+    ]
+  },
+  "parada": "limite de gerações",
+  "desenvolvimento": {
+    "original": {
+      "parametros": {
+        "p_exec_tick": 0,
+        "p_periodo_atr": 14.0,
+        "p_periodo_regime_atr": 50.0,
+        "p_desvio_vwap": 2.1,
+        "p_modo_banda": 0.0,
+        "p_periodo_desvio": 20.0,
+        "p_zscore_vol": 1.5,
+        "p_stop_pontos": 350.0,
+        "p_alvo_pontos": 400.0,
+        "p_minimotrades": 100.0,
+        "p_lote": 2,
+        "p_offset_limite_stop": 50.0,
+        "p_barras_espera": 3.0,
+        "p_max_entradas_dia": 10.0,
+        "p_hora_inicio": 915.0,
+        "p_hora_fim_entradas": 1645.0,
+        "p_hora_zeragem": 1700.0,
+        "p_noticia1_ini": 1025.0,
+        "p_noticia1_fim": 1035.0,
+        "p_noticia2_ini": 1425.0,
+        "p_noticia2_fim": 1435.0,
+        "p_zerar_na_noticia": 1.0
+      },
+      "metricas": {
+        "pregoes": 19,
+        "barras": 10186,
+        "operacoes": 91,
+        "operacoes_por_dia": 4.7894736842105265,
+        "acertos": 46,
+        "acerto": 0.5054945054945055,
+        "delta_meta_acerto_pp": 5.549450549450547,
+        "liquido": 342.0,
+        "liquido_por_dia": 18.0,
+        "delta_meta_diaria": -2982.0,
+        "fator_lucro_liquido": 1.05509,
+        "drawdown_max": 1230.0,
+        "pior_dia": -548.0,
+        "duracao_mediana_s": 540.0,
+        "duracao_p90_s": 2100.0,
+        "dias_meta": 0,
+        "max_exposicao": 2,
+        "ambiguidades": 0,
+        "por_pregao": {
+          "2026-09-15": {
+            "liquido": 0.0,
+            "operacoes": 0
+          },
+          "2026-09-16": {
+            "liquido": -144.0,
+            "operacoes": 1
+          },
+          "2026-09-17": {
+            "liquido": 50.0,
+            "operacoes": 3
+          },
+          "2026-09-23": {
+            "liquido": 368.0,
+            "operacoes": 5
+          },
+          "2026-09-24": {
+            "liquido": -146.0,
+            "operacoes": 1
+          },
+          "2026-09-25": {
+            "liquido": 14.0,
+            "operacoes": 2
+          },
+          "2026-09-29": {
+            "liquido": 158.0,
+            "operacoes": 1
+          },
+          "2026-09-30": {
+            "liquido": 224.0,
+            "operacoes": 4
+          },
+          "2026-10-01": {
+            "liquido": 104.0,
+            "operacoes": 5
+          },
+          "2026-10-02": {
+            "liquido": 226.0,
+            "operacoes": 8
+          },
+          "2026-10-05": {
+            "liquido": 172.0,
+            "operacoes": 3
+          },
+          "2026-10-06": {
+            "liquido": 42.0,
+            "operacoes": 6
+          },
+          "2026-10-07": {
+            "liquido": 316.0,
+            "operacoes": 2
+          },
+          "2026-10-08": {
+            "liquido": -230.0,
+            "operacoes": 10
+          },
+          "2026-10-09": {
+            "liquido": 28.0,
+            "operacoes": 8
+          },
+          "2026-10-13": {
+            "liquido": -48.0,
+            "operacoes": 8
+          },
+          "2026-10-14": {
+            "liquido": 56.0,
+            "operacoes": 8
+          },
+          "2026-10-15": {
+            "liquido": -300.0,
+            "operacoes": 8
+          },
+          "2026-10-16": {
+            "liquido": -548.0,
+            "operacoes": 8
+          }
+        }
+      }
+    },
+    "publicado": {
+      "parametros": {
+        "p_exec_tick": 0,
+        "p_periodo_atr": 14.0,
+        "p_periodo_regime_atr": 50.0,
+        "p_desvio_vwap": 2.1,
+        "p_modo_banda": 0.0,
+        "p_periodo_desvio": 20.0,
+        "p_zscore_vol": 1.5,
+        "p_stop_pontos": 350.0,
+        "p_alvo_pontos": 400.0,
+        "p_minimotrades": 100.0,
+        "p_lote": 2,
+        "p_offset_limite_stop": 50.0,
+        "p_barras_espera": 3.0,
+        "p_max_entradas_dia": 10.0,
+        "p_hora_inicio": 915.0,
+        "p_hora_fim_entradas": 1645.0,
+        "p_hora_zeragem": 1700.0,
+        "p_noticia1_ini": 1025.0,
+        "p_noticia1_fim": 1035.0,
+        "p_noticia2_ini": 1425.0,
+        "p_noticia2_fim": 1435.0,
+        "p_zerar_na_noticia": 1.0
+      },
+      "metricas": {
+        "pregoes": 19,
+        "barras": 10186,
+        "operacoes": 91,
+        "operacoes_por_dia": 4.7894736842105265,
+        "acertos": 46,
+        "acerto": 0.5054945054945055,
+        "delta_meta_acerto_pp": 5.549450549450547,
+        "liquido": 342.0,
+        "liquido_por_dia": 18.0,
+        "delta_meta_diaria": -2982.0,
+        "fator_lucro_liquido": 1.05509,
+        "drawdown_max": 1230.0,
+        "pior_dia": -548.0,
+        "duracao_mediana_s": 540.0,
+        "duracao_p90_s": 2100.0,
+        "dias_meta": 0,
+        "max_exposicao": 2,
+        "ambiguidades": 0,
+        "por_pregao": {
+          "2026-09-15": {
+            "liquido": 0.0,
+            "operacoes": 0
+          },
+          "2026-09-16": {
+            "liquido": -144.0,
+            "operacoes": 1
+          },
+          "2026-09-17": {
+            "liquido": 50.0,
+            "operacoes": 3
+          },
+          "2026-09-23": {
+            "liquido": 368.0,
+            "operacoes": 5
+          },
+          "2026-09-24": {
+            "liquido": -146.0,
+            "operacoes": 1
+          },
+          "2026-09-25": {
+            "liquido": 14.0,
+            "operacoes": 2
+          },
+          "2026-09-29": {
+            "liquido": 158.0,
+            "operacoes": 1
+          },
+          "2026-09-30": {
+            "liquido": 224.0,
+            "operacoes": 4
+          },
+          "2026-10-01": {
+            "liquido": 104.0,
+            "operacoes": 5
+          },
+          "2026-10-02": {
+            "liquido": 226.0,
+            "operacoes": 8
+          },
+          "2026-10-05": {
+            "liquido": 172.0,
+            "operacoes": 3
+          },
+          "2026-10-06": {
+            "liquido": 42.0,
+            "operacoes": 6
+          },
+          "2026-10-07": {
+            "liquido": 316.0,
+            "operacoes": 2
+          },
+          "2026-10-08": {
+            "liquido": -230.0,
+            "operacoes": 10
+          },
+          "2026-10-09": {
+            "liquido": 28.0,
+            "operacoes": 8
+          },
+          "2026-10-13": {
+            "liquido": -48.0,
+            "operacoes": 8
+          },
+          "2026-10-14": {
+            "liquido": 56.0,
+            "operacoes": 8
+          },
+          "2026-10-15": {
+            "liquido": -300.0,
+            "operacoes": 8
+          },
+          "2026-10-16": {
+            "liquido": -548.0,
+            "operacoes": 8
+          }
+        }
+      }
+    },
+    "lote_original_separado": {
+      "parametros": {
+        "p_exec_tick": 0,
+        "p_periodo_atr": 14.0,
+        "p_periodo_regime_atr": 50.0,
+        "p_desvio_vwap": 2.1,
+        "p_modo_banda": 0.0,
+        "p_periodo_desvio": 20.0,
+        "p_zscore_vol": 1.5,
+        "p_stop_pontos": 350.0,
+        "p_alvo_pontos": 400.0,
+        "p_minimotrades": 100.0,
+        "p_lote": 5.0,
+        "p_offset_limite_stop": 50.0,
+        "p_barras_espera": 3.0,
+        "p_max_entradas_dia": 10.0,
+        "p_hora_inicio": 915.0,
+        "p_hora_fim_entradas": 1645.0,
+        "p_hora_zeragem": 1700.0,
+        "p_noticia1_ini": 1025.0,
+        "p_noticia1_fim": 1035.0,
+        "p_noticia2_ini": 1425.0,
+        "p_noticia2_fim": 1435.0,
+        "p_zerar_na_noticia": 1.0
+      },
+      "metricas": {
+        "pregoes": 19,
+        "barras": 10186,
+        "operacoes": 91,
+        "operacoes_por_dia": 4.7894736842105265,
+        "acertos": 46,
+        "acerto": 0.5054945054945055,
+        "delta_meta_acerto_pp": 5.549450549450547,
+        "liquido": 855.0,
+        "liquido_por_dia": 45.0,
+        "delta_meta_diaria": -2955.0,
+        "fator_lucro_liquido": 1.05509,
+        "drawdown_max": 3075.0,
+        "pior_dia": -1370.0,
+        "duracao_mediana_s": 540.0,
+        "duracao_p90_s": 2100.0,
+        "dias_meta": 0,
+        "max_exposicao": 5,
+        "ambiguidades": 0,
+        "por_pregao": {
+          "2026-09-15": {
+            "liquido": 0.0,
+            "operacoes": 0
+          },
+          "2026-09-16": {
+            "liquido": -360.0,
+            "operacoes": 1
+          },
+          "2026-09-17": {
+            "liquido": 125.0,
+            "operacoes": 3
+          },
+          "2026-09-23": {
+            "liquido": 920.0,
+            "operacoes": 5
+          },
+          "2026-09-24": {
+            "liquido": -365.0,
+            "operacoes": 1
+          },
+          "2026-09-25": {
+            "liquido": 35.0,
+            "operacoes": 2
+          },
+          "2026-09-29": {
+            "liquido": 395.0,
+            "operacoes": 1
+          },
+          "2026-09-30": {
+            "liquido": 560.0,
+            "operacoes": 4
+          },
+          "2026-10-01": {
+            "liquido": 260.0,
+            "operacoes": 5
+          },
+          "2026-10-02": {
+            "liquido": 565.0,
+            "operacoes": 8
+          },
+          "2026-10-05": {
+            "liquido": 430.0,
+            "operacoes": 3
+          },
+          "2026-10-06": {
+            "liquido": 105.0,
+            "operacoes": 6
+          },
+          "2026-10-07": {
+            "liquido": 790.0,
+            "operacoes": 2
+          },
+          "2026-10-08": {
+            "liquido": -575.0,
+            "operacoes": 10
+          },
+          "2026-10-09": {
+            "liquido": 70.0,
+            "operacoes": 8
+          },
+          "2026-10-13": {
+            "liquido": -120.0,
+            "operacoes": 8
+          },
+          "2026-10-14": {
+            "liquido": 140.0,
+            "operacoes": 8
+          },
+          "2026-10-15": {
+            "liquido": -750.0,
+            "operacoes": 8
+          },
+          "2026-10-16": {
+            "liquido": -1370.0,
+            "operacoes": 8
+          }
+        }
+      }
+    },
+    "otimizado": {
+      "parametros": {
+        "p_exec_tick": 0,
+        "p_periodo_atr": 20,
+        "p_periodo_regime_atr": 65,
+        "p_desvio_vwap": 2.6,
+        "p_modo_banda": 0,
+        "p_periodo_desvio": 20,
+        "p_zscore_vol": 2.0,
+        "p_stop_pontos": 450,
+        "p_alvo_pontos": 550,
+        "p_minimotrades": 100,
+        "p_lote": 2,
+        "p_offset_limite_stop": 100,
+        "p_barras_espera": 5,
+        "p_max_entradas_dia": 5,
+        "p_hora_inicio": 915,
+        "p_hora_fim_entradas": 1645,
+        "p_hora_zeragem": 1700.0,
+        "p_noticia1_ini": 1025.0,
+        "p_noticia1_fim": 1035.0,
+        "p_noticia2_ini": 1425.0,
+        "p_noticia2_fim": 1435.0,
+        "p_zerar_na_noticia": 1.0
+      },
+      "metricas": {
+        "pregoes": 19,
+        "barras": 10186,
+        "operacoes": 58,
+        "operacoes_por_dia": 3.0526315789473686,
+        "acertos": 34,
+        "acerto": 0.5862068965517241,
+        "delta_meta_acerto_pp": 13.620689655172407,
+        "liquido": 2764.0,
+        "liquido_por_dia": 145.47,
+        "delta_meta_diaria": -2854.53,
+        "fator_lucro_liquido": 1.7247,
+        "drawdown_max": 552.0,
+        "pior_dia": -184.0,
+        "duracao_mediana_s": 1020.0,
+        "duracao_p90_s": 2916.0000000000005,
+        "dias_meta": 0,
+        "max_exposicao": 2,
+        "ambiguidades": 0,
+        "por_pregao": {
+          "2026-09-15": {
+            "liquido": 0.0,
+            "operacoes": 0
+          },
+          "2026-09-16": {
+            "liquido": -184.0,
+            "operacoes": 1
+          },
+          "2026-09-17": {
+            "liquido": -148.0,
+            "operacoes": 2
+          },
+          "2026-09-23": {
+            "liquido": 508.0,
+            "operacoes": 5
+          },
+          "2026-09-24": {
+            "liquido": 22.0,
+            "operacoes": 2
+          },
+          "2026-09-25": {
+            "liquido": 34.0,
+            "operacoes": 2
+          },
+          "2026-09-29": {
+            "liquido": 116.0,
+            "operacoes": 2
+          },
+          "2026-09-30": {
+            "liquido": 34.0,
+            "operacoes": 2
+          },
+          "2026-10-01": {
+            "liquido": 322.0,
+            "operacoes": 4
+          },
+          "2026-10-02": {
+            "liquido": 872.0,
+            "operacoes": 7
+          },
+          "2026-10-05": {
+            "liquido": 218.0,
+            "operacoes": 1
+          },
+          "2026-10-06": {
+            "liquido": 34.0,
+            "operacoes": 2
+          },
+          "2026-10-07": {
+            "liquido": 436.0,
+            "operacoes": 2
+          },
+          "2026-10-08": {
+            "liquido": -116.0,
+            "operacoes": 5
+          },
+          "2026-10-09": {
+            "liquido": 238.0,
+            "operacoes": 5
+          },
+          "2026-10-13": {
+            "liquido": 68.0,
+            "operacoes": 4
+          },
+          "2026-10-14": {
+            "liquido": 286.0,
+            "operacoes": 5
+          },
+          "2026-10-15": {
+            "liquido": 174.0,
+            "operacoes": 3
+          },
+          "2026-10-16": {
+            "liquido": -150.0,
+            "operacoes": 4
+          }
+        }
+      },
+      "delta_original_reais": 2422.0,
+      "delta_publicado_reais": 2422.0
+    }
+  },
+  "exploratorio": {
+    "original": {
+      "parametros": {
+        "p_exec_tick": 0,
+        "p_periodo_atr": 14.0,
+        "p_periodo_regime_atr": 50.0,
+        "p_desvio_vwap": 2.1,
+        "p_modo_banda": 0.0,
+        "p_periodo_desvio": 20.0,
+        "p_zscore_vol": 1.5,
+        "p_stop_pontos": 350.0,
+        "p_alvo_pontos": 400.0,
+        "p_minimotrades": 100.0,
+        "p_lote": 2,
+        "p_offset_limite_stop": 50.0,
+        "p_barras_espera": 3.0,
+        "p_max_entradas_dia": 10.0,
+        "p_hora_inicio": 915.0,
+        "p_hora_fim_entradas": 1645.0,
+        "p_hora_zeragem": 1700.0,
+        "p_noticia1_ini": 1025.0,
+        "p_noticia1_fim": 1035.0,
+        "p_noticia2_ini": 1425.0,
+        "p_noticia2_fim": 1435.0,
+        "p_zerar_na_noticia": 1.0
+      },
+      "metricas": {
+        "pregoes": 20,
+        "barras": 11288,
+        "operacoes": 147,
+        "operacoes_por_dia": 7.35,
+        "acertos": 76,
+        "acerto": 0.5170068027210885,
+        "delta_meta_acerto_pp": 6.700680272108844,
+        "liquido": 1902.0,
+        "liquido_por_dia": 95.1,
+        "delta_meta_diaria": -2904.9,
+        "fator_lucro_liquido": 1.21237,
+        "drawdown_max": 2352.0,
+        "pior_dia": -1046.0,
+        "duracao_mediana_s": 900.0,
+        "duracao_p90_s": 3180.0,
+        "dias_meta": 0,
+        "max_exposicao": 2,
+        "ambiguidades": 0,
+        "por_pregao": {
+          "2026-10-19": {
+            "liquido": -864.0,
+            "operacoes": 6
+          },
+          "2026-10-20": {
+            "liquido": -404.0,
+            "operacoes": 7
+          },
+          "2026-10-22": {
+            "liquido": 188.0,
+            "operacoes": 8
+          },
+          "2026-10-23": {
+            "liquido": -226.0,
+            "operacoes": 9
+          },
+          "2026-10-27": {
+            "liquido": -1046.0,
+            "operacoes": 10
+          },
+          "2026-10-28": {
+            "liquido": 386.0,
+            "operacoes": 9
+          },
+          "2026-10-29": {
+            "liquido": 778.0,
+            "operacoes": 10
+          },
+          "2026-10-30": {
+            "liquido": 244.0,
+            "operacoes": 6
+          },
+          "2026-11-03": {
+            "liquido": 148.0,
+            "operacoes": 6
+          },
+          "2026-11-04": {
+            "liquido": 488.0,
+            "operacoes": 5
+          },
+          "2026-11-05": {
+            "liquido": 472.0,
+            "operacoes": 6
+          },
+          "2026-11-06": {
+            "liquido": 264.0,
+            "operacoes": 9
+          },
+          "2026-11-09": {
+            "liquido": 582.0,
+            "operacoes": 6
+          },
+          "2026-11-10": {
+            "liquido": 296.0,
+            "operacoes": 6
+          },
+          "2026-11-11": {
+            "liquido": 112.0,
+            "operacoes": 5
+          },
+          "2026-11-12": {
+            "liquido": -370.0,
+            "operacoes": 6
+          },
+          "2026-11-13": {
+            "liquido": 418.0,
+            "operacoes": 8
+          },
+          "2026-11-16": {
+            "liquido": 200.0,
+            "operacoes": 7
+          },
+          "2026-11-17": {
+            "liquido": 796.0,
+            "operacoes": 10
+          },
+          "2026-11-18": {
+            "liquido": -560.0,
+            "operacoes": 8
+          }
+        }
+      }
+    },
+    "publicado": {
+      "parametros": {
+        "p_exec_tick": 0,
+        "p_periodo_atr": 14.0,
+        "p_periodo_regime_atr": 50.0,
+        "p_desvio_vwap": 2.1,
+        "p_modo_banda": 0.0,
+        "p_periodo_desvio": 20.0,
+        "p_zscore_vol": 1.5,
+        "p_stop_pontos": 350.0,
+        "p_alvo_pontos": 400.0,
+        "p_minimotrades": 100.0,
+        "p_lote": 2,
+        "p_offset_limite_stop": 50.0,
+        "p_barras_espera": 3.0,
+        "p_max_entradas_dia": 10.0,
+        "p_hora_inicio": 915.0,
+        "p_hora_fim_entradas": 1645.0,
+        "p_hora_zeragem": 1700.0,
+        "p_noticia1_ini": 1025.0,
+        "p_noticia1_fim": 1035.0,
+        "p_noticia2_ini": 1425.0,
+        "p_noticia2_fim": 1435.0,
+        "p_zerar_na_noticia": 1.0
+      },
+      "metricas": {
+        "pregoes": 20,
+        "barras": 11288,
+        "operacoes": 147,
+        "operacoes_por_dia": 7.35,
+        "acertos": 76,
+        "acerto": 0.5170068027210885,
+        "delta_meta_acerto_pp": 6.700680272108844,
+        "liquido": 1902.0,
+        "liquido_por_dia": 95.1,
+        "delta_meta_diaria": -2904.9,
+        "fator_lucro_liquido": 1.21237,
+        "drawdown_max": 2352.0,
+        "pior_dia": -1046.0,
+        "duracao_mediana_s": 900.0,
+        "duracao_p90_s": 3180.0,
+        "dias_meta": 0,
+        "max_exposicao": 2,
+        "ambiguidades": 0,
+        "por_pregao": {
+          "2026-10-19": {
+            "liquido": -864.0,
+            "operacoes": 6
+          },
+          "2026-10-20": {
+            "liquido": -404.0,
+            "operacoes": 7
+          },
+          "2026-10-22": {
+            "liquido": 188.0,
+            "operacoes": 8
+          },
+          "2026-10-23": {
+            "liquido": -226.0,
+            "operacoes": 9
+          },
+          "2026-10-27": {
+            "liquido": -1046.0,
+            "operacoes": 10
+          },
+          "2026-10-28": {
+            "liquido": 386.0,
+            "operacoes": 9
+          },
+          "2026-10-29": {
+            "liquido": 778.0,
+            "operacoes": 10
+          },
+          "2026-10-30": {
+            "liquido": 244.0,
+            "operacoes": 6
+          },
+          "2026-11-03": {
+            "liquido": 148.0,
+            "operacoes": 6
+          },
+          "2026-11-04": {
+            "liquido": 488.0,
+            "operacoes": 5
+          },
+          "2026-11-05": {
+            "liquido": 472.0,
+            "operacoes": 6
+          },
+          "2026-11-06": {
+            "liquido": 264.0,
+            "operacoes": 9
+          },
+          "2026-11-09": {
+            "liquido": 582.0,
+            "operacoes": 6
+          },
+          "2026-11-10": {
+            "liquido": 296.0,
+            "operacoes": 6
+          },
+          "2026-11-11": {
+            "liquido": 112.0,
+            "operacoes": 5
+          },
+          "2026-11-12": {
+            "liquido": -370.0,
+            "operacoes": 6
+          },
+          "2026-11-13": {
+            "liquido": 418.0,
+            "operacoes": 8
+          },
+          "2026-11-16": {
+            "liquido": 200.0,
+            "operacoes": 7
+          },
+          "2026-11-17": {
+            "liquido": 796.0,
+            "operacoes": 10
+          },
+          "2026-11-18": {
+            "liquido": -560.0,
+            "operacoes": 8
+          }
+        }
+      }
+    },
+    "otimizado": {
+      "parametros": {
+        "p_exec_tick": 0,
+        "p_periodo_atr": 20,
+        "p_periodo_regime_atr": 65,
+        "p_desvio_vwap": 2.6,
+        "p_modo_banda": 0,
+        "p_periodo_desvio": 20,
+        "p_zscore_vol": 2.0,
+        "p_stop_pontos": 450,
+        "p_alvo_pontos": 550,
+        "p_minimotrades": 100,
+        "p_lote": 2,
+        "p_offset_limite_stop": 100,
+        "p_barras_espera": 5,
+        "p_max_entradas_dia": 5,
+        "p_hora_inicio": 915,
+        "p_hora_fim_entradas": 1645,
+        "p_hora_zeragem": 1700.0,
+        "p_noticia1_ini": 1025.0,
+        "p_noticia1_fim": 1035.0,
+        "p_noticia2_ini": 1425.0,
+        "p_noticia2_fim": 1435.0,
+        "p_zerar_na_noticia": 1.0
+      },
+      "metricas": {
+        "pregoes": 20,
+        "barras": 11288,
+        "operacoes": 86,
+        "operacoes_por_dia": 4.3,
+        "acertos": 36,
+        "acerto": 0.4186046511627907,
+        "delta_meta_acerto_pp": -3.139534883720929,
+        "liquido": -2022.0,
+        "liquido_por_dia": -101.1,
+        "delta_meta_diaria": -3101.1,
+        "fator_lucro_liquido": 0.73147,
+        "drawdown_max": 2056.0,
+        "pior_dia": -862.0,
+        "duracao_mediana_s": 1500.0,
+        "duracao_p90_s": 5640.0,
+        "dias_meta": 0,
+        "max_exposicao": 2,
+        "ambiguidades": 0,
+        "por_pregao": {
+          "2026-10-19": {
+            "liquido": -242.0,
+            "operacoes": 5
+          },
+          "2026-10-20": {
+            "liquido": -358.0,
+            "operacoes": 5
+          },
+          "2026-10-22": {
+            "liquido": -126.0,
+            "operacoes": 5
+          },
+          "2026-10-23": {
+            "liquido": -136.0,
+            "operacoes": 4
+          },
+          "2026-10-27": {
+            "liquido": -386.0,
+            "operacoes": 5
+          },
+          "2026-10-28": {
+            "liquido": 102.0,
+            "operacoes": 6
+          },
+          "2026-10-29": {
+            "liquido": 28.0,
+            "operacoes": 5
+          },
+          "2026-10-30": {
+            "liquido": -394.0,
+            "operacoes": 3
+          },
+          "2026-11-03": {
+            "liquido": -84.0,
+            "operacoes": 3
+          },
+          "2026-11-04": {
+            "liquido": 248.0,
+            "operacoes": 3
+          },
+          "2026-11-05": {
+            "liquido": -110.0,
+            "operacoes": 4
+          },
+          "2026-11-06": {
+            "liquido": 224.0,
+            "operacoes": 3
+          },
+          "2026-11-09": {
+            "liquido": 174.0,
+            "operacoes": 5
+          },
+          "2026-11-10": {
+            "liquido": 224.0,
+            "operacoes": 4
+          },
+          "2026-11-11": {
+            "liquido": -338.0,
+            "operacoes": 4
+          },
+          "2026-11-12": {
+            "liquido": -250.0,
+            "operacoes": 4
+          },
+          "2026-11-13": {
+            "liquido": 296.0,
+            "operacoes": 3
+          },
+          "2026-11-16": {
+            "liquido": -156.0,
+            "operacoes": 5
+          },
+          "2026-11-17": {
+            "liquido": 124.0,
+            "operacoes": 5
+          },
+          "2026-11-18": {
+            "liquido": -862.0,
+            "operacoes": 5
+          }
+        }
+      },
+      "delta_original_reais": -3924.0,
+      "delta_publicado_reais": -3924.0
+    }
+  },
+  "validacao_inedita": null,
+  "evolucao": [
+    {
+      "geracao": 1,
+      "avaliados": 24,
+      "segundos": 7.62,
+      "aptidao": 6530.0
+    },
+    {
+      "geracao": 2,
+      "avaliados": 47,
+      "segundos": 10.58,
+      "aptidao": 9190.0
+    },
+    {
+      "geracao": 3,
+      "avaliados": 70,
+      "segundos": 13.52,
+      "aptidao": 13820.0
+    }
+  ],
+  "avaliacoes": [
+    {
+      "input:p_alvo_pontos": 550.0,
+      "input:p_barras_espera": 5.0,
+      "input:p_desvio_vwap": 2.6,
+      "input:p_exec_tick": 0,
+      "input:p_hora_fim_entradas": 1645.0,
+      "input:p_hora_inicio": 915.0,
+      "input:p_lote": 2,
+      "input:p_max_entradas_dia": 5.0,
+      "input:p_minimotrades": 100.0,
+      "input:p_modo_banda": 0.0,
+      "input:p_offset_limite_stop": 100.0,
+      "input:p_periodo_atr": 20.0,
+      "input:p_periodo_desvio": 20.0,
+      "input:p_periodo_regime_atr": 65.0,
+      "input:p_stop_pontos": 450.0,
+      "input:p_zscore_vol": 2.0,
+      "aptidao": 13820.0,
+      "resultado_reais": 2764.0,
+      "drawdown_reais": 553.0,
+      "saidas": 58
+    },
+    {
+      "input:p_alvo_pontos": 250.0,
+      "input:p_barras_espera": 5.0,
+      "input:p_desvio_vwap": 2.6,
+      "input:p_exec_tick": 0,
+      "input:p_hora_fim_entradas": 1645.0,
+      "input:p_hora_inicio": 1000.0,
+      "input:p_lote": 2,
+      "input:p_max_entradas_dia": 5.0,
+      "input:p_minimotrades": 100.0,
+      "input:p_modo_banda": 0.0,
+      "input:p_offset_limite_stop": 50.0,
+      "input:p_periodo_atr": 14.0,
+      "input:p_periodo_desvio": 15.0,
+      "input:p_periodo_regime_atr": 65.0,
+      "input:p_stop_pontos": 350.0,
+      "input:p_zscore_vol": 1.5,
+      "aptidao": 10830.0,
+      "resultado_reais": 2166.0,
+      "drawdown_reais": 577.0,
+      "saidas": 67
+    },
+    {
+      "input:p_alvo_pontos": 550.0,
+      "input:p_barras_espera": 5.0,
+      "input:p_desvio_vwap": 2.6,
+      "input:p_exec_tick": 0,
+      "input:p_hora_fim_entradas": 1550.0,
+      "input:p_hora_inicio": 915.0,
+      "input:p_lote": 2,
+      "input:p_max_entradas_dia": 5.0,
+      "input:p_minimotrades": 50.0,
+      "input:p_modo_banda": 0.0,
+      "input:p_offset_limite_stop": 5.0,
+      "input:p_periodo_atr": 20.0,
+      "input:p_periodo_desvio": 15.0,
+      "input:p_periodo_regime_atr": 35.0,
+      "input:p_stop_pontos": 450.0,
+      "input:p_zscore_vol": 1.5,
+      "aptidao": 9190.0,
+      "resultado_reais": 1838.0,
+      "drawdown_reais": 832.0,
+      "saidas": 89
+    },
+    {
+      "input:p_alvo_pontos": 250.0,
+      "input:p_barras_espera": 5.0,
+      "input:p_desvio_vwap": 2.1,
+      "input:p_exec_tick": 0,
+      "input:p_hora_fim_entradas": 1615.0,
+      "input:p_hora_inicio": 915.0,
+      "input:p_lote": 2,
+      "input:p_max_entradas_dia": 10.0,
+      "input:p_minimotrades": 50.0,
+      "input:p_modo_banda": 0.0,
+      "input:p_offset_limite_stop": 5.0,
+      "input:p_periodo_atr": 20.0,
+      "input:p_periodo_desvio": 15.0,
+      "input:p_periodo_regime_atr": 65.0,
+      "input:p_stop_pontos": 450.0,
+      "input:p_zscore_vol": 1.5,
+      "aptidao": 8510.0,
+      "resultado_reais": 1702.0,
+      "drawdown_reais": 701.0,
+      "saidas": 130
+    },
+    {
+      "input:p_alvo_pontos": 250.0,
+      "input:p_barras_espera": 5.0,
+      "input:p_desvio_vwap": 2.1,
+      "input:p_exec_tick": 0,
+      "input:p_hora_fim_entradas": 1550.0,
+      "input:p_hora_inicio": 915.0,
+      "input:p_lote": 2,
+      "input:p_max_entradas_dia": 10.0,
+      "input:p_minimotrades": 50.0,
+      "input:p_modo_banda": 0.0,
+      "input:p_offset_limite_stop": 5.0,
+      "input:p_periodo_atr": 20.0,
+      "input:p_periodo_desvio": 15.0,
+      "input:p_periodo_regime_atr": 50.0,
+      "input:p_stop_pontos": 200.0,
+      "input:p_zscore_vol": 1.5,
+      "aptidao": 7480.0,
+      "resultado_reais": 1496.0,
+      "drawdown_reais": 1021.0,
+      "saidas": 132
+    },
+    {
+      "input:p_alvo_pontos": 250.0,
+      "input:p_barras_espera": 1.0,
+      "input:p_desvio_vwap": 2.1,
+      "input:p_exec_tick": 0,
+      "input:p_hora_fim_entradas": 1645.0,
+      "input:p_hora_inicio": 930.0,
+      "input:p_lote": 2,
+      "input:p_max_entradas_dia": 10.0,
+      "input:p_minimotrades": 50.0,
+      "input:p_modo_banda": 0.0,
+      "input:p_offset_limite_stop": 100.0,
+      "input:p_periodo_atr": 20.0,
+      "input:p_periodo_desvio": 15.0,
+      "input:p_periodo_regime_atr": 65.0,
+      "input:p_stop_pontos": 450.0,
+      "input:p_zscore_vol": 1.5,
+      "aptidao": 6690.0,
+      "resultado_reais": 1338.0,
+      "drawdown_reais": 891.0,
+      "saidas": 149
+    },
+    {
+      "input:p_alvo_pontos": 250.0,
+      "input:p_barras_espera": 3.0,
+      "input:p_desvio_vwap": 2.6,
+      "input:p_exec_tick": 0,
+      "input:p_hora_fim_entradas": 1645.0,
+      "input:p_hora_inicio": 915.0,
+      "input:p_lote": 2,
+      "input:p_max_entradas_dia": 5.0,
+      "input:p_minimotrades": 50.0,
+      "input:p_modo_banda": 0.0,
+      "input:p_offset_limite_stop": 100.0,
+      "input:p_periodo_atr": 10.0,
+      "input:p_periodo_desvio": 20.0,
+      "input:p_periodo_regime_atr": 35.0,
+      "input:p_stop_pontos": 200.0,
+      "input:p_zscore_vol": 1.5,
+      "aptidao": 6530.0,
+      "resultado_reais": 1306.0,
+      "drawdown_reais": 875.0,
+      "saidas": 117
+    },
+    {
+      "input:p_alvo_pontos": 450.0,
+      "input:p_barras_espera": 1.0,
+      "input:p_desvio_vwap": 2.1,
+      "input:p_exec_tick": 0,
+      "input:p_hora_fim_entradas": 1645.0,
+      "input:p_hora_inicio": 915.0,
+      "input:p_lote": 2,
+      "input:p_max_entradas_dia": 5.0,
+      "input:p_minimotrades": 50.0,
+      "input:p_modo_banda": 0.0,
+      "input:p_offset_limite_stop": 100.0,
+      "input:p_periodo_atr": 20.0,
+      "input:p_periodo_desvio": 20.0,
+      "input:p_periodo_regime_atr": 65.0,
+      "input:p_stop_pontos": 450.0,
+      "input:p_zscore_vol": 2.0,
+      "aptidao": 6240.0,
+      "resultado_reais": 1248.0,
+      "drawdown_reais": 921.0,
+      "saidas": 98
+    },
+    {
+      "input:p_alvo_pontos": 250.0,
+      "input:p_barras_espera": 5.0,
+      "input:p_desvio_vwap": 2.1,
+      "input:p_exec_tick": 0,
+      "input:p_hora_fim_entradas": 1615.0,
+      "input:p_hora_inicio": 930.0,
+      "input:p_lote": 2,
+      "input:p_max_entradas_dia": 15.0,
+      "input:p_minimotrades": 50.0,
+      "input:p_modo_banda": 0.0,
+      "input:p_offset_limite_stop": 5.0,
+      "input:p_periodo_atr": 20.0,
+      "input:p_periodo_desvio": 30.0,
+      "input:p_periodo_regime_atr": 65.0,
+      "input:p_stop_pontos": 200.0,
+      "input:p_zscore_vol": 1.5,
+      "aptidao": 5490.0,
+      "resultado_reais": 1098.0,
+      "drawdown_reais": 767.0,
+      "saidas": 133
+    },
+    {
+      "input:p_alvo_pontos": 250.0,
+      "input:p_barras_espera": 1.0,
+      "input:p_desvio_vwap": 2.6,
+      "input:p_exec_tick": 0,
+      "input:p_hora_fim_entradas": 1645.0,
+      "input:p_hora_inicio": 915.0,
+      "input:p_lote": 2,
+      "input:p_max_entradas_dia": 10.0,
+      "input:p_minimotrades": 100.0,
+      "input:p_modo_banda": 0.0,
+      "input:p_offset_limite_stop": 100.0,
+      "input:p_periodo_atr": 20.0,
+      "input:p_periodo_desvio": 15.0,
+      "input:p_periodo_regime_atr": 65.0,
+      "input:p_stop_pontos": 450.0,
+      "input:p_zscore_vol": 1.5,
+      "aptidao": 5210.0,
+      "resultado_reais": 1042.0,
+      "drawdown_reais": 799.0,
+      "saidas": 100
+    },
+    {
+      "input:p_alvo_pontos": 550.0,
+      "input:p_barras_espera": 5.0,
+      "input:p_desvio_vwap": 2.1,
+      "input:p_exec_tick": 0,
+      "input:p_hora_fim_entradas": 1645.0,
+      "input:p_hora_inicio": 1000.0,
+      "input:p_lote": 2,
+      "input:p_max_entradas_dia": 15.0,
+      "input:p_minimotrades": 100.0,
+      "input:p_modo_banda": 0.0,
+      "input:p_offset_limite_stop": 5.0,
+      "input:p_periodo_atr": 20.0,
+      "input:p_periodo_desvio": 15.0,
+      "input:p_periodo_regime_atr": 65.0,
+      "input:p_stop_pontos": 275.0,
+      "input:p_zscore_vol": 1.5,
+      "aptidao": 5120.0,
+      "resultado_reais": 1024.0,
+      "drawdown_reais": 1001.0,
+      "saidas": 84
+    },
+    {
+      "input:p_alvo_pontos": 250.0,
+      "input:p_barras_espera": 3.0,
+      "input:p_desvio_vwap": 2.1,
+      "input:p_exec_tick": 0,
+      "input:p_hora_fim_entradas": 1645.0,
+      "input:p_hora_inicio": 1000.0,
+      "input:p_lote": 2,
+      "input:p_max_entradas_dia": 15.0,
+      "input:p_minimotrades": 100.0,
+      "input:p_modo_banda": 0.0,
+      "input:p_offset_limite_stop": 50.0,
+      "input:p_periodo_atr": 14.0,
+      "input:p_periodo_desvio": 20.0,
+      "input:p_periodo_regime_atr": 65.0,
+      "input:p_stop_pontos": 200.0,
+      "input:p_zscore_vol": 2.0,
+      "aptidao": 5110.0,
+      "resultado_reais": 1022.0,
+      "drawdown_reais": 435.0,
+      "saidas": 78
+    },
+    {
+      "input:p_alvo_pontos": 350.0,
+      "input:p_barras_espera": 1.0,
+      "input:p_desvio_vwap": 1.6,
+      "input:p_exec_tick": 0,
+      "input:p_hora_fim_entradas": 1645.0,
+      "input:p_hora_inicio": 930.0,
+      "input:p_lote": 2,
+      "input:p_max_entradas_dia": 15.0,
+      "input:p_minimotrades": 250.0,
+      "input:p_modo_banda": 0.0,
+      "input:p_offset_limite_stop": 100.0,
+      "input:p_periodo_atr": 10.0,
+      "input:p_periodo_desvio": 20.0,
+      "input:p_periodo_regime_atr": 50.0,
+      "input:p_stop_pontos": 450.0,
+      "input:p_zscore_vol": 2.0,
+      "aptidao": 5010.0,
+      "resultado_reais": 1002.0,
+      "drawdown_reais": 699.0,
+      "saidas": 42
+    },
+    {
+      "input:p_alvo_pontos": 250.0,
+      "input:p_barras_espera": 1.0,
+      "input:p_desvio_vwap": 2.6,
+      "input:p_exec_tick": 0,
+      "input:p_hora_fim_entradas": 1645.0,
+      "input:p_hora_inicio": 930.0,
+      "input:p_lote": 2,
+      "input:p_max_entradas_dia": 10.0,
+      "input:p_minimotrades": 100.0,
+      "input:p_modo_banda": 0.0,
+      "input:p_offset_limite_stop": 100.0,
+      "input:p_periodo_atr": 20.0,
+      "input:p_periodo_desvio": 20.0,
+      "input:p_periodo_regime_atr": 50.0,
+      "input:p_stop_pontos": 450.0,
+      "input:p_zscore_vol": 2.0,
+      "aptidao": 4830.0,
+      "resultado_reais": 966.0,
+      "drawdown_reais": 982.0,
+      "saidas": 73
+    },
+    {
+      "input:p_alvo_pontos": 250.0,
+      "input:p_barras_espera": 3.0,
+      "input:p_desvio_vwap": 2.6,
+      "input:p_exec_tick": 0,
+      "input:p_hora_fim_entradas": 1550.0,
+      "input:p_hora_inicio": 1000.0,
+      "input:p_lote": 2,
+      "input:p_max_entradas_dia": 10.0,
+      "input:p_minimotrades": 100.0,
+      "input:p_modo_banda": 0.0,
+      "input:p_offset_limite_stop": 100.0,
+      "input:p_periodo_atr": 20.0,
+      "input:p_periodo_desvio": 20.0,
+      "input:p_periodo_regime_atr": 65.0,
+      "input:p_stop_pontos": 200.0,
+      "input:p_zscore_vol": 1.5,
+      "aptidao": 4660.0,
+      "resultado_reais": 932.0,
+      "drawdown_reais": 575.0,
+      "saidas": 80
+    },
+    {
+      "input:p_alvo_pontos": 350.0,
+      "input:p_barras_espera": 1.0,
+      "input:p_desvio_vwap": 2.6,
+      "input:p_exec_tick": 0,
+      "input:p_hora_fim_entradas": 1645.0,
+      "input:p_hora_inicio": 930.0,
+      "input:p_lote": 2,
+      "input:p_max_entradas_dia": 5.0,
+      "input:p_minimotrades": 50.0,
+      "input:p_modo_banda": 0.0,
+      "input:p_offset_limite_stop": 50.0,
+      "input:p_periodo_atr": 20.0,
+      "input:p_periodo_desvio": 20.0,
+      "input:p_periodo_regime_atr": 65.0,
+      "input:p_stop_pontos": 450.0,
+      "input:p_zscore_vol": 1.5,
+      "aptidao": 4570.0,
+      "resultado_reais": 914.0,
+      "drawdown_reais": 745.0,
+      "saidas": 104
+    },
+    {
+      "input:p_alvo_pontos": 250.0,
+      "input:p_barras_espera": 3.0,
+      "input:p_desvio_vwap": 2.1,
+      "input:p_exec_tick": 0,
+      "input:p_hora_fim_entradas": 1615.0,
+      "input:p_hora_inicio": 930.0,
+      "input:p_lote": 2,
+      "input:p_max_entradas_dia": 5.0,
+      "input:p_minimotrades": 100.0,
+      "input:p_modo_banda": 0.0,
+      "input:p_offset_limite_stop": 100.0,
+      "input:p_periodo_atr": 14.0,
+      "input:p_periodo_desvio": 15.0,
+      "input:p_periodo_regime_atr": 50.0,
+      "input:p_stop_pontos": 200.0,
+      "input:p_zscore_vol": 1.5,
+      "aptidao": 4170.0,
+      "resultado_reais": 834.0,
+      "drawdown_reais": 781.0,
+      "saidas": 73
+    },
+    {
+      "input:p_alvo_pontos": 250.0,
+      "input:p_barras_espera": 3.0,
+      "input:p_desvio_vwap": 2.1,
+      "input:p_exec_tick": 0,
+      "input:p_hora_fim_entradas": 1645.0,
+      "input:p_hora_inicio": 915.0,
+      "input:p_lote": 2,
+      "input:p_max_entradas_dia": 10.0,
+      "input:p_minimotrades": 100.0,
+      "input:p_modo_banda": 0.0,
+      "input:p_offset_limite_stop": 5.0,
+      "input:p_periodo_atr": 14.0,
+      "input:p_periodo_desvio": 20.0,
+      "input:p_periodo_regime_atr": 65.0,
+      "input:p_stop_pontos": 200.0,
+      "input:p_zscore_vol": 1.5,
+      "aptidao": 4040.0,
+      "resultado_reais": 808.0,
+      "drawdown_reais": 827.0,
+      "saidas": 101
+    },
+    {
+      "input:p_alvo_pontos": 350.0,
+      "input:p_barras_espera": 3.0,
+      "input:p_desvio_vwap": 2.1,
+      "input:p_exec_tick": 0,
+      "input:p_hora_fim_entradas": 1645.0,
+      "input:p_hora_inicio": 930.0,
+      "input:p_lote": 2,
+      "input:p_max_entradas_dia": 5.0,
+      "input:p_minimotrades": 100.0,
+      "input:p_modo_banda": 0.0,
+      "input:p_offset_limite_stop": 5.0,
+      "input:p_periodo_atr": 20.0,
+      "input:p_periodo_desvio": 15.0,
+      "input:p_periodo_regime_atr": 50.0,
+      "input:p_stop_pontos": 200.0,
+      "input:p_zscore_vol": 1.5,
+      "aptidao": 3900.0,
+      "resultado_reais": 780.0,
+      "drawdown_reais": 695.0,
+      "saidas": 72
+    },
+    {
+      "input:p_alvo_pontos": 250.0,
+      "input:p_barras_espera": 3.0,
+      "input:p_desvio_vwap": 2.1,
+      "input:p_exec_tick": 0,
+      "input:p_hora_fim_entradas": 1645.0,
+      "input:p_hora_inicio": 930.0,
+      "input:p_lote": 2,
+      "input:p_max_entradas_dia": 15.0,
+      "input:p_minimotrades": 100.0,
+      "input:p_modo_banda": 0.0,
+      "input:p_offset_limite_stop": 5.0,
+      "input:p_periodo_atr": 20.0,
+      "input:p_periodo_desvio": 20.0,
+      "input:p_periodo_regime_atr": 65.0,
+      "input:p_stop_pontos": 200.0,
+      "input:p_zscore_vol": 1.5,
+      "aptidao": 3700.0,
+      "resultado_reais": 740.0,
+      "drawdown_reais": 731.0,
+      "saidas": 106
+    },
+    {
+      "input:p_alvo_pontos": 250.0,
+      "input:p_barras_espera": 5.0,
+      "input:p_desvio_vwap": 1.6,
+      "input:p_exec_tick": 0,
+      "input:p_hora_fim_entradas": 1615.0,
+      "input:p_hora_inicio": 930.0,
+      "input:p_lote": 2,
+      "input:p_max_entradas_dia": 5.0,
+      "input:p_minimotrades": 100.0,
+      "input:p_modo_banda": 0.0,
+      "input:p_offset_limite_stop": 25.0,
+      "input:p_periodo_atr": 14.0,
+      "input:p_periodo_desvio": 15.0,
+      "input:p_periodo_regime_atr": 50.0,
+      "input:p_stop_pontos": 350.0,
+      "input:p_zscore_vol": 1.0,
+      "aptidao": 3650.0,
+      "resultado_reais": 730.0,
+      "drawdown_reais": 1199.0,
+      "saidas": 74
+    },
+    {
+      "input:p_alvo_pontos": 550.0,
+      "input:p_barras_espera": 5.0,
+      "input:p_desvio_vwap": 2.6,
+      "input:p_exec_tick": 0,
+      "input:p_hora_fim_entradas": 1550.0,
+      "input:p_hora_inicio": 930.0,
+      "input:p_lote": 2,
+      "input:p_max_entradas_dia": 5.0,
+      "input:p_minimotrades": 50.0,
+      "input:p_modo_banda": 0.0,
+      "input:p_offset_limite_stop": 5.0,
+      "input:p_periodo_atr": 20.0,
+      "input:p_periodo_desvio": 15.0,
+      "input:p_periodo_regime_atr": 65.0,
+      "input:p_stop_pontos": 200.0,
+      "input:p_zscore_vol": 2.0,
+      "aptidao": 3440.0,
+      "resultado_reais": 688.0,
+      "drawdown_reais": 589.0,
+      "saidas": 84
+    },
+    {
+      "input:p_alvo_pontos": 450.0,
+      "input:p_barras_espera": 5.0,
+      "input:p_desvio_vwap": 1.6,
+      "input:p_exec_tick": 0,
+      "input:p_hora_fim_entradas": 1550.0,
+      "input:p_hora_inicio": 1000.0,
+      "input:p_lote": 2,
+      "input:p_max_entradas_dia": 5.0,
+      "input:p_minimotrades": 100.0,
+      "input:p_modo_banda": 0.0,
+      "input:p_offset_limite_stop": 5.0,
+      "input:p_periodo_atr": 14.0,
+      "input:p_periodo_desvio": 15.0,
+      "input:p_periodo_regime_atr": 65.0,
+      "input:p_stop_pontos": 350.0,
+      "input:p_zscore_vol": 1.0,
+      "aptidao": 3300.0,
+      "resultado_reais": 660.0,
+      "drawdown_reais": 865.0,
+      "saidas": 68
+    },
+    {
+      "input:p_alvo_pontos": 550.0,
+      "input:p_barras_espera": 3.0,
+      "input:p_desvio_vwap": 1.6,
+      "input:p_exec_tick": 0,
+      "input:p_hora_fim_entradas": 1645.0,
+      "input:p_hora_inicio": 915.0,
+      "input:p_lote": 2,
+      "input:p_max_entradas_dia": 15.0,
+      "input:p_minimotrades": 100.0,
+      "input:p_modo_banda": 1.0,
+      "input:p_offset_limite_stop": 100.0,
+      "input:p_periodo_atr": 20.0,
+      "input:p_periodo_desvio": 30.0,
+      "input:p_periodo_regime_atr": 50.0,
+      "input:p_stop_pontos": 350.0,
+      "input:p_zscore_vol": 1.5,
+      "aptidao": 3070.0,
+      "resultado_reais": 614.0,
+      "drawdown_reais": 729.0,
+      "saidas": 47
+    },
+    {
+      "input:p_alvo_pontos": 250.0,
+      "input:p_barras_espera": 5.0,
+      "input:p_desvio_vwap": 2.6,
+      "input:p_exec_tick": 0,
+      "input:p_hora_fim_entradas": 1645.0,
+      "input:p_hora_inicio": 915.0,
+      "input:p_lote": 2,
+      "input:p_max_entradas_dia": 5.0,
+      "input:p_minimotrades": 150.0,
+      "input:p_modo_banda": 0.0,
+      "input:p_offset_limite_stop": 5.0,
+      "input:p_periodo_atr": 20.0,
+      "input:p_periodo_desvio": 20.0,
+      "input:p_periodo_regime_atr": 65.0,
+      "input:p_stop_pontos": 200.0,
+      "input:p_zscore_vol": 2.0,
+      "aptidao": 2950.0,
+      "resultado_reais": 590.0,
+      "drawdown_reais": 701.0,
+      "saidas": 45
+    },
+    {
+      "input:p_alvo_pontos": 250.0,
+      "input:p_barras_espera": 3.0,
+      "input:p_desvio_vwap": 2.1,
+      "input:p_exec_tick": 0,
+      "input:p_hora_fim_entradas": 1615.0,
+      "input:p_hora_inicio": 930.0,
+      "input:p_lote": 2,
+      "input:p_max_entradas_dia": 5.0,
+      "input:p_minimotrades": 100.0,
+      "input:p_modo_banda": 0.0,
+      "input:p_offset_limite_stop": 100.0,
+      "input:p_periodo_atr": 14.0,
+      "input:p_periodo_desvio": 20.0,
+      "input:p_periodo_regime_atr": 65.0,
+      "input:p_stop_pontos": 200.0,
+      "input:p_zscore_vol": 1.5,
+      "aptidao": 2860.0,
+      "resultado_reais": 572.0,
+      "drawdown_reais": 743.0,
+      "saidas": 70
+    },
+    {
+      "input:p_alvo_pontos": 350.0,
+      "input:p_barras_espera": 3.0,
+      "input:p_desvio_vwap": 1.6,
+      "input:p_exec_tick": 0,
+      "input:p_hora_fim_entradas": 1645.0,
+      "input:p_hora_inicio": 930.0,
+      "input:p_lote": 2,
+      "input:p_max_entradas_dia": 5.0,
+      "input:p_minimotrades": 100.0,
+      "input:p_modo_banda": 0.0,
+      "input:p_offset_limite_stop": 100.0,
+      "input:p_periodo_atr": 20.0,
+      "input:p_periodo_desvio": 15.0,
+      "input:p_periodo_regime_atr": 50.0,
+      "input:p_stop_pontos": 200.0,
+      "input:p_zscore_vol": 1.5,
+      "aptidao": 2810.0,
+      "resultado_reais": 562.0,
+      "drawdown_reais": 875.0,
+      "saidas": 74
+    },
+    {
+      "input:p_alvo_pontos": 250.0,
+      "input:p_barras_espera": 3.0,
+      "input:p_desvio_vwap": 2.1,
+      "input:p_exec_tick": 0,
+      "input:p_hora_fim_entradas": 1645.0,
+      "input:p_hora_inicio": 915.0,
+      "input:p_lote": 2,
+      "input:p_max_entradas_dia": 15.0,
+      "input:p_minimotrades": 100.0,
+      "input:p_modo_banda": 1.0,
+      "input:p_offset_limite_stop": 50.0,
+      "input:p_periodo_atr": 20.0,
+      "input:p_periodo_desvio": 15.0,
+      "input:p_periodo_regime_atr": 35.0,
+      "input:p_stop_pontos": 450.0,
+      "input:p_zscore_vol": 1.5,
+      "aptidao": 2620.0,
+      "resultado_reais": 524.0,
+      "drawdown_reais": 552.0,
+      "saidas": 37
+    },
+    {
+      "input:p_alvo_pontos": 400.0,
+      "input:p_barras_espera": 5.0,
+      "input:p_desvio_vwap": 1.6,
+      "input:p_exec_tick": 0,
+      "input:p_hora_fim_entradas": 1615.0,
+      "input:p_hora_inicio": 930.0,
+      "input:p_lote": 2,
+      "input:p_max_entradas_dia": 5.0,
+      "input:p_minimotrades": 150.0,
+      "input:p_modo_banda": 1.0,
+      "input:p_offset_limite_stop": 5.0,
+      "input:p_periodo_atr": 14.0,
+      "input:p_periodo_desvio": 20.0,
+      "input:p_periodo_regime_atr": 65.0,
+      "input:p_stop_pontos": 450.0,
+      "input:p_zscore_vol": 1.5,
+      "aptidao": 2280.0,
+      "resultado_reais": 456.0,
+      "drawdown_reais": 553.0,
+      "saidas": 30
+    },
+    {
+      "input:p_alvo_pontos": 350.0,
+      "input:p_barras_espera": 1.0,
+      "input:p_desvio_vwap": 2.6,
+      "input:p_exec_tick": 0,
+      "input:p_hora_fim_entradas": 1645.0,
+      "input:p_hora_inicio": 915.0,
+      "input:p_lote": 2,
+      "input:p_max_entradas_dia": 5.0,
+      "input:p_minimotrades": 100.0,
+      "input:p_modo_banda": 0.0,
+      "input:p_offset_limite_stop": 25.0,
+      "input:p_periodo_atr": 10.0,
+      "input:p_periodo_desvio": 30.0,
+      "input:p_periodo_regime_atr": 35.0,
+      "input:p_stop_pontos": 350.0,
+      "input:p_zscore_vol": 2.0,
+      "aptidao": 2260.0,
+      "resultado_reais": 452.0,
+      "drawdown_reais": 744.0,
+      "saidas": 62
+    },
+    {
+      "input:p_alvo_pontos": 550.0,
+      "input:p_barras_espera": 5.0,
+      "input:p_desvio_vwap": 2.6,
+      "input:p_exec_tick": 0,
+      "input:p_hora_fim_entradas": 1550.0,
+      "input:p_hora_inicio": 1000.0,
+      "input:p_lote": 2,
+      "input:p_max_entradas_dia": 10.0,
+      "input:p_minimotrades": 100.0,
+      "input:p_modo_banda": 0.0,
+      "input:p_offset_limite_stop": 5.0,
+      "input:p_periodo_atr": 20.0,
+      "input:p_periodo_desvio": 20.0,
+      "input:p_periodo_regime_atr": 50.0,
+      "input:p_stop_pontos": 450.0,
+      "input:p_zscore_vol": 2.0,
+      "aptidao": 2230.0,
+      "resultado_reais": 446.0,
+      "drawdown_reais": 1266.0,
+      "saidas": 50
+    },
+    {
+      "input:p_alvo_pontos": 250.0,
+      "input:p_barras_espera": 5.0,
+      "input:p_desvio_vwap": 2.1,
+      "input:p_exec_tick": 0,
+      "input:p_hora_fim_entradas": 1615.0,
+      "input:p_hora_inicio": 915.0,
+      "input:p_lote": 2,
+      "input:p_max_entradas_dia": 5.0,
+      "input:p_minimotrades": 100.0,
+      "input:p_modo_banda": 0.0,
+      "input:p_offset_limite_stop": 25.0,
+      "input:p_periodo_atr": 14.0,
+      "input:p_periodo_desvio": 30.0,
+      "input:p_periodo_regime_atr": 35.0,
+      "input:p_stop_pontos": 200.0,
+      "input:p_zscore_vol": 1.5,
+      "aptidao": 2190.0,
+      "resultado_reais": 438.0,
+      "drawdown_reais": 899.0,
+      "saidas": 67
+    },
+    {
+      "input:p_alvo_pontos": 400.0,
+      "input:p_barras_espera": 3.0,
+      "input:p_desvio_vwap": 2.1,
+      "input:p_exec_tick": 0,
+      "input:p_hora_fim_entradas": 1645.0,
+      "input:p_hora_inicio": 915.0,
+      "input:p_lote": 2,
+      "input:p_max_entradas_dia": 10.0,
+      "input:p_minimotrades": 100.0,
+      "input:p_modo_banda": 0.0,
+      "input:p_offset_limite_stop": 50.0,
+      "input:p_periodo_atr": 14.0,
+      "input:p_periodo_desvio": 20.0,
+      "input:p_periodo_regime_atr": 50.0,
+      "input:p_stop_pontos": 350.0,
+      "input:p_zscore_vol": 1.5,
+      "aptidao": 1710.0,
+      "resultado_reais": 342.0,
+      "drawdown_reais": 1231.0,
+      "saidas": 91
+    },
+    {
+      "input:p_alvo_pontos": 450.0,
+      "input:p_barras_espera": 5.0,
+      "input:p_desvio_vwap": 2.1,
+      "input:p_exec_tick": 0,
+      "input:p_hora_fim_entradas": 1550.0,
+      "input:p_hora_inicio": 915.0,
+      "input:p_lote": 2,
+      "input:p_max_entradas_dia": 5.0,
+      "input:p_minimotrades": 150.0,
+      "input:p_modo_banda": 0.0,
+      "input:p_offset_limite_stop": 100.0,
+      "input:p_periodo_atr": 14.0,
+      "input:p_periodo_desvio": 30.0,
+      "input:p_periodo_regime_atr": 50.0,
+      "input:p_stop_pontos": 350.0,
+      "input:p_zscore_vol": 1.5,
+      "aptidao": 1590.0,
+      "resultado_reais": 318.0,
+      "drawdown_reais": 692.0,
+      "saidas": 49
+    },
+    {
+      "input:p_alvo_pontos": 400.0,
+      "input:p_barras_espera": 3.0,
+      "input:p_desvio_vwap": 2.6,
+      "input:p_exec_tick": 0,
+      "input:p_hora_fim_entradas": 1615.0,
+      "input:p_hora_inicio": 930.0,
+      "input:p_lote": 2,
+      "input:p_max_entradas_dia": 15.0,
+      "input:p_minimotrades": 150.0,
+      "input:p_modo_banda": 1.0,
+      "input:p_offset_limite_stop": 25.0,
+      "input:p_periodo_atr": 14.0,
+      "input:p_periodo_desvio": 30.0,
+      "input:p_periodo_regime_atr": 65.0,
+      "input:p_stop_pontos": 450.0,
+      "input:p_zscore_vol": 1.0,
+      "aptidao": 1340.0,
+      "resultado_reais": 268.0,
+      "drawdown_reais": 552.0,
+      "saidas": 26
+    },
+    {
+      "input:p_alvo_pontos": 250.0,
+      "input:p_barras_espera": 5.0,
+      "input:p_desvio_vwap": 2.1,
+      "input:p_exec_tick": 0,
+      "input:p_hora_fim_entradas": 1615.0,
+      "input:p_hora_inicio": 915.0,
+      "input:p_lote": 2,
+      "input:p_max_entradas_dia": 10.0,
+      "input:p_minimotrades": 100.0,
+      "input:p_modo_banda": 0.0,
+      "input:p_offset_limite_stop": 100.0,
+      "input:p_periodo_atr": 14.0,
+      "input:p_periodo_desvio": 15.0,
+      "input:p_periodo_regime_atr": 65.0,
+      "input:p_stop_pontos": 200.0,
+      "input:p_zscore_vol": 1.5,
+      "aptidao": 730.0,
+      "resultado_reais": 146.0,
+      "drawdown_reais": 1287.0,
+      "saidas": 93
+    },
+    {
+      "input:p_alvo_pontos": 550.0,
+      "input:p_barras_espera": 5.0,
+      "input:p_desvio_vwap": 1.6,
+      "input:p_exec_tick": 0,
+      "input:p_hora_fim_entradas": 1550.0,
+      "input:p_hora_inicio": 915.0,
+      "input:p_lote": 2,
+      "input:p_max_entradas_dia": 15.0,
+      "input:p_minimotrades": 150.0,
+      "input:p_modo_banda": 1.0,
+      "input:p_offset_limite_stop": 25.0,
+      "input:p_periodo_atr": 20.0,
+      "input:p_periodo_desvio": 15.0,
+      "input:p_periodo_regime_atr": 65.0,
+      "input:p_stop_pontos": 450.0,
+      "input:p_zscore_vol": 1.5,
+      "aptidao": 720.0,
+      "resultado_reais": 144.0,
+      "drawdown_reais": 552.0,
+      "saidas": 26
+    },
+    {
+      "input:p_alvo_pontos": 450.0,
+      "input:p_barras_espera": 1.0,
+      "input:p_desvio_vwap": 1.6,
+      "input:p_exec_tick": 0,
+      "input:p_hora_fim_entradas": 1645.0,
+      "input:p_hora_inicio": 930.0,
+      "input:p_lote": 2,
+      "input:p_max_entradas_dia": 5.0,
+      "input:p_minimotrades": 150.0,
+      "input:p_modo_banda": 1.0,
+      "input:p_offset_limite_stop": 50.0,
+      "input:p_periodo_atr": 10.0,
+      "input:p_periodo_desvio": 15.0,
+      "input:p_periodo_regime_atr": 50.0,
+      "input:p_stop_pontos": 275.0,
+      "input:p_zscore_vol": 1.5,
+      "aptidao": 640.0,
+      "resultado_reais": 128.0,
+      "drawdown_reais": 592.0,
+      "saidas": 31
+    },
+    {
+      "input:p_alvo_pontos": 350.0,
+      "input:p_barras_espera": 5.0,
+      "input:p_desvio_vwap": 2.6,
+      "input:p_exec_tick": 0,
+      "input:p_hora_fim_entradas": 1550.0,
+      "input:p_hora_inicio": 1000.0,
+      "input:p_lote": 2,
+      "input:p_max_entradas_dia": 5.0,
+      "input:p_minimotrades": 50.0,
+      "input:p_modo_banda": 1.0,
+      "input:p_offset_limite_stop": 25.0,
+      "input:p_periodo_atr": 20.0,
+      "input:p_periodo_desvio": 20.0,
+      "input:p_periodo_regime_atr": 65.0,
+      "input:p_stop_pontos": 200.0,
+      "input:p_zscore_vol": 2.0,
+      "aptidao": 630.0,
+      "resultado_reais": 126.0,
+      "drawdown_reais": 841.0,
+      "saidas": 36
+    },
+    {
+      "input:p_alvo_pontos": 250.0,
+      "input:p_barras_espera": 3.0,
+      "input:p_desvio_vwap": 2.6,
+      "input:p_exec_tick": 0,
+      "input:p_hora_fim_entradas": 1550.0,
+      "input:p_hora_inicio": 930.0,
+      "input:p_lote": 2,
+      "input:p_max_entradas_dia": 5.0,
+      "input:p_minimotrades": 100.0,
+      "input:p_modo_banda": 1.0,
+      "input:p_offset_limite_stop": 100.0,
+      "input:p_periodo_atr": 10.0,
+      "input:p_periodo_desvio": 20.0,
+      "input:p_periodo_regime_atr": 50.0,
+      "input:p_stop_pontos": 200.0,
+      "input:p_zscore_vol": 1.5,
+      "aptidao": 390.0,
+      "resultado_reais": 78.0,
+      "drawdown_reais": 580.0,
+      "saidas": 38
+    },
+    {
+      "input:p_alvo_pontos": 450.0,
+      "input:p_barras_espera": 1.0,
+      "input:p_desvio_vwap": 2.1,
+      "input:p_exec_tick": 0,
+      "input:p_hora_fim_entradas": 1550.0,
+      "input:p_hora_inicio": 1000.0,
+      "input:p_lote": 2,
+      "input:p_max_entradas_dia": 5.0,
+      "input:p_minimotrades": 50.0,
+      "input:p_modo_banda": 0.0,
+      "input:p_offset_limite_stop": 5.0,
+      "input:p_periodo_atr": 20.0,
+      "input:p_periodo_desvio": 20.0,
+      "input:p_periodo_regime_atr": 65.0,
+      "input:p_stop_pontos": 275.0,
+      "input:p_zscore_vol": 2.0,
+      "aptidao": -320.0,
+      "resultado_reais": -64.0,
+      "drawdown_reais": 925.0,
+      "saidas": 89
+    },
+    {
+      "input:p_alvo_pontos": 250.0,
+      "input:p_barras_espera": 5.0,
+      "input:p_desvio_vwap": 1.6,
+      "input:p_exec_tick": 0,
+      "input:p_hora_fim_entradas": 1550.0,
+      "input:p_hora_inicio": 1000.0,
+      "input:p_lote": 2,
+      "input:p_max_entradas_dia": 15.0,
+      "input:p_minimotrades": 150.0,
+      "input:p_modo_banda": 0.0,
+      "input:p_offset_limite_stop": 5.0,
+      "input:p_periodo_atr": 10.0,
+      "input:p_periodo_desvio": 15.0,
+      "input:p_periodo_regime_atr": 65.0,
+      "input:p_stop_pontos": 350.0,
+      "input:p_zscore_vol": 1.5,
+      "aptidao": -400.0,
+      "resultado_reais": -80.0,
+      "drawdown_reais": 905.0,
+      "saidas": 58
+    },
+    {
+      "input:p_alvo_pontos": 250.0,
+      "input:p_barras_espera": 1.0,
+      "input:p_desvio_vwap": 1.6,
+      "input:p_exec_tick": 0,
+      "input:p_hora_fim_entradas": 1615.0,
+      "input:p_hora_inicio": 915.0,
+      "input:p_lote": 2,
+      "input:p_max_entradas_dia": 10.0,
+      "input:p_minimotrades": 100.0,
+      "input:p_modo_banda": 0.0,
+      "input:p_offset_limite_stop": 50.0,
+      "input:p_periodo_atr": 20.0,
+      "input:p_periodo_desvio": 15.0,
+      "input:p_periodo_regime_atr": 35.0,
+      "input:p_stop_pontos": 350.0,
+      "input:p_zscore_vol": 2.0,
+      "aptidao": -790.0,
+      "resultado_reais": -158.0,
+      "drawdown_reais": 978.0,
+      "saidas": 84
+    },
+    {
+      "input:p_alvo_pontos": 350.0,
+      "input:p_barras_espera": 1.0,
+      "input:p_desvio_vwap": 2.1,
+      "input:p_exec_tick": 0,
+      "input:p_hora_fim_entradas": 1615.0,
+      "input:p_hora_inicio": 915.0,
+      "input:p_lote": 2,
+      "input:p_max_entradas_dia": 15.0,
+      "input:p_minimotrades": 50.0,
+      "input:p_modo_banda": 0.0,
+      "input:p_offset_limite_stop": 25.0,
+      "input:p_periodo_atr": 20.0,
+      "input:p_periodo_desvio": 30.0,
+      "input:p_periodo_regime_atr": 50.0,
+      "input:p_stop_pontos": 200.0,
+      "input:p_zscore_vol": 1.0,
+      "aptidao": -890.0,
+      "resultado_reais": -178.0,
+      "drawdown_reais": 989.0,
+      "saidas": 183
+    },
+    {
+      "input:p_alvo_pontos": 550.0,
+      "input:p_barras_espera": 3.0,
+      "input:p_desvio_vwap": 2.1,
+      "input:p_exec_tick": 0,
+      "input:p_hora_fim_entradas": 1615.0,
+      "input:p_hora_inicio": 915.0,
+      "input:p_lote": 2,
+      "input:p_max_entradas_dia": 15.0,
+      "input:p_minimotrades": 150.0,
+      "input:p_modo_banda": 1.0,
+      "input:p_offset_limite_stop": 100.0,
+      "input:p_periodo_atr": 20.0,
+      "input:p_periodo_desvio": 30.0,
+      "input:p_periodo_regime_atr": 50.0,
+      "input:p_stop_pontos": 200.0,
+      "input:p_zscore_vol": 1.5,
+      "aptidao": -1110.0,
+      "resultado_reais": -222.0,
+      "drawdown_reais": 696.0,
+      "saidas": 25
+    },
+    {
+      "input:p_alvo_pontos": 350.0,
+      "input:p_barras_espera": 1.0,
+      "input:p_desvio_vwap": 2.1,
+      "input:p_exec_tick": 0,
+      "input:p_hora_fim_entradas": 1615.0,
+      "input:p_hora_inicio": 930.0,
+      "input:p_lote": 2,
+      "input:p_max_entradas_dia": 10.0,
+      "input:p_minimotrades": 100.0,
+      "input:p_modo_banda": 1.0,
+      "input:p_offset_limite_stop": 50.0,
+      "input:p_periodo_atr": 20.0,
+      "input:p_periodo_desvio": 20.0,
+      "input:p_periodo_regime_atr": 50.0,
+      "input:p_stop_pontos": 200.0,
+      "input:p_zscore_vol": 2.0,
+      "aptidao": -1170.0,
+      "resultado_reais": -234.0,
+      "drawdown_reais": 657.0,
+      "saidas": 29
+    },
+    {
+      "input:p_alvo_pontos": 350.0,
+      "input:p_barras_espera": 5.0,
+      "input:p_desvio_vwap": 2.6,
+      "input:p_exec_tick": 0,
+      "input:p_hora_fim_entradas": 1550.0,
+      "input:p_hora_inicio": 1000.0,
+      "input:p_lote": 2,
+      "input:p_max_entradas_dia": 10.0,
+      "input:p_minimotrades": 100.0,
+      "input:p_modo_banda": 1.0,
+      "input:p_offset_limite_stop": 5.0,
+      "input:p_periodo_atr": 14.0,
+      "input:p_periodo_desvio": 20.0,
+      "input:p_periodo_regime_atr": 50.0,
+      "input:p_stop_pontos": 450.0,
+      "input:p_zscore_vol": 2.0,
+      "aptidao": -1350.0,
+      "resultado_reais": -270.0,
+      "drawdown_reais": 552.0,
+      "saidas": 26
+    },
+    {
+      "input:p_alvo_pontos": 550.0,
+      "input:p_barras_espera": 5.0,
+      "input:p_desvio_vwap": 2.6,
+      "input:p_exec_tick": 0,
+      "input:p_hora_fim_entradas": 1645.0,
+      "input:p_hora_inicio": 915.0,
+      "input:p_lote": 2,
+      "input:p_max_entradas_dia": 5.0,
+      "input:p_minimotrades": 250.0,
+      "input:p_modo_banda": 1.0,
+      "input:p_offset_limite_stop": 5.0,
+      "input:p_periodo_atr": 10.0,
+      "input:p_periodo_desvio": 15.0,
+      "input:p_periodo_regime_atr": 35.0,
+      "input:p_stop_pontos": 275.0,
+      "input:p_zscore_vol": 1.5,
+      "aptidao": -1390.0,
+      "resultado_reais": -278.0,
+      "drawdown_reais": 457.0,
+      "saidas": 19
+    },
+    {
+      "input:p_alvo_pontos": 400.0,
+      "input:p_barras_espera": 5.0,
+      "input:p_desvio_vwap": 2.6,
+      "input:p_exec_tick": 0,
+      "input:p_hora_fim_entradas": 1615.0,
+      "input:p_hora_inicio": 915.0,
+      "input:p_lote": 2,
+      "input:p_max_entradas_dia": 10.0,
+      "input:p_minimotrades": 100.0,
+      "input:p_modo_banda": 1.0,
+      "input:p_offset_limite_stop": 5.0,
+      "input:p_periodo_atr": 20.0,
+      "input:p_periodo_desvio": 30.0,
+      "input:p_periodo_regime_atr": 35.0,
+      "input:p_stop_pontos": 275.0,
+      "input:p_zscore_vol": 1.5,
+      "aptidao": -1450.0,
+      "resultado_reais": -290.0,
+      "drawdown_reais": 640.0,
+      "saidas": 31
+    },
+    {
+      "input:p_alvo_pontos": 550.0,
+      "input:p_barras_espera": 1.0,
+      "input:p_desvio_vwap": 2.1,
+      "input:p_exec_tick": 0,
+      "input:p_hora_fim_entradas": 1615.0,
+      "input:p_hora_inicio": 915.0,
+      "input:p_lote": 2,
+      "input:p_max_entradas_dia": 15.0,
+      "input:p_minimotrades": 150.0,
+      "input:p_modo_banda": 1.0,
+      "input:p_offset_limite_stop": 50.0,
+      "input:p_periodo_atr": 10.0,
+      "input:p_periodo_desvio": 15.0,
+      "input:p_periodo_regime_atr": 35.0,
+      "input:p_stop_pontos": 450.0,
+      "input:p_zscore_vol": 2.0,
+      "aptidao": -1770.0,
+      "resultado_reais": -354.0,
+      "drawdown_reais": 1195.0,
+      "saidas": 25
+    },
+    {
+      "input:p_alvo_pontos": 350.0,
+      "input:p_barras_espera": 3.0,
+      "input:p_desvio_vwap": 2.1,
+      "input:p_exec_tick": 0,
+      "input:p_hora_fim_entradas": 1615.0,
+      "input:p_hora_inicio": 930.0,
+      "input:p_lote": 2,
+      "input:p_max_entradas_dia": 15.0,
+      "input:p_minimotrades": 250.0,
+      "input:p_modo_banda": 1.0,
+      "input:p_offset_limite_stop": 100.0,
+      "input:p_periodo_atr": 14.0,
+      "input:p_periodo_desvio": 15.0,
+      "input:p_periodo_regime_atr": 50.0,
+      "input:p_stop_pontos": 350.0,
+      "input:p_zscore_vol": 1.0,
+      "aptidao": -1780.0,
+      "resultado_reais": -356.0,
+      "drawdown_reais": 582.0,
+      "saidas": 24
+    },
+    {
+      "input:p_alvo_pontos": 450.0,
+      "input:p_barras_espera": 3.0,
+      "input:p_desvio_vwap": 1.6,
+      "input:p_exec_tick": 0,
+      "input:p_hora_fim_entradas": 1645.0,
+      "input:p_hora_inicio": 915.0,
+      "input:p_lote": 2,
+      "input:p_max_entradas_dia": 5.0,
+      "input:p_minimotrades": 250.0,
+      "input:p_modo_banda": 0.0,
+      "input:p_offset_limite_stop": 100.0,
+      "input:p_periodo_atr": 10.0,
+      "input:p_periodo_desvio": 15.0,
+      "input:p_periodo_regime_atr": 65.0,
+      "input:p_stop_pontos": 450.0,
+      "input:p_zscore_vol": 1.0,
+      "aptidao": -2120.0,
+      "resultado_reais": -424.0,
+      "drawdown_reais": 1306.0,
+      "saidas": 37
+    },
+    {
+      "input:p_alvo_pontos": 400.0,
+      "input:p_barras_espera": 5.0,
+      "input:p_desvio_vwap": 1.6,
+      "input:p_exec_tick": 0,
+      "input:p_hora_fim_entradas": 1615.0,
+      "input:p_hora_inicio": 930.0,
+      "input:p_lote": 2,
+      "input:p_max_entradas_dia": 15.0,
+      "input:p_minimotrades": 50.0,
+      "input:p_modo_banda": 0.0,
+      "input:p_offset_limite_stop": 5.0,
+      "input:p_periodo_atr": 20.0,
+      "input:p_periodo_desvio": 15.0,
+      "input:p_periodo_regime_atr": 35.0,
+      "input:p_stop_pontos": 275.0,
+      "input:p_zscore_vol": 1.5,
+      "aptidao": -2140.0,
+      "resultado_reais": -428.0,
+      "drawdown_reais": 1245.0,
+      "saidas": 134
+    },
+    {
+      "input:p_alvo_pontos": 550.0,
+      "input:p_barras_espera": 1.0,
+      "input:p_desvio_vwap": 1.6,
+      "input:p_exec_tick": 0,
+      "input:p_hora_fim_entradas": 1615.0,
+      "input:p_hora_inicio": 1000.0,
+      "input:p_lote": 2,
+      "input:p_max_entradas_dia": 5.0,
+      "input:p_minimotrades": 150.0,
+      "input:p_modo_banda": 0.0,
+      "input:p_offset_limite_stop": 50.0,
+      "input:p_periodo_atr": 14.0,
+      "input:p_periodo_desvio": 15.0,
+      "input:p_periodo_regime_atr": 50.0,
+      "input:p_stop_pontos": 200.0,
+      "input:p_zscore_vol": 1.0,
+      "aptidao": -2140.0,
+      "resultado_reais": -428.0,
+      "drawdown_reais": 831.0,
+      "saidas": 54
+    },
+    {
+      "input:p_alvo_pontos": 350.0,
+      "input:p_barras_espera": 1.0,
+      "input:p_desvio_vwap": 1.6,
+      "input:p_exec_tick": 0,
+      "input:p_hora_fim_entradas": 1615.0,
+      "input:p_hora_inicio": 930.0,
+      "input:p_lote": 2,
+      "input:p_max_entradas_dia": 5.0,
+      "input:p_minimotrades": 250.0,
+      "input:p_modo_banda": 0.0,
+      "input:p_offset_limite_stop": 100.0,
+      "input:p_periodo_atr": 10.0,
+      "input:p_periodo_desvio": 20.0,
+      "input:p_periodo_regime_atr": 50.0,
+      "input:p_stop_pontos": 200.0,
+      "input:p_zscore_vol": 2.0,
+      "aptidao": -2300.0,
+      "resultado_reais": -460.0,
+      "drawdown_reais": 705.0,
+      "saidas": 34
+    },
+    {
+      "input:p_alvo_pontos": 350.0,
+      "input:p_barras_espera": 3.0,
+      "input:p_desvio_vwap": 2.6,
+      "input:p_exec_tick": 0,
+      "input:p_hora_fim_entradas": 1615.0,
+      "input:p_hora_inicio": 915.0,
+      "input:p_lote": 2,
+      "input:p_max_entradas_dia": 10.0,
+      "input:p_minimotrades": 50.0,
+      "input:p_modo_banda": 0.0,
+      "input:p_offset_limite_stop": 100.0,
+      "input:p_periodo_atr": 14.0,
+      "input:p_periodo_desvio": 20.0,
+      "input:p_periodo_regime_atr": 35.0,
+      "input:p_stop_pontos": 350.0,
+      "input:p_zscore_vol": 1.0,
+      "aptidao": -2750.0,
+      "resultado_reais": -550.0,
+      "drawdown_reais": 1176.0,
+      "saidas": 141
+    },
+    {
+      "input:p_alvo_pontos": 550.0,
+      "input:p_barras_espera": 5.0,
+      "input:p_desvio_vwap": 2.6,
+      "input:p_exec_tick": 0,
+      "input:p_hora_fim_entradas": 1645.0,
+      "input:p_hora_inicio": 930.0,
+      "input:p_lote": 2,
+      "input:p_max_entradas_dia": 15.0,
+      "input:p_minimotrades": 150.0,
+      "input:p_modo_banda": 1.0,
+      "input:p_offset_limite_stop": 25.0,
+      "input:p_periodo_atr": 14.0,
+      "input:p_periodo_desvio": 20.0,
+      "input:p_periodo_regime_atr": 65.0,
+      "input:p_stop_pontos": 450.0,
+      "input:p_zscore_vol": 1.5,
+      "aptidao": -2820.0,
+      "resultado_reais": -564.0,
+      "drawdown_reais": 1092.0,
+      "saidas": 25
+    },
+    {
+      "input:p_alvo_pontos": 350.0,
+      "input:p_barras_espera": 5.0,
+      "input:p_desvio_vwap": 2.6,
+      "input:p_exec_tick": 0,
+      "input:p_hora_fim_entradas": 1550.0,
+      "input:p_hora_inicio": 930.0,
+      "input:p_lote": 2,
+      "input:p_max_entradas_dia": 5.0,
+      "input:p_minimotrades": 250.0,
+      "input:p_modo_banda": 0.0,
+      "input:p_offset_limite_stop": 100.0,
+      "input:p_periodo_atr": 14.0,
+      "input:p_periodo_desvio": 30.0,
+      "input:p_periodo_regime_atr": 50.0,
+      "input:p_stop_pontos": 200.0,
+      "input:p_zscore_vol": 1.0,
+      "aptidao": -2990.0,
+      "resultado_reais": -598.0,
+      "drawdown_reais": 717.0,
+      "saidas": 30
+    },
+    {
+      "input:p_alvo_pontos": 550.0,
+      "input:p_barras_espera": 3.0,
+      "input:p_desvio_vwap": 1.6,
+      "input:p_exec_tick": 0,
+      "input:p_hora_fim_entradas": 1645.0,
+      "input:p_hora_inicio": 1000.0,
+      "input:p_lote": 2,
+      "input:p_max_entradas_dia": 5.0,
+      "input:p_minimotrades": 250.0,
+      "input:p_modo_banda": 0.0,
+      "input:p_offset_limite_stop": 5.0,
+      "input:p_periodo_atr": 10.0,
+      "input:p_periodo_desvio": 20.0,
+      "input:p_periodo_regime_atr": 50.0,
+      "input:p_stop_pontos": 200.0,
+      "input:p_zscore_vol": 2.0,
+      "aptidao": -2990.0,
+      "resultado_reais": -598.0,
+      "drawdown_reais": 803.0,
+      "saidas": 31
+    },
+    {
+      "input:p_alvo_pontos": 550.0,
+      "input:p_barras_espera": 5.0,
+      "input:p_desvio_vwap": 2.1,
+      "input:p_exec_tick": 0,
+      "input:p_hora_fim_entradas": 1645.0,
+      "input:p_hora_inicio": 1000.0,
+      "input:p_lote": 2,
+      "input:p_max_entradas_dia": 5.0,
+      "input:p_minimotrades": 150.0,
+      "input:p_modo_banda": 0.0,
+      "input:p_offset_limite_stop": 5.0,
+      "input:p_periodo_atr": 10.0,
+      "input:p_periodo_desvio": 30.0,
+      "input:p_periodo_regime_atr": 50.0,
+      "input:p_stop_pontos": 200.0,
+      "input:p_zscore_vol": 1.5,
+      "aptidao": -3350.0,
+      "resultado_reais": -670.0,
+      "drawdown_reais": 1137.0,
+      "saidas": 48
+    },
+    {
+      "input:p_alvo_pontos": 550.0,
+      "input:p_barras_espera": 5.0,
+      "input:p_desvio_vwap": 2.1,
+      "input:p_exec_tick": 0,
+      "input:p_hora_fim_entradas": 1550.0,
+      "input:p_hora_inicio": 1000.0,
+      "input:p_lote": 2,
+      "input:p_max_entradas_dia": 5.0,
+      "input:p_minimotrades": 50.0,
+      "input:p_modo_banda": 1.0,
+      "input:p_offset_limite_stop": 100.0,
+      "input:p_periodo_atr": 10.0,
+      "input:p_periodo_desvio": 15.0,
+      "input:p_periodo_regime_atr": 35.0,
+      "input:p_stop_pontos": 200.0,
+      "input:p_zscore_vol": 2.0,
+      "aptidao": -3970.0,
+      "resultado_reais": -794.0,
+      "drawdown_reais": 879.0,
+      "saidas": 50
+    },
+    {
+      "input:p_alvo_pontos": 550.0,
+      "input:p_barras_espera": 3.0,
+      "input:p_desvio_vwap": 1.6,
+      "input:p_exec_tick": 0,
+      "input:p_hora_fim_entradas": 1615.0,
+      "input:p_hora_inicio": 930.0,
+      "input:p_lote": 2,
+      "input:p_max_entradas_dia": 5.0,
+      "input:p_minimotrades": 100.0,
+      "input:p_modo_banda": 1.0,
+      "input:p_offset_limite_stop": 100.0,
+      "input:p_periodo_atr": 20.0,
+      "input:p_periodo_desvio": 30.0,
+      "input:p_periodo_regime_atr": 35.0,
+      "input:p_stop_pontos": 275.0,
+      "input:p_zscore_vol": 1.5,
+      "aptidao": -4010.0,
+      "resultado_reais": -802.0,
+      "drawdown_reais": 1058.0,
+      "saidas": 41
+    },
+    {
+      "input:p_alvo_pontos": 400.0,
+      "input:p_barras_espera": 1.0,
+      "input:p_desvio_vwap": 2.6,
+      "input:p_exec_tick": 0,
+      "input:p_hora_fim_entradas": 1550.0,
+      "input:p_hora_inicio": 915.0,
+      "input:p_lote": 2,
+      "input:p_max_entradas_dia": 5.0,
+      "input:p_minimotrades": 50.0,
+      "input:p_modo_banda": 1.0,
+      "input:p_offset_limite_stop": 50.0,
+      "input:p_periodo_atr": 14.0,
+      "input:p_periodo_desvio": 20.0,
+      "input:p_periodo_regime_atr": 65.0,
+      "input:p_stop_pontos": 200.0,
+      "input:p_zscore_vol": 2.0,
+      "aptidao": -4580.0,
+      "resultado_reais": -916.0,
+      "drawdown_reais": 1101.0,
+      "saidas": 42
+    },
+    {
+      "input:p_alvo_pontos": 450.0,
+      "input:p_barras_espera": 5.0,
+      "input:p_desvio_vwap": 1.6,
+      "input:p_exec_tick": 0,
+      "input:p_hora_fim_entradas": 1615.0,
+      "input:p_hora_inicio": 915.0,
+      "input:p_lote": 2,
+      "input:p_max_entradas_dia": 10.0,
+      "input:p_minimotrades": 50.0,
+      "input:p_modo_banda": 1.0,
+      "input:p_offset_limite_stop": 50.0,
+      "input:p_periodo_atr": 10.0,
+      "input:p_periodo_desvio": 20.0,
+      "input:p_periodo_regime_atr": 35.0,
+      "input:p_stop_pontos": 200.0,
+      "input:p_zscore_vol": 1.0,
+      "aptidao": -4890.0,
+      "resultado_reais": -978.0,
+      "drawdown_reais": 1234.0,
+      "saidas": 87
+    },
+    {
+      "input:p_alvo_pontos": 400.0,
+      "input:p_barras_espera": 1.0,
+      "input:p_desvio_vwap": 2.6,
+      "input:p_exec_tick": 0,
+      "input:p_hora_fim_entradas": 1645.0,
+      "input:p_hora_inicio": 930.0,
+      "input:p_lote": 2,
+      "input:p_max_entradas_dia": 10.0,
+      "input:p_minimotrades": 100.0,
+      "input:p_modo_banda": 0.0,
+      "input:p_offset_limite_stop": 50.0,
+      "input:p_periodo_atr": 20.0,
+      "input:p_periodo_desvio": 20.0,
+      "input:p_periodo_regime_atr": 35.0,
+      "input:p_stop_pontos": 200.0,
+      "input:p_zscore_vol": 1.0,
+      "aptidao": -6000.0,
+      "resultado_reais": -1200.0,
+      "drawdown_reais": 1475.0,
+      "saidas": 104
+    },
+    {
+      "input:p_alvo_pontos": 400.0,
+      "input:p_barras_espera": 5.0,
+      "input:p_desvio_vwap": 1.6,
+      "input:p_exec_tick": 0,
+      "input:p_hora_fim_entradas": 1550.0,
+      "input:p_hora_inicio": 915.0,
+      "input:p_lote": 2,
+      "input:p_max_entradas_dia": 10.0,
+      "input:p_minimotrades": 250.0,
+      "input:p_modo_banda": 1.0,
+      "input:p_offset_limite_stop": 5.0,
+      "input:p_periodo_atr": 20.0,
+      "input:p_periodo_desvio": 20.0,
+      "input:p_periodo_regime_atr": 50.0,
+      "input:p_stop_pontos": 275.0,
+      "input:p_zscore_vol": 1.0,
+      "aptidao": -7250.0,
+      "resultado_reais": -1450.0,
+      "drawdown_reais": 1450.0,
+      "saidas": 30
+    },
+    {
+      "input:p_alvo_pontos": 400.0,
+      "input:p_barras_espera": 3.0,
+      "input:p_desvio_vwap": 2.6,
+      "input:p_exec_tick": 0,
+      "input:p_hora_fim_entradas": 1615.0,
+      "input:p_hora_inicio": 930.0,
+      "input:p_lote": 2,
+      "input:p_max_entradas_dia": 10.0,
+      "input:p_minimotrades": 50.0,
+      "input:p_modo_banda": 1.0,
+      "input:p_offset_limite_stop": 100.0,
+      "input:p_periodo_atr": 10.0,
+      "input:p_periodo_desvio": 30.0,
+      "input:p_periodo_regime_atr": 50.0,
+      "input:p_stop_pontos": 450.0,
+      "input:p_zscore_vol": 1.0,
+      "aptidao": null,
+      "resultado_reais": -1244.0,
+      "drawdown_reais": 1615.0,
+      "saidas": 63
+    },
+    {
+      "input:p_alvo_pontos": 400.0,
+      "input:p_barras_espera": 5.0,
+      "input:p_desvio_vwap": 1.6,
+      "input:p_exec_tick": 0,
+      "input:p_hora_fim_entradas": 1550.0,
+      "input:p_hora_inicio": 1000.0,
+      "input:p_lote": 2,
+      "input:p_max_entradas_dia": 5.0,
+      "input:p_minimotrades": 50.0,
+      "input:p_modo_banda": 0.0,
+      "input:p_offset_limite_stop": 5.0,
+      "input:p_periodo_atr": 10.0,
+      "input:p_periodo_desvio": 15.0,
+      "input:p_periodo_regime_atr": 35.0,
+      "input:p_stop_pontos": 350.0,
+      "input:p_zscore_vol": 2.0,
+      "aptidao": null,
+      "resultado_reais": -1404.0,
+      "drawdown_reais": 2401.0,
+      "saidas": 90
+    },
+    {
+      "input:p_alvo_pontos": 250.0,
+      "input:p_barras_espera": 1.0,
+      "input:p_desvio_vwap": 2.1,
+      "input:p_exec_tick": 0,
+      "input:p_hora_fim_entradas": 1550.0,
+      "input:p_hora_inicio": 930.0,
+      "input:p_lote": 2,
+      "input:p_max_entradas_dia": 15.0,
+      "input:p_minimotrades": 100.0,
+      "input:p_modo_banda": 0.0,
+      "input:p_offset_limite_stop": 50.0,
+      "input:p_periodo_atr": 14.0,
+      "input:p_periodo_desvio": 20.0,
+      "input:p_periodo_regime_atr": 50.0,
+      "input:p_stop_pontos": 450.0,
+      "input:p_zscore_vol": 1.0,
+      "aptidao": null,
+      "resultado_reais": -528.0,
+      "drawdown_reais": 2029.0,
+      "saidas": 112
+    },
+    {
+      "input:p_alvo_pontos": 250.0,
+      "input:p_barras_espera": 1.0,
+      "input:p_desvio_vwap": 2.6,
+      "input:p_exec_tick": 0,
+      "input:p_hora_fim_entradas": 1645.0,
+      "input:p_hora_inicio": 930.0,
+      "input:p_lote": 2,
+      "input:p_max_entradas_dia": 10.0,
+      "input:p_minimotrades": 50.0,
+      "input:p_modo_banda": 0.0,
+      "input:p_offset_limite_stop": 100.0,
+      "input:p_periodo_atr": 20.0,
+      "input:p_periodo_desvio": 15.0,
+      "input:p_periodo_regime_atr": 50.0,
+      "input:p_stop_pontos": 450.0,
+      "input:p_zscore_vol": 1.0,
+      "aptidao": null,
+      "resultado_reais": -778.0,
+      "drawdown_reais": 2207.0,
+      "saidas": 162
+    }
+  ],
+  "erros_ag": 0
+}

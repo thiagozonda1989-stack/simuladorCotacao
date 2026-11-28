@@ -1,0 +1,618 @@
+Sondas S1-Alvo e S1-Stop | WINZ26 1 min | 26/10/2026
+Motor 142dbe882ae2a0436c4273a6e5bfa1268222e5d3
+Base das sondas e dos replays eba5fcfd37baf440eed22f648b406c33e0749ffb
+
+===== docs/colaboracao/evidencias/WINZ26_v5_8_s1_toque_tardio_profit_20261026_v1/README.md =====
+# Profit OHLC · toque tardio de alvo e stop isolados
+
+No Backtest OHLC do Profit, tanto o alvo quanto o stop-limit foram **preenchidos após espera**. Cada execução enviou uma única proteção às 10:52. A proteção seguia pendente nas avaliações de 10:53 e 10:54 e encerrou a posição às 10:55, no primeiro toque elegível. A primeira divergência com o simulador padrão foi às **10:54**, quando este já mostrava a ordem expirada. O modo diagnóstico reproduziu as duas saídas. [Matriz completa](matriz_profit_simulador.csv)
+
+## Configuração e versão
+
+- Profit Ultra **5.0.4.33**, Backtest **OHLC**, WINZ26, 1 minuto, pregão de **26/10/2026**, fuso America/Sao_Paulo. Quantidade e quantidade máxima 1, slippage e custos zero, “Executar nos Limites” ativo.
+- A captura do alvo usa o período “Tudo” (intervalo avaliado de 12/05 a 22/11/2026). A do stop usa “3 Meses” (23/08 a 23/11/2026). Ambas cobrem as oito barras da sonda e reproduzem a mesma entrada.
+- Sondas V1.0 de `eba5fcfd37baf440eed22f648b406c33e0749ffb`, parâmetros `p_Data=1261026`, `p_Entrada=1051`, `p_Protecao=1052`, `p_Cancela=1056`, `p_Zera=1057`, `p_Fim=1058`. No alvo, `p_Distancia=430`; no stop, `p_Distancia=795` e `p_Folga=100`. [Sonda alvo](../WINZ26_v5_8_s1_toque_tardio_20261026_v1/sonda_s1_alvo_toque_tardio_profit_v1_0.ntsl) · [Sonda stop](../WINZ26_v5_8_s1_toque_tardio_20261026_v1/sonda_s1_stop_toque_tardio_profit_v1_0.ntsl)
+- Motor executado `142dbe882ae2a0436c4273a6e5bfa1268222e5d3`, na revisão base `eba5fcfd37baf440eed22f648b406c33e0749ffb`. Os modos padrão e diagnóstico abaixo usam os quatro replays daquela revisão. [Configuração e comandos](../WINZ26_v5_8_s1_toque_tardio_20261026_v1/README.md#reprodução-no-simulador)
+
+## Eventos do Backtest
+
+| Rótulo do console | Seq. | Posição / pendência | Evento observado nas duas execuções |
+|---|---:|---|---|
+| 10:51 | 1 | 0 / 0 | Solicitação de compra a mercado |
+| 10:51 | 2 | +1 / 0 | Avaliação adicional já comprada |
+| 10:52 (t) | 3 | +1 / 0 | Envio único de alvo a +430 pontos ou stop a −795, limite a −895 |
+| 10:53 (t+1) | 4 | +1 / 1 | Proteção pendente, faixa sem toque |
+| 10:54 (t+2) | 5 | +1 / 1 | Proteção pendente, faixa sem toque |
+| 10:55 (t+3) | 6 | 0 / 0 | Primeiro toque elegível, posição zerada |
+| 10:56–10:58 | 7–9 | 0 / 0 | Nenhuma solicitação de limpeza |
+
+O CSV de operações registra, em cada execução, **compra de 1 contrato às 10:52:00 e venda de 1 às 10:55:00**, com duração de três minutos. As saídas foram de +430 pontos (R$ 86) para o alvo e −795 pontos (−R$ 159) para o stop. Os PDFs confirmam uma operação, o resultado e o custo zero em cada sonda. O `10:51` da avaliação extra é o rótulo da barra observado no console. O preenchimento de entrada leva a hora da barra seguinte no CSV, às 10:52:00. [Console normalizado](console_profit.csv) · [Operações](operacoes_profit.csv)
+
+O OHLC concorda entre console, exportações e preparo do simulador nas oito barras. Em t+1 e t+2, as máximas relativas (+225 e +405) ficam abaixo do alvo (+430) e as mínimas (−355 e −85) acima do gatilho (−795). Em t+3, a abertura de +220 coincide com o fechamento anterior e fica entre as duas proteções. A máxima de +445 supera o alvo. A mínima de −875 cruza o gatilho e fica 20 pontos acima do limite (−895). Cada estratégia estava exposta a apenas uma dessas pernas. [OHLC relativo](barras_conferencia.csv)
+
+## Comparação com o simulador
+
+| Perna | Modo | Pendentes t+1 / t+2 / t+3 | Saída | Classificação |
+|---|---|---|---|---|
+| Alvo | Profit OHLC | 1 / 1 / 0 | 10:55, +430 pts | Preenchida após espera |
+| Alvo | Simulador padrão | 1 / 0 / 0 | 10:58, −375 pts, limpeza | Expirada após t+1 |
+| Alvo | Simulador diagnóstico | 1 / 1 / 0 | 10:55, +430 pts | Preenchida após espera |
+| Stop | Profit OHLC | 1 / 1 / 0 | 10:55, −795 pts | Preenchida após espera |
+| Stop | Simulador padrão | 1 / 0 / 0 | 10:58, −375 pts, limpeza | Expirada após t+1 |
+| Stop | Simulador diagnóstico | 1 / 1 / 0 | 10:55, −795 pts | Preenchida após espera |
+
+O modo diagnóstico usa `--no-ordem-so-proxima-barra`, que altera a validade das ordens em geral. O padrão continua com `ordem_so_proxima_barra=True`. Nas duas pernas, a primeira diferença aparece na avaliação de t+2, com posição +1 nos dois motores e pendência 1 no Profit contra 0 no simulador padrão. [Estados do simulador](../WINZ26_v5_8_s1_toque_tardio_20261026_v1/estados_simulador.csv) · [Eventos do simulador](../WINZ26_v5_8_s1_toque_tardio_20261026_v1/eventos_simulador.csv)
+
+## Listas de ordens do Replay
+
+As listas de ordens são de **execuções separadas no Profit Replay**, com origem de automação. A coluna “Criação” preserva a data e a hora do Replay. “Última Atualização” traz a data de execução ou exportação (23/11/2026). A associação interna das linhas “Trade” com a ordem resumida do alvo foi preservada com identificadores locais `entrada` e `protecao`.
+
+| Replay | Vínculo e horários observados | Comparação com Backtest |
+|---|---|---|
+| Alvo | Trade de compra às 10:52:00.265, criação da ordem de venda às 10:53:00.189 e Trade de venda vinculado às 10:55:08.155 | +430 pts, mesmo preço de entrada e saída |
+| Stop | Compra “a Mercado”, criação às 10:52:02.143. Venda exibida como “Limite”, criação às 10:53:03.665. Ambas “Executada”, sem linhas Trade ou preço de stop informado | −795 pts, entrada e saída 25 pts acima das respectivas execuções do Backtest |
+
+A lista do stop não permite identificar o instante exato de preenchimento, a ativação do gatilho ou eventual conversão da ordem. As duas listas não comprovam o ciclo nativo das ordens do mesmo Backtest, nem oferecem vínculo OCO. Cada sonda isolada usa somente uma perna. [Linhas relativas do Replay](ordens_replay_relativas.csv) · [Comparação de preços](comparacao_replay_backtest.csv)
+
+## Cobertura, privacidade e reprodução
+
+- Cada exportação de barras tem 20.001 registros e cinco campos (Data, Abertura, Máxima, Mínima, Fechamento), ordenados do mais novo ao mais antigo, sem duplicidade de timestamp. As 19.449 barras comuns têm OHLC idêntico. O workbook sem extensão `[Pasta1]SONDA_S1_ALVO_barras` repete integralmente o CSV do alvo após leitura de datas e valores. As séries completas têm 173 intervalos intradiários acima de 60 s no alvo e 137 no stop. A janela de **10:51 a 10:58 não tem lacunas**. [Cobertura](cobertura_barras.csv)
+- Cada console contém dois blocos estruturados idênticos. O primeiro foi preservado em ordem física com 11 eventos (nove avaliações, uma compra e uma proteção). A avaliação extra repete o mesmo `CurrentBar`. As operações, as barras e os consoles do Backtest foram relacionados por pregão, ativo, janela, direção, quantidades e preços. As fontes são sondas OHLC, portanto o cruzamento não usa capturas RTD de Negócios ou Ofertas.
+- Os 13 originais continuam no Windows. O inventário registra nomes, tamanhos e SHA-256. As tabelas publicam preços em pontos relativos, sem conta, titular ou identificadores nativos. A auditoria dos IDs e a recomputação desde as barras exportadas exigem os originais. [Inventário](inventario.csv) · [Manifesto](SHA256SUMS.txt) · [Fontes completas para o Gemini](fontes_gemini.txt)
+
+```powershell
+py -3.11 -m tools.publicar_s1_toque_tardio_profit --originais $pastaPrivada --referencia $pastaEvidenciasSondagem --saida $saidaNova
+py -3.11 -m pytest -q
+```
+
+Use a pasta da sondagem inicial como referência. O extrator lê os originais e grava somente em um destino novo. A suíte passou com **89 testes e 12 avisos de fuso horário do pandas**.
+
+As sondas sustentam a persistência das duas proteções isoladas nesta janela OHLC. O experimento não altera a validade padrão nem a regra de stop-limit. A opção experimental de entrada a mercado através de lacuna continua restrita a uma entrada elegível com posição zerada. Posição exposta com proteção pendente na lacuna (caso 2) permanece fora da paridade demonstrada. A saída de 10:15 continua ambígua em OHLC. [Aceitação e limites anteriores](../WINZ26_v5_8_s1_toque_tardio_20261026_v1/README.md)
+
+===== docs/colaboracao/evidencias/WINZ26_v5_8_s1_toque_tardio_profit_20261026_v1/barras_conferencia.csv =====
+sonda;hora_barra;abertura_pts_entrada;maxima_pts_entrada;minima_pts_entrada;fechamento_pts_entrada
+s1_alvo;10:51;110.00;375.00;-200.00;-5.00
+s1_alvo;10:52;0.00;175.00;-425.00;-290.00
+s1_alvo;10:53;-285.00;225.00;-355.00;35.00
+s1_alvo;10:54;35.00;405.00;-85.00;220.00
+s1_alvo;10:55;220.00;445.00;-875.00;-260.00
+s1_alvo;10:56;-260.00;-70.00;-705.00;-90.00
+s1_alvo;10:57;-95.00;200.00;-425.00;-375.00
+s1_alvo;10:58;-375.00;-235.00;-615.00;-540.00
+s1_stop;10:51;110.00;375.00;-200.00;-5.00
+s1_stop;10:52;0.00;175.00;-425.00;-290.00
+s1_stop;10:53;-285.00;225.00;-355.00;35.00
+s1_stop;10:54;35.00;405.00;-85.00;220.00
+s1_stop;10:55;220.00;445.00;-875.00;-260.00
+s1_stop;10:56;-260.00;-70.00;-705.00;-90.00
+s1_stop;10:57;-95.00;200.00;-425.00;-375.00
+s1_stop;10:58;-375.00;-235.00;-615.00;-540.00
+
+===== docs/colaboracao/evidencias/WINZ26_v5_8_s1_toque_tardio_profit_20261026_v1/cobertura_barras.csv =====
+sonda;registros;menor_timestamp;maior_timestamp;timestamps_duplicados;lacunas_intradiarias_maiores_60s;lacunas_janela_sonda
+s1_alvo;20001;2026-09-29 10:15:00;2026-11-19 18:24:00;0;173;0
+s1_stop;20001;2026-09-30 10:55:00;2026-11-23 18:14:00;0;137;0
+
+===== docs/colaboracao/evidencias/WINZ26_v5_8_s1_toque_tardio_profit_20261026_v1/comparacao_replay_backtest.csv =====
+sonda;ordens_resumidas;linhas_trade;entrada_replay_menos_backtest_pts;saida_replay_menos_backtest_pts;resultado_replay_pts
+s1_alvo;2;2;0.00;0.00;430.00
+s1_stop;2;0;25.00;25.00;-795.00
+
+===== docs/colaboracao/evidencias/WINZ26_v5_8_s1_toque_tardio_profit_20261026_v1/console_profit.csv =====
+sonda;seq_console;evento;seq_avaliacao;data_ntsl;hora_contexto;currentbar;posicao;pendentes;gatilho_pts_entrada;limite_pts_entrada
+s1_alvo;1;AVALIACAO;1;1261026;10:51;26873;0;0;;
+s1_alvo;2;SOLICITA_COMPRA;1;1261026;10:51;26873;0;0;;
+s1_alvo;3;AVALIACAO;2;1261026;10:51;26873;1;0;;
+s1_alvo;4;AVALIACAO;3;1261026;10:52;26874;1;0;;
+s1_alvo;5;SOLICITA_ALVO;3;1261026;10:52;26874;1;0;;430.00
+s1_alvo;6;AVALIACAO;4;1261026;10:53;26875;1;1;;
+s1_alvo;7;AVALIACAO;5;1261026;10:54;26876;1;1;;
+s1_alvo;8;AVALIACAO;6;1261026;10:55;26877;0;0;;
+s1_alvo;9;AVALIACAO;7;1261026;10:56;26878;0;0;;
+s1_alvo;10;AVALIACAO;8;1261026;10:57;26879;0;0;;
+s1_alvo;11;AVALIACAO;9;1261026;10:58;26880;0;0;;
+s1_stop;1;AVALIACAO;1;1261026;10:51;26873;0;0;;
+s1_stop;2;SOLICITA_COMPRA;1;1261026;10:51;26873;0;0;;
+s1_stop;3;AVALIACAO;2;1261026;10:51;26873;1;0;;
+s1_stop;4;AVALIACAO;3;1261026;10:52;26874;1;0;;
+s1_stop;5;SOLICITA_STOP;3;1261026;10:52;26874;1;0;-795.00;-895.00
+s1_stop;6;AVALIACAO;4;1261026;10:53;26875;1;1;;
+s1_stop;7;AVALIACAO;5;1261026;10:54;26876;1;1;;
+s1_stop;8;AVALIACAO;6;1261026;10:55;26877;0;0;;
+s1_stop;9;AVALIACAO;7;1261026;10:56;26878;0;0;;
+s1_stop;10;AVALIACAO;8;1261026;10:57;26879;0;0;;
+s1_stop;11;AVALIACAO;9;1261026;10:58;26880;0;0;;
+
+===== docs/colaboracao/evidencias/WINZ26_v5_8_s1_toque_tardio_profit_20261026_v1/inventario.csv =====
+arquivo;tamanho_bytes;sha256;formato;registros
+SONDA_S1_ALVO_operacoes.csv;463;94703c3772f883e77ac6980de42efef211eb3253dd0ccea61c16752a110b97ea;CSV CP1252;1
+SONDA_S1_ALVO_console.txt;3117;34758643132afb9788a6102f6cd053cc71d7850d740ba99298f2d73e9342b7b0;TXT UTF-8;11
+SONDA_S1_ALVO_barras.csv;920086;1036ce183e5e0ff371ca10b21b2774e2f8420598c50d71b107cbe6a1eebf6863;CSV CP1252;20001
+SONDA_S1_ALVO_relatorio.pdf;10965;1846abf99e9c5dfe8cb986777b1f88ecc3112e43e2e22a4b8bb4bd771a07245e;PDF conferido à parte;1
+SONDA_S1_ALVO_config.png;274687;f50cab2afa862c86b853f3979a6c5b7eddb015c569c87e106094370c8ea07da0;PNG conferido à parte;1
+lista_ordens_s1_alvo_replay.csv;888;a3ac77bd107126f23d3d95404a9318b87c7712aa2460d2a2805734b4612b975e;CSV CP1252, Replay;4
+SONDA_S1_STOP_operacoes.csv;471;2fd65108dbf1d45c72bf088f056f875fe24914e8ff7ff9c267d04a4a55b3ab2b;CSV CP1252;1
+SONDA_S1_STOP_console.txt;3149;0d5dac76d81e91492c9266269ba91e33f51ed017ae4d82dfe91f11b81b31f41b;TXT UTF-8;11
+SONDA_S1_STOP_barras.csv;920086;530d7efaed5c29d0973c9343ba55629915685cd4528e4e885ca3d5424935b8b5;CSV CP1252;20001
+SONDA_S1_STOP_relatorio.pdf;10979;0db74ed0d9e43a301114e83892c702d45ea7501d806dbeaad602064269a4d729;PDF conferido à parte;1
+SONDA_S1_STOP_config.png;241823;9323bef722baccb60ae6695d22cc763e757e5b56001d1de399ea18a359e48b29;PNG conferido à parte;1
+lista_ordens_s1_stop_replay.csv;778;631576d5484acad42ae7ae09a23bf1a2eeae7cbddcb423e4958f0e3cf3bffa5d;CSV CP1252, Replay;2
+[Pasta1]SONDA_S1_ALVO_barras;682519;7d0c5532ba968dca5f12996431adc71a0032063c47de772abdd76556737c58b0;XLSX sem extensão;20001
+
+===== docs/colaboracao/evidencias/WINZ26_v5_8_s1_toque_tardio_profit_20261026_v1/matriz_profit_simulador.csv =====
+sonda;motor;modo;contexto_envio_protecao;nivel_pts_entrada;limite_pts_entrada;pendentes_t1;pendentes_t2;pendentes_t3;pendentes_t4;hora_preenchimento_protecao;hora_saida_limpeza;pontos_saida;resultado_liquido_brl;classificacao
+s1_alvo;Simulador;padrao;10:52;430;430;1;0;0;0;;10:58;-375.0;-75.0;expirada
+s1_alvo;Simulador;diagnostico;10:52;430;430;1;1;0;0;10:55;;430.0;86.0;preenchida após espera
+s1_alvo;Profit;Backtest OHLC;10:52;430.00;430.00;1;1;0;0;10:55;;430.00;86.00;preenchida após espera
+s1_stop;Simulador;padrao;10:52;-795;-895;1;0;0;0;;10:58;-375.0;-75.0;expirada
+s1_stop;Simulador;diagnostico;10:52;-795;-895;1;1;0;0;10:55;;-795.0;-159.0;preenchida após espera
+s1_stop;Profit;Backtest OHLC;10:52;-795.00;-895.00;1;1;0;0;10:55;;-795.00;-159.00;preenchida após espera
+
+===== docs/colaboracao/evidencias/WINZ26_v5_8_s1_toque_tardio_profit_20261026_v1/operacoes_profit.csv =====
+sonda;pregao;ativo;lado;quantidade_compra;quantidade_venda;hora_entrada_csv;hora_saida_csv;entrada_pts_referencia;saida_pts_referencia;duracao_segundos;comissoes_brl;resultado_brl
+s1_alvo;2026-10-26;WINZ26;C;1;1;10:52:00;10:55:00;0;430.00;180;0.00;86.00
+s1_stop;2026-10-26;WINZ26;C;1;1;10:52:00;10:55:00;0;-795.00;180;0.00;-159.00
+
+===== docs/colaboracao/evidencias/WINZ26_v5_8_s1_toque_tardio_profit_20261026_v1/ordens_replay_relativas.csv =====
+sonda;sequencia_exportacao;ordem_alias;lado;tipo_ordem;estado_linha;data_hora_replay_coluna_criacao;data_ultima_atualizacao_linha;quantidade_executada;media_pts_entrada_replay;limite_pts_entrada_replay;campo_preco_stop_informado
+s1_alvo;1;protecao;V;Limite;Executada;26/10/2026 10:53:00.189;23/11/2026;1;430.00;430.00;0
+s1_alvo;2;protecao;V;Limite;Trade;26/10/2026 10:55:08.155;;1;430.00;;0
+s1_alvo;3;entrada;C;a Mercado;Executada;26/10/2026 10:52:00.265;23/11/2026;1;0.00;;0
+s1_alvo;4;entrada;C;a Mercado;Trade;26/10/2026 10:52:00.265;;1;0.00;;0
+s1_stop;1;protecao;V;Limite;Executada;26/10/2026 10:53:03.665;23/11/2026;1;-795.00;-895.00;0
+s1_stop;2;entrada;C;a Mercado;Executada;26/10/2026 10:52:02.143;23/11/2026;1;0.00;;0
+
+===== docs/colaboracao/evidencias/WINZ26_v5_8_s1_toque_tardio_profit_20261026_v1/SHA256SUMS.txt =====
+15646937d1ee87865268f48e7a37ef90a5752cf5a9c5270168f8f642405e8ed0  README.md
+647e3f61991f9aa1eb68d689bda3d60b6c67801026048b88ea67eddff2e9893d  barras_conferencia.csv
+7ad9736a25b0fbbad5c1bee596447271ba35868c4e0869cb50d0fb145e6294e9  cobertura_barras.csv
+75ddfc9fa6e2bf21e190898641031939c2d92a07887b8427af8e603b3e819d96  comparacao_replay_backtest.csv
+56f5e2f65b3bb367ccd50c45fdce313d93dde50d233eec695563f49522e4e934  console_profit.csv
+649dcc5b7bc2636f9c14db405003f07e9bbdd7ec5b366d6cc2af56d2773c9fc6  inventario.csv
+28f1f4e5b26dede5a22613122c673bb14d9644c10770fec0e9581c2c325c2319  matriz_profit_simulador.csv
+668a05d01a05c64f5dd71695aeacc9a1122cabf7b78fa4a1bce3419fd094ca72  operacoes_profit.csv
+a82581a74d4da73cbe87a3757efaf8d699fce1b7f050f5040b4a4040a07c97a0  ordens_replay_relativas.csv
+
+===== docs/colaboracao/evidencias/WINZ26_v5_8_s1_toque_tardio_20261026_v1/estados_simulador.csv =====
+sonda;modo;seq_avaliacao;hora_contexto_ntsl;currentbar;posicao;has_pending_orders
+s1_alvo;padrao;1;10:51;100;0;0
+s1_alvo;padrao;2;10:51;100;1;0
+s1_alvo;padrao;3;10:52;101;1;0
+s1_alvo;padrao;4;10:53;102;1;1
+s1_alvo;padrao;5;10:54;103;1;0
+s1_alvo;padrao;6;10:55;104;1;0
+s1_alvo;padrao;7;10:56;105;1;0
+s1_alvo;padrao;8;10:57;106;1;0
+s1_alvo;padrao;9;10:58;107;0;0
+s1_alvo;diagnostico;1;10:51;100;0;0
+s1_alvo;diagnostico;2;10:51;100;1;0
+s1_alvo;diagnostico;3;10:52;101;1;0
+s1_alvo;diagnostico;4;10:53;102;1;1
+s1_alvo;diagnostico;5;10:54;103;1;1
+s1_alvo;diagnostico;6;10:55;104;0;0
+s1_alvo;diagnostico;7;10:56;105;0;0
+s1_alvo;diagnostico;8;10:57;106;0;0
+s1_alvo;diagnostico;9;10:58;107;0;0
+s1_stop;padrao;1;10:51;100;0;0
+s1_stop;padrao;2;10:51;100;1;0
+s1_stop;padrao;3;10:52;101;1;0
+s1_stop;padrao;4;10:53;102;1;1
+s1_stop;padrao;5;10:54;103;1;0
+s1_stop;padrao;6;10:55;104;1;0
+s1_stop;padrao;7;10:56;105;1;0
+s1_stop;padrao;8;10:57;106;1;0
+s1_stop;padrao;9;10:58;107;0;0
+s1_stop;diagnostico;1;10:51;100;0;0
+s1_stop;diagnostico;2;10:51;100;1;0
+s1_stop;diagnostico;3;10:52;101;1;0
+s1_stop;diagnostico;4;10:53;102;1;1
+s1_stop;diagnostico;5;10:54;103;1;1
+s1_stop;diagnostico;6;10:55;104;0;0
+s1_stop;diagnostico;7;10:56;105;0;0
+s1_stop;diagnostico;8;10:57;106;0;0
+s1_stop;diagnostico;9;10:58;107;0;0
+
+===== docs/colaboracao/evidencias/WINZ26_v5_8_s1_toque_tardio_20261026_v1/eventos_simulador.csv =====
+sonda;modo;hora_barra_replay;contexto_ntsl;hora_execucao;evento;ordem;posicao;quantidade;gatilho_pts_entrada;limite_pts_entrada;preco_execucao_pts_entrada
+s1_alvo;padrao;10:51;10:51;;avaliacao_ntsl;;0;;;;
+s1_alvo;padrao;10:51;10:51;;solicitacao;buyatmarket;0;1;;;
+s1_alvo;padrao;10:52;10:52;10:52;preenchimento;buyatmarket;1;1;;;0.0
+s1_alvo;padrao;10:52;10:51;;avaliacao_ntsl_pos_preenchimento;;1;;;;
+s1_alvo;padrao;10:52;10:52;;avaliacao_ntsl;;1;;;;
+s1_alvo;padrao;10:52;10:52;;solicitacao;selltocoverlimit;1;1;430.0;;
+s1_alvo;padrao;10:53;10:53;;avaliacao_ntsl;;1;;;;
+s1_alvo;padrao;10:54;10:54;;avaliacao_ntsl;;1;;;;
+s1_alvo;padrao;10:55;10:55;;avaliacao_ntsl;;1;;;;
+s1_alvo;padrao;10:56;10:56;;avaliacao_ntsl;;1;;;;
+s1_alvo;padrao;10:57;10:57;;avaliacao_ntsl;;1;;;;
+s1_alvo;padrao;10:57;10:57;;solicitacao;closeposition;1;1;;;
+s1_alvo;padrao;10:58;10:58;10:58;preenchimento;closeposition;0;1;;;-375.0
+s1_alvo;padrao;10:58;10:58;;avaliacao_ntsl;;0;;;;
+s1_alvo;diagnostico;10:51;10:51;;avaliacao_ntsl;;0;;;;
+s1_alvo;diagnostico;10:51;10:51;;solicitacao;buyatmarket;0;1;;;
+s1_alvo;diagnostico;10:52;10:52;10:52;preenchimento;buyatmarket;1;1;;;0.0
+s1_alvo;diagnostico;10:52;10:51;;avaliacao_ntsl_pos_preenchimento;;1;;;;
+s1_alvo;diagnostico;10:52;10:52;;avaliacao_ntsl;;1;;;;
+s1_alvo;diagnostico;10:52;10:52;;solicitacao;selltocoverlimit;1;1;430.0;;
+s1_alvo;diagnostico;10:53;10:53;;avaliacao_ntsl;;1;;;;
+s1_alvo;diagnostico;10:54;10:54;;avaliacao_ntsl;;1;;;;
+s1_alvo;diagnostico;10:55;10:55;10:55;preenchimento;selltocoverlimit;0;1;430.0;;430.0
+s1_alvo;diagnostico;10:55;10:55;;avaliacao_ntsl;;0;;;;
+s1_alvo;diagnostico;10:56;10:56;;avaliacao_ntsl;;0;;;;
+s1_alvo;diagnostico;10:57;10:57;;avaliacao_ntsl;;0;;;;
+s1_alvo;diagnostico;10:58;10:58;;avaliacao_ntsl;;0;;;;
+s1_stop;padrao;10:51;10:51;;avaliacao_ntsl;;0;;;;
+s1_stop;padrao;10:51;10:51;;solicitacao;buyatmarket;0;1;;;
+s1_stop;padrao;10:52;10:52;10:52;preenchimento;buyatmarket;1;1;;;0.0
+s1_stop;padrao;10:52;10:51;;avaliacao_ntsl_pos_preenchimento;;1;;;;
+s1_stop;padrao;10:52;10:52;;avaliacao_ntsl;;1;;;;
+s1_stop;padrao;10:52;10:52;;solicitacao;selltocoverstop;1;1;-795.0;-895.0;
+s1_stop;padrao;10:53;10:53;;avaliacao_ntsl;;1;;;;
+s1_stop;padrao;10:54;10:54;;avaliacao_ntsl;;1;;;;
+s1_stop;padrao;10:55;10:55;;avaliacao_ntsl;;1;;;;
+s1_stop;padrao;10:56;10:56;;avaliacao_ntsl;;1;;;;
+s1_stop;padrao;10:57;10:57;;avaliacao_ntsl;;1;;;;
+s1_stop;padrao;10:57;10:57;;solicitacao;closeposition;1;1;;;
+s1_stop;padrao;10:58;10:58;10:58;preenchimento;closeposition;0;1;;;-375.0
+s1_stop;padrao;10:58;10:58;;avaliacao_ntsl;;0;;;;
+s1_stop;diagnostico;10:51;10:51;;avaliacao_ntsl;;0;;;;
+s1_stop;diagnostico;10:51;10:51;;solicitacao;buyatmarket;0;1;;;
+s1_stop;diagnostico;10:52;10:52;10:52;preenchimento;buyatmarket;1;1;;;0.0
+s1_stop;diagnostico;10:52;10:51;;avaliacao_ntsl_pos_preenchimento;;1;;;;
+s1_stop;diagnostico;10:52;10:52;;avaliacao_ntsl;;1;;;;
+s1_stop;diagnostico;10:52;10:52;;solicitacao;selltocoverstop;1;1;-795.0;-895.0;
+s1_stop;diagnostico;10:53;10:53;;avaliacao_ntsl;;1;;;;
+s1_stop;diagnostico;10:54;10:54;;avaliacao_ntsl;;1;;;;
+s1_stop;diagnostico;10:55;10:55;;gatilho_stop;selltocoverstop;1;1;-795.0;-895.0;
+s1_stop;diagnostico;10:55;10:55;10:55;preenchimento;selltocoverstop;0;1;-795.0;-895.0;-795.0
+s1_stop;diagnostico;10:55;10:55;;avaliacao_ntsl;;0;;;;
+s1_stop;diagnostico;10:56;10:56;;avaliacao_ntsl;;0;;;;
+s1_stop;diagnostico;10:57;10:57;;avaliacao_ntsl;;0;;;;
+s1_stop;diagnostico;10:58;10:58;;avaliacao_ntsl;;0;;;;
+
+===== docs/colaboracao/evidencias/WINZ26_v5_8_s1_toque_tardio_20261026_v1/sonda_s1_alvo_toque_tardio_profit_v1_0.ntsl =====
+{ S1 toque tardio: apenas SellToCoverLimit. Somente Backtest OHLC. }
+input
+  p_Data(1261026);
+  p_Entrada(1051);
+  p_Protecao(1052);
+  p_Cancela(1056);
+  p_Zera(1057);
+  p_Fim(1058);
+  p_Distancia(430);
+
+var
+  v_Seq, v_Pendentes : Integer;
+  v_EntradaEnviada, v_ProtecaoEnviada, v_Cancelou, v_Zerou : Boolean;
+  v_Limite : Float;
+
+begin
+  if (Date = p_Data) and (Time >= p_Entrada) and (Time <= p_Fim) then
+  begin
+    v_Seq := v_Seq + 1;
+    if HasPendingOrders then v_Pendentes := 1 else v_Pendentes := 0;
+    ConsoleLog("SONDA_S1_ALVO;AVALIACAO"
+      + ";data=" + FloatToString(Date, 0)
+      + ";hora=" + FloatToString(Time, 0)
+      + ";barra=" + FloatToString(CurrentBar, 0)
+      + ";seq=" + FloatToString(v_Seq, 0)
+      + ";posicao=" + FloatToString(PositionQty, 0)
+      + ";pendentes=" + FloatToString(v_Pendentes, 0)
+      + ";abertura=" + FloatToString(Open, 0)
+      + ";maxima=" + FloatToString(High, 0)
+      + ";minima=" + FloatToString(Low, 0)
+      + ";fechamento=" + FloatToString(Close, 0), clYellow);
+
+    if (Time = p_Entrada) and not v_EntradaEnviada and not HasPosition and not HasPendingOrders then
+    begin
+      v_EntradaEnviada := True;
+      ConsoleLog("SONDA_S1_ALVO;SOLICITA_COMPRA;seq=" + FloatToString(v_Seq, 0), clYellow);
+      BuyAtMarket(1);
+    end;
+
+    if (Time = p_Protecao) and IsBought and not v_ProtecaoEnviada then
+    begin
+      v_ProtecaoEnviada := True;
+      v_Limite := BuyPrice + p_Distancia;
+      ConsoleLog("SONDA_S1_ALVO;SOLICITA_ALVO;seq=" + FloatToString(v_Seq, 0)
+        + ";limite=" + FloatToString(v_Limite, 0), clYellow);
+      SellToCoverLimit(v_Limite, 1);
+    end;
+
+    if (Time = p_Cancela) and HasPendingOrders and not v_Cancelou then
+    begin
+      v_Cancelou := True;
+      ConsoleLog("SONDA_S1_ALVO;SOLICITA_CANCELAMENTO_LIMPEZA;seq=" + FloatToString(v_Seq, 0), clYellow);
+      CancelPendingOrders;
+    end;
+
+    if (Time = p_Zera) and HasPosition and not v_Zerou then
+    begin
+      v_Zerou := True;
+      ConsoleLog("SONDA_S1_ALVO;SOLICITA_ZERAGEM_LIMPEZA;seq=" + FloatToString(v_Seq, 0), clYellow);
+      ClosePosition;
+    end;
+  end;
+end;
+
+===== docs/colaboracao/evidencias/WINZ26_v5_8_s1_toque_tardio_20261026_v1/sonda_s1_stop_toque_tardio_profit_v1_0.ntsl =====
+{ S1 toque tardio: apenas SellToCoverStop. Somente Backtest OHLC. }
+input
+  p_Data(1261026);
+  p_Entrada(1051);
+  p_Protecao(1052);
+  p_Cancela(1056);
+  p_Zera(1057);
+  p_Fim(1058);
+  p_Distancia(795);
+  p_Folga(100);
+
+var
+  v_Seq, v_Pendentes : Integer;
+  v_EntradaEnviada, v_ProtecaoEnviada, v_Cancelou, v_Zerou : Boolean;
+  v_Limite, v_Gatilho : Float;
+
+begin
+  if (Date = p_Data) and (Time >= p_Entrada) and (Time <= p_Fim) then
+  begin
+    v_Seq := v_Seq + 1;
+    if HasPendingOrders then v_Pendentes := 1 else v_Pendentes := 0;
+    ConsoleLog("SONDA_S1_STOP;AVALIACAO"
+      + ";data=" + FloatToString(Date, 0)
+      + ";hora=" + FloatToString(Time, 0)
+      + ";barra=" + FloatToString(CurrentBar, 0)
+      + ";seq=" + FloatToString(v_Seq, 0)
+      + ";posicao=" + FloatToString(PositionQty, 0)
+      + ";pendentes=" + FloatToString(v_Pendentes, 0)
+      + ";abertura=" + FloatToString(Open, 0)
+      + ";maxima=" + FloatToString(High, 0)
+      + ";minima=" + FloatToString(Low, 0)
+      + ";fechamento=" + FloatToString(Close, 0), clYellow);
+
+    if (Time = p_Entrada) and not v_EntradaEnviada and not HasPosition and not HasPendingOrders then
+    begin
+      v_EntradaEnviada := True;
+      ConsoleLog("SONDA_S1_STOP;SOLICITA_COMPRA;seq=" + FloatToString(v_Seq, 0), clYellow);
+      BuyAtMarket(1);
+    end;
+
+    if (Time = p_Protecao) and IsBought and not v_ProtecaoEnviada then
+    begin
+      v_ProtecaoEnviada := True;
+      v_Gatilho := BuyPrice - p_Distancia;
+      v_Limite := v_Gatilho - p_Folga;
+      ConsoleLog("SONDA_S1_STOP;SOLICITA_STOP;seq=" + FloatToString(v_Seq, 0)
+        + ";gatilho=" + FloatToString(v_Gatilho, 0)
+        + ";limite=" + FloatToString(v_Limite, 0), clYellow);
+      SellToCoverStop(v_Gatilho, v_Limite, 1);
+    end;
+
+    if (Time = p_Cancela) and HasPendingOrders and not v_Cancelou then
+    begin
+      v_Cancelou := True;
+      ConsoleLog("SONDA_S1_STOP;SOLICITA_CANCELAMENTO_LIMPEZA;seq=" + FloatToString(v_Seq, 0), clYellow);
+      CancelPendingOrders;
+    end;
+
+    if (Time = p_Zera) and HasPosition and not v_Zerou then
+    begin
+      v_Zerou := True;
+      ConsoleLog("SONDA_S1_STOP;SOLICITA_ZERAGEM_LIMPEZA;seq=" + FloatToString(v_Seq, 0), clYellow);
+      ClosePosition;
+    end;
+  end;
+end;
+
+===== tools/publicar_s1_toque_tardio_profit.py =====
+"""Publica a evidência de toque tardio da S1, sem ordens ou preços brutos."""
+
+import argparse
+import csv
+import io
+import xml.etree.ElementTree as ET
+from datetime import datetime, timedelta
+from decimal import Decimal
+from hashlib import sha256
+from pathlib import Path
+from zipfile import ZipFile
+
+from tools.publicar_sonda_lacuna_profit import debug_blocks, number, raw_operation, write_csv
+from tools.publicar_sondas_protecao_profit import TIMESTAMP_FORMAT, native_console, read_csv
+
+
+DAY = "2026-10-26"
+HOURS = [f"10:{n}" for n in range(51, 59)]
+PRICES = ("abertura", "maxima", "minima", "fechamento")
+BR_DATE = "%d/%m/%Y %H:%M"
+XML = {"x": "http://schemas.openxmlformats.org/spreadsheetml/2006/main"}
+
+
+def profit_bars(data):
+    values = list(csv.reader(io.StringIO(data.decode("cp1252")), delimiter=";"))
+    return [(datetime.strptime(time, BR_DATE), *(number(price) for price in prices))
+            for time, *prices in values[1:]]
+
+
+def workbook_bars(data):
+    with ZipFile(io.BytesIO(data)) as workbook:
+        sheet = ET.fromstring(workbook.read("xl/worksheets/sheet1.xml"))
+        rows = sheet.findall("x:sheetData/x:row", XML)
+        epoch = datetime(1899, 12, 30)
+        result = []
+        for row in rows[1:]:
+            stamp, *prices = (Decimal(cell.findtext("x:v", namespaces=XML)) for cell in row)
+            minute = round(stamp * 1440)
+            result.append((epoch + timedelta(minutes=minute), *prices))
+        return result
+
+
+def replay_order_rows(data, sonda, entry_backtest, exit_backtest):
+    export = list(csv.reader(io.StringIO(data.decode("cp1252")), delimiter=";"))
+    header = export[1]
+    if len(header) != 26:
+        raise ValueError("Formato inesperado na lista de ordens do Replay.")
+    orders = [dict(zip(header, line, strict=True)) for line in export[2:] if len(line) == len(header)]
+    buy, = [order for order in orders if order["Lado"] == "C"]
+    sell, = [order for order in orders if order["Lado"] == "V"]
+    entry_replay = number(buy["Preço Médio"])
+    result = []
+    aliases = {"C": "entrada", "V": "protecao"}
+    for index, line in enumerate(export[2:], 1):
+        if not line:
+            continue
+        row = dict(zip(header, line))
+        if row["Status"] != "Trade":
+            parent = row
+        side = parent["Lado"]
+        average = number(row["Preço Médio"])
+        result.append(dict(
+            sonda=sonda, sequencia_exportacao=index, ordem_alias=aliases[side],
+            lado=side, tipo_ordem=parent["Tipo de Ordem"], estado_linha=row["Status"],
+            data_hora_replay_coluna_criacao=row["Criação"],
+            data_ultima_atualizacao_linha=row.get("Última Atualização", "").split(" ")[0],
+            quantidade_executada=row["Qtd Executada"],
+            media_pts_entrada_replay=average - entry_replay,
+            limite_pts_entrada_replay=number(row["Preço"]) - entry_replay if row.get("Preço") not in (None, "", "-") else "",
+            campo_preco_stop_informado=int(row.get("Preço Stop") not in (None, "", "-")),
+        ))
+    return result, dict(
+        sonda=sonda, ordens_resumidas=len(orders), linhas_trade=sum(row["estado_linha"] == "Trade" for row in result),
+        entrada_replay_menos_backtest_pts=entry_replay - entry_backtest,
+        saida_replay_menos_backtest_pts=number(sell["Preço Médio"]) - exit_backtest,
+        resultado_replay_pts=number(sell["Preço Médio"]) - entry_replay,
+    )
+
+
+def collect(args):
+    tables = {name: [] for name in (
+        "matriz_profit_simulador.csv", "console_profit.csv", "barras_conferencia.csv",
+        "ordens_replay_relativas.csv", "comparacao_replay_backtest.csv", "inventario.csv",
+        "cobertura_barras.csv", "operacoes_profit.csv",
+    )}
+
+    def source(name, fmt, rows=""):
+        data = (args.originais / name).read_bytes()
+        tables["inventario.csv"].append(dict(
+            arquivo=name, tamanho_bytes=len(data), sha256=sha256(data).hexdigest(), formato=fmt, registros=rows,
+        ))
+        return data
+
+    previous = read_csv(args.referencia / "matriz_profit_simulador.csv", ";")
+    prepared = read_csv(args.referencia / "barras_relativas.csv", ";")
+    all_bars = {}
+    for kind, expected in (("alvo", Decimal(430)), ("stop", Decimal(-795))):
+        sonda = "s1_" + kind
+        stem = "SONDA_S1_" + kind.upper()
+        operation = raw_operation(source(f"{stem}_operacoes.csv", "CSV CP1252", 1))
+        opening, closing = (datetime.strptime(operation[key], TIMESTAMP_FORMAT) for key in ("Abertura", "Fechamento"))
+        entry, exit_price = map(number, (operation["Preço Compra"], operation["Preço Venda"]))
+        if (opening.strftime("%Y-%m-%d %H:%M"), closing.strftime("%Y-%m-%d %H:%M")) != (DAY + " 10:52", DAY + " 10:55"):
+            raise ValueError(f"{sonda}: operação fora da janela.")
+        if operation["Ativo"] != "WINZ26" or operation["Lado"] != "C" or (operation["Qtd Compra"],operation["Qtd Venda"]) != ("1", "1"):
+            raise ValueError(f"{sonda}: ativo, lado ou quantidade divergentes.")
+        points = exit_price - entry
+        if points != expected or number(operation["Total"]) != points * Decimal("0.20"):
+            raise ValueError(f"{sonda}: execução diferente do nível previsto.")
+
+        tables["operacoes_profit.csv"].append(dict(
+            sonda=sonda, pregao=opening.date(), ativo=operation["Ativo"], lado=operation["Lado"],
+            quantidade_compra=operation["Qtd Compra"], quantidade_venda=operation["Qtd Venda"],
+            hora_entrada_csv=opening.time(), hora_saida_csv=closing.time(),
+            entrada_pts_referencia=0, saida_pts_referencia=points,
+            duracao_segundos=int((closing - opening).total_seconds()),
+            comissoes_brl=number(operation["Comissões"]), resultado_brl=number(operation["Total"]),
+        ))
+
+        console_data = source(f"{stem}_console.txt", "TXT UTF-8")
+        blocks, console, warnings = native_console(sonda, console_data, stem, entry)
+        if blocks != 2 or len(console) != 11 or warnings:
+            raise ValueError(f"{sonda}: captura difere da sequência esperada.")
+        tables["inventario.csv"][-1]["registros"] = len(console)
+        tables["console_profit.csv"].extend(console)
+        protection, = [row for row in console if row["evento"] in ("SOLICITA_ALVO", "SOLICITA_STOP")]
+        nivel = protection["limite_pts_entrada"] if kind == "alvo" else protection["gatilho_pts_entrada"]
+        assert nivel == points and protection["hora_contexto"] == "10:52"
+        assert protection["limite_pts_entrada"] == (430 if kind == "alvo" else -895)
+        states = {row["hora_contexto"]: row for row in console if row["evento"] == "AVALIACAO"}
+        pending = [states[hour]["pendentes"] for hour in HOURS[2:6]]
+        assert pending == [1, 1, 0, 0] and states["10:55"]["posicao"] == 0
+        assert not any("LIMPEZA" in row["evento"] for row in console)
+
+        bars = profit_bars(source(f"{stem}_barras.csv", "CSV CP1252"))
+        all_bars[kind] = bars
+        tables["inventario.csv"][-1]["registros"] = len(bars)
+        stamps = [row[0] for row in bars]
+        assert all(later > earlier for earlier, later in zip(stamps[1:], stamps))
+        tables["cobertura_barras.csv"].append(dict(
+            sonda=sonda, registros=len(bars), menor_timestamp=stamps[-1],
+            maior_timestamp=stamps[0], timestamps_duplicados=len(stamps) - len(set(stamps)),
+            lacunas_intradiarias_maiores_60s=sum(
+                earlier.date() == later.date() and later - earlier > timedelta(minutes=1)
+                for earlier, later in zip(stamps[1:], stamps)
+            ),
+            lacunas_janela_sonda=0,
+        ))
+        keys = {row[0].strftime("%H:%M"): row[1:] for row in bars if str(row[0].date()) == DAY}
+        assert keys["10:52"][0] == entry
+        evaluations = []
+        for line in debug_blocks(console_data)[0]:
+            if line.startswith(f"{stem};AVALIACAO;"):
+                fields = dict(part.split("=", 1) for part in line.split(";")[2:])
+                evaluations.append(fields)
+        assert [int(number(row["barra"])) for row in evaluations] == [26873, *range(26873, 26881)]
+        assert len(evaluations) == len(HOURS) + 1
+        for evaluation, hour in zip(evaluations, [HOURS[0], *HOURS], strict=True):
+            stamp = str(int(number(evaluation["hora"]))).zfill(4)
+            assert f"{stamp[:2]}:{stamp[2:]}" == hour
+            assert tuple(number(evaluation[field]) for field in PRICES) == keys[hour]
+
+        for bar in prepared:
+            hour = bar["hora_barra"]
+            relative = {f"{field}_pts_entrada": value - entry for field, value in zip(PRICES, keys[hour])}
+            assert all(Decimal(bar[key]) == value for key, value in relative.items())
+            tables["barras_conferencia.csv"].append(dict(sonda=sonda, hora_barra=hour, **relative))
+        source(f"{stem}_relatorio.pdf", "PDF conferido à parte", 1)
+        source(f"{stem}_config.png", "PNG conferido à parte", 1)
+        data = source(f"lista_ordens_s1_{kind}_replay.csv", "CSV CP1252, Replay")
+        orders, comparison = replay_order_rows(data, sonda, entry, exit_price)
+        tables["inventario.csv"][-1]["registros"] = len(orders)
+        tables["ordens_replay_relativas.csv"].extend(orders)
+        tables["comparacao_replay_backtest.csv"].append(comparison)
+
+        controls = [row for row in previous if row["sonda"] == sonda]
+        diagnostic, = [row for row in controls if row["modo"] == "diagnostico"]
+        assert diagnostic["hora_preenchimento_protecao"] == closing.strftime("%H:%M")
+        assert Decimal(diagnostic["pontos_saida"]) == points
+        tables["matriz_profit_simulador.csv"].extend(
+            row for row in controls if row["motor"] == "Simulador"
+        )
+        tables["matriz_profit_simulador.csv"].append(dict(
+            sonda=sonda, motor="Profit", modo="Backtest OHLC", contexto_envio_protecao="10:52",
+            nivel_pts_entrada=nivel,limite_pts_entrada=protection["limite_pts_entrada"],
+            pendentes_t1=pending[0],pendentes_t2=pending[1],pendentes_t3=pending[2],pendentes_t4=pending[3],
+            hora_preenchimento_protecao=closing.strftime("%H:%M"), hora_saida_limpeza="",
+            pontos_saida=points, resultado_liquido_brl=number(operation["Total"]),
+            classificacao="preenchida após espera",
+        ))
+    workbook = workbook_bars(source("[Pasta1]SONDA_S1_ALVO_barras", "XLSX sem extensão"))
+    tables["inventario.csv"][-1]["registros"] = len(workbook)
+    assert workbook == all_bars["alvo"]
+    target = {row[0]: row[1:] for row in all_bars["alvo"]}
+    stop = {row[0]: row[1:] for row in all_bars["stop"]}
+    assert all(target[stamp] == stop[stamp] for stamp in target.keys() & stop.keys())
+    return tables
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    for field in ("originais", "referencia", "saida"):
+        parser.add_argument("--" + field, type=Path, required=True)
+    args = parser.parse_args()
+    tables = collect(args)
+    args.saida.mkdir(exist_ok=False)
+    for name, rows in tables.items():
+        write_csv(args.saida / name, rows)
+
+
+if __name__ == "__main__":
+    main()

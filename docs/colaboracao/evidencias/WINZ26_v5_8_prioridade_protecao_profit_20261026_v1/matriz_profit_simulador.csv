@@ -1,0 +1,13 @@
+rodada;p_Perna;p_SaidaMercado;entrada_contexto;entrada_execucao;protecao_contexto;posicao_1054;pendentes_1054;solicita_mercado_contexto;abertura_1055_pts_entrada;saida_execucao;qtd_compra;qtd_venda;operacoes;posicao_1055;pendentes_1055;posicao_1058;pendentes_1058;alvo_ou_limite_solicitado_pts_entrada;gatilho_solicitado_pts_entrada;fonte;saida_pts_entrada;saida_menos_abertura_pts;resultado_liquido_brl;ordem_simulador;gatilhos_simulador;ambiguidades_simulador
+01_alvo_controle;1;0;10:51;10:52:00;10:52;1;1;;220.00;10:55:00;1;1;1;0;0;0;0;428.00;;Profit;430.00;210.00;86.00;;;
+01_alvo_controle;1;0;10:51;10:52:00;10:52;1;1;;220.00;10:55:00;1;1;1;0;0;0;0;428.00;;Simulador painel;428.0;208.00;85.60;selltocoverlimit;0;0
+01_alvo_controle;1;0;10:51;10:52:00;10:52;1;1;;220.00;10:55:00;1;1;1;0;0;0;0;430;;Simulador padrões;430.0;210.00;86.00;selltocoverlimit;0;0
+02_alvo_mercado;1;1;10:51;10:52:00;10:52;1;1;10:54;220.00;10:55:00;1;1;1;0;0;0;0;428.00;;Profit;220.00;0.00;44.00;;;
+02_alvo_mercado;1;1;10:51;10:52:00;10:52;1;1;10:54;220.00;10:55:00;1;1;1;0;0;0;0;428.00;;Simulador painel;220.0;0.00;44.00;selltocoveratmarket;0;0
+02_alvo_mercado;1;1;10:51;10:52:00;10:52;1;1;10:54;220.00;10:55:00;1;1;1;0;0;0;0;430;;Simulador padrões;220.0;0.00;44.00;selltocoveratmarket;0;0
+03_stop_controle;2;0;10:51;10:52:00;10:52;1;1;;220.00;10:55:00;1;1;1;0;0;0;0;-894.00;-793.00;Profit;-795.00;-1015.00;-159.00;;;
+03_stop_controle;2;0;10:51;10:52:00;10:52;1;1;;220.00;10:55:00;1;1;1;0;0;0;0;-894.00;-793.00;Simulador painel;-793.0;-1013.00;-158.60;selltocoverstop;1;0
+03_stop_controle;2;0;10:51;10:52:00;10:52;1;1;;220.00;10:55:00;1;1;1;0;0;0;0;-895;-795;Simulador padrões;-795.0;-1015.00;-159.00;selltocoverstop;1;0
+04_stop_mercado;2;1;10:51;10:52:00;10:52;1;1;10:54;220.00;10:55:00;1;1;1;0;0;0;0;-894.00;-793.00;Profit;220.00;0.00;44.00;;;
+04_stop_mercado;2;1;10:51;10:52:00;10:52;1;1;10:54;220.00;10:55:00;1;1;1;0;0;0;0;-894.00;-793.00;Simulador painel;220.0;0.00;44.00;selltocoveratmarket;0;0
+04_stop_mercado;2;1;10:51;10:52:00;10:52;1;1;10:54;220.00;10:55:00;1;1;1;0;0;0;0;-895;-795;Simulador padrões;220.0;0.00;44.00;selltocoveratmarket;0;0

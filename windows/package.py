@@ -9,9 +9,9 @@ from zipfile import ZipFile, ZIP_DEFLATED
 
 PROJECT = Path(__file__).resolve().parents[1]
 VERSION = (PROJECT/"VERSION").read_text().strip()
-FILES = ("app.py", "diagnostico.py", "estrategia.py", "ntsl.py", "interface.html", "simulador.py",
+FILES = ("app.py", "replay_ticks.py", "integrar_profitrtd.py", "validacao.py", "execucoes.py", "github_execucoes.py", "cotacoes.py", "sessao.py", "controle.py", "diagnostico.py", "estrategia.py", "ntsl.py", "interface.html", "simulador.py",
          "modelo_profit.ntsl", "config_v6.json", "config_v7.json", "README.md",
-         "CHANGELOG.md", "README-otimizador.md", "requirements.txt", "VERSION", "exemplo_cruzamento.ntsl")
+         "CHANGELOG.md", "MANUTENCAO.md", "DIRETRIZES_PROJETO.md", "README-otimizador.md", "requirements.txt", "VERSION", "exemplo_cruzamento.ntsl")
 
 
 def main():
@@ -28,7 +28,9 @@ def main():
         for filename in FILES:
             shutil.copy2(PROJECT/filename,root/filename)
         shutil.copytree(PROJECT/"windows",root/"windows",ignore=shutil.ignore_patterns("__pycache__"))
-        shutil.copytree(PROJECT/"exemplos",root/"exemplos")
+        for directory in ("exemplos", "estrategias", "docs", "schemas", "tools"):
+            shutil.copytree(PROJECT/directory, root/directory, ignore=shutil.ignore_patterns("__pycache__"))
+        shutil.copytree(PROJECT/"dados"/"exemplos", root/"dados"/"exemplos")
         runtime = root/"runtime"
         with ZipFile(args.python_win) as archive:
             archive.extractall(runtime)

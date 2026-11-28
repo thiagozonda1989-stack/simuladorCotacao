@@ -1,0 +1,3 @@
+arquivo;bytes;sha256;pregao;observacao
+SONDA_03_ORDENS_REPLAY.csv;796;bd4fc69fbf090958812c0bbc2620d3b9216f5b30b6c9c96c721b372f488ed03a;2026-10-26;"2 ordens; 26 colunas"
+SONDA_03_LOGS_REPLAY.png;83021;564acbe655d807b433c4ea0daefe1abe6248b486d597f897cad3e4c19e119b6e;2026-10-26;"2144 × 1528; painel Eventos"

@@ -1,0 +1,354 @@
+{ Copia instrumentada de Modelo_Unificado_v5_8 para backtest OHLC. }
+{ Modelo Unificado Refatorado v5.8 - WIN / ProfitPro                          }
+{ Base: v5.7. Mudancas:                                                         }
+{  1. Densidade (Trades) so bloqueia ENTRADA e usa candle fechado no tick a tick }
+{  2. Sinal de entrada usa candle FECHADO (p_Exec_Tick = 1)                     }
+{  3. Uma entrada por candle + espera de N candles apos cada saida              }
+{  4. Folga do stop-limite padrao 50 pts (era 5 = 1 tick)                       }
+{  5. Saidas usam a posicao real (Abs(Position)), nao o lote fixo               }
+{  6. Cancela ordem pendente que sobrou com o robo zerado                       }
+{  7. Aquecimento dos indicadores (CurrentBar)                                  }
+{  8. Z-score do volume contra os 20 candles ANTERIORES                         }
+{  9. Banda opcional pelo desvio em torno da VWAP (p_Modo_Banda = 1)            }
+{ 10. Horarios e janelas de noticia parametrizados; limite de entradas por dia  }
+{                                                                               }
+{ p_Exec_Tick: 1 = automacao / replay tick a tick                               }
+{              0 = backtest e OTIMIZADOR (execucao por barra fechada)           }
+{ Com os dois modos a entrada ocorre no inicio do candle seguinte ao sinal,     }
+{ entao backtest e execucao real ficam equivalentes.                            }
+
+input
+  p_Exec_Tick(0);
+  p_Periodo_ATR(14);
+  p_Periodo_Regime_ATR(50);
+  p_Desvio_VWAP(2.1);
+  p_Modo_Banda(0);           { 0 = StdDevs(Close) como v5.7; 1 = desvio em torno da VWAP }
+  p_Periodo_Desvio(20);
+  p_ZScore_Vol(1.5);
+  p_Stop_Pontos(350);
+  p_Alvo_Pontos(400);
+  p_MinimoTrades(100);
+  p_Lote(5);
+  p_Offset_Limite_Stop(50);
+  p_Barras_Espera(3);        { candles sem nova entrada apos uma saida }
+  p_Max_Entradas_Dia(10);
+  p_Hora_Inicio(0915);
+  p_Hora_Fim_Entradas(1645);
+  p_Hora_Zeragem(1700);
+  p_Noticia1_Ini(1025);      { 0 = janela desligada }
+  p_Noticia1_Fim(1035);
+  p_Noticia2_Ini(1425);
+  p_Noticia2_Fim(1435);
+  p_Zerar_Na_Noticia(1);     { 1 = zera na janela (como v5.7); 0 = so bloqueia entradas }
+
+var
+  v_VWAP_Diaria        : Float;
+  v_Dist_VWAP          : Float;
+  v_Dist_VWAP_Quad     : Float;
+  v_Desvio_Padrao      : Float;
+  v_Banda_Superior     : Float;
+  v_Banda_Inferior     : Float;
+  v_TrueRange          : Float;
+  v_ATR                : Float;
+  v_Media_ATR          : Float;
+  v_Saldo_Agressao     : Float;
+  v_Media_Volume       : Float;
+  v_Desvio_Volume      : Float;
+  v_Volume_ZScore      : Float;
+  v_Regime_Mercado     : Integer;
+  v_Sinal_Compra       : Boolean;
+  v_Sinal_Venda        : Boolean;
+  v_Compra_Conf        : Boolean;
+  v_Venda_Conf         : Boolean;
+  v_Densidade_OK       : Boolean;
+  v_Aquecido           : Boolean;
+  v_Na_Noticia         : Boolean;
+  v_Pregao_Ativo       : Boolean;
+  v_Zerar              : Boolean;
+  v_Pode_Entrar        : Boolean;
+  v_Posicionado        : Boolean;
+  v_Estava_Posicionado : Boolean;
+  v_Barra_Ult_Entr     : Integer;
+  v_Barra_Ult_Saida    : Integer;
+  v_Entradas_Dia       : Integer;
+  v_Qtd                : Integer;
+
+  q_Log : Boolean;
+  q_Seq : Integer;
+
+function q_Flag(p_Valor : Boolean): Integer;
+begin
+  if p_Valor then Result := 1
+  else Result := 0;
+end;
+
+
+begin
+  q_Log := (Date = 1261021) or (Date = 1261026);
+  if q_Log then q_Seq := q_Seq + 1;
+  { ================= Indicadores (candle atual) ================= }
+  v_VWAP_Diaria    := VWAP(1);
+  v_Dist_VWAP      := Close - v_VWAP_Diaria;
+  v_Dist_VWAP_Quad := v_Dist_VWAP * v_Dist_VWAP;
+
+  if p_Modo_Banda = 1 then
+    v_Desvio_Padrao := Power(Media(p_Periodo_Desvio, v_Dist_VWAP_Quad), 0.5)
+  else
+    v_Desvio_Padrao := StdDevs(Close, p_Periodo_Desvio);
+
+  v_Banda_Superior := v_VWAP_Diaria + (p_Desvio_VWAP * v_Desvio_Padrao);
+  v_Banda_Inferior := v_VWAP_Diaria - (p_Desvio_VWAP * v_Desvio_Padrao);
+
+  v_TrueRange      := TrueRange;
+  v_ATR            := Media(p_Periodo_ATR, v_TrueRange);
+  v_Media_ATR      := Media(p_Periodo_Regime_ATR, v_ATR);
+  v_Saldo_Agressao := AgressionVolBalance;
+
+  v_Media_Volume   := Media(20, Volume);
+  v_Desvio_Volume  := StdDevs(Volume, 20);
+
+  { z-score do candle atual contra os 20 candles anteriores }
+  if v_Desvio_Volume[1] > 0 then
+    v_Volume_ZScore := (Volume - v_Media_Volume[1]) / v_Desvio_Volume[1]
+  else
+    v_Volume_ZScore := 0;
+
+  { 1 = tendencia; 2 = reversao por exaustao; 0 = ruido/bloqueado }
+  if (v_ATR > v_Media_ATR)
+     and (Abs(Close - v_VWAP_Diaria) > (1.2 * v_Desvio_Padrao)) then
+    v_Regime_Mercado := 1
+  else if ((Low <= v_Banda_Inferior) or (High >= v_Banda_Superior))
+          and (v_Volume_ZScore > p_ZScore_Vol) then
+    v_Regime_Mercado := 2
+  else
+    v_Regime_Mercado := 0;
+
+  v_Sinal_Compra :=
+    ((v_Regime_Mercado = 1) and (Close > v_VWAP_Diaria)
+     and (v_Saldo_Agressao > 0) and (v_Volume_ZScore > p_ZScore_Vol))
+    or
+    ((v_Regime_Mercado = 2) and (Low <= v_Banda_Inferior)
+     and (v_Saldo_Agressao > 0));
+
+  v_Sinal_Venda :=
+    ((v_Regime_Mercado = 1) and (Close < v_VWAP_Diaria)
+     and (v_Saldo_Agressao < 0) and (v_Volume_ZScore > p_ZScore_Vol))
+    or
+    ((v_Regime_Mercado = 2) and (High >= v_Banda_Superior)
+     and (v_Saldo_Agressao < 0));
+
+  { ================= Sinal confirmado (candle fechado) ================= }
+  if p_Exec_Tick = 1 then
+  begin
+    v_Compra_Conf  := v_Sinal_Compra[1];
+    v_Venda_Conf   := v_Sinal_Venda[1];
+    v_Densidade_OK := Trades[1] > p_MinimoTrades;
+  end
+  else
+  begin
+    v_Compra_Conf  := v_Sinal_Compra;
+    v_Venda_Conf   := v_Sinal_Venda;
+    v_Densidade_OK := Trades > p_MinimoTrades;
+  end;
+
+  v_Aquecido := CurrentBar > (p_Periodo_ATR + p_Periodo_Regime_ATR + p_Periodo_Desvio + 2);
+
+  { ================= Controle de estado ================= }
+  if Date <> Date[1] then
+    v_Entradas_Dia := 0;
+
+  v_Posicionado := IsBought or IsSold;
+  if v_Estava_Posicionado and (not v_Posicionado) then
+    v_Barra_Ult_Saida := CurrentBar;
+
+  { ================= Filtros de horario ================= }
+  v_Na_Noticia :=
+    ((p_Noticia1_Ini > 0) and (Time >= p_Noticia1_Ini) and (Time <= p_Noticia1_Fim))
+    or
+    ((p_Noticia2_Ini > 0) and (Time >= p_Noticia2_Ini) and (Time <= p_Noticia2_Fim));
+
+  v_Pregao_Ativo := (Time >= p_Hora_Inicio) and (Time <= p_Hora_Zeragem);
+
+  v_Zerar := (not v_Pregao_Ativo)
+             or (v_Na_Noticia and (p_Zerar_Na_Noticia = 1));
+
+  v_Pode_Entrar := v_Pregao_Ativo
+                   and (Time <= p_Hora_Fim_Entradas)
+                   and (not v_Na_Noticia)
+                   and v_Densidade_OK
+                   and v_Aquecido
+                   and (CurrentBar <> v_Barra_Ult_Entr)
+                   and (CurrentBar >= v_Barra_Ult_Saida + p_Barras_Espera)
+                   and (v_Entradas_Dia < p_Max_Entradas_Dia);
+
+  v_Qtd := Abs(Position);
+  if v_Qtd = 0 then
+    v_Qtd := p_Lote;
+
+  if q_Log then
+    ConsoleLog("V58;AVALIACAO"
+             + ";data=" + FloatToString(Date, 0)
+             + ";hora=" + FloatToString(Time, 0)
+             + ";barra=" + FloatToString(CurrentBar, 0)
+             + ";seq=" + FloatToString(q_Seq, 0)
+             + ";posicao=" + FloatToString(PositionQty, 0)
+             + ";preco_medio=" + FloatToString(Price, 2)
+             + ";anterior=" + FloatToString(q_Flag(v_Estava_Posicionado), 0)
+             + ";entradas=" + FloatToString(v_Entradas_Dia, 0)
+             + ";ultima_entrada=" + FloatToString(v_Barra_Ult_Entr, 0)
+             + ";ultima_saida=" + FloatToString(v_Barra_Ult_Saida, 0)
+             + ";pode=" + FloatToString(q_Flag(v_Pode_Entrar), 0)
+             + ";pendentes=" + FloatToString(q_Flag(HasPendingOrders), 0)
+             + ";aquecido=" + FloatToString(q_Flag(v_Aquecido), 0)
+             + ";densidade=" + FloatToString(q_Flag(v_Densidade_OK), 0)
+             + ";zerar=" + FloatToString(q_Flag(v_Zerar), 0)
+             + ";compra=" + FloatToString(q_Flag(v_Compra_Conf), 0)
+             + ";venda=" + FloatToString(q_Flag(v_Venda_Conf), 0)
+             + ";regime=" + FloatToString(v_Regime_Mercado, 0)
+             + ";trades=" + FloatToString(Trades, 0)
+             + ";trades_1=" + FloatToString(Trades[1], 0)
+             + ";vwap=" + FloatToString(v_VWAP_Diaria, 6)
+             + ";atr=" + FloatToString(v_ATR, 6)
+             + ";media_atr=" + FloatToString(v_Media_ATR, 6)
+             + ";desvio_banda=" + FloatToString(v_Desvio_Padrao, 6)
+             + ";agressao=" + FloatToString(v_Saldo_Agressao, 4)
+             + ";media_volume_1=" + FloatToString(v_Media_Volume[1], 6)
+             + ";desvio_volume_1=" + FloatToString(v_Desvio_Volume[1], 6)
+             + ";zvolume=" + FloatToString(v_Volume_ZScore, 6), clYellow);
+
+  { ================= Ordens ================= }
+  if v_Zerar then
+  begin
+    if IsBought then
+      begin
+        if q_Log then
+          ConsoleLog("V58;SAIDA_MERCADO_VENDA"
+                   + ";data=" + FloatToString(Date, 0)
+                   + ";hora=" + FloatToString(Time, 0)
+                   + ";barra=" + FloatToString(CurrentBar, 0)
+                   + ";seq=" + FloatToString(q_Seq, 0)
+                   + ";qtd=" + FloatToString(v_Qtd, 0), clYellow);
+        SellToCoverAtMarket(v_Qtd);
+      end
+    else if IsSold then
+      begin
+        if q_Log then
+          ConsoleLog("V58;SAIDA_MERCADO_COMPRA"
+                   + ";data=" + FloatToString(Date, 0)
+                   + ";hora=" + FloatToString(Time, 0)
+                   + ";barra=" + FloatToString(CurrentBar, 0)
+                   + ";seq=" + FloatToString(q_Seq, 0)
+                   + ";qtd=" + FloatToString(v_Qtd, 0), clYellow);
+        BuyToCoverAtMarket(v_Qtd);
+      end
+    else if HasPendingOrders then
+      begin
+        if q_Log then
+          ConsoleLog("V58;CANCELA_PENDENTES"
+                   + ";data=" + FloatToString(Date, 0)
+                   + ";hora=" + FloatToString(Time, 0)
+                   + ";barra=" + FloatToString(CurrentBar, 0)
+                   + ";seq=" + FloatToString(q_Seq, 0), clYellow);
+        CancelPendingOrders;
+      end;
+  end
+  else if IsBought then
+  begin
+    if q_Log then
+      ConsoleLog("V58;ALVO_VENDA"
+               + ";data=" + FloatToString(Date, 0)
+               + ";hora=" + FloatToString(Time, 0)
+               + ";barra=" + FloatToString(CurrentBar, 0)
+               + ";seq=" + FloatToString(q_Seq, 0)
+               + ";qtd=" + FloatToString(v_Qtd, 0)
+               + ";limite=" + FloatToString(BuyPrice + p_Alvo_Pontos, 2), clYellow);
+    SellToCoverLimit(BuyPrice + p_Alvo_Pontos, v_Qtd);
+    if q_Log then
+      ConsoleLog("V58;STOP_VENDA"
+               + ";data=" + FloatToString(Date, 0)
+               + ";hora=" + FloatToString(Time, 0)
+               + ";barra=" + FloatToString(CurrentBar, 0)
+               + ";seq=" + FloatToString(q_Seq, 0)
+               + ";qtd=" + FloatToString(v_Qtd, 0)
+               + ";gatilho=" + FloatToString(BuyPrice - p_Stop_Pontos, 2)
+               + ";limite=" + FloatToString(BuyPrice - p_Stop_Pontos - p_Offset_Limite_Stop, 2), clYellow);
+    SellToCoverStop(BuyPrice - p_Stop_Pontos,
+                    BuyPrice - p_Stop_Pontos - p_Offset_Limite_Stop,
+                    v_Qtd);
+  end
+  else if IsSold then
+  begin
+    if q_Log then
+      ConsoleLog("V58;ALVO_COMPRA"
+               + ";data=" + FloatToString(Date, 0)
+               + ";hora=" + FloatToString(Time, 0)
+               + ";barra=" + FloatToString(CurrentBar, 0)
+               + ";seq=" + FloatToString(q_Seq, 0)
+               + ";qtd=" + FloatToString(v_Qtd, 0)
+               + ";limite=" + FloatToString(SellPrice - p_Alvo_Pontos, 2), clYellow);
+    BuyToCoverLimit(SellPrice - p_Alvo_Pontos, v_Qtd);
+    if q_Log then
+      ConsoleLog("V58;STOP_COMPRA"
+               + ";data=" + FloatToString(Date, 0)
+               + ";hora=" + FloatToString(Time, 0)
+               + ";barra=" + FloatToString(CurrentBar, 0)
+               + ";seq=" + FloatToString(q_Seq, 0)
+               + ";qtd=" + FloatToString(v_Qtd, 0)
+               + ";gatilho=" + FloatToString(SellPrice + p_Stop_Pontos, 2)
+               + ";limite=" + FloatToString(SellPrice + p_Stop_Pontos + p_Offset_Limite_Stop, 2), clYellow);
+    BuyToCoverStop(SellPrice + p_Stop_Pontos,
+                   SellPrice + p_Stop_Pontos + p_Offset_Limite_Stop,
+                   v_Qtd);
+  end
+  else if v_Pode_Entrar then
+  begin
+    if HasPendingOrders then
+      begin
+        if q_Log then
+          ConsoleLog("V58;CANCELA_PENDENTES"
+                   + ";data=" + FloatToString(Date, 0)
+                   + ";hora=" + FloatToString(Time, 0)
+                   + ";barra=" + FloatToString(CurrentBar, 0)
+                   + ";seq=" + FloatToString(q_Seq, 0), clYellow);
+        CancelPendingOrders;
+      end
+    else if v_Compra_Conf then
+    begin
+      if q_Log then
+        ConsoleLog("V58;ENTRADA_COMPRA"
+                 + ";data=" + FloatToString(Date, 0)
+                 + ";hora=" + FloatToString(Time, 0)
+                 + ";barra=" + FloatToString(CurrentBar, 0)
+                 + ";seq=" + FloatToString(q_Seq, 0)
+                 + ";qtd=" + FloatToString(p_Lote, 0), clYellow);
+      BuyAtMarket(p_Lote);
+      v_Barra_Ult_Entr := CurrentBar;
+      v_Entradas_Dia   := v_Entradas_Dia + 1;
+    end
+    else if v_Venda_Conf then
+    begin
+      if q_Log then
+        ConsoleLog("V58;ENTRADA_VENDA"
+                 + ";data=" + FloatToString(Date, 0)
+                 + ";hora=" + FloatToString(Time, 0)
+                 + ";barra=" + FloatToString(CurrentBar, 0)
+                 + ";seq=" + FloatToString(q_Seq, 0)
+                 + ";qtd=" + FloatToString(p_Lote, 0), clYellow);
+      SellShortAtMarket(p_Lote);
+      v_Barra_Ult_Entr := CurrentBar;
+      v_Entradas_Dia   := v_Entradas_Dia + 1;
+    end;
+  end
+  else if HasPendingOrders and (CurrentBar <> v_Barra_Ult_Entr) then
+    begin
+      if q_Log then
+        ConsoleLog("V58;CANCELA_PENDENTES"
+                 + ";data=" + FloatToString(Date, 0)
+                 + ";hora=" + FloatToString(Time, 0)
+                 + ";barra=" + FloatToString(CurrentBar, 0)
+                 + ";seq=" + FloatToString(q_Seq, 0), clYellow);
+      CancelPendingOrders;
+    end;
+
+  v_Estava_Posicionado := v_Posicionado;
+end;

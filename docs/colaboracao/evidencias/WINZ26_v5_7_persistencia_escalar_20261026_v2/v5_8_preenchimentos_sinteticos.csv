@@ -1,0 +1,9 @@
+versao_motor;ordem_execucao;barra;ordem_ntsl;acao;preco_sintetico;quantidade;posicao_apos
+antes;1;4;buyatmarket;long;100.0;1;1
+antes;2;4;selltocoverstop;exit_long;95.0;1;0
+antes;3;5;buyatmarket;long;98.0;1;1
+antes;4;9;fim_pregao;exit_long;101.0;1;0
+depois;1;4;buyatmarket;long;100.0;1;1
+depois;2;4;selltocoverstop;exit_long;95.0;1;0
+depois;3;8;buyatmarket;long;102.0;1;1
+depois;4;9;selltocoverstop;exit_long;97.0;1;0

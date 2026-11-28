@@ -1,0 +1,666 @@
+FONTES PUBLICAVEIS PARA REVISAO NO GEMINI
+WINZ26 v5.7 - persistencia NTSL e regressao com configuracao unica
+Motor validado: 6aeb1f95d8642f7057b04a0dba9bd1612b6ee5fe
+Sondas e testes: e7921ef9759ffa783c4aba18cc51b81109a17c58
+PR https://github.com/thiagozonda1989-stack/simuladorCotacao/pull/2
+Achado do Claude https://github.com/thiagozonda1989-stack/simuladorCotacao/pull/2#issuecomment-7048493016
+Audite a ordem observada no console, a atribuicao de anterior e a hipotese da sonda.
+Diferencie a captura historica, a sonda sintetica do simulador e a sonda executada pelo usuario no Profit em modo Debug.
+Resultado confirmado na sonda nativa: seq 2 escreve 1; seq 3, zerada, le antes=1. No simulador sintetico o fechamento le antes=0.
+
+=== docs/colaboracao/evidencias/WINZ26_v5_7_persistencia_20261026_v1/README.md ===
+
+# WINZ26 v5.7 — persistência entre avaliações
+
+Motor e comparador executados a partir de `742b093e29cab338c9345cbe5b42e5de0e4c6f8d`, com o mesmo código validado em `6aeb1f95d8642f7057b04a0dba9bd1612b6ee5fe`. Código da sonda, teste e catálogo em `e7921ef9759ffa783c4aba18cc51b81109a17c58`. Ambiente Windows 10, Python 3.11.3 e pandas 3.1.1.
+
+## Fonte da captura e cálculo de `anterior`
+
+Foram encontradas três cópias do download `Modelo_Unificado_Refatorado_v5_7_Captura_Paridade.ntsl`, incluindo duas com sufixos de download. As três têm 8.810 bytes e SHA-256 `53d165350fd66902df9d0e7e340f8dc07335c47d8d47413a3cf1057aec18f018`. O fonte foi versionado byte a byte e entrou no catálogo e no manifesto. No Profit, a estratégia aberta que mostrou os logs tinha o nome de aba com sufixo `V2`. O TXT apresenta a estrutura, os campos, a data e a janela de log do fonte encontrado. O console original não registra o hash do programa carregado, então a associação usa esses cruzamentos e o nome da variante registrado no relatório. [Fonte recuperado](../../../../estrategias/execucao/Modelo_Unificado_Refatorado_v5_7_Captura_Paridade.ntsl) · [Relatório da captura](../../CAPTURA_PARIDADE_WINZ26_20261026.md)
+
+O SHA-256 do TXT original coincidiu com `65a90e3cc66c1464e0fba0be862036ba568604eadeb1082741cc24212e9de6a2`. Foram 298 linhas, 288 mensagens de paridade e duas sequências idênticas de 144 mensagens. A primeira sequência correspondeu linha a linha aos 144 eventos publicados, com 75 avaliações. Conferimos ordem, data, hora da barra, `CurrentBar`, número da avaliação, evento e os campos que a publicação reteve. O original e os campos retirados na publicação permanecem no Windows. [CSV de eventos publicado](../../captura_paridade_win_20261026_eventos.csv)
+
+Em cada avaliação, o fonte lê `PositionQty` em `v_PosicaoAtual` (linha 46). Com o log ativo, incrementa `v_AvaliacaoLog` e escreve `POSICAO_OBSERVADA` quando a posição mudou. O campo `anterior` é o valor de `v_PosicaoAnterior` lido antes da atribuição. Logo após o bloco de log, na linha 64, executa `v_PosicaoAnterior := v_PosicaoAtual` em toda avaliação, inclusive fora da janela de log. Isso ocorre antes dos indicadores, dos sinais e das chamadas de ordens. A variável é escalar e o cálculo não usa `[1]` nem consulta uma operação anterior.
+
+No recorte histórico, a avaliação 8, com rótulo 13:03, observou +1 e atribuiu +1. A avaliação 9 de 13:04, já zerada, registrou `anterior=1`. O par 10/11 repete o padrão com rótulos 13:04 e 13:05. Trata-se de evidência histórica para o comportamento dessa variável na variante de captura. A coluna de valor atribuído do recorte é reconstruída do fonte e da posição registrada, pois o console original só escreve `anterior` quando há transição. O recorte mantém o rótulo do console. Horários de execução não são inferidos a partir dele. [Avaliações 7–11](profit_captura_historica_recorte.csv) · [Achado do Claude](https://github.com/thiagozonda1989-stack/simuladorCotacao/pull/2#issuecomment-7048493016)
+
+## Sonda mínima de persistência
+
+No simulador, uma compra abriu a 100 e o stop preencheu a 95 dentro da barra sintética de 13:04. A avaliação extra leu `v_Anterior=0` e atribuiu `1`. A avaliação regular seguinte, já zerada, leu `0` e atribuiu `0`. A sequência que o NTSL gravou também voltou para 2, pois a atribuição da avaliação extra foi descartada. A coluna `ordem_console` preserva a ordem real das mensagens. [Log sintético executado](simulador_sonda_log.csv)
+
+| Ordem do log | Fase no simulador | Rótulo NTSL | `seq` | Posição | Antes | Depois |
+|---:|---|---|---:|---:|---:|---:|
+| 1 | Regular, solicita compra | 13:03 | 1 | 0 | 0 | 0 |
+| 2 | Pós-preenchimento na abertura de 13:04 | 13:03 | 2 | +1 | 0 | 1 |
+| 3 | Regular, depois do stop | 13:04 | 2 | 0 | 0 | 0 |
+| 4 | Regular | 13:05 | 3 | 0 | 0 | 0 |
+
+### Resultado no Profit
+
+O usuário executou a sonda no Profit em modo Debug e forneceu as quatro linhas do console. O CSV conserva a ordem original e normaliza os separadores de milhar, a data e a hora. Os horários são rótulos da barra da avaliação NTSL.
+
+| Ordem do log | Hora da barra | `CurrentBar` | `seq` | Posição | Antes | Depois |
+|---:|---:|---:|---:|---:|---:|---:|
+| 1 | 13:03 | 27005 | 1 | 0 | 0 | 0 |
+| 2 | 13:03 | 27005 | 2 | +1 | 0 | 1 |
+| 3 | 13:04 | 27006 | 3 | 0 | 1 | 0 |
+| 4 | 13:05 | 27007 | 4 | 0 | 0 | 0 |
+
+A avaliação extra comprada, de sequência 2, gravou `depois=1`. A avaliação regular zerada das 13:04, de sequência 3, leu `antes=1`. Isso confirma a persistência da variável escalar entre as duas avaliações neste Backtest. O simulador leu `antes=0` na passagem correspondente do caso sintético. A evidência se refere à sonda escalar. Uma alteração no motor requer teste de decisão dependente do estado e regressões de histórico, médias e ordens. [Log da sonda no Profit](profit_sonda_log.csv)
+
+### Reproduzir no Profit
+
+1. Abra a [sonda NTSL do Profit](sonda_persistencia_profit_v1_0.ntsl) como nova estratégia de execução no Editor. Compile e execute no **Backtest OHLC**, ativo **WINZ26**, período **1 minuto**, com histórico incluindo **26/10/2026**. Use quantidade e quantidade máxima 1, slippage zero e execução nos limites. A sonda tem a data, a janela 13:03–13:05, o stop de 350 pontos e o offset de 5 nos inputs.
+2. Copie somente as linhas iniciadas em `PERSISTENCIA;` do console, na ordem em que aparecem. Cada linha registra data e hora da barra, `CurrentBar`, `seq`, posição, valor antes e valor depois. Preserve a repetição de rótulos ou de `seq`. Use a ordem do console para distinguir as passagens.
+3. Verifique se a passagem extra comprada grava `depois=1` e se a passagem regular zerada seguinte lê `antes=1`. As duas passagens precisam aparecer na ordem do console para decidir a questão.
+
+## Regressões com configuração única
+
+As comparações usam as mesmas barras privadas do Profit, WINZ26 em 1 minuto, OHLC, timestamps na abertura em `America/Sao_Paulo`. Para **todas as execuções de estratégia e indicadores**, usei `--vwap-continuo-lacunas`. A comparação de indicadores e candidatos usa `--aquecimento 63 --aquecimento-por-segmento`. Essa opção filtra a comparação, enquanto o replay recebe todo o histórico exportado. Controles da estratégia, custos, slippage, latência, tick, volume financeiro e agressão de referência seguem a [rodada anterior](../WINZ26_v5_7_20261021_20261026_pos_preenchimento_v1/README.md). As exportações e os derivados privados foram reaproveitados, sem modificar os originais.
+
+| Pregão | Padrão | Proteção legada | Pós-preenchimento | Oito indicadores | Primeira barra elegível |
+|---|---:|---:|---:|---:|---|
+| 21/10/2026 | 10/10 | 10/10 | 10/10 | 502/502 cada | 10:03 |
+| 26/10/2026 | 8/12 | 11/12 | 12/12 | 463/463 cada | 10:42 |
+
+Os arquivos `execucoes.csv`, `candles.csv` e `eventos_ordens.csv` dos seis replays ficaram byte a byte iguais aos da rodada anterior para o mesmo modo. Em 26/10, a #182 continua comprada em um contrato de 176.815 a 176.465 às 13:05 na exportação. A diferença da camada de indicadores vem da configuração: com VWAP contínua e corte por segmento, 26/10 passa a ser medido nas 463 barras elegíveis, frente ao corte histórico por dia de 490 barras. A VWAP coincide nessa amostra. A cobertura continua parcial no pregão inteiro.
+
+| Pregão | Barras usadas | Período | Timestamps duplicados | Lacunas no período |
+|---|---:|---|---:|---|
+| 21/10 | 565 | 09:00–18:24 | 0 | 0 |
+| 26/10 | 553 | 09:03–18:24 | 0 | 9 minutos, 09:30–09:38 |
+
+A matriz publica somente contagens e os limites do recorte, com tolerância de 0,01 ponto para VWAP, ATR e média do ATR e igualdade para o regime. Saldo de agressão é referência injetada; conferir reconstrução independente requer a fonte apropriada. Para reproduzir a matriz, são precisos os CSVs privados de barras, plots e operações. Auditar ativação ou cancelamento intrabar ainda exige o histórico nativo de ordens em resolução subminuto. [Matriz](matriz_vwap_continua_segmento.csv)
+
+## Comandos reproduzíveis
+
+Comandos executados no Windows. Use um destino novo e as entradas privadas por pregão para a matriz. O JSON de inputs da v5.7 contém somente `{"p_Lote": 1}`.
+
+```powershell
+py -3.11 -m pytest -q
+$evid = 'docs/colaboracao/evidencias/WINZ26_v5_7_persistencia_20261026_v1'
+py -3.11 estrategia.py --csv "$evid/candles_sinteticos.csv" `
+  --ntsl "$evid/sonda_persistencia_simulador_v1_0.ntsl" --saida $saidaSonda `
+  --segundos 60 --formato ohlc --avaliacao-pos-preenchimento --rastrear-ordens
+
+$comum = @('--segundos','60','--formato','ohlc','--tick','5','--valor-ponto','0.2',
+           '--volume-financeiro-ntsl','--agressao-referencia-injetada','--vwap-continuo-lacunas')
+# $modo recebe @(), @('--protecao-no-candle-entrada') ou @('--avaliacao-pos-preenchimento').
+py -3.11 estrategia.py --csv $barrasPreparadas `
+  --ntsl estrategias/execucao/Modelo_Unificado_Refatorado_v5_7.ntsl `
+  --inputs $inputs --saida $replay @comum @modo --rastrear-ordens
+py -3.11 estrategia.py --csv $barrasPreparadas `
+  --ntsl estrategias/indicadores/indicador_paridade_modelo_unificado_v5_7_v1_0.ntsl `
+  --saida $plotsMotor @comum
+py -3.11 tools/comparar_paridade_mesmas_barras.py --profit-barras $barrasProfit `
+  --profit-indicadores $plotsProfit --profit-operacoes $operacoesProfit `
+  --barras-preparadas $barrasPreparadas --motor-indicadores "$plotsMotor/candles.csv" `
+  --motor-candles "$replay/candles.csv" --motor-execucoes "$replay/execucoes.csv" `
+  --data $dia --aquecimento 63 --aquecimento-por-segmento --saida $comparacao
+```
+
+A suíte passou com **57 testes** e 12 avisos conhecidos de timezone do pandas. Inclui a sonda sintética, o inventário de hashes NTSL e as regressões existentes de histórico, médias, proteções e duplicação de ordens. O motor e a v5.7 original mantêm os mesmos bytes que no SHA validado.
+
+## Inventário da publicação
+
+| Arquivo | Linhas de dados |
+|---|---:|
+| [Candles sintéticos](candles_sinteticos.csv) | 4 |
+| [Sonda para o Profit](sonda_persistencia_profit_v1_0.ntsl) | Código |
+| [Sonda para o simulador](sonda_persistencia_simulador_v1_0.ntsl) | Código |
+| [Log sintético normalizado](simulador_sonda_log.csv) | 4 |
+| [Log da sonda executada no Profit](profit_sonda_log.csv) | 4 |
+| [Recorte histórico derivado do console Profit](profit_captura_historica_recorte.csv) | 5 |
+| [Matriz integrada](matriz_vwap_continua_segmento.csv) | 6 |
+
+O [TXT para o Gemini](fontes_gemini.txt) incorpora estas fontes e os 144 eventos já divulgados. A normalização retém apenas identificadores de avaliação, relógios, posição, estado da variável e métricas agregadas. Conta, titular, caminhos privados e séries brutas ficaram fora da publicação. [SHA-256 dos arquivos publicados](SHA256SUMS.txt)
+
+=== estrategias/execucao/Modelo_Unificado_Refatorado_v5_7_Captura_Paridade.ntsl ===
+
+{ Modelo Unificado Refatorado v5.7 - Captura de paridade no Profit }
+{ Funcoes e assinaturas alinhadas ao Manual NTSL consultado em 08/11/2026. }
+
+input
+  p_Periodo_ATR(14);
+  p_Periodo_Regime_ATR(50);
+  p_Desvio_VWAP(2.1);
+  p_ZScore_Vol(1.5);
+  p_Stop_Pontos(350);
+  p_Alvo_Pontos(450);
+  p_MinimoTrades(100);
+  p_Lote(1);
+  p_Offset_Limite_Stop(5);
+  p_LogData(1261026);  { 26/10/2026; 0 registra qualquer data }
+  p_LogInicio(1258);
+  p_LogFim(1407);
+
+var
+  v_VWAP_Diaria       : Float;
+  v_Desvio_Padrao     : Float;
+  v_Banda_Superior    : Float;
+  v_Banda_Inferior    : Float;
+  v_TrueRange         : Float;
+  v_ATR               : Float;
+  v_Media_ATR         : Float;
+  v_Saldo_Agressao    : Float;
+  v_Media_Volume      : Float;
+  v_Desvio_Volume     : Float;
+  v_Volume_ZScore     : Float;
+  v_Regime_Mercado    : Integer;
+  v_Filtro_Horario    : Boolean;
+  v_Densidade_OK      : Boolean;
+  v_Sinal_Compra      : Boolean;
+  v_Sinal_Venda       : Boolean;
+
+  v_LogAtivo          : Boolean;
+  v_PosicaoAnterior   : Float;
+  v_PosicaoAtual      : Float;
+  v_PrecoMedioLog     : Float;
+  v_ChaveLog          : String;
+  v_AvaliacaoLog      : Integer;
+
+begin
+  v_LogAtivo := ((p_LogData = 0) or (Date = p_LogData))
+                and (Time >= p_LogInicio) and (Time <= p_LogFim);
+  v_PosicaoAtual := PositionQty;
+  v_PrecoMedioLog := 0;
+  if IsBought then
+    v_PrecoMedioLog := BuyPrice
+  else if IsSold then
+    v_PrecoMedioLog := SellPrice;
+
+  if v_LogAtivo then
+  begin
+    v_AvaliacaoLog := v_AvaliacaoLog + 1;
+    v_ChaveLog := "barra=" + FloatToString(CurrentBar, 0)
+                  + "|avaliacao=" + FloatToString(v_AvaliacaoLog, 0);
+    if v_PosicaoAtual <> v_PosicaoAnterior then
+      ConsoleLog(FloatToString(Date, 0) + ";" + FloatToString(Time, 0) + ";" + v_ChaveLog + ";PARIDADE;POSICAO_OBSERVADA"
+                 + ";anterior=" + FloatToString(v_PosicaoAnterior, 0)
+                 + ";atual=" + FloatToString(v_PosicaoAtual, 0)
+                 + ";preco_medio_atual=" + FloatToString(v_PrecoMedioLog, 2), clYellow);
+  end;
+  v_PosicaoAnterior := v_PosicaoAtual;
+
+  v_Filtro_Horario := (Time >= 0915) and (Time <= 1700)
+                      and not ((Time >= 1025) and (Time <= 1035))
+                      and not ((Time >= 1425) and (Time <= 1435));
+  v_Densidade_OK := Trades > p_MinimoTrades;
+
+  v_VWAP_Diaria    := VWAP(1);
+  v_Desvio_Padrao  := StdDevs(Close, 20);
+  v_Banda_Superior := v_VWAP_Diaria + (p_Desvio_VWAP * v_Desvio_Padrao);
+  v_Banda_Inferior := v_VWAP_Diaria - (p_Desvio_VWAP * v_Desvio_Padrao);
+  v_TrueRange      := TrueRange;
+  v_ATR            := Media(p_Periodo_ATR, v_TrueRange);
+  v_Media_ATR      := Media(p_Periodo_Regime_ATR, v_ATR);
+  v_Saldo_Agressao := AgressionVolBalance;
+  v_Media_Volume   := Media(20, Volume);
+  v_Desvio_Volume  := StdDevs(Volume, 20);
+
+  if v_Desvio_Volume > 0 then
+    v_Volume_ZScore := (Volume - v_Media_Volume) / v_Desvio_Volume
+  else
+    v_Volume_ZScore := 0;
+
+  { 1 = tendencia; 2 = reversao por exaustao; 0 = ruido/bloqueado }
+  if (v_ATR > v_Media_ATR)
+     and (Abs(Close - v_VWAP_Diaria) > (1.2 * v_Desvio_Padrao)) then
+    v_Regime_Mercado := 1
+  else if ((Low <= v_Banda_Inferior) or (High >= v_Banda_Superior))
+          and (v_Volume_ZScore > p_ZScore_Vol) then
+    v_Regime_Mercado := 2
+  else
+    v_Regime_Mercado := 0;
+
+  { Tendencia: segue preco e agressao. Exaustao: reverte nas bandas. }
+  v_Sinal_Compra :=
+    ((v_Regime_Mercado = 1) and (Close > v_VWAP_Diaria)
+     and (v_Saldo_Agressao > 0) and (v_Volume_ZScore > p_ZScore_Vol))
+    or
+    ((v_Regime_Mercado = 2) and (Low <= v_Banda_Inferior)
+     and (v_Saldo_Agressao > 0));
+
+  v_Sinal_Venda :=
+    ((v_Regime_Mercado = 1) and (Close < v_VWAP_Diaria)
+     and (v_Saldo_Agressao < 0) and (v_Volume_ZScore > p_ZScore_Vol))
+    or
+    ((v_Regime_Mercado = 2) and (High >= v_Banda_Superior)
+     and (v_Saldo_Agressao < 0));
+
+  if v_LogAtivo then
+  begin
+    ConsoleLog(FloatToString(Date, 0) + ";" + FloatToString(Time, 0) + ";" + v_ChaveLog
+               + ";PARIDADE;AVALIACAO"
+               + ";abertura=" + FloatToString(Open, 2)
+               + ";maxima=" + FloatToString(High, 2)
+               + ";minima=" + FloatToString(Low, 2)
+               + ";fechamento=" + FloatToString(Close, 2)
+               + ";posicao=" + FloatToString(v_PosicaoAtual, 0)
+               + ";preco_medio=" + FloatToString(v_PrecoMedioLog, 2)
+               + ";regime=" + FloatToString(v_Regime_Mercado, 0)
+               + ";trades=" + FloatToString(Trades, 0)
+               + ";vwap=" + FloatToString(v_VWAP_Diaria, 2)
+               + ";agressao=" + FloatToString(v_Saldo_Agressao, 2)
+               + ";zvolume=" + FloatToString(v_Volume_ZScore, 4), clYellow);
+    if v_Sinal_Compra then
+      ConsoleLog(FloatToString(Date, 0) + ";" + FloatToString(Time, 0) + ";" + v_ChaveLog
+                 + ";PARIDADE;SINAL_COMPRA", clYellow);
+    if v_Sinal_Venda then
+      ConsoleLog(FloatToString(Date, 0) + ";" + FloatToString(Time, 0) + ";" + v_ChaveLog
+                 + ";PARIDADE;SINAL_VENDA", clYellow);
+    if HasPendingOrders then
+      ConsoleLog(FloatToString(Date, 0) + ";" + FloatToString(Time, 0) + ";" + v_ChaveLog
+                 + ";PARIDADE;ORDENS_PENDENTES", clYellow);
+  end;
+
+  if (not v_Filtro_Horario) or (not v_Densidade_OK) then
+  begin
+    if HasPendingOrders then
+    begin
+      if v_LogAtivo then
+        ConsoleLog(FloatToString(Date, 0) + ";" + FloatToString(Time, 0) + ";" + v_ChaveLog + ";PARIDADE;SOLICITA_CANCELAMENTO", clYellow);
+      CancelPendingOrders;
+    end;
+    if IsBought then
+    begin
+      if v_LogAtivo then
+        ConsoleLog(FloatToString(Date, 0) + ";" + FloatToString(Time, 0) + ";" + v_ChaveLog + ";PARIDADE;SOLICITA_SAIDA_MERCADO_VENDA" + ";qtd=" + FloatToString(p_Lote, 2), clYellow);
+      SellToCoverAtMarket(p_Lote);
+    end
+    else if IsSold then
+    begin
+      if v_LogAtivo then
+        ConsoleLog(FloatToString(Date, 0) + ";" + FloatToString(Time, 0) + ";" + v_ChaveLog + ";PARIDADE;SOLICITA_SAIDA_MERCADO_COMPRA" + ";qtd=" + FloatToString(p_Lote, 2), clYellow);
+      BuyToCoverAtMarket(p_Lote);
+    end;
+  end
+  else
+  begin
+    if IsBought then
+    begin
+      if v_LogAtivo then
+        ConsoleLog(FloatToString(Date, 0) + ";" + FloatToString(Time, 0) + ";" + v_ChaveLog + ";PARIDADE;SOLICITA_ALVO_VENDA"
+                   + ";qtd=" + FloatToString(p_Lote, 2)
+                   + ";limite=" + FloatToString(BuyPrice + p_Alvo_Pontos, 2), clYellow);
+      SellToCoverLimit(BuyPrice + p_Alvo_Pontos, p_Lote);
+      if v_LogAtivo then
+        ConsoleLog(FloatToString(Date, 0) + ";" + FloatToString(Time, 0) + ";" + v_ChaveLog + ";PARIDADE;SOLICITA_STOP_VENDA"
+                   + ";qtd=" + FloatToString(p_Lote, 2)
+                   + ";gatilho=" + FloatToString(BuyPrice - p_Stop_Pontos, 2)
+                   + ";limite=" + FloatToString(BuyPrice - p_Stop_Pontos - p_Offset_Limite_Stop, 2), clYellow);
+      SellToCoverStop(BuyPrice - p_Stop_Pontos,
+                      BuyPrice - p_Stop_Pontos - p_Offset_Limite_Stop,
+                      p_Lote);
+    end
+    else if IsSold then
+    begin
+      if v_LogAtivo then
+        ConsoleLog(FloatToString(Date, 0) + ";" + FloatToString(Time, 0) + ";" + v_ChaveLog + ";PARIDADE;SOLICITA_ALVO_COMPRA"
+                   + ";qtd=" + FloatToString(p_Lote, 2)
+                   + ";limite=" + FloatToString(SellPrice - p_Alvo_Pontos, 2), clYellow);
+      BuyToCoverLimit(SellPrice - p_Alvo_Pontos, p_Lote);
+      if v_LogAtivo then
+        ConsoleLog(FloatToString(Date, 0) + ";" + FloatToString(Time, 0) + ";" + v_ChaveLog + ";PARIDADE;SOLICITA_STOP_COMPRA"
+                   + ";qtd=" + FloatToString(p_Lote, 2)
+                   + ";gatilho=" + FloatToString(SellPrice + p_Stop_Pontos, 2)
+                   + ";limite=" + FloatToString(SellPrice + p_Stop_Pontos + p_Offset_Limite_Stop, 2), clYellow);
+      BuyToCoverStop(SellPrice + p_Stop_Pontos,
+                     SellPrice + p_Stop_Pontos + p_Offset_Limite_Stop,
+                     p_Lote);
+    end
+    else if not HasPendingOrders then
+    begin
+      if v_Sinal_Compra then
+      begin
+        if v_LogAtivo then
+          ConsoleLog(FloatToString(Date, 0) + ";" + FloatToString(Time, 0) + ";" + v_ChaveLog + ";PARIDADE;SOLICITA_ENTRADA_COMPRA" + ";qtd=" + FloatToString(p_Lote, 2), clYellow);
+        BuyAtMarket(p_Lote);
+      end
+      else if v_Sinal_Venda then
+      begin
+        if v_LogAtivo then
+          ConsoleLog(FloatToString(Date, 0) + ";" + FloatToString(Time, 0) + ";" + v_ChaveLog + ";PARIDADE;SOLICITA_ENTRADA_VENDA" + ";qtd=" + FloatToString(p_Lote, 2), clYellow);
+        SellShortAtMarket(p_Lote);
+      end;
+    end;
+  end;
+  Plot(PositionQty);
+  if IsBought then
+    Plot2(BuyPrice)
+  else if IsSold then
+    Plot2(SellPrice)
+  else
+    Plot2(0);
+end;
+
+=== docs/colaboracao/evidencias/WINZ26_v5_7_persistencia_20261026_v1/sonda_persistencia_profit_v1_0.ntsl ===
+
+{ Sonda de persistencia NTSL. Executar exclusivamente no backtest OHLC. }
+
+input
+  p_Data(1261026);
+  p_HoraEntrada(1303);
+  p_FimLog(1305);
+  p_Stop(350);
+  p_Offset(5);
+
+var
+  v_Anterior : Integer;
+  v_Antes    : Integer;
+  v_Seq      : Integer;
+
+begin
+  if (Date = p_Data) and (Time >= p_HoraEntrada) and (Time <= p_FimLog) then
+  begin
+    v_Seq := v_Seq + 1;
+    v_Antes := v_Anterior;
+
+    if IsBought then
+      SellToCoverStop(BuyPrice - p_Stop, BuyPrice - p_Stop - p_Offset, 1)
+    else if (Time = p_HoraEntrada) and not HasPendingOrders then
+      BuyAtMarket(1);
+
+    if IsBought then
+      v_Anterior := 1
+    else
+      v_Anterior := 0;
+
+    ConsoleLog("PERSISTENCIA;data=" + FloatToString(Date, 0)
+               + ";hora=" + FloatToString(Time, 0)
+               + ";barra=" + FloatToString(CurrentBar, 0)
+               + ";seq=" + FloatToString(v_Seq, 0)
+               + ";posicao=" + FloatToString(PositionQty, 0)
+               + ";antes=" + FloatToString(v_Antes, 0)
+               + ";depois=" + FloatToString(v_Anterior, 0), clYellow);
+  end;
+end;
+
+=== docs/colaboracao/evidencias/WINZ26_v5_7_persistencia_20261026_v1/sonda_persistencia_simulador_v1_0.ntsl ===
+
+{ Sonda de persistencia NTSL. Fixture sintetica para o simulador OHLC. }
+
+input
+  p_Data(1261026);
+  p_HoraEntrada(1303);
+  p_FimLog(1305);
+  p_Stop(5);
+  p_Offset(5);
+
+var
+  v_Anterior : Integer;
+  v_Antes    : Integer;
+  v_Seq      : Integer;
+
+begin
+  if (Date = p_Data) and (Time >= p_HoraEntrada) and (Time <= p_FimLog) then
+  begin
+    v_Seq := v_Seq + 1;
+    v_Antes := v_Anterior;
+
+    if IsBought then
+      SellToCoverStop(BuyPrice - p_Stop, BuyPrice - p_Stop - p_Offset, 1)
+    else if (Time = p_HoraEntrada) and not HasPendingOrders then
+      BuyAtMarket(1);
+
+    if IsBought then
+      v_Anterior := 1
+    else
+      v_Anterior := 0;
+
+    ConsoleLog("PERSISTENCIA;data=" + Date
+               + ";hora=" + Time
+               + ";barra=" + CurrentBar
+               + ";seq=" + v_Seq
+               + ";posicao=" + PositionQty
+               + ";antes=" + v_Antes
+               + ";depois=" + v_Anterior);
+  end;
+end;
+
+=== docs/colaboracao/evidencias/WINZ26_v5_7_persistencia_20261026_v1/candles_sinteticos.csv ===
+
+timestamp;abertura;maxima;minima;fechamento
+2026-10-26T13:02:00-03:00;100;102;99;101
+2026-10-26T13:03:00-03:00;100;102;99;101
+2026-10-26T13:04:00-03:00;100;101;94;97
+2026-10-26T13:05:00-03:00;92;93;86;88
+
+=== docs/colaboracao/evidencias/WINZ26_v5_7_persistencia_20261026_v1/simulador_sonda_log.csv ===
+
+ordem_console;fase;rotulo_barra_contexto;hora_barra_contexto;seq_ntsl;posicao;antes;depois
+1;regular;2;13:03;1;0;0;0
+2;pos_preenchimento;2;13:03;2;1;0;1
+3;regular;3;13:04;2;0;0;0
+4;regular;4;13:05;3;0;0;0
+
+=== docs/colaboracao/evidencias/WINZ26_v5_7_persistencia_20261026_v1/profit_sonda_log.csv ===
+
+ordem_console;data;hora_barra_profit;rotulo_barra_profit;seq_ntsl;posicao;antes;depois
+1;2026-10-26;13:03;27005;1;0;0;0
+2;2026-10-26;13:03;27005;2;1;0;1
+3;2026-10-26;13:04;27006;3;0;1;0
+4;2026-10-26;13:05;27007;4;0;0;0
+
+=== docs/colaboracao/evidencias/WINZ26_v5_7_persistencia_20261026_v1/profit_captura_historica_recorte.csv ===
+
+avaliacao;hora_barra_profit;rotulo_barra_profit;anterior_reconstruido;posicao_observada;atribuido_por_fonte;evento_transicao_publicado;evento_avaliacao_publicado
+7;13:03;27005;-1;0;0;25;26
+8;13:03;27005;0;1;1;29;30
+9;13:04;27006;1;0;0;34;35
+10;13:04;27006;0;1;1;38;39
+11;13:05;27007;1;0;0;43;44
+
+=== docs/colaboracao/evidencias/WINZ26_v5_7_persistencia_20261026_v1/matriz_vwap_continua_segmento.csv ===
+
+pregao;modo;operacoes_profit;operacoes_motor;exatas;sem_par_profit;sem_par_motor;barras_elegiveis;primeira_barra_elegivel;vwap_dentro;atr_dentro;media_atr_dentro;regime_exato;plots_sem_divergencia
+2026-10-21;padrao;10;10;10;0;0;502;2026-10-21T10:03:00-03:00;502;502;502;502;8
+2026-10-21;protecao-legada;10;10;10;0;0;502;2026-10-21T10:03:00-03:00;502;502;502;502;8
+2026-10-21;pos-preenchimento;10;10;10;0;0;502;2026-10-21T10:03:00-03:00;502;502;502;502;8
+2026-10-26;padrao;12;10;8;4;2;463;2026-10-26T10:42:00-03:00;463;463;463;463;8
+2026-10-26;protecao-legada;12;11;11;1;0;463;2026-10-26T10:42:00-03:00;463;463;463;463;8
+2026-10-26;pos-preenchimento;12;12;12;0;0;463;2026-10-26T10:42:00-03:00;463;463;463;463;8
+
+=== docs/colaboracao/CAPTURA_PARIDADE_WINZ26_20261026.md ===
+
+# Captura de paridade da v5.7 em 26/10/2026
+
+Referência do simulador: `ec7b6442359367e1e92abe79d9321894ce442583`. O console foi gerado pela variante `Modelo_Unificado_Refatorado_v5_7_Captura_Paridade.ntsl`, com rótulos de barra de 12:58 a 14:07. A comparação usa barras de 1 minuto. As configurações completas do Profit não constam nos anexos.
+
+## Fontes e validação
+
+| Fonte privada | SHA-256 do original | Cobertura |
+|---|---|---|
+| Texto colado(3).txt | `65a90e3cc66c1464e0fba0be862036ba568604eadeb1082741cc24212e9de6a2` | 298 linhas, 288 de paridade. Os dois blocos de 144 eventos são idênticos na ordem. |
+| operacoes_teste_v.csv | `da6261fcdcd58bb6313ab409bd220fae39766665b513da2a9b554c17511d0a97` | 330 operações WINZ26 em 56 datas, de 13/08 a 19/11/2026. CSV delimitado por ponto e vírgula, decodificado como Windows-1252. |
+
+A análise usa o primeiro bloco de paridade e mantém a ordem dentro dele. O console formata inteiros com separador de milhar, por exemplo `1.304` corresponde a 13:04. O CSV contém identificação da conta e do titular. O repositório guarda este resumo e as contagens agregadas.
+
+## Reentrada confirmada no Profit
+
+| Barra do console | Avaliação | Evidência |
+|---|---:|---|
+| 13:03 | 7–8 | A estratégia observou posição zerada, pediu compra, observou posição comprada e solicitou alvo e stop. |
+| 13:04 | 9–10 | A posição anterior estava zerada na avaliação 9. Com o sinal de compra ativo, a estratégia fez uma nova solicitação. Na avaliação 10, observou nova posição comprada e solicitou alvo e stop próprios. |
+| 13:05 | 11 | A estratégia voltou a observar posição zerada. |
+
+A exportação do Profit mostra as operações 181 e 182, rotuladas respectivamente às 13:04 e 13:05. Cada uma abriu e fechou no mesmo minuto exibido e registrou −350 pontos e −R$ 70,00 brutos. O preço de entrada de cada operação coincide com o preço médio observado no console na barra rotulada um minuto antes. O preço de saída coincide com o gatilho de stop solicitado em cada caso. Essa associação vale para as operações conferidas. A captura não fornece segundos efetivos de execução nem comprova a trajetória intrabar.
+
+Esta captura conferiu as exportações do Profit. A [rodada de avaliação pós-preenchimento](evidencias/WINZ26_v5_7_20261021_20261026_pos_preenchimento_v1/README.md) registra o rastreamento posterior no simulador, a matriz de 26/10 e a regressão de 21/10.
+
+=== docs/colaboracao/CAPTURA_PARIDADE_WINZ26_EVENTOS.md ===
+
+# Sequência do console de 26/10/2026
+
+O arquivo `captura_paridade_win_20261026_eventos.csv` deriva da captura descrita em `CAPTURA_PARIDADE_WINZ26_20261026.md`. Contém 144 eventos na ordem do primeiro bloco. Foi conferido que o segundo bloco repete exatamente o primeiro. A coluna `hora_barra` guarda o rótulo de um minuto exibido no console. A coluna `campos` preserva posição, transições, regime e quantidade quando presentes. Preços, OHLC e indicadores de mercado foram omitidos. Use o CSV de operações local, já validado pelo SHA-256 do relatório, para conferir preços de execução.
+
+=== docs/colaboracao/captura_paridade_win_20261026_eventos.csv ===
+
+ordem;data;hora_barra;barra;avaliacao;evento;campos
+1;2026-10-26;12:58;27000;1;AVALIACAO;posicao=0|regime=2
+2;2026-10-26;12:58;27000;1;SINAL_VENDA;
+3;2026-10-26;12:58;27000;1;SOLICITA_ENTRADA_VENDA;qtd=1,00
+4;2026-10-26;12:58;27000;2;POSICAO_OBSERVADA;anterior=0|atual=-1
+5;2026-10-26;12:58;27000;2;AVALIACAO;posicao=-1|regime=2
+6;2026-10-26;12:58;27000;2;SINAL_VENDA;
+7;2026-10-26;12:58;27000;2;SOLICITA_ALVO_COMPRA;qtd=1,00
+8;2026-10-26;12:58;27000;2;SOLICITA_STOP_COMPRA;qtd=1,00
+9;2026-10-26;12:59;27001;3;AVALIACAO;posicao=-1|regime=0
+10;2026-10-26;12:59;27001;3;ORDENS_PENDENTES;
+11;2026-10-26;12:59;27001;3;SOLICITA_ALVO_COMPRA;qtd=1,00
+12;2026-10-26;12:59;27001;3;SOLICITA_STOP_COMPRA;qtd=1,00
+13;2026-10-26;13:00;27002;4;AVALIACAO;posicao=-1|regime=1
+14;2026-10-26;13:00;27002;4;ORDENS_PENDENTES;
+15;2026-10-26;13:00;27002;4;SOLICITA_ALVO_COMPRA;qtd=1,00
+16;2026-10-26;13:00;27002;4;SOLICITA_STOP_COMPRA;qtd=1,00
+17;2026-10-26;13:01;27003;5;AVALIACAO;posicao=-1|regime=1
+18;2026-10-26;13:01;27003;5;ORDENS_PENDENTES;
+19;2026-10-26;13:01;27003;5;SOLICITA_ALVO_COMPRA;qtd=1,00
+20;2026-10-26;13:01;27003;5;SOLICITA_STOP_COMPRA;qtd=1,00
+21;2026-10-26;13:02;27004;6;AVALIACAO;posicao=-1|regime=1
+22;2026-10-26;13:02;27004;6;ORDENS_PENDENTES;
+23;2026-10-26;13:02;27004;6;SOLICITA_ALVO_COMPRA;qtd=1,00
+24;2026-10-26;13:02;27004;6;SOLICITA_STOP_COMPRA;qtd=1,00
+25;2026-10-26;13:03;27005;7;POSICAO_OBSERVADA;anterior=-1|atual=0
+26;2026-10-26;13:03;27005;7;AVALIACAO;posicao=0|regime=1
+27;2026-10-26;13:03;27005;7;SINAL_COMPRA;
+28;2026-10-26;13:03;27005;7;SOLICITA_ENTRADA_COMPRA;qtd=1,00
+29;2026-10-26;13:03;27005;8;POSICAO_OBSERVADA;anterior=0|atual=1
+30;2026-10-26;13:03;27005;8;AVALIACAO;posicao=1|regime=1
+31;2026-10-26;13:03;27005;8;SINAL_COMPRA;
+32;2026-10-26;13:03;27005;8;SOLICITA_ALVO_VENDA;qtd=1,00
+33;2026-10-26;13:03;27005;8;SOLICITA_STOP_VENDA;qtd=1,00
+34;2026-10-26;13:04;27006;9;POSICAO_OBSERVADA;anterior=1|atual=0
+35;2026-10-26;13:04;27006;9;AVALIACAO;posicao=0|regime=1
+36;2026-10-26;13:04;27006;9;SINAL_COMPRA;
+37;2026-10-26;13:04;27006;9;SOLICITA_ENTRADA_COMPRA;qtd=1,00
+38;2026-10-26;13:04;27006;10;POSICAO_OBSERVADA;anterior=0|atual=1
+39;2026-10-26;13:04;27006;10;AVALIACAO;posicao=1|regime=1
+40;2026-10-26;13:04;27006;10;SINAL_COMPRA;
+41;2026-10-26;13:04;27006;10;SOLICITA_ALVO_VENDA;qtd=1,00
+42;2026-10-26;13:04;27006;10;SOLICITA_STOP_VENDA;qtd=1,00
+43;2026-10-26;13:05;27007;11;POSICAO_OBSERVADA;anterior=1|atual=0
+44;2026-10-26;13:05;27007;11;AVALIACAO;posicao=0|regime=1
+45;2026-10-26;13:06;27008;12;AVALIACAO;posicao=0|regime=1
+46;2026-10-26;13:07;27009;13;AVALIACAO;posicao=0|regime=1
+47;2026-10-26;13:08;27010;14;AVALIACAO;posicao=0|regime=1
+48;2026-10-26;13:09;27011;15;AVALIACAO;posicao=0|regime=1
+49;2026-10-26;13:10;27012;16;AVALIACAO;posicao=0|regime=1
+50;2026-10-26;13:11;27013;17;AVALIACAO;posicao=0|regime=1
+51;2026-10-26;13:12;27014;18;AVALIACAO;posicao=0|regime=1
+52;2026-10-26;13:13;27015;19;AVALIACAO;posicao=0|regime=1
+53;2026-10-26;13:14;27016;20;AVALIACAO;posicao=0|regime=1
+54;2026-10-26;13:15;27017;21;AVALIACAO;posicao=0|regime=1
+55;2026-10-26;13:16;27018;22;AVALIACAO;posicao=0|regime=1
+56;2026-10-26;13:17;27019;23;AVALIACAO;posicao=0|regime=1
+57;2026-10-26;13:18;27020;24;AVALIACAO;posicao=0|regime=0
+58;2026-10-26;13:19;27021;25;AVALIACAO;posicao=0|regime=0
+59;2026-10-26;13:20;27022;26;AVALIACAO;posicao=0|regime=0
+60;2026-10-26;13:21;27023;27;AVALIACAO;posicao=0|regime=0
+61;2026-10-26;13:22;27024;28;AVALIACAO;posicao=0|regime=0
+62;2026-10-26;13:23;27025;29;AVALIACAO;posicao=0|regime=0
+63;2026-10-26;13:24;27026;30;AVALIACAO;posicao=0|regime=0
+64;2026-10-26;13:25;27027;31;AVALIACAO;posicao=0|regime=0
+65;2026-10-26;13:26;27028;32;AVALIACAO;posicao=0|regime=0
+66;2026-10-26;13:27;27029;33;AVALIACAO;posicao=0|regime=0
+67;2026-10-26;13:28;27030;34;AVALIACAO;posicao=0|regime=0
+68;2026-10-26;13:29;27031;35;AVALIACAO;posicao=0|regime=0
+69;2026-10-26;13:30;27032;36;AVALIACAO;posicao=0|regime=0
+70;2026-10-26;13:31;27033;37;AVALIACAO;posicao=0|regime=0
+71;2026-10-26;13:32;27034;38;AVALIACAO;posicao=0|regime=2
+72;2026-10-26;13:33;27035;39;AVALIACAO;posicao=0|regime=1
+73;2026-10-26;13:34;27036;40;AVALIACAO;posicao=0|regime=0
+74;2026-10-26;13:35;27037;41;AVALIACAO;posicao=0|regime=0
+75;2026-10-26;13:36;27038;42;AVALIACAO;posicao=0|regime=0
+76;2026-10-26;13:37;27039;43;AVALIACAO;posicao=0|regime=0
+77;2026-10-26;13:38;27040;44;AVALIACAO;posicao=0|regime=2
+78;2026-10-26;13:38;27040;44;SINAL_VENDA;
+79;2026-10-26;13:38;27040;44;SOLICITA_ENTRADA_VENDA;qtd=1,00
+80;2026-10-26;13:38;27040;45;POSICAO_OBSERVADA;anterior=0|atual=-1
+81;2026-10-26;13:38;27040;45;AVALIACAO;posicao=-1|regime=2
+82;2026-10-26;13:38;27040;45;SINAL_VENDA;
+83;2026-10-26;13:38;27040;45;SOLICITA_ALVO_COMPRA;qtd=1,00
+84;2026-10-26;13:38;27040;45;SOLICITA_STOP_COMPRA;qtd=1,00
+85;2026-10-26;13:39;27041;46;AVALIACAO;posicao=-1|regime=0
+86;2026-10-26;13:39;27041;46;ORDENS_PENDENTES;
+87;2026-10-26;13:39;27041;46;SOLICITA_ALVO_COMPRA;qtd=1,00
+88;2026-10-26;13:39;27041;46;SOLICITA_STOP_COMPRA;qtd=1,00
+89;2026-10-26;13:40;27042;47;AVALIACAO;posicao=-1|regime=0
+90;2026-10-26;13:40;27042;47;ORDENS_PENDENTES;
+91;2026-10-26;13:40;27042;47;SOLICITA_ALVO_COMPRA;qtd=1,00
+92;2026-10-26;13:40;27042;47;SOLICITA_STOP_COMPRA;qtd=1,00
+93;2026-10-26;13:41;27043;48;AVALIACAO;posicao=-1|regime=0
+94;2026-10-26;13:41;27043;48;ORDENS_PENDENTES;
+95;2026-10-26;13:41;27043;48;SOLICITA_ALVO_COMPRA;qtd=1,00
+96;2026-10-26;13:41;27043;48;SOLICITA_STOP_COMPRA;qtd=1,00
+97;2026-10-26;13:42;27044;49;AVALIACAO;posicao=-1|regime=0
+98;2026-10-26;13:42;27044;49;ORDENS_PENDENTES;
+99;2026-10-26;13:42;27044;49;SOLICITA_ALVO_COMPRA;qtd=1,00
+100;2026-10-26;13:42;27044;49;SOLICITA_STOP_COMPRA;qtd=1,00
+101;2026-10-26;13:43;27045;50;AVALIACAO;posicao=-1|regime=0
+102;2026-10-26;13:43;27045;50;ORDENS_PENDENTES;
+103;2026-10-26;13:43;27045;50;SOLICITA_ALVO_COMPRA;qtd=1,00
+104;2026-10-26;13:43;27045;50;SOLICITA_STOP_COMPRA;qtd=1,00
+105;2026-10-26;13:44;27046;51;POSICAO_OBSERVADA;anterior=-1|atual=0
+106;2026-10-26;13:44;27046;51;AVALIACAO;posicao=0|regime=0
+107;2026-10-26;13:45;27047;52;AVALIACAO;posicao=0|regime=0
+108;2026-10-26;13:46;27048;53;AVALIACAO;posicao=0|regime=0
+109;2026-10-26;13:47;27049;54;AVALIACAO;posicao=0|regime=0
+110;2026-10-26;13:48;27050;55;AVALIACAO;posicao=0|regime=0
+111;2026-10-26;13:49;27051;56;AVALIACAO;posicao=0|regime=0
+112;2026-10-26;13:50;27052;57;AVALIACAO;posicao=0|regime=0
+113;2026-10-26;13:51;27053;58;AVALIACAO;posicao=0|regime=0
+114;2026-10-26;13:52;27054;59;AVALIACAO;posicao=0|regime=0
+115;2026-10-26;13:53;27055;60;AVALIACAO;posicao=0|regime=0
+116;2026-10-26;13:54;27056;61;AVALIACAO;posicao=0|regime=0
+117;2026-10-26;13:55;27057;62;AVALIACAO;posicao=0|regime=0
+118;2026-10-26;13:56;27058;63;AVALIACAO;posicao=0|regime=0
+119;2026-10-26;13:57;27059;64;AVALIACAO;posicao=0|regime=0
+120;2026-10-26;13:58;27060;65;AVALIACAO;posicao=0|regime=0
+121;2026-10-26;13:59;27061;66;AVALIACAO;posicao=0|regime=0
+122;2026-10-26;14:00;27062;67;AVALIACAO;posicao=0|regime=2
+123;2026-10-26;14:01;27063;68;AVALIACAO;posicao=0|regime=0
+124;2026-10-26;14:02;27064;69;AVALIACAO;posicao=0|regime=0
+125;2026-10-26;14:03;27065;70;AVALIACAO;posicao=0|regime=1
+126;2026-10-26;14:03;27065;70;SINAL_COMPRA;
+127;2026-10-26;14:03;27065;70;SOLICITA_ENTRADA_COMPRA;qtd=1,00
+128;2026-10-26;14:03;27065;71;POSICAO_OBSERVADA;anterior=0|atual=1
+129;2026-10-26;14:03;27065;71;AVALIACAO;posicao=1|regime=1
+130;2026-10-26;14:03;27065;71;SINAL_COMPRA;
+131;2026-10-26;14:03;27065;71;SOLICITA_ALVO_VENDA;qtd=1,00
+132;2026-10-26;14:03;27065;71;SOLICITA_STOP_VENDA;qtd=1,00
+133;2026-10-26;14:04;27066;72;AVALIACAO;posicao=1|regime=0
+134;2026-10-26;14:04;27066;72;ORDENS_PENDENTES;
+135;2026-10-26;14:04;27066;72;SOLICITA_ALVO_VENDA;qtd=1,00
+136;2026-10-26;14:04;27066;72;SOLICITA_STOP_VENDA;qtd=1,00
+137;2026-10-26;14:05;27067;73;AVALIACAO;posicao=1|regime=1
+138;2026-10-26;14:05;27067;73;SINAL_COMPRA;
+139;2026-10-26;14:05;27067;73;ORDENS_PENDENTES;
+140;2026-10-26;14:05;27067;73;SOLICITA_ALVO_VENDA;qtd=1,00
+141;2026-10-26;14:05;27067;73;SOLICITA_STOP_VENDA;qtd=1,00
+142;2026-10-26;14:06;27068;74;POSICAO_OBSERVADA;anterior=1|atual=0
+143;2026-10-26;14:06;27068;74;AVALIACAO;posicao=0|regime=1
+144;2026-10-26;14:07;27069;75;AVALIACAO;posicao=0|regime=1
+
+=== tests/test_replay.py - teste da sonda ===
+
+def test_sonda_persistencia_caracteriza_isolamento_do_modo_atual(tmp_path):
+    fixture = ROOT / "docs/colaboracao/evidencias/WINZ26_v5_7_persistencia_20261026_v1"
+    source = (fixture / "sonda_persistencia_simulador_v1_0.ntsl").read_text(encoding="utf-8")
+    output = tmp_path / "sonda"
+    run_strategy(fixture / "candles_sinteticos.csv", source, output, 60, "ohlc", 5,
+                 regras={"avaliacao_pos_preenchimento": True, "rastrear_ordens": True})
+    with (output / "console.csv").open(newline="", encoding="utf-8") as stream:
+        log = list(csv.DictReader(stream))
+    states = []
+    for row in log:
+        fields = dict(part.split("=", 1) for part in row["mensagem"].split(";")[1:])
+        states.append((int(row["barra"]), *(int(fields[k]) for k in ("seq", "posicao", "antes", "depois"))))
+    assert states == [(2, 1, 0, 0, 0), (2, 2, 1, 0, 1), (3, 2, 0, 0, 0), (4, 3, 0, 0, 0)]
+    audit = pd.read_csv(output / "eventos_ordens.csv")
+    opening = audit.loc[audit.evento == "avaliacao_ntsl_pos_preenchimento"]
+    assert opening[["barra", "barra_contexto_ntsl", "posicao"]].values.tolist() == [[3, 2, 1]]
+    fills = pd.read_csv(output / "execucoes.csv")
+    assert fills[["barra", "acao", "preco"]].values.tolist() == [
+        [3, "long", 100], [3, "exit_long", 95],
+    ]

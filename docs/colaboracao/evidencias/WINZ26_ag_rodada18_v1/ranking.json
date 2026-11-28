@@ -1,0 +1,5324 @@
+{
+  "exploratorio": {
+    "win_60s_2c": [
+      {
+        "versao": "modelo_scalper_v1_1",
+        "desenvolvimento": {
+          "parametros": {
+            "p_alvopontos": 100,
+            "p_stoppontos": 150,
+            "p_offsetstop": 10,
+            "p_lote": 2,
+            "p_periodofluxo": 1.0,
+            "p_periodomediafluxo": 12,
+            "p_thresholdfluxo": 2.3,
+            "p_mintradesbarra": 400,
+            "p_maxbarrasposicao": 6,
+            "p_maxstopsconsecutivos": 3.0,
+            "p_cooldownminutos": 10,
+            "p_limiteperdadia": 300.0,
+            "p_horarioinicio": 905.0,
+            "p_horariofimentradas": 1655.0,
+            "p_horariozeragem": 1700.0
+          },
+          "metricas": {
+            "pregoes": 19,
+            "barras": 10186,
+            "operacoes": 21,
+            "operacoes_por_dia": 1.105263157894737,
+            "acertos": 16,
+            "acerto": 0.7619047619047619,
+            "delta_meta_acerto_pp": 31.190476190476186,
+            "liquido": 562.0,
+            "liquido_por_dia": 29.58,
+            "delta_meta_diaria": -2970.42,
+            "fator_lucro_liquido": 3.17829,
+            "drawdown_max": 130.0,
+            "pior_dia": 0.0,
+            "duracao_mediana_s": 60.0,
+            "duracao_p90_s": 300.0,
+            "dias_meta": 0,
+            "max_exposicao": 2,
+            "ambiguidades": 0,
+            "por_pregao": {
+              "2026-09-15": {
+                "liquido": 0.0,
+                "operacoes": 0
+              },
+              "2026-09-16": {
+                "liquido": 0.0,
+                "operacoes": 0
+              },
+              "2026-09-17": {
+                "liquido": 0.0,
+                "operacoes": 0
+              },
+              "2026-09-23": {
+                "liquido": 0.0,
+                "operacoes": 0
+              },
+              "2026-09-24": {
+                "liquido": 0.0,
+                "operacoes": 0
+              },
+              "2026-09-25": {
+                "liquido": 0.0,
+                "operacoes": 0
+              },
+              "2026-09-29": {
+                "liquido": 0.0,
+                "operacoes": 0
+              },
+              "2026-09-30": {
+                "liquido": 0.0,
+                "operacoes": 0
+              },
+              "2026-10-01": {
+                "liquido": 0.0,
+                "operacoes": 0
+              },
+              "2026-10-02": {
+                "liquido": 0.0,
+                "operacoes": 0
+              },
+              "2026-10-05": {
+                "liquido": 0.0,
+                "operacoes": 0
+              },
+              "2026-10-06": {
+                "liquido": 70.0,
+                "operacoes": 1
+              },
+              "2026-10-07": {
+                "liquido": 0.0,
+                "operacoes": 0
+              },
+              "2026-10-08": {
+                "liquido": 38.0,
+                "operacoes": 1
+              },
+              "2026-10-09": {
+                "liquido": 0.0,
+                "operacoes": 0
+              },
+              "2026-10-13": {
+                "liquido": 246.0,
+                "operacoes": 7
+              },
+              "2026-10-14": {
+                "liquido": 94.0,
+                "operacoes": 2
+              },
+              "2026-10-15": {
+                "liquido": 102.0,
+                "operacoes": 7
+              },
+              "2026-10-16": {
+                "liquido": 12.0,
+                "operacoes": 3
+              }
+            }
+          },
+          "delta_original_reais": 1178.0,
+          "delta_publicado_reais": 1178.0
+        },
+        "exploratorio": {
+          "parametros": {
+            "p_alvopontos": 100,
+            "p_stoppontos": 150,
+            "p_offsetstop": 10,
+            "p_lote": 2,
+            "p_periodofluxo": 1.0,
+            "p_periodomediafluxo": 12,
+            "p_thresholdfluxo": 2.3,
+            "p_mintradesbarra": 400,
+            "p_maxbarrasposicao": 6,
+            "p_maxstopsconsecutivos": 3.0,
+            "p_cooldownminutos": 10,
+            "p_limiteperdadia": 300.0,
+            "p_horarioinicio": 905.0,
+            "p_horariofimentradas": 1655.0,
+            "p_horariozeragem": 1700.0
+          },
+          "metricas": {
+            "pregoes": 20,
+            "barras": 11288,
+            "operacoes": 83,
+            "operacoes_por_dia": 4.15,
+            "acertos": 49,
+            "acerto": 0.5903614457831325,
+            "delta_meta_acerto_pp": 14.036144578313253,
+            "liquido": -58.0,
+            "liquido_por_dia": -2.9,
+            "delta_meta_diaria": -3002.9,
+            "fator_lucro_liquido": 0.97148,
+            "drawdown_max": 456.0,
+            "pior_dia": -212.0,
+            "duracao_mediana_s": 120.0,
+            "duracao_p90_s": 420.0,
+            "dias_meta": 0,
+            "max_exposicao": 2,
+            "ambiguidades": 0,
+            "por_pregao": {
+              "2026-10-19": {
+                "liquido": -168.0,
+                "operacoes": 3
+              },
+              "2026-10-20": {
+                "liquido": 146.0,
+                "operacoes": 5
+              },
+              "2026-10-22": {
+                "liquido": 82.0,
+                "operacoes": 2
+              },
+              "2026-10-23": {
+                "liquido": -12.0,
+                "operacoes": 1
+              },
+              "2026-10-27": {
+                "liquido": 12.0,
+                "operacoes": 3
+              },
+              "2026-10-28": {
+                "liquido": -80.0,
+                "operacoes": 3
+              },
+              "2026-10-29": {
+                "liquido": -64.0,
+                "operacoes": 1
+              },
+              "2026-10-30": {
+                "liquido": 62.0,
+                "operacoes": 7
+              },
+              "2026-11-03": {
+                "liquido": 64.0,
+                "operacoes": 5
+              },
+              "2026-11-04": {
+                "liquido": 50.0,
+                "operacoes": 4
+              },
+              "2026-11-05": {
+                "liquido": -28.0,
+                "operacoes": 7
+              },
+              "2026-11-06": {
+                "liquido": -48.0,
+                "operacoes": 3
+              },
+              "2026-11-09": {
+                "liquido": 48.0,
+                "operacoes": 5
+              },
+              "2026-11-10": {
+                "liquido": -142.0,
+                "operacoes": 7
+              },
+              "2026-11-11": {
+                "liquido": -212.0,
+                "operacoes": 6
+              },
+              "2026-11-12": {
+                "liquido": 196.0,
+                "operacoes": 4
+              },
+              "2026-11-13": {
+                "liquido": 74.0,
+                "operacoes": 4
+              },
+              "2026-11-16": {
+                "liquido": 164.0,
+                "operacoes": 4
+              },
+              "2026-11-17": {
+                "liquido": -116.0,
+                "operacoes": 5
+              },
+              "2026-11-18": {
+                "liquido": -86.0,
+                "operacoes": 4
+              }
+            }
+          },
+          "delta_original_reais": 1740.0,
+          "delta_publicado_reais": 1740.0
+        },
+        "validacao_inedita": null,
+        "metricas_agregadas_iguais_a": null
+      },
+      {
+        "versao": "pullback_tendencia_v1_7",
+        "desenvolvimento": {
+          "parametros": {
+            "p_rapida": 15,
+            "p_lenta": 21,
+            "p_alvo": 250,
+            "p_usaralvodinamico": 0,
+            "p_janelaamplitude": 10,
+            "p_fatoramplitude": 1.2,
+            "p_alvomin": 50.0,
+            "p_alvomax": 220.0,
+            "p_rompimento": 1,
+            "p_stop": 150,
+            "p_fatorstop": 0.8,
+            "p_folgastop": 25,
+            "p_tempomax": 10,
+            "p_maxentradasdia": 4,
+            "p_espera": 1,
+            "p_perdamaxdia": 150.0,
+            "p_horainicio": 1000,
+            "p_horafimentradas": 1700,
+            "p_horazeragem": 1745.0,
+            "p_ativarsaidafalha": 0,
+            "p_janelafalha": 1.0,
+            "p_toleranciafalhaticks": 0.0
+          },
+          "metricas": {
+            "pregoes": 19,
+            "barras": 10186,
+            "operacoes": 74,
+            "operacoes_por_dia": 3.8947368421052633,
+            "acertos": 36,
+            "acerto": 0.4864864864864865,
+            "delta_meta_acerto_pp": 3.64864864864865,
+            "liquido": 1480.0,
+            "liquido_por_dia": 77.89,
+            "delta_meta_diaria": -2922.11,
+            "fator_lucro_liquido": 1.69746,
+            "drawdown_max": 262.0,
+            "pior_dia": -200.0,
+            "duracao_mediana_s": 120.0,
+            "duracao_p90_s": 360.0,
+            "dias_meta": 0,
+            "max_exposicao": 2,
+            "ambiguidades": 0,
+            "por_pregao": {
+              "2026-09-15": {
+                "liquido": -88.0,
+                "operacoes": 3
+              },
+              "2026-09-16": {
+                "liquido": -152.0,
+                "operacoes": 4
+              },
+              "2026-09-17": {
+                "liquido": 422.0,
+                "operacoes": 4
+              },
+              "2026-09-23": {
+                "liquido": -36.0,
+                "operacoes": 4
+              },
+              "2026-09-24": {
+                "liquido": 156.0,
+                "operacoes": 4
+              },
+              "2026-09-25": {
+                "liquido": -4.0,
+                "operacoes": 4
+              },
+              "2026-09-29": {
+                "liquido": 90.0,
+                "operacoes": 4
+              },
+              "2026-09-30": {
+                "liquido": 68.0,
+                "operacoes": 4
+              },
+              "2026-10-01": {
+                "liquido": 60.0,
+                "operacoes": 4
+              },
+              "2026-10-02": {
+                "liquido": 252.0,
+                "operacoes": 4
+              },
+              "2026-10-05": {
+                "liquido": 110.0,
+                "operacoes": 4
+              },
+              "2026-10-06": {
+                "liquido": 172.0,
+                "operacoes": 4
+              },
+              "2026-10-07": {
+                "liquido": 74.0,
+                "operacoes": 4
+              },
+              "2026-10-08": {
+                "liquido": 270.0,
+                "operacoes": 4
+              },
+              "2026-10-09": {
+                "liquido": 68.0,
+                "operacoes": 4
+              },
+              "2026-10-13": {
+                "liquido": 76.0,
+                "operacoes": 4
+              },
+              "2026-10-14": {
+                "liquido": 72.0,
+                "operacoes": 4
+              },
+              "2026-10-15": {
+                "liquido": 70.0,
+                "operacoes": 4
+              },
+              "2026-10-16": {
+                "liquido": -200.0,
+                "operacoes": 3
+              }
+            }
+          },
+          "delta_original_reais": 1254.0,
+          "delta_publicado_reais": 782.0
+        },
+        "exploratorio": {
+          "parametros": {
+            "p_rapida": 15,
+            "p_lenta": 21,
+            "p_alvo": 250,
+            "p_usaralvodinamico": 0,
+            "p_janelaamplitude": 10,
+            "p_fatoramplitude": 1.2,
+            "p_alvomin": 50.0,
+            "p_alvomax": 220.0,
+            "p_rompimento": 1,
+            "p_stop": 150,
+            "p_fatorstop": 0.8,
+            "p_folgastop": 25,
+            "p_tempomax": 10,
+            "p_maxentradasdia": 4,
+            "p_espera": 1,
+            "p_perdamaxdia": 150.0,
+            "p_horainicio": 1000,
+            "p_horafimentradas": 1700,
+            "p_horazeragem": 1745.0,
+            "p_ativarsaidafalha": 0,
+            "p_janelafalha": 1.0,
+            "p_toleranciafalhaticks": 0.0
+          },
+          "metricas": {
+            "pregoes": 20,
+            "barras": 11288,
+            "operacoes": 76,
+            "operacoes_por_dia": 3.8,
+            "acertos": 28,
+            "acerto": 0.3684210526315789,
+            "delta_meta_acerto_pp": -8.157894736842108,
+            "liquido": -126.0,
+            "liquido_por_dia": -6.3,
+            "delta_meta_diaria": -3006.3,
+            "fator_lucro_liquido": 0.95323,
+            "drawdown_max": 832.0,
+            "pior_dia": -194.0,
+            "duracao_mediana_s": 120.0,
+            "duracao_p90_s": 300.0,
+            "dias_meta": 0,
+            "max_exposicao": 2,
+            "ambiguidades": 1,
+            "por_pregao": {
+              "2026-10-19": {
+                "liquido": 136.0,
+                "operacoes": 4
+              },
+              "2026-10-20": {
+                "liquido": -30.0,
+                "operacoes": 4
+              },
+              "2026-10-22": {
+                "liquido": 68.0,
+                "operacoes": 4
+              },
+              "2026-10-23": {
+                "liquido": 392.0,
+                "operacoes": 4
+              },
+              "2026-10-27": {
+                "liquido": -192.0,
+                "operacoes": 3
+              },
+              "2026-10-28": {
+                "liquido": -192.0,
+                "operacoes": 3
+              },
+              "2026-10-29": {
+                "liquido": -98.0,
+                "operacoes": 4
+              },
+              "2026-10-30": {
+                "liquido": -192.0,
+                "operacoes": 3
+              },
+              "2026-11-03": {
+                "liquido": 230.0,
+                "operacoes": 4
+              },
+              "2026-11-04": {
+                "liquido": -86.0,
+                "operacoes": 4
+              },
+              "2026-11-05": {
+                "liquido": 230.0,
+                "operacoes": 4
+              },
+              "2026-11-06": {
+                "liquido": 86.0,
+                "operacoes": 4
+              },
+              "2026-11-09": {
+                "liquido": -172.0,
+                "operacoes": 3
+              },
+              "2026-11-10": {
+                "liquido": 76.0,
+                "operacoes": 4
+              },
+              "2026-11-11": {
+                "liquido": -194.0,
+                "operacoes": 4
+              },
+              "2026-11-12": {
+                "liquido": -48.0,
+                "operacoes": 4
+              },
+              "2026-11-13": {
+                "liquido": -186.0,
+                "operacoes": 4
+              },
+              "2026-11-16": {
+                "liquido": 102.0,
+                "operacoes": 4
+              },
+              "2026-11-17": {
+                "liquido": 24.0,
+                "operacoes": 4
+              },
+              "2026-11-18": {
+                "liquido": -80.0,
+                "operacoes": 4
+              }
+            }
+          },
+          "delta_original_reais": 8.0,
+          "delta_publicado_reais": 354.0
+        },
+        "validacao_inedita": null,
+        "metricas_agregadas_iguais_a": null
+      },
+      {
+        "versao": "pullback_tendencia_v1_4",
+        "desenvolvimento": {
+          "parametros": {
+            "p_rapida": 15,
+            "p_lenta": 27,
+            "p_alvo": 250,
+            "p_usaralvodinamico": 0,
+            "p_janelaamplitude": 10.0,
+            "p_fatoramplitude": 1.2,
+            "p_alvomin": 50.0,
+            "p_alvomax": 220.0,
+            "p_rompimento": 1,
+            "p_stop": 75,
+            "p_folgastop": 100,
+            "p_tempomax": 10,
+            "p_maxentradasdia": 4,
+            "p_espera": 5,
+            "p_perdamaxdia": 150.0,
+            "p_horainicio": 930,
+            "p_horafimentradas": 1700,
+            "p_horazeragem": 1745.0
+          },
+          "metricas": {
+            "pregoes": 19,
+            "barras": 10186,
+            "operacoes": 74,
+            "operacoes_por_dia": 3.8947368421052633,
+            "acertos": 30,
+            "acerto": 0.40540540540540543,
+            "delta_meta_acerto_pp": -4.459459459459458,
+            "liquido": 1132.0,
+            "liquido_por_dia": 59.58,
+            "delta_meta_diaria": -2940.42,
+            "fator_lucro_liquido": 1.63667,
+            "drawdown_max": 510.0,
+            "pior_dia": -166.0,
+            "duracao_mediana_s": 120.0,
+            "duracao_p90_s": 360.0,
+            "dias_meta": 0,
+            "max_exposicao": 2,
+            "ambiguidades": 1,
+            "por_pregao": {
+              "2026-09-15": {
+                "liquido": -102.0,
+                "operacoes": 3
+              },
+              "2026-09-16": {
+                "liquido": -18.0,
+                "operacoes": 4
+              },
+              "2026-09-17": {
+                "liquido": 422.0,
+                "operacoes": 4
+              },
+              "2026-09-23": {
+                "liquido": -6.0,
+                "operacoes": 4
+              },
+              "2026-09-24": {
+                "liquido": -12.0,
+                "operacoes": 4
+              },
+              "2026-09-25": {
+                "liquido": -14.0,
+                "operacoes": 4
+              },
+              "2026-09-29": {
+                "liquido": 260.0,
+                "operacoes": 4
+              },
+              "2026-09-30": {
+                "liquido": -4.0,
+                "operacoes": 4
+              },
+              "2026-10-01": {
+                "liquido": 52.0,
+                "operacoes": 4
+              },
+              "2026-10-02": {
+                "liquido": 260.0,
+                "operacoes": 4
+              },
+              "2026-10-05": {
+                "liquido": -80.0,
+                "operacoes": 4
+              },
+              "2026-10-06": {
+                "liquido": 336.0,
+                "operacoes": 4
+              },
+              "2026-10-07": {
+                "liquido": 126.0,
+                "operacoes": 4
+              },
+              "2026-10-08": {
+                "liquido": 262.0,
+                "operacoes": 4
+              },
+              "2026-10-09": {
+                "liquido": -166.0,
+                "operacoes": 4
+              },
+              "2026-10-13": {
+                "liquido": -158.0,
+                "operacoes": 4
+              },
+              "2026-10-14": {
+                "liquido": -152.0,
+                "operacoes": 3
+              },
+              "2026-10-15": {
+                "liquido": 128.0,
+                "operacoes": 4
+              },
+              "2026-10-16": {
+                "liquido": -2.0,
+                "operacoes": 4
+              }
+            }
+          },
+          "delta_original_reais": 1068.0,
+          "delta_publicado_reais": 612.0
+        },
+        "exploratorio": {
+          "parametros": {
+            "p_rapida": 15,
+            "p_lenta": 27,
+            "p_alvo": 250,
+            "p_usaralvodinamico": 0,
+            "p_janelaamplitude": 10.0,
+            "p_fatoramplitude": 1.2,
+            "p_alvomin": 50.0,
+            "p_alvomax": 220.0,
+            "p_rompimento": 1,
+            "p_stop": 75,
+            "p_folgastop": 100,
+            "p_tempomax": 10,
+            "p_maxentradasdia": 4,
+            "p_espera": 5,
+            "p_perdamaxdia": 150.0,
+            "p_horainicio": 930,
+            "p_horafimentradas": 1700,
+            "p_horazeragem": 1745.0
+          },
+          "metricas": {
+            "pregoes": 20,
+            "barras": 11288,
+            "operacoes": 80,
+            "operacoes_por_dia": 4.0,
+            "acertos": 19,
+            "acerto": 0.2375,
+            "delta_meta_acerto_pp": -21.250000000000004,
+            "liquido": -548.0,
+            "liquido_por_dia": -27.4,
+            "delta_meta_diaria": -3027.4,
+            "fator_lucro_liquido": 0.77167,
+            "drawdown_max": 852.0,
+            "pior_dia": -166.0,
+            "duracao_mediana_s": 60.0,
+            "duracao_p90_s": 240.0,
+            "dias_meta": 0,
+            "max_exposicao": 2,
+            "ambiguidades": 2,
+            "por_pregao": {
+              "2026-10-19": {
+                "liquido": -150.0,
+                "operacoes": 4
+              },
+              "2026-10-20": {
+                "liquido": -6.0,
+                "operacoes": 4
+              },
+              "2026-10-22": {
+                "liquido": -164.0,
+                "operacoes": 4
+              },
+              "2026-10-23": {
+                "liquido": 392.0,
+                "operacoes": 4
+              },
+              "2026-10-27": {
+                "liquido": -4.0,
+                "operacoes": 4
+              },
+              "2026-10-28": {
+                "liquido": -148.0,
+                "operacoes": 4
+              },
+              "2026-10-29": {
+                "liquido": -36.0,
+                "operacoes": 4
+              },
+              "2026-10-30": {
+                "liquido": -162.0,
+                "operacoes": 4
+              },
+              "2026-11-03": {
+                "liquido": -18.0,
+                "operacoes": 4
+              },
+              "2026-11-04": {
+                "liquido": -18.0,
+                "operacoes": 4
+              },
+              "2026-11-05": {
+                "liquido": 98.0,
+                "operacoes": 4
+              },
+              "2026-11-06": {
+                "liquido": -26.0,
+                "operacoes": 4
+              },
+              "2026-11-09": {
+                "liquido": -20.0,
+                "operacoes": 4
+              },
+              "2026-11-10": {
+                "liquido": 110.0,
+                "operacoes": 4
+              },
+              "2026-11-11": {
+                "liquido": -166.0,
+                "operacoes": 4
+              },
+              "2026-11-12": {
+                "liquido": -138.0,
+                "operacoes": 4
+              },
+              "2026-11-13": {
+                "liquido": -158.0,
+                "operacoes": 4
+              },
+              "2026-11-16": {
+                "liquido": -4.0,
+                "operacoes": 4
+              },
+              "2026-11-17": {
+                "liquido": 128.0,
+                "operacoes": 4
+              },
+              "2026-11-18": {
+                "liquido": -58.0,
+                "operacoes": 4
+              }
+            }
+          },
+          "delta_original_reais": -496.0,
+          "delta_publicado_reais": 736.0
+        },
+        "validacao_inedita": null,
+        "metricas_agregadas_iguais_a": null
+      },
+      {
+        "versao": "pullback_tendencia_v1_5",
+        "desenvolvimento": {
+          "parametros": {
+            "p_rapida": 20,
+            "p_lenta": 48,
+            "p_alvo": 200,
+            "p_usaralvodinamico": 0,
+            "p_janelaamplitude": 5,
+            "p_fatoramplitude": 1.6,
+            "p_alvomin": 50.0,
+            "p_alvomax": 220.0,
+            "p_rompimento": 1,
+            "p_stop": 110,
+            "p_fatorstop": 0.65,
+            "p_folgastop": 50,
+            "p_tempomax": 30,
+            "p_maxentradasdia": 12,
+            "p_espera": 5,
+            "p_perdamaxdia": 150.0,
+            "p_horainicio": 930,
+            "p_horafimentradas": 1700,
+            "p_horazeragem": 1745.0
+          },
+          "metricas": {
+            "pregoes": 19,
+            "barras": 10186,
+            "operacoes": 128,
+            "operacoes_por_dia": 6.7368421052631575,
+            "acertos": 51,
+            "acerto": 0.3984375,
+            "delta_meta_acerto_pp": -5.156250000000001,
+            "liquido": 1268.0,
+            "liquido_por_dia": 66.74,
+            "delta_meta_diaria": -2933.26,
+            "fator_lucro_liquido": 1.40824,
+            "drawdown_max": 388.0,
+            "pior_dia": -164.0,
+            "duracao_mediana_s": 120.0,
+            "duracao_p90_s": 300.0,
+            "dias_meta": 0,
+            "max_exposicao": 2,
+            "ambiguidades": 0,
+            "por_pregao": {
+              "2026-09-15": {
+                "liquido": -68.0,
+                "operacoes": 2
+              },
+              "2026-09-16": {
+                "liquido": 246.0,
+                "operacoes": 4
+              },
+              "2026-09-17": {
+                "liquido": 156.0,
+                "operacoes": 6
+              },
+              "2026-09-23": {
+                "liquido": -96.0,
+                "operacoes": 2
+              },
+              "2026-09-24": {
+                "liquido": 124.0,
+                "operacoes": 6
+              },
+              "2026-09-25": {
+                "liquido": -150.0,
+                "operacoes": 4
+              },
+              "2026-09-29": {
+                "liquido": 132.0,
+                "operacoes": 6
+              },
+              "2026-09-30": {
+                "liquido": -4.0,
+                "operacoes": 3
+              },
+              "2026-10-01": {
+                "liquido": 124.0,
+                "operacoes": 7
+              },
+              "2026-10-02": {
+                "liquido": 110.0,
+                "operacoes": 10
+              },
+              "2026-10-05": {
+                "liquido": 390.0,
+                "operacoes": 7
+              },
+              "2026-10-06": {
+                "liquido": 118.0,
+                "operacoes": 9
+              },
+              "2026-10-07": {
+                "liquido": -18.0,
+                "operacoes": 4
+              },
+              "2026-10-08": {
+                "liquido": 280.0,
+                "operacoes": 6
+              },
+              "2026-10-09": {
+                "liquido": -116.0,
+                "operacoes": 12
+              },
+              "2026-10-13": {
+                "liquido": -30.0,
+                "operacoes": 12
+              },
+              "2026-10-14": {
+                "liquido": -164.0,
+                "operacoes": 6
+              },
+              "2026-10-15": {
+                "liquido": 74.0,
+                "operacoes": 10
+              },
+              "2026-10-16": {
+                "liquido": 160.0,
+                "operacoes": 12
+              }
+            }
+          },
+          "delta_original_reais": 1042.0,
+          "delta_publicado_reais": 570.0
+        },
+        "exploratorio": {
+          "parametros": {
+            "p_rapida": 20,
+            "p_lenta": 48,
+            "p_alvo": 200,
+            "p_usaralvodinamico": 0,
+            "p_janelaamplitude": 5,
+            "p_fatoramplitude": 1.6,
+            "p_alvomin": 50.0,
+            "p_alvomax": 220.0,
+            "p_rompimento": 1,
+            "p_stop": 110,
+            "p_fatorstop": 0.65,
+            "p_folgastop": 50,
+            "p_tempomax": 30,
+            "p_maxentradasdia": 12,
+            "p_espera": 5,
+            "p_perdamaxdia": 150.0,
+            "p_horainicio": 930,
+            "p_horafimentradas": 1700,
+            "p_horazeragem": 1745.0
+          },
+          "metricas": {
+            "pregoes": 20,
+            "barras": 11288,
+            "operacoes": 167,
+            "operacoes_por_dia": 8.35,
+            "acertos": 51,
+            "acerto": 0.30538922155688625,
+            "delta_meta_acerto_pp": -14.461077844311376,
+            "liquido": -1212.0,
+            "liquido_por_dia": -60.6,
+            "delta_meta_diaria": -3060.6,
+            "fator_lucro_liquido": 0.76638,
+            "drawdown_max": 1776.0,
+            "pior_dia": -512.0,
+            "duracao_mediana_s": 60.0,
+            "duracao_p90_s": 300.0,
+            "dias_meta": 0,
+            "max_exposicao": 2,
+            "ambiguidades": 2,
+            "por_pregao": {
+              "2026-10-19": {
+                "liquido": -182.0,
+                "operacoes": 6
+              },
+              "2026-10-20": {
+                "liquido": -178.0,
+                "operacoes": 3
+              },
+              "2026-10-22": {
+                "liquido": 166.0,
+                "operacoes": 11
+              },
+              "2026-10-23": {
+                "liquido": 468.0,
+                "operacoes": 12
+              },
+              "2026-10-27": {
+                "liquido": -154.0,
+                "operacoes": 10
+              },
+              "2026-10-28": {
+                "liquido": -166.0,
+                "operacoes": 6
+              },
+              "2026-10-29": {
+                "liquido": -40.0,
+                "operacoes": 12
+              },
+              "2026-10-30": {
+                "liquido": -512.0,
+                "operacoes": 6
+              },
+              "2026-11-03": {
+                "liquido": 58.0,
+                "operacoes": 11
+              },
+              "2026-11-04": {
+                "liquido": -176.0,
+                "operacoes": 4
+              },
+              "2026-11-05": {
+                "liquido": -172.0,
+                "operacoes": 7
+              },
+              "2026-11-06": {
+                "liquido": -14.0,
+                "operacoes": 12
+              },
+              "2026-11-09": {
+                "liquido": -166.0,
+                "operacoes": 6
+              },
+              "2026-11-10": {
+                "liquido": 8.0,
+                "operacoes": 6
+              },
+              "2026-11-11": {
+                "liquido": -156.0,
+                "operacoes": 3
+              },
+              "2026-11-12": {
+                "liquido": -2.0,
+                "operacoes": 12
+              },
+              "2026-11-13": {
+                "liquido": -154.0,
+                "operacoes": 4
+              },
+              "2026-11-16": {
+                "liquido": -46.0,
+                "operacoes": 12
+              },
+              "2026-11-17": {
+                "liquido": -10.0,
+                "operacoes": 12
+              },
+              "2026-11-18": {
+                "liquido": 216.0,
+                "operacoes": 12
+              }
+            }
+          },
+          "delta_original_reais": -1078.0,
+          "delta_publicado_reais": -732.0
+        },
+        "validacao_inedita": null,
+        "metricas_agregadas_iguais_a": null
+      },
+      {
+        "versao": "Modelo_Unificado_Refatorado_v5_7",
+        "desenvolvimento": {
+          "parametros": {
+            "p_periodo_atr": 20,
+            "p_periodo_regime_atr": 50,
+            "p_desvio_vwap": 2.6,
+            "p_zscore_vol": 1.5,
+            "p_stop_pontos": 350,
+            "p_alvo_pontos": 550,
+            "p_minimotrades": 150,
+            "p_lote": 2,
+            "p_offset_limite_stop": 50
+          },
+          "metricas": {
+            "pregoes": 19,
+            "barras": 10186,
+            "operacoes": 70,
+            "operacoes_por_dia": 3.6842105263157894,
+            "acertos": 35,
+            "acerto": 0.5,
+            "delta_meta_acerto_pp": 4.999999999999999,
+            "liquido": 1078.0,
+            "liquido_por_dia": 56.74,
+            "delta_meta_diaria": -2943.26,
+            "fator_lucro_liquido": 1.40344,
+            "drawdown_max": 720.0,
+            "pior_dia": -502.0,
+            "duracao_mediana_s": 120.0,
+            "duracao_p90_s": 1566.0,
+            "dias_meta": 0,
+            "max_exposicao": 2,
+            "ambiguidades": 0,
+            "por_pregao": {
+              "2026-09-15": {
+                "liquido": 0.0,
+                "operacoes": 0
+              },
+              "2026-09-16": {
+                "liquido": 36.0,
+                "operacoes": 1
+              },
+              "2026-09-17": {
+                "liquido": -34.0,
+                "operacoes": 1
+              },
+              "2026-09-23": {
+                "liquido": 48.0,
+                "operacoes": 5
+              },
+              "2026-09-24": {
+                "liquido": 0.0,
+                "operacoes": 1
+              },
+              "2026-09-25": {
+                "liquido": 0.0,
+                "operacoes": 0
+              },
+              "2026-09-29": {
+                "liquido": 0.0,
+                "operacoes": 0
+              },
+              "2026-09-30": {
+                "liquido": 26.0,
+                "operacoes": 1
+              },
+              "2026-10-01": {
+                "liquido": -142.0,
+                "operacoes": 3
+              },
+              "2026-10-02": {
+                "liquido": 160.0,
+                "operacoes": 7
+              },
+              "2026-10-05": {
+                "liquido": -46.0,
+                "operacoes": 1
+              },
+              "2026-10-06": {
+                "liquido": -136.0,
+                "operacoes": 4
+              },
+              "2026-10-07": {
+                "liquido": 0.0,
+                "operacoes": 0
+              },
+              "2026-10-08": {
+                "liquido": -28.0,
+                "operacoes": 7
+              },
+              "2026-10-09": {
+                "liquido": 290.0,
+                "operacoes": 8
+              },
+              "2026-10-13": {
+                "liquido": 128.0,
+                "operacoes": 10
+              },
+              "2026-10-14": {
+                "liquido": 772.0,
+                "operacoes": 9
+              },
+              "2026-10-15": {
+                "liquido": 506.0,
+                "operacoes": 6
+              },
+              "2026-10-16": {
+                "liquido": -502.0,
+                "operacoes": 6
+              }
+            }
+          },
+          "delta_original_reais": 2078.0,
+          "delta_publicado_reais": 2078.0
+        },
+        "exploratorio": {
+          "parametros": {
+            "p_periodo_atr": 20,
+            "p_periodo_regime_atr": 50,
+            "p_desvio_vwap": 2.6,
+            "p_zscore_vol": 1.5,
+            "p_stop_pontos": 350,
+            "p_alvo_pontos": 550,
+            "p_minimotrades": 150,
+            "p_lote": 2,
+            "p_offset_limite_stop": 50
+          },
+          "metricas": {
+            "pregoes": 20,
+            "barras": 11288,
+            "operacoes": 137,
+            "operacoes_por_dia": 6.85,
+            "acertos": 54,
+            "acerto": 0.39416058394160586,
+            "delta_meta_acerto_pp": -5.583941605839415,
+            "liquido": -1218.0,
+            "liquido_por_dia": -60.9,
+            "delta_meta_diaria": -3060.9,
+            "fator_lucro_liquido": 0.88117,
+            "drawdown_max": 2030.0,
+            "pior_dia": -998.0,
+            "duracao_mediana_s": 960.0,
+            "duracao_p90_s": 4428.000000000001,
+            "dias_meta": 0,
+            "max_exposicao": 2,
+            "ambiguidades": 0,
+            "por_pregao": {
+              "2026-10-19": {
+                "liquido": -532.0,
+                "operacoes": 6
+              },
+              "2026-10-20": {
+                "liquido": -484.0,
+                "operacoes": 7
+              },
+              "2026-10-22": {
+                "liquido": -266.0,
+                "operacoes": 7
+              },
+              "2026-10-23": {
+                "liquido": 394.0,
+                "operacoes": 7
+              },
+              "2026-10-27": {
+                "liquido": -998.0,
+                "operacoes": 11
+              },
+              "2026-10-28": {
+                "liquido": 742.0,
+                "operacoes": 10
+              },
+              "2026-10-29": {
+                "liquido": -368.0,
+                "operacoes": 11
+              },
+              "2026-10-30": {
+                "liquido": 4.0,
+                "operacoes": 5
+              },
+              "2026-11-03": {
+                "liquido": 56.0,
+                "operacoes": 6
+              },
+              "2026-11-04": {
+                "liquido": 14.0,
+                "operacoes": 4
+              },
+              "2026-11-05": {
+                "liquido": 406.0,
+                "operacoes": 6
+              },
+              "2026-11-06": {
+                "liquido": -346.0,
+                "operacoes": 9
+              },
+              "2026-11-09": {
+                "liquido": 604.0,
+                "operacoes": 5
+              },
+              "2026-11-10": {
+                "liquido": 114.0,
+                "operacoes": 6
+              },
+              "2026-11-11": {
+                "liquido": -370.0,
+                "operacoes": 5
+              },
+              "2026-11-12": {
+                "liquido": -384.0,
+                "operacoes": 6
+              },
+              "2026-11-13": {
+                "liquido": 152.0,
+                "operacoes": 4
+              },
+              "2026-11-16": {
+                "liquido": 34.0,
+                "operacoes": 6
+              },
+              "2026-11-17": {
+                "liquido": 702.0,
+                "operacoes": 8
+              },
+              "2026-11-18": {
+                "liquido": -692.0,
+                "operacoes": 8
+              }
+            }
+          },
+          "delta_original_reais": -2558.0,
+          "delta_publicado_reais": -2558.0
+        },
+        "validacao_inedita": null,
+        "metricas_agregadas_iguais_a": null
+      },
+      {
+        "versao": "pullback_tendencia_v1_6",
+        "desenvolvimento": {
+          "parametros": {
+            "p_rapida": 5,
+            "p_lenta": 34,
+            "p_alvo": 250,
+            "p_usaralvodinamico": 0,
+            "p_janelaamplitude": 10,
+            "p_fatoramplitude": 1.2,
+            "p_alvomin": 50.0,
+            "p_alvomax": 220.0,
+            "p_rompimento": 1,
+            "p_stop": 200,
+            "p_fatorstop": 0.8,
+            "p_separacao": 0.05,
+            "p_folgastop": 50,
+            "p_tempomax": 15,
+            "p_maxentradasdia": 24,
+            "p_espera": 1,
+            "p_perdamaxdia": 150.0,
+            "p_horainicio": 1030,
+            "p_horafimentradas": 1530,
+            "p_horazeragem": 1745.0
+          },
+          "metricas": {
+            "pregoes": 19,
+            "barras": 10186,
+            "operacoes": 224,
+            "operacoes_por_dia": 11.789473684210526,
+            "acertos": 93,
+            "acerto": 0.41517857142857145,
+            "delta_meta_acerto_pp": -3.482142857142856,
+            "liquido": 2188.0,
+            "liquido_por_dia": 115.16,
+            "delta_meta_diaria": -2884.84,
+            "fator_lucro_liquido": 1.30774,
+            "drawdown_max": 518.0,
+            "pior_dia": -304.0,
+            "duracao_mediana_s": 120.0,
+            "duracao_p90_s": 522.000000000001,
+            "dias_meta": 0,
+            "max_exposicao": 2,
+            "ambiguidades": 1,
+            "por_pregao": {
+              "2026-09-15": {
+                "liquido": 6.0,
+                "operacoes": 14
+              },
+              "2026-09-16": {
+                "liquido": -304.0,
+                "operacoes": 1
+              },
+              "2026-09-17": {
+                "liquido": 776.0,
+                "operacoes": 15
+              },
+              "2026-09-23": {
+                "liquido": -196.0,
+                "operacoes": 3
+              },
+              "2026-09-24": {
+                "liquido": 392.0,
+                "operacoes": 11
+              },
+              "2026-09-25": {
+                "liquido": -152.0,
+                "operacoes": 7
+              },
+              "2026-09-29": {
+                "liquido": 160.0,
+                "operacoes": 9
+              },
+              "2026-09-30": {
+                "liquido": 168.0,
+                "operacoes": 14
+              },
+              "2026-10-01": {
+                "liquido": -172.0,
+                "operacoes": 2
+              },
+              "2026-10-02": {
+                "liquido": 690.0,
+                "operacoes": 20
+              },
+              "2026-10-05": {
+                "liquido": -168.0,
+                "operacoes": 2
+              },
+              "2026-10-06": {
+                "liquido": 298.0,
+                "operacoes": 19
+              },
+              "2026-10-07": {
+                "liquido": -174.0,
+                "operacoes": 5
+              },
+              "2026-10-08": {
+                "liquido": 1054.0,
+                "operacoes": 24
+              },
+              "2026-10-09": {
+                "liquido": 134.0,
+                "operacoes": 21
+              },
+              "2026-10-13": {
+                "liquido": -172.0,
+                "operacoes": 18
+              },
+              "2026-10-14": {
+                "liquido": -38.0,
+                "operacoes": 17
+              },
+              "2026-10-15": {
+                "liquido": 54.0,
+                "operacoes": 20
+              },
+              "2026-10-16": {
+                "liquido": -168.0,
+                "operacoes": 2
+              }
+            }
+          },
+          "delta_original_reais": 2160.0,
+          "delta_publicado_reais": 2418.0
+        },
+        "exploratorio": {
+          "parametros": {
+            "p_rapida": 5,
+            "p_lenta": 34,
+            "p_alvo": 250,
+            "p_usaralvodinamico": 0,
+            "p_janelaamplitude": 10,
+            "p_fatoramplitude": 1.2,
+            "p_alvomin": 50.0,
+            "p_alvomax": 220.0,
+            "p_rompimento": 1,
+            "p_stop": 200,
+            "p_fatorstop": 0.8,
+            "p_separacao": 0.05,
+            "p_folgastop": 50,
+            "p_tempomax": 15,
+            "p_maxentradasdia": 24,
+            "p_espera": 1,
+            "p_perdamaxdia": 150.0,
+            "p_horainicio": 1030,
+            "p_horafimentradas": 1530,
+            "p_horazeragem": 1745.0
+          },
+          "metricas": {
+            "pregoes": 20,
+            "barras": 11288,
+            "operacoes": 200,
+            "operacoes_por_dia": 10.0,
+            "acertos": 62,
+            "acerto": 0.31,
+            "delta_meta_acerto_pp": -14.000000000000002,
+            "liquido": -1836.0,
+            "liquido_por_dia": -91.8,
+            "delta_meta_diaria": -3091.8,
+            "fator_lucro_liquido": 0.76771,
+            "drawdown_max": 1836.0,
+            "pior_dia": -210.0,
+            "duracao_mediana_s": 120.0,
+            "duracao_p90_s": 420.0,
+            "dias_meta": 0,
+            "max_exposicao": 2,
+            "ambiguidades": 1,
+            "por_pregao": {
+              "2026-10-19": {
+                "liquido": -176.0,
+                "operacoes": 2
+              },
+              "2026-10-20": {
+                "liquido": -190.0,
+                "operacoes": 11
+              },
+              "2026-10-22": {
+                "liquido": -168.0,
+                "operacoes": 2
+              },
+              "2026-10-23": {
+                "liquido": -182.0,
+                "operacoes": 2
+              },
+              "2026-10-27": {
+                "liquido": 266.0,
+                "operacoes": 18
+              },
+              "2026-10-28": {
+                "liquido": 188.0,
+                "operacoes": 20
+              },
+              "2026-10-29": {
+                "liquido": -186.0,
+                "operacoes": 2
+              },
+              "2026-10-30": {
+                "liquido": 296.0,
+                "operacoes": 24
+              },
+              "2026-11-03": {
+                "liquido": -162.0,
+                "operacoes": 2
+              },
+              "2026-11-04": {
+                "liquido": -210.0,
+                "operacoes": 3
+              },
+              "2026-11-05": {
+                "liquido": -150.0,
+                "operacoes": 16
+              },
+              "2026-11-06": {
+                "liquido": -156.0,
+                "operacoes": 11
+              },
+              "2026-11-09": {
+                "liquido": -194.0,
+                "operacoes": 3
+              },
+              "2026-11-10": {
+                "liquido": 14.0,
+                "operacoes": 18
+              },
+              "2026-11-11": {
+                "liquido": -190.0,
+                "operacoes": 7
+              },
+              "2026-11-12": {
+                "liquido": -160.0,
+                "operacoes": 3
+              },
+              "2026-11-13": {
+                "liquido": -178.0,
+                "operacoes": 16
+              },
+              "2026-11-16": {
+                "liquido": -186.0,
+                "operacoes": 14
+              },
+              "2026-11-17": {
+                "liquido": 48.0,
+                "operacoes": 23
+              },
+              "2026-11-18": {
+                "liquido": -160.0,
+                "operacoes": 3
+              }
+            }
+          },
+          "delta_original_reais": -1370.0,
+          "delta_publicado_reais": -1332.0
+        },
+        "validacao_inedita": null,
+        "metricas_agregadas_iguais_a": null
+      },
+      {
+        "versao": "Modelo_Unificado_v5_8",
+        "desenvolvimento": {
+          "parametros": {
+            "p_exec_tick": 0,
+            "p_periodo_atr": 20,
+            "p_periodo_regime_atr": 65,
+            "p_desvio_vwap": 2.6,
+            "p_modo_banda": 0,
+            "p_periodo_desvio": 20,
+            "p_zscore_vol": 2.0,
+            "p_stop_pontos": 450,
+            "p_alvo_pontos": 550,
+            "p_minimotrades": 100,
+            "p_lote": 2,
+            "p_offset_limite_stop": 100,
+            "p_barras_espera": 5,
+            "p_max_entradas_dia": 5,
+            "p_hora_inicio": 915,
+            "p_hora_fim_entradas": 1645,
+            "p_hora_zeragem": 1700.0,
+            "p_noticia1_ini": 1025.0,
+            "p_noticia1_fim": 1035.0,
+            "p_noticia2_ini": 1425.0,
+            "p_noticia2_fim": 1435.0,
+            "p_zerar_na_noticia": 1.0
+          },
+          "metricas": {
+            "pregoes": 19,
+            "barras": 10186,
+            "operacoes": 58,
+            "operacoes_por_dia": 3.0526315789473686,
+            "acertos": 34,
+            "acerto": 0.5862068965517241,
+            "delta_meta_acerto_pp": 13.620689655172407,
+            "liquido": 2764.0,
+            "liquido_por_dia": 145.47,
+            "delta_meta_diaria": -2854.53,
+            "fator_lucro_liquido": 1.7247,
+            "drawdown_max": 552.0,
+            "pior_dia": -184.0,
+            "duracao_mediana_s": 1020.0,
+            "duracao_p90_s": 2916.0000000000005,
+            "dias_meta": 0,
+            "max_exposicao": 2,
+            "ambiguidades": 0,
+            "por_pregao": {
+              "2026-09-15": {
+                "liquido": 0.0,
+                "operacoes": 0
+              },
+              "2026-09-16": {
+                "liquido": -184.0,
+                "operacoes": 1
+              },
+              "2026-09-17": {
+                "liquido": -148.0,
+                "operacoes": 2
+              },
+              "2026-09-23": {
+                "liquido": 508.0,
+                "operacoes": 5
+              },
+              "2026-09-24": {
+                "liquido": 22.0,
+                "operacoes": 2
+              },
+              "2026-09-25": {
+                "liquido": 34.0,
+                "operacoes": 2
+              },
+              "2026-09-29": {
+                "liquido": 116.0,
+                "operacoes": 2
+              },
+              "2026-09-30": {
+                "liquido": 34.0,
+                "operacoes": 2
+              },
+              "2026-10-01": {
+                "liquido": 322.0,
+                "operacoes": 4
+              },
+              "2026-10-02": {
+                "liquido": 872.0,
+                "operacoes": 7
+              },
+              "2026-10-05": {
+                "liquido": 218.0,
+                "operacoes": 1
+              },
+              "2026-10-06": {
+                "liquido": 34.0,
+                "operacoes": 2
+              },
+              "2026-10-07": {
+                "liquido": 436.0,
+                "operacoes": 2
+              },
+              "2026-10-08": {
+                "liquido": -116.0,
+                "operacoes": 5
+              },
+              "2026-10-09": {
+                "liquido": 238.0,
+                "operacoes": 5
+              },
+              "2026-10-13": {
+                "liquido": 68.0,
+                "operacoes": 4
+              },
+              "2026-10-14": {
+                "liquido": 286.0,
+                "operacoes": 5
+              },
+              "2026-10-15": {
+                "liquido": 174.0,
+                "operacoes": 3
+              },
+              "2026-10-16": {
+                "liquido": -150.0,
+                "operacoes": 4
+              }
+            }
+          },
+          "delta_original_reais": 2422.0,
+          "delta_publicado_reais": 2422.0
+        },
+        "exploratorio": {
+          "parametros": {
+            "p_exec_tick": 0,
+            "p_periodo_atr": 20,
+            "p_periodo_regime_atr": 65,
+            "p_desvio_vwap": 2.6,
+            "p_modo_banda": 0,
+            "p_periodo_desvio": 20,
+            "p_zscore_vol": 2.0,
+            "p_stop_pontos": 450,
+            "p_alvo_pontos": 550,
+            "p_minimotrades": 100,
+            "p_lote": 2,
+            "p_offset_limite_stop": 100,
+            "p_barras_espera": 5,
+            "p_max_entradas_dia": 5,
+            "p_hora_inicio": 915,
+            "p_hora_fim_entradas": 1645,
+            "p_hora_zeragem": 1700.0,
+            "p_noticia1_ini": 1025.0,
+            "p_noticia1_fim": 1035.0,
+            "p_noticia2_ini": 1425.0,
+            "p_noticia2_fim": 1435.0,
+            "p_zerar_na_noticia": 1.0
+          },
+          "metricas": {
+            "pregoes": 20,
+            "barras": 11288,
+            "operacoes": 86,
+            "operacoes_por_dia": 4.3,
+            "acertos": 36,
+            "acerto": 0.4186046511627907,
+            "delta_meta_acerto_pp": -3.139534883720929,
+            "liquido": -2022.0,
+            "liquido_por_dia": -101.1,
+            "delta_meta_diaria": -3101.1,
+            "fator_lucro_liquido": 0.73147,
+            "drawdown_max": 2056.0,
+            "pior_dia": -862.0,
+            "duracao_mediana_s": 1500.0,
+            "duracao_p90_s": 5640.0,
+            "dias_meta": 0,
+            "max_exposicao": 2,
+            "ambiguidades": 0,
+            "por_pregao": {
+              "2026-10-19": {
+                "liquido": -242.0,
+                "operacoes": 5
+              },
+              "2026-10-20": {
+                "liquido": -358.0,
+                "operacoes": 5
+              },
+              "2026-10-22": {
+                "liquido": -126.0,
+                "operacoes": 5
+              },
+              "2026-10-23": {
+                "liquido": -136.0,
+                "operacoes": 4
+              },
+              "2026-10-27": {
+                "liquido": -386.0,
+                "operacoes": 5
+              },
+              "2026-10-28": {
+                "liquido": 102.0,
+                "operacoes": 6
+              },
+              "2026-10-29": {
+                "liquido": 28.0,
+                "operacoes": 5
+              },
+              "2026-10-30": {
+                "liquido": -394.0,
+                "operacoes": 3
+              },
+              "2026-11-03": {
+                "liquido": -84.0,
+                "operacoes": 3
+              },
+              "2026-11-04": {
+                "liquido": 248.0,
+                "operacoes": 3
+              },
+              "2026-11-05": {
+                "liquido": -110.0,
+                "operacoes": 4
+              },
+              "2026-11-06": {
+                "liquido": 224.0,
+                "operacoes": 3
+              },
+              "2026-11-09": {
+                "liquido": 174.0,
+                "operacoes": 5
+              },
+              "2026-11-10": {
+                "liquido": 224.0,
+                "operacoes": 4
+              },
+              "2026-11-11": {
+                "liquido": -338.0,
+                "operacoes": 4
+              },
+              "2026-11-12": {
+                "liquido": -250.0,
+                "operacoes": 4
+              },
+              "2026-11-13": {
+                "liquido": 296.0,
+                "operacoes": 3
+              },
+              "2026-11-16": {
+                "liquido": -156.0,
+                "operacoes": 5
+              },
+              "2026-11-17": {
+                "liquido": 124.0,
+                "operacoes": 5
+              },
+              "2026-11-18": {
+                "liquido": -862.0,
+                "operacoes": 5
+              }
+            }
+          },
+          "delta_original_reais": -3924.0,
+          "delta_publicado_reais": -3924.0
+        },
+        "validacao_inedita": null,
+        "metricas_agregadas_iguais_a": null
+      }
+    ],
+    "win_60s_1c": [
+      {
+        "versao": "pullback_tendencia_v1_0",
+        "desenvolvimento": {
+          "parametros": {
+            "p_rapida": 9,
+            "p_lenta": 21,
+            "p_alvo": 200,
+            "p_stop": 75,
+            "p_folgastop": 50,
+            "p_tempomax": 30.0,
+            "p_maxentradasdia": 4,
+            "p_espera": 5,
+            "p_perdamaxdia": 150.0,
+            "p_horainicio": 1030,
+            "p_horafimentradas": 1700,
+            "p_horazeragem": 1745.0
+          },
+          "metricas": {
+            "pregoes": 19,
+            "barras": 10186,
+            "operacoes": 163,
+            "operacoes_por_dia": 8.578947368421053,
+            "acertos": 60,
+            "acerto": 0.36809815950920244,
+            "delta_meta_acerto_pp": -8.190184049079758,
+            "liquido": 521.0,
+            "liquido_por_dia": 27.42,
+            "delta_meta_diaria": -2972.58,
+            "fator_lucro_liquido": 1.2646,
+            "drawdown_max": 260.0,
+            "pior_dia": -110.0,
+            "duracao_mediana_s": 120.0,
+            "duracao_p90_s": 528.0000000000007,
+            "dias_meta": 0,
+            "max_exposicao": 1,
+            "ambiguidades": 2,
+            "por_pregao": {
+              "2026-09-15": {
+                "liquido": -110.0,
+                "operacoes": 9
+              },
+              "2026-09-16": {
+                "liquido": -79.0,
+                "operacoes": 10
+              },
+              "2026-09-17": {
+                "liquido": 71.0,
+                "operacoes": 9
+              },
+              "2026-09-23": {
+                "liquido": -49.0,
+                "operacoes": 8
+              },
+              "2026-09-24": {
+                "liquido": 15.0,
+                "operacoes": 15
+              },
+              "2026-09-25": {
+                "liquido": -27.0,
+                "operacoes": 8
+              },
+              "2026-09-29": {
+                "liquido": -29.0,
+                "operacoes": 11
+              },
+              "2026-09-30": {
+                "liquido": 139.0,
+                "operacoes": 11
+              },
+              "2026-10-01": {
+                "liquido": -11.0,
+                "operacoes": 12
+              },
+              "2026-10-02": {
+                "liquido": 142.0,
+                "operacoes": 8
+              },
+              "2026-10-05": {
+                "liquido": 150.0,
+                "operacoes": 5
+              },
+              "2026-10-06": {
+                "liquido": 50.0,
+                "operacoes": 18
+              },
+              "2026-10-07": {
+                "liquido": 115.0,
+                "operacoes": 15
+              },
+              "2026-10-08": {
+                "liquido": 104.0,
+                "operacoes": 4
+              },
+              "2026-10-09": {
+                "liquido": 35.0,
+                "operacoes": 4
+              },
+              "2026-10-13": {
+                "liquido": -24.0,
+                "operacoes": 4
+              },
+              "2026-10-14": {
+                "liquido": 0.0,
+                "operacoes": 4
+              },
+              "2026-10-15": {
+                "liquido": 35.0,
+                "operacoes": 4
+              },
+              "2026-10-16": {
+                "liquido": -6.0,
+                "operacoes": 4
+              }
+            }
+          },
+          "delta_original_reais": 1140.0,
+          "delta_publicado_reais": 427.0
+        },
+        "exploratorio": {
+          "parametros": {
+            "p_rapida": 9,
+            "p_lenta": 21,
+            "p_alvo": 200,
+            "p_stop": 75,
+            "p_folgastop": 50,
+            "p_tempomax": 30.0,
+            "p_maxentradasdia": 4,
+            "p_espera": 5,
+            "p_perdamaxdia": 150.0,
+            "p_horainicio": 1030,
+            "p_horafimentradas": 1700,
+            "p_horazeragem": 1745.0
+          },
+          "metricas": {
+            "pregoes": 20,
+            "barras": 11288,
+            "operacoes": 84,
+            "operacoes_por_dia": 4.2,
+            "acertos": 38,
+            "acerto": 0.4523809523809524,
+            "delta_meta_acerto_pp": 0.23809523809523725,
+            "liquido": 766.0,
+            "liquido_por_dia": 38.3,
+            "delta_meta_diaria": -2961.7,
+            "fator_lucro_liquido": 1.86359,
+            "drawdown_max": 129.0,
+            "pior_dia": -82.0,
+            "duracao_mediana_s": 60.0,
+            "duracao_p90_s": 240.0,
+            "dias_meta": 0,
+            "max_exposicao": 1,
+            "ambiguidades": 3,
+            "por_pregao": {
+              "2026-10-19": {
+                "liquido": 156.0,
+                "operacoes": 4
+              },
+              "2026-10-20": {
+                "liquido": 86.0,
+                "operacoes": 4
+              },
+              "2026-10-22": {
+                "liquido": 103.0,
+                "operacoes": 4
+              },
+              "2026-10-23": {
+                "liquido": -30.0,
+                "operacoes": 4
+              },
+              "2026-10-27": {
+                "liquido": 132.0,
+                "operacoes": 4
+              },
+              "2026-10-28": {
+                "liquido": 165.0,
+                "operacoes": 8
+              },
+              "2026-10-29": {
+                "liquido": 48.0,
+                "operacoes": 4
+              },
+              "2026-10-30": {
+                "liquido": 44.0,
+                "operacoes": 4
+              },
+              "2026-11-03": {
+                "liquido": 40.0,
+                "operacoes": 4
+              },
+              "2026-11-04": {
+                "liquido": -13.0,
+                "operacoes": 4
+              },
+              "2026-11-05": {
+                "liquido": -12.0,
+                "operacoes": 4
+              },
+              "2026-11-06": {
+                "liquido": 28.0,
+                "operacoes": 4
+              },
+              "2026-11-09": {
+                "liquido": -82.0,
+                "operacoes": 4
+              },
+              "2026-11-10": {
+                "liquido": 35.0,
+                "operacoes": 4
+              },
+              "2026-11-11": {
+                "liquido": -21.0,
+                "operacoes": 4
+              },
+              "2026-11-12": {
+                "liquido": -20.0,
+                "operacoes": 4
+              },
+              "2026-11-13": {
+                "liquido": 44.0,
+                "operacoes": 4
+              },
+              "2026-11-16": {
+                "liquido": 37.0,
+                "operacoes": 4
+              },
+              "2026-11-17": {
+                "liquido": 47.0,
+                "operacoes": 4
+              },
+              "2026-11-18": {
+                "liquido": -21.0,
+                "operacoes": 4
+              }
+            }
+          },
+          "delta_original_reais": 744.0,
+          "delta_publicado_reais": 940.0
+        },
+        "validacao_inedita": null,
+        "metricas_agregadas_iguais_a": null
+      },
+      {
+        "versao": "pullback_tendencia_v1_1",
+        "desenvolvimento": {
+          "parametros": {
+            "p_rapida": 5,
+            "p_lenta": 48,
+            "p_alvo": 250,
+            "p_stop": 300,
+            "p_folgastop": 50,
+            "p_tempomax": 30,
+            "p_maxentradasdia": 4,
+            "p_espera": 1,
+            "p_perdamaxdia": 150.0,
+            "p_horainicio": 930,
+            "p_horafimentradas": 1530,
+            "p_horazeragem": 1745.0
+          },
+          "metricas": {
+            "pregoes": 19,
+            "barras": 10186,
+            "operacoes": 138,
+            "operacoes_por_dia": 7.2631578947368425,
+            "acertos": 80,
+            "acerto": 0.5797101449275363,
+            "delta_meta_acerto_pp": 12.971014492753625,
+            "liquido": 408.0,
+            "liquido_por_dia": 21.47,
+            "delta_meta_diaria": -2978.53,
+            "fator_lucro_liquido": 1.11403,
+            "drawdown_max": 452.0,
+            "pior_dia": -199.0,
+            "duracao_mediana_s": 270.0,
+            "duracao_p90_s": 1037.9999999999998,
+            "dias_meta": 0,
+            "max_exposicao": 1,
+            "ambiguidades": 1,
+            "por_pregao": {
+              "2026-09-15": {
+                "liquido": -199.0,
+                "operacoes": 5
+              },
+              "2026-09-16": {
+                "liquido": 86.0,
+                "operacoes": 10
+              },
+              "2026-09-17": {
+                "liquido": 72.0,
+                "operacoes": 6
+              },
+              "2026-09-23": {
+                "liquido": 280.0,
+                "operacoes": 12
+              },
+              "2026-09-24": {
+                "liquido": -199.0,
+                "operacoes": 5
+              },
+              "2026-09-25": {
+                "liquido": -188.0,
+                "operacoes": 5
+              },
+              "2026-09-29": {
+                "liquido": 59.0,
+                "operacoes": 8
+              },
+              "2026-09-30": {
+                "liquido": 144.0,
+                "operacoes": 12
+              },
+              "2026-10-01": {
+                "liquido": 46.0,
+                "operacoes": 10
+              },
+              "2026-10-02": {
+                "liquido": -156.0,
+                "operacoes": 6
+              },
+              "2026-10-05": {
+                "liquido": 110.0,
+                "operacoes": 4
+              },
+              "2026-10-06": {
+                "liquido": 272.0,
+                "operacoes": 16
+              },
+              "2026-10-07": {
+                "liquido": 14.0,
+                "operacoes": 15
+              },
+              "2026-10-08": {
+                "liquido": -26.0,
+                "operacoes": 4
+              },
+              "2026-10-09": {
+                "liquido": -26.0,
+                "operacoes": 4
+              },
+              "2026-10-13": {
+                "liquido": -26.0,
+                "operacoes": 4
+              },
+              "2026-10-14": {
+                "liquido": 85.0,
+                "operacoes": 4
+              },
+              "2026-10-15": {
+                "liquido": 85.0,
+                "operacoes": 4
+              },
+              "2026-10-16": {
+                "liquido": -25.0,
+                "operacoes": 4
+              }
+            }
+          },
+          "delta_original_reais": 1132.0,
+          "delta_publicado_reais": 458.0
+        },
+        "exploratorio": {
+          "parametros": {
+            "p_rapida": 5,
+            "p_lenta": 48,
+            "p_alvo": 250,
+            "p_stop": 300,
+            "p_folgastop": 50,
+            "p_tempomax": 30,
+            "p_maxentradasdia": 4,
+            "p_espera": 1,
+            "p_perdamaxdia": 150.0,
+            "p_horainicio": 930,
+            "p_horafimentradas": 1530,
+            "p_horazeragem": 1745.0
+          },
+          "metricas": {
+            "pregoes": 20,
+            "barras": 11288,
+            "operacoes": 82,
+            "operacoes_por_dia": 4.1,
+            "acertos": 52,
+            "acerto": 0.6341463414634146,
+            "delta_meta_acerto_pp": 18.414634146341463,
+            "liquido": 714.0,
+            "liquido_por_dia": 35.7,
+            "delta_meta_diaria": -2964.3,
+            "fator_lucro_liquido": 1.38387,
+            "drawdown_max": 339.0,
+            "pior_dia": -137.0,
+            "duracao_mediana_s": 300.0,
+            "duracao_p90_s": 954.0000000000003,
+            "dias_meta": 0,
+            "max_exposicao": 1,
+            "ambiguidades": 1,
+            "por_pregao": {
+              "2026-10-19": {
+                "liquido": 196.0,
+                "operacoes": 4
+              },
+              "2026-10-20": {
+                "liquido": 228.0,
+                "operacoes": 4
+              },
+              "2026-10-22": {
+                "liquido": 85.0,
+                "operacoes": 4
+              },
+              "2026-10-23": {
+                "liquido": 85.0,
+                "operacoes": 4
+              },
+              "2026-10-27": {
+                "liquido": 86.0,
+                "operacoes": 4
+              },
+              "2026-10-28": {
+                "liquido": 75.0,
+                "operacoes": 6
+              },
+              "2026-10-29": {
+                "liquido": -137.0,
+                "operacoes": 4
+              },
+              "2026-10-30": {
+                "liquido": 85.0,
+                "operacoes": 4
+              },
+              "2026-11-03": {
+                "liquido": -137.0,
+                "operacoes": 4
+              },
+              "2026-11-04": {
+                "liquido": -26.0,
+                "operacoes": 4
+              },
+              "2026-11-05": {
+                "liquido": 85.0,
+                "operacoes": 4
+              },
+              "2026-11-06": {
+                "liquido": -26.0,
+                "operacoes": 4
+              },
+              "2026-11-09": {
+                "liquido": -26.0,
+                "operacoes": 4
+              },
+              "2026-11-10": {
+                "liquido": 85.0,
+                "operacoes": 4
+              },
+              "2026-11-11": {
+                "liquido": -26.0,
+                "operacoes": 4
+              },
+              "2026-11-12": {
+                "liquido": 85.0,
+                "operacoes": 4
+              },
+              "2026-11-13": {
+                "liquido": 75.0,
+                "operacoes": 4
+              },
+              "2026-11-16": {
+                "liquido": -137.0,
+                "operacoes": 4
+              },
+              "2026-11-17": {
+                "liquido": 196.0,
+                "operacoes": 4
+              },
+              "2026-11-18": {
+                "liquido": -137.0,
+                "operacoes": 4
+              }
+            }
+          },
+          "delta_original_reais": 550.0,
+          "delta_publicado_reais": 1000.0
+        },
+        "validacao_inedita": null,
+        "metricas_agregadas_iguais_a": null
+      },
+      {
+        "versao": "pullback_tendencia_v1_2",
+        "desenvolvimento": {
+          "parametros": {
+            "p_rapida": 5,
+            "p_lenta": 34,
+            "p_alvo": 200,
+            "p_stop": 110,
+            "p_folgastop": 100,
+            "p_tempomax": 30,
+            "p_maxentradasdia": 2,
+            "p_espera": 1,
+            "p_perdamaxdia": 150.0,
+            "p_horainicio": 1000,
+            "p_horafimentradas": 1630,
+            "p_horazeragem": 1745.0
+          },
+          "metricas": {
+            "pregoes": 19,
+            "barras": 10186,
+            "operacoes": 122,
+            "operacoes_por_dia": 6.421052631578948,
+            "acertos": 58,
+            "acerto": 0.47540983606557374,
+            "delta_meta_acerto_pp": 2.540983606557373,
+            "liquido": 382.0,
+            "liquido_por_dia": 20.11,
+            "delta_meta_diaria": -2979.89,
+            "fator_lucro_liquido": 1.18383,
+            "drawdown_max": 447.0,
+            "pior_dia": -319.0,
+            "duracao_mediana_s": 120.0,
+            "duracao_p90_s": 780.0,
+            "dias_meta": 0,
+            "max_exposicao": 1,
+            "ambiguidades": 3,
+            "por_pregao": {
+              "2026-09-15": {
+                "liquido": 54.0,
+                "operacoes": 11
+              },
+              "2026-09-16": {
+                "liquido": 31.0,
+                "operacoes": 12
+              },
+              "2026-09-17": {
+                "liquido": 51.0,
+                "operacoes": 5
+              },
+              "2026-09-23": {
+                "liquido": 116.0,
+                "operacoes": 7
+              },
+              "2026-09-24": {
+                "liquido": -108.0,
+                "operacoes": 13
+              },
+              "2026-09-25": {
+                "liquido": 47.0,
+                "operacoes": 7
+              },
+              "2026-09-29": {
+                "liquido": -3.0,
+                "operacoes": 8
+              },
+              "2026-09-30": {
+                "liquido": 203.0,
+                "operacoes": 10
+              },
+              "2026-10-01": {
+                "liquido": 4.0,
+                "operacoes": 7
+              },
+              "2026-10-02": {
+                "liquido": -52.0,
+                "operacoes": 4
+              },
+              "2026-10-05": {
+                "liquido": -319.0,
+                "operacoes": 2
+              },
+              "2026-10-06": {
+                "liquido": 110.0,
+                "operacoes": 10
+              },
+              "2026-10-07": {
+                "liquido": 120.0,
+                "operacoes": 11
+              },
+              "2026-10-08": {
+                "liquido": -69.0,
+                "operacoes": 5
+              },
+              "2026-10-09": {
+                "liquido": 78.0,
+                "operacoes": 2
+              },
+              "2026-10-13": {
+                "liquido": 78.0,
+                "operacoes": 2
+              },
+              "2026-10-14": {
+                "liquido": 78.0,
+                "operacoes": 2
+              },
+              "2026-10-15": {
+                "liquido": 11.0,
+                "operacoes": 2
+              },
+              "2026-10-16": {
+                "liquido": -48.0,
+                "operacoes": 2
+              }
+            }
+          },
+          "delta_original_reais": 1003.0,
+          "delta_publicado_reais": 542.0
+        },
+        "exploratorio": {
+          "parametros": {
+            "p_rapida": 5,
+            "p_lenta": 34,
+            "p_alvo": 200,
+            "p_stop": 110,
+            "p_folgastop": 100,
+            "p_tempomax": 30,
+            "p_maxentradasdia": 2,
+            "p_espera": 1,
+            "p_perdamaxdia": 150.0,
+            "p_horainicio": 1000,
+            "p_horafimentradas": 1630,
+            "p_horazeragem": 1745.0
+          },
+          "metricas": {
+            "pregoes": 20,
+            "barras": 11288,
+            "operacoes": 42,
+            "operacoes_por_dia": 2.1,
+            "acertos": 23,
+            "acerto": 0.5476190476190477,
+            "delta_meta_acerto_pp": 9.761904761904766,
+            "liquido": 434.0,
+            "liquido_por_dia": 21.7,
+            "delta_meta_diaria": -2978.3,
+            "fator_lucro_liquido": 1.83784,
+            "drawdown_max": 98.0,
+            "pior_dia": -98.0,
+            "duracao_mediana_s": 60.0,
+            "duracao_p90_s": 180.0,
+            "dias_meta": 0,
+            "max_exposicao": 1,
+            "ambiguidades": 0,
+            "por_pregao": {
+              "2026-10-19": {
+                "liquido": 11.0,
+                "operacoes": 2
+              },
+              "2026-10-20": {
+                "liquido": 15.0,
+                "operacoes": 2
+              },
+              "2026-10-22": {
+                "liquido": 78.0,
+                "operacoes": 2
+              },
+              "2026-10-23": {
+                "liquido": 13.0,
+                "operacoes": 2
+              },
+              "2026-10-27": {
+                "liquido": 100.0,
+                "operacoes": 2
+              },
+              "2026-10-28": {
+                "liquido": 106.0,
+                "operacoes": 4
+              },
+              "2026-10-29": {
+                "liquido": 33.0,
+                "operacoes": 2
+              },
+              "2026-10-30": {
+                "liquido": 15.0,
+                "operacoes": 2
+              },
+              "2026-11-03": {
+                "liquido": 15.0,
+                "operacoes": 2
+              },
+              "2026-11-04": {
+                "liquido": 15.0,
+                "operacoes": 2
+              },
+              "2026-11-05": {
+                "liquido": 78.0,
+                "operacoes": 2
+              },
+              "2026-11-06": {
+                "liquido": 15.0,
+                "operacoes": 2
+              },
+              "2026-11-09": {
+                "liquido": -51.0,
+                "operacoes": 2
+              },
+              "2026-11-10": {
+                "liquido": 15.0,
+                "operacoes": 2
+              },
+              "2026-11-11": {
+                "liquido": -48.0,
+                "operacoes": 2
+              },
+              "2026-11-12": {
+                "liquido": 80.0,
+                "operacoes": 2
+              },
+              "2026-11-13": {
+                "liquido": 12.0,
+                "operacoes": 2
+              },
+              "2026-11-16": {
+                "liquido": 15.0,
+                "operacoes": 2
+              },
+              "2026-11-17": {
+                "liquido": 15.0,
+                "operacoes": 2
+              },
+              "2026-11-18": {
+                "liquido": -98.0,
+                "operacoes": 2
+              }
+            }
+          },
+          "delta_original_reais": 213.0,
+          "delta_publicado_reais": 518.0
+        },
+        "validacao_inedita": null,
+        "metricas_agregadas_iguais_a": null
+      },
+      {
+        "versao": "pullback_tendencia_v1_3",
+        "desenvolvimento": {
+          "parametros": {
+            "p_rapida": 20,
+            "p_lenta": 34,
+            "p_alvo": 250,
+            "p_stop": 75,
+            "p_folgastop": 100,
+            "p_tempomax": 10,
+            "p_maxentradasdia": 24,
+            "p_espera": 5,
+            "p_perdamaxdia": 150.0,
+            "p_horainicio": 1000,
+            "p_horafimentradas": 1530,
+            "p_horazeragem": 1745.0
+          },
+          "metricas": {
+            "pregoes": 19,
+            "barras": 10186,
+            "operacoes": 106,
+            "operacoes_por_dia": 5.578947368421052,
+            "acertos": 41,
+            "acerto": 0.3867924528301887,
+            "delta_meta_acerto_pp": -6.3207547169811304,
+            "liquido": 774.0,
+            "liquido_por_dia": 40.74,
+            "delta_meta_diaria": -2959.26,
+            "fator_lucro_liquido": 1.5708,
+            "drawdown_max": 168.0,
+            "pior_dia": -150.0,
+            "duracao_mediana_s": 60.0,
+            "duracao_p90_s": 360.0,
+            "dias_meta": 0,
+            "max_exposicao": 1,
+            "ambiguidades": 0,
+            "por_pregao": {
+              "2026-09-15": {
+                "liquido": 10.0,
+                "operacoes": 3
+              },
+              "2026-09-16": {
+                "liquido": 49.0,
+                "operacoes": 1
+              },
+              "2026-09-17": {
+                "liquido": 142.0,
+                "operacoes": 5
+              },
+              "2026-09-23": {
+                "liquido": -25.0,
+                "operacoes": 2
+              },
+              "2026-09-24": {
+                "liquido": 64.0,
+                "operacoes": 4
+              },
+              "2026-09-25": {
+                "liquido": -74.0,
+                "operacoes": 4
+              },
+              "2026-09-29": {
+                "liquido": -30.0,
+                "operacoes": 5
+              },
+              "2026-09-30": {
+                "liquido": 2.0,
+                "operacoes": 3
+              },
+              "2026-10-01": {
+                "liquido": 114.0,
+                "operacoes": 7
+              },
+              "2026-10-02": {
+                "liquido": 145.0,
+                "operacoes": 7
+              },
+              "2026-10-05": {
+                "liquido": 91.0,
+                "operacoes": 7
+              },
+              "2026-10-06": {
+                "liquido": 87.0,
+                "operacoes": 8
+              },
+              "2026-10-07": {
+                "liquido": 52.0,
+                "operacoes": 4
+              },
+              "2026-10-08": {
+                "liquido": 229.0,
+                "operacoes": 6
+              },
+              "2026-10-09": {
+                "liquido": -58.0,
+                "operacoes": 9
+              },
+              "2026-10-13": {
+                "liquido": 101.0,
+                "operacoes": 12
+              },
+              "2026-10-14": {
+                "liquido": -36.0,
+                "operacoes": 5
+              },
+              "2026-10-15": {
+                "liquido": 61.0,
+                "operacoes": 8
+              },
+              "2026-10-16": {
+                "liquido": -150.0,
+                "operacoes": 6
+              }
+            }
+          },
+          "delta_original_reais": 465.0,
+          "delta_publicado_reais": 69.0
+        },
+        "exploratorio": {
+          "parametros": {
+            "p_rapida": 20,
+            "p_lenta": 34,
+            "p_alvo": 250,
+            "p_stop": 75,
+            "p_folgastop": 100,
+            "p_tempomax": 10,
+            "p_maxentradasdia": 24,
+            "p_espera": 5,
+            "p_perdamaxdia": 150.0,
+            "p_horainicio": 1000,
+            "p_horafimentradas": 1530,
+            "p_horazeragem": 1745.0
+          },
+          "metricas": {
+            "pregoes": 20,
+            "barras": 11288,
+            "operacoes": 192,
+            "operacoes_por_dia": 9.6,
+            "acertos": 60,
+            "acerto": 0.3125,
+            "delta_meta_acerto_pp": -13.750000000000002,
+            "liquido": -203.0,
+            "liquido_por_dia": -10.15,
+            "delta_meta_diaria": -3010.15,
+            "fator_lucro_liquido": 0.92423,
+            "drawdown_max": 510.0,
+            "pior_dia": -163.0,
+            "duracao_mediana_s": 60.0,
+            "duracao_p90_s": 600.0,
+            "dias_meta": 0,
+            "max_exposicao": 1,
+            "ambiguidades": 3,
+            "por_pregao": {
+              "2026-10-19": {
+                "liquido": -156.0,
+                "operacoes": 7
+              },
+              "2026-10-20": {
+                "liquido": -138.0,
+                "operacoes": 6
+              },
+              "2026-10-22": {
+                "liquido": 61.0,
+                "operacoes": 7
+              },
+              "2026-10-23": {
+                "liquido": 204.0,
+                "operacoes": 12
+              },
+              "2026-10-27": {
+                "liquido": 1.0,
+                "operacoes": 12
+              },
+              "2026-10-28": {
+                "liquido": -140.0,
+                "operacoes": 7
+              },
+              "2026-10-29": {
+                "liquido": -102.0,
+                "operacoes": 12
+              },
+              "2026-10-30": {
+                "liquido": -163.0,
+                "operacoes": 6
+              },
+              "2026-11-03": {
+                "liquido": 27.0,
+                "operacoes": 8
+              },
+              "2026-11-04": {
+                "liquido": 129.0,
+                "operacoes": 11
+              },
+              "2026-11-05": {
+                "liquido": -44.0,
+                "operacoes": 10
+              },
+              "2026-11-06": {
+                "liquido": -28.0,
+                "operacoes": 12
+              },
+              "2026-11-09": {
+                "liquido": -120.0,
+                "operacoes": 12
+              },
+              "2026-11-10": {
+                "liquido": 111.0,
+                "operacoes": 4
+              },
+              "2026-11-11": {
+                "liquido": -103.0,
+                "operacoes": 17
+              },
+              "2026-11-12": {
+                "liquido": 80.0,
+                "operacoes": 12
+              },
+              "2026-11-13": {
+                "liquido": -38.0,
+                "operacoes": 6
+              },
+              "2026-11-16": {
+                "liquido": 25.0,
+                "operacoes": 10
+              },
+              "2026-11-17": {
+                "liquido": -21.0,
+                "operacoes": 11
+              },
+              "2026-11-18": {
+                "liquido": 212.0,
+                "operacoes": 10
+              }
+            }
+          },
+          "delta_original_reais": -196.0,
+          "delta_publicado_reais": -30.0
+        },
+        "validacao_inedita": null,
+        "metricas_agregadas_iguais_a": null
+      }
+    ],
+    "win_5s_2c": [
+      {
+        "versao": "modelo_scalper_v2_3",
+        "desenvolvimento": {
+          "parametros": {
+            "p_alvopontos": 200,
+            "p_stoppontos": 15,
+            "p_offsetstop": 20,
+            "p_lote": 2,
+            "p_segundosporbarra": 5.0,
+            "p_tempomaxsegundos": 90,
+            "p_minbarrasantesexaustao": 3.0,
+            "p_aceleracaosaida": 0.8,
+            "p_razaofluxosaida": 1.2,
+            "p_minvelocidade": 10,
+            "p_minaceleracao": 0.2,
+            "p_minforcacontratos": 25,
+            "p_razaodesbalanco": 2.5,
+            "p_mintradesbarra": 1,
+            "p_periodomediapreco": 15,
+            "p_maxstopsconsecutivos": 3.0,
+            "p_cooldownminutos": 5,
+            "p_cooldownentreentradasbarras": 12.0,
+            "p_maxoperacoesdia": 30.0,
+            "p_limiteperdadia": 300.0,
+            "p_horarioinicio": 1015,
+            "p_horariofimentradas": 1700.0,
+            "p_horariozeragem": 1730.0
+          },
+          "metricas": {
+            "pregoes": 2,
+            "barras": 13520,
+            "operacoes": 60,
+            "operacoes_por_dia": 30.0,
+            "acertos": 11,
+            "acerto": 0.18333333333333332,
+            "delta_meta_acerto_pp": -26.66666666666667,
+            "liquido": 14.0,
+            "liquido_por_dia": 7.0,
+            "delta_meta_diaria": -2993.0,
+            "fator_lucro_liquido": 1.02602,
+            "drawdown_max": 174.0,
+            "pior_dia": -86.0,
+            "duracao_mediana_s": 5.0,
+            "duracao_p90_s": 70.5,
+            "dias_meta": 0,
+            "max_exposicao": 2,
+            "ambiguidades": 0,
+            "por_pregao": {
+              "2026-11-11": {
+                "liquido": -86.0,
+                "operacoes": 30
+              },
+              "2026-11-13": {
+                "liquido": 100.0,
+                "operacoes": 30
+              }
+            }
+          },
+          "delta_original_reais": 474.0,
+          "delta_publicado_reais": 474.0
+        },
+        "exploratorio": {
+          "parametros": {
+            "p_alvopontos": 200,
+            "p_stoppontos": 15,
+            "p_offsetstop": 20,
+            "p_lote": 2,
+            "p_segundosporbarra": 5.0,
+            "p_tempomaxsegundos": 90,
+            "p_minbarrasantesexaustao": 3.0,
+            "p_aceleracaosaida": 0.8,
+            "p_razaofluxosaida": 1.2,
+            "p_minvelocidade": 10,
+            "p_minaceleracao": 0.2,
+            "p_minforcacontratos": 25,
+            "p_razaodesbalanco": 2.5,
+            "p_mintradesbarra": 1,
+            "p_periodomediapreco": 15,
+            "p_maxstopsconsecutivos": 3.0,
+            "p_cooldownminutos": 5,
+            "p_cooldownentreentradasbarras": 12.0,
+            "p_maxoperacoesdia": 30.0,
+            "p_limiteperdadia": 300.0,
+            "p_horarioinicio": 1015,
+            "p_horariofimentradas": 1700.0,
+            "p_horariozeragem": 1730.0
+          },
+          "metricas": {
+            "pregoes": 1,
+            "barras": 6770,
+            "operacoes": 30,
+            "operacoes_por_dia": 30.0,
+            "acertos": 7,
+            "acerto": 0.23333333333333334,
+            "delta_meta_acerto_pp": -21.666666666666668,
+            "liquido": 66.0,
+            "liquido_por_dia": 66.0,
+            "delta_meta_diaria": -2934.0,
+            "fator_lucro_liquido": 1.264,
+            "drawdown_max": 72.0,
+            "pior_dia": 66.0,
+            "duracao_mediana_s": 10.0,
+            "duracao_p90_s": 80.0,
+            "dias_meta": 0,
+            "max_exposicao": 2,
+            "ambiguidades": 0,
+            "por_pregao": {
+              "2026-11-16": {
+                "liquido": 66.0,
+                "operacoes": 30
+              }
+            }
+          },
+          "delta_original_reais": 174.0,
+          "delta_publicado_reais": 174.0
+        },
+        "validacao_inedita": null,
+        "metricas_agregadas_iguais_a": null
+      },
+      {
+        "versao": "modelo_scalper_v2_0",
+        "desenvolvimento": {
+          "parametros": {
+            "p_alvopontos": 100,
+            "p_stoppontos": 15,
+            "p_offsetstop": 20,
+            "p_lote": 2,
+            "p_segundosporbarra": 5.0,
+            "p_tempomaxsegundos": 15,
+            "p_minbarrasantesexaustao": 1.0,
+            "p_minvelocidade": 10.0,
+            "p_minaceleracao": 5,
+            "p_minforcacontratos": 5,
+            "p_razaodesbalanco": 2.5,
+            "p_mintradesbarra": 5,
+            "p_periodomediapreco": 15,
+            "p_maxstopsconsecutivos": 3.0,
+            "p_cooldownminutos": 15,
+            "p_limiteperdadia": 300.0,
+            "p_horarioinicio": 945,
+            "p_horariofimentradas": 1700.0,
+            "p_horariozeragem": 1730.0
+          },
+          "metricas": {
+            "pregoes": 2,
+            "barras": 13520,
+            "operacoes": 3,
+            "operacoes_por_dia": 1.5,
+            "acertos": 0,
+            "acerto": 0.0,
+            "delta_meta_acerto_pp": -45.0,
+            "liquido": -42.0,
+            "liquido_por_dia": -21.0,
+            "delta_meta_diaria": -3021.0,
+            "fator_lucro_liquido": 0.0,
+            "drawdown_max": 42.0,
+            "pior_dia": -32.0,
+            "duracao_mediana_s": 5.0,
+            "duracao_p90_s": 9.0,
+            "dias_meta": 0,
+            "max_exposicao": 2,
+            "ambiguidades": 0,
+            "por_pregao": {
+              "2026-11-11": {
+                "liquido": -32.0,
+                "operacoes": 2
+              },
+              "2026-11-13": {
+                "liquido": -10.0,
+                "operacoes": 1
+              }
+            }
+          },
+          "delta_original_reais": 76.0,
+          "delta_publicado_reais": 76.0
+        },
+        "exploratorio": {
+          "parametros": {
+            "p_alvopontos": 100,
+            "p_stoppontos": 15,
+            "p_offsetstop": 20,
+            "p_lote": 2,
+            "p_segundosporbarra": 5.0,
+            "p_tempomaxsegundos": 15,
+            "p_minbarrasantesexaustao": 1.0,
+            "p_minvelocidade": 10.0,
+            "p_minaceleracao": 5,
+            "p_minforcacontratos": 5,
+            "p_razaodesbalanco": 2.5,
+            "p_mintradesbarra": 5,
+            "p_periodomediapreco": 15,
+            "p_maxstopsconsecutivos": 3.0,
+            "p_cooldownminutos": 15,
+            "p_limiteperdadia": 300.0,
+            "p_horarioinicio": 945,
+            "p_horariofimentradas": 1700.0,
+            "p_horariozeragem": 1730.0
+          },
+          "metricas": {
+            "pregoes": 1,
+            "barras": 6770,
+            "operacoes": 2,
+            "operacoes_por_dia": 2.0,
+            "acertos": 0,
+            "acerto": 0.0,
+            "delta_meta_acerto_pp": -45.0,
+            "liquido": -22.0,
+            "liquido_por_dia": -22.0,
+            "delta_meta_diaria": -3022.0,
+            "fator_lucro_liquido": 0.0,
+            "drawdown_max": 22.0,
+            "pior_dia": -22.0,
+            "duracao_mediana_s": 5.0,
+            "duracao_p90_s": 5.0,
+            "dias_meta": 0,
+            "max_exposicao": 2,
+            "ambiguidades": 0,
+            "por_pregao": {
+              "2026-11-16": {
+                "liquido": -22.0,
+                "operacoes": 2
+              }
+            }
+          },
+          "delta_original_reais": -112.0,
+          "delta_publicado_reais": -112.0
+        },
+        "validacao_inedita": null,
+        "metricas_agregadas_iguais_a": null
+      },
+      {
+        "versao": "modelo_scalper_v2_1",
+        "desenvolvimento": {
+          "parametros": {
+            "p_alvopontos": 100,
+            "p_stoppontos": 15,
+            "p_offsetstop": 20,
+            "p_lote": 2,
+            "p_segundosporbarra": 5.0,
+            "p_tempomaxsegundos": 15,
+            "p_minbarrasantesexaustao": 1.0,
+            "p_minvelocidade": 2,
+            "p_minaceleracao": 5,
+            "p_minforcacontratos": 25,
+            "p_razaodesbalanco": 2.5,
+            "p_mintradesbarra": 5,
+            "p_periodomediapreco": 15,
+            "p_maxstopsconsecutivos": 3.0,
+            "p_cooldownminutos": 15,
+            "p_limiteperdadia": 300.0,
+            "p_horarioinicio": 945,
+            "p_horariofimentradas": 1700.0,
+            "p_horariozeragem": 1730.0
+          },
+          "metricas": {
+            "pregoes": 2,
+            "barras": 13520,
+            "operacoes": 3,
+            "operacoes_por_dia": 1.5,
+            "acertos": 0,
+            "acerto": 0.0,
+            "delta_meta_acerto_pp": -45.0,
+            "liquido": -42.0,
+            "liquido_por_dia": -21.0,
+            "delta_meta_diaria": -3021.0,
+            "fator_lucro_liquido": 0.0,
+            "drawdown_max": 42.0,
+            "pior_dia": -32.0,
+            "duracao_mediana_s": 5.0,
+            "duracao_p90_s": 9.0,
+            "dias_meta": 0,
+            "max_exposicao": 2,
+            "ambiguidades": 0,
+            "por_pregao": {
+              "2026-11-11": {
+                "liquido": -32.0,
+                "operacoes": 2
+              },
+              "2026-11-13": {
+                "liquido": -10.0,
+                "operacoes": 1
+              }
+            }
+          },
+          "delta_original_reais": 574.0,
+          "delta_publicado_reais": 574.0
+        },
+        "exploratorio": {
+          "parametros": {
+            "p_alvopontos": 100,
+            "p_stoppontos": 15,
+            "p_offsetstop": 20,
+            "p_lote": 2,
+            "p_segundosporbarra": 5.0,
+            "p_tempomaxsegundos": 15,
+            "p_minbarrasantesexaustao": 1.0,
+            "p_minvelocidade": 2,
+            "p_minaceleracao": 5,
+            "p_minforcacontratos": 25,
+            "p_razaodesbalanco": 2.5,
+            "p_mintradesbarra": 5,
+            "p_periodomediapreco": 15,
+            "p_maxstopsconsecutivos": 3.0,
+            "p_cooldownminutos": 15,
+            "p_limiteperdadia": 300.0,
+            "p_horarioinicio": 945,
+            "p_horariofimentradas": 1700.0,
+            "p_horariozeragem": 1730.0
+          },
+          "metricas": {
+            "pregoes": 1,
+            "barras": 6770,
+            "operacoes": 2,
+            "operacoes_por_dia": 2.0,
+            "acertos": 0,
+            "acerto": 0.0,
+            "delta_meta_acerto_pp": -45.0,
+            "liquido": -22.0,
+            "liquido_por_dia": -22.0,
+            "delta_meta_diaria": -3022.0,
+            "fator_lucro_liquido": 0.0,
+            "drawdown_max": 22.0,
+            "pior_dia": -22.0,
+            "duracao_mediana_s": 5.0,
+            "duracao_p90_s": 5.0,
+            "dias_meta": 0,
+            "max_exposicao": 2,
+            "ambiguidades": 0,
+            "por_pregao": {
+              "2026-11-16": {
+                "liquido": -22.0,
+                "operacoes": 2
+              }
+            }
+          },
+          "delta_original_reais": 288.0,
+          "delta_publicado_reais": 288.0
+        },
+        "validacao_inedita": null,
+        "metricas_agregadas_iguais_a": "modelo_scalper_v2_0"
+      },
+      {
+        "versao": "modelo_scalper_v2_2",
+        "desenvolvimento": {
+          "parametros": {
+            "p_alvopontos": 100,
+            "p_stoppontos": 15,
+            "p_offsetstop": 20,
+            "p_lote": 2,
+            "p_segundosporbarra": 5.0,
+            "p_tempomaxsegundos": 15,
+            "p_minbarrasantesexaustao": 1.0,
+            "p_minvelocidade": 2,
+            "p_minaceleracao": 5,
+            "p_minforcacontratos": 25,
+            "p_razaodesbalanco": 2.5,
+            "p_mintradesbarra": 5,
+            "p_periodomediapreco": 15,
+            "p_maxstopsconsecutivos": 3.0,
+            "p_cooldownminutos": 15,
+            "p_limiteperdadia": 300.0,
+            "p_horarioinicio": 945,
+            "p_horariofimentradas": 1700.0,
+            "p_horariozeragem": 1730.0
+          },
+          "metricas": {
+            "pregoes": 2,
+            "barras": 13520,
+            "operacoes": 3,
+            "operacoes_por_dia": 1.5,
+            "acertos": 0,
+            "acerto": 0.0,
+            "delta_meta_acerto_pp": -45.0,
+            "liquido": -42.0,
+            "liquido_por_dia": -21.0,
+            "delta_meta_diaria": -3021.0,
+            "fator_lucro_liquido": 0.0,
+            "drawdown_max": 42.0,
+            "pior_dia": -32.0,
+            "duracao_mediana_s": 5.0,
+            "duracao_p90_s": 9.0,
+            "dias_meta": 0,
+            "max_exposicao": 2,
+            "ambiguidades": 0,
+            "por_pregao": {
+              "2026-11-11": {
+                "liquido": -32.0,
+                "operacoes": 2
+              },
+              "2026-11-13": {
+                "liquido": -10.0,
+                "operacoes": 1
+              }
+            }
+          },
+          "delta_original_reais": 588.0,
+          "delta_publicado_reais": 588.0
+        },
+        "exploratorio": {
+          "parametros": {
+            "p_alvopontos": 100,
+            "p_stoppontos": 15,
+            "p_offsetstop": 20,
+            "p_lote": 2,
+            "p_segundosporbarra": 5.0,
+            "p_tempomaxsegundos": 15,
+            "p_minbarrasantesexaustao": 1.0,
+            "p_minvelocidade": 2,
+            "p_minaceleracao": 5,
+            "p_minforcacontratos": 25,
+            "p_razaodesbalanco": 2.5,
+            "p_mintradesbarra": 5,
+            "p_periodomediapreco": 15,
+            "p_maxstopsconsecutivos": 3.0,
+            "p_cooldownminutos": 15,
+            "p_limiteperdadia": 300.0,
+            "p_horarioinicio": 945,
+            "p_horariofimentradas": 1700.0,
+            "p_horariozeragem": 1730.0
+          },
+          "metricas": {
+            "pregoes": 1,
+            "barras": 6770,
+            "operacoes": 2,
+            "operacoes_por_dia": 2.0,
+            "acertos": 0,
+            "acerto": 0.0,
+            "delta_meta_acerto_pp": -45.0,
+            "liquido": -22.0,
+            "liquido_por_dia": -22.0,
+            "delta_meta_diaria": -3022.0,
+            "fator_lucro_liquido": 0.0,
+            "drawdown_max": 22.0,
+            "pior_dia": -22.0,
+            "duracao_mediana_s": 5.0,
+            "duracao_p90_s": 5.0,
+            "dias_meta": 0,
+            "max_exposicao": 2,
+            "ambiguidades": 0,
+            "por_pregao": {
+              "2026-11-16": {
+                "liquido": -22.0,
+                "operacoes": 2
+              }
+            }
+          },
+          "delta_original_reais": 282.0,
+          "delta_publicado_reais": 282.0
+        },
+        "validacao_inedita": null,
+        "metricas_agregadas_iguais_a": "modelo_scalper_v2_0"
+      },
+      {
+        "versao": "modelo_micro_scalper_v4_2_5s",
+        "desenvolvimento": {
+          "parametros": {
+            "p_alvopontos": 200,
+            "p_stoppontos": 40,
+            "p_offsetstop": 20,
+            "p_lote": 2,
+            "p_segundosporbarra": 5.0,
+            "p_tempominsaidasegundos": 5.0,
+            "p_tempomaxsegundos": 25,
+            "p_cooldownbarras": 0,
+            "p_periodomedia": 9,
+            "p_minrangebarra": 10.0,
+            "p_maxrangebarra": 80.0,
+            "p_distanciamaxmedia": 60.0,
+            "p_recuominpontos": 5.0,
+            "p_recuomaxpontos": 20.0,
+            "p_reacaominpontos": 5.0,
+            "p_validadesetupbarras": 2.0,
+            "p_modobook": 0.0,
+            "p_niveisbook": 5.0,
+            "p_maxspreadticks": 2.0,
+            "p_minqtdtopo": 10.0,
+            "p_minqtdbook": 50.0,
+            "p_minimbalancetopo": 0.1,
+            "p_minimbalancebook": 0.05,
+            "p_mindeslocamentomicroticks": 0.05,
+            "p_minagressaocontratos": 5.0,
+            "p_razaoagressaoentrada": 1.2,
+            "p_razaoagressaosaida": 1.1,
+            "p_mintradesbarrafechada": 10.0,
+            "p_confirmacoesbarras": 1.0,
+            "p_pontosminimossetup": 5.0,
+            "p_imbalancesaida": 0.05,
+            "p_maxoperacoesdia": 350.0,
+            "p_maxstopsconsecutivos": 5.0,
+            "p_cooldownstopsbarras": 12.0,
+            "p_limiteperdadia": 150.0,
+            "p_horarioinicio": 1015,
+            "p_horariofimentradas": 1815.0,
+            "p_horariozeragem": 1820.0
+          },
+          "metricas": {
+            "pregoes": 2,
+            "barras": 13520,
+            "operacoes": 98,
+            "operacoes_por_dia": 49.0,
+            "acertos": 26,
+            "acerto": 0.2653061224489796,
+            "delta_meta_acerto_pp": -18.46938775510204,
+            "liquido": -300.0,
+            "liquido_por_dia": -150.0,
+            "delta_meta_diaria": -3150.0,
+            "fator_lucro_liquido": 0.72222,
+            "drawdown_max": 390.0,
+            "pior_dia": -150.0,
+            "duracao_mediana_s": 10.0,
+            "duracao_p90_s": 30.0,
+            "dias_meta": 0,
+            "max_exposicao": 2,
+            "ambiguidades": 0,
+            "por_pregao": {
+              "2026-11-11": {
+                "liquido": -150.0,
+                "operacoes": 87
+              },
+              "2026-11-13": {
+                "liquido": -150.0,
+                "operacoes": 11
+              }
+            }
+          },
+          "delta_original_reais": 20.0,
+          "delta_publicado_reais": 20.0
+        },
+        "exploratorio": {
+          "parametros": {
+            "p_alvopontos": 200,
+            "p_stoppontos": 40,
+            "p_offsetstop": 20,
+            "p_lote": 2,
+            "p_segundosporbarra": 5.0,
+            "p_tempominsaidasegundos": 5.0,
+            "p_tempomaxsegundos": 25,
+            "p_cooldownbarras": 0,
+            "p_periodomedia": 9,
+            "p_minrangebarra": 10.0,
+            "p_maxrangebarra": 80.0,
+            "p_distanciamaxmedia": 60.0,
+            "p_recuominpontos": 5.0,
+            "p_recuomaxpontos": 20.0,
+            "p_reacaominpontos": 5.0,
+            "p_validadesetupbarras": 2.0,
+            "p_modobook": 0.0,
+            "p_niveisbook": 5.0,
+            "p_maxspreadticks": 2.0,
+            "p_minqtdtopo": 10.0,
+            "p_minqtdbook": 50.0,
+            "p_minimbalancetopo": 0.1,
+            "p_minimbalancebook": 0.05,
+            "p_mindeslocamentomicroticks": 0.05,
+            "p_minagressaocontratos": 5.0,
+            "p_razaoagressaoentrada": 1.2,
+            "p_razaoagressaosaida": 1.1,
+            "p_mintradesbarrafechada": 10.0,
+            "p_confirmacoesbarras": 1.0,
+            "p_pontosminimossetup": 5.0,
+            "p_imbalancesaida": 0.05,
+            "p_maxoperacoesdia": 350.0,
+            "p_maxstopsconsecutivos": 5.0,
+            "p_cooldownstopsbarras": 12.0,
+            "p_limiteperdadia": 150.0,
+            "p_horarioinicio": 1015,
+            "p_horariofimentradas": 1815.0,
+            "p_horariozeragem": 1820.0
+          },
+          "metricas": {
+            "pregoes": 1,
+            "barras": 6770,
+            "operacoes": 36,
+            "operacoes_por_dia": 36.0,
+            "acertos": 9,
+            "acerto": 0.25,
+            "delta_meta_acerto_pp": -20.0,
+            "liquido": -154.0,
+            "liquido_por_dia": -154.0,
+            "delta_meta_diaria": -3154.0,
+            "fator_lucro_liquido": 0.60914,
+            "drawdown_max": 154.0,
+            "pior_dia": -154.0,
+            "duracao_mediana_s": 20.0,
+            "duracao_p90_s": 30.0,
+            "dias_meta": 0,
+            "max_exposicao": 2,
+            "ambiguidades": 0,
+            "por_pregao": {
+              "2026-11-16": {
+                "liquido": -154.0,
+                "operacoes": 36
+              }
+            }
+          },
+          "delta_original_reais": 10.0,
+          "delta_publicado_reais": 10.0
+        },
+        "validacao_inedita": null,
+        "metricas_agregadas_iguais_a": null
+      },
+      {
+        "versao": "modelo_micro_scalper_v4_3_ranges_5s",
+        "desenvolvimento": {
+          "parametros": {
+            "p_alvopontos": 50,
+            "p_stoppontos": 25,
+            "p_offsetstop": 50,
+            "p_lote": 2,
+            "p_segundosporbarra": 5.0,
+            "p_tempominsaidasegundos": 5.0,
+            "p_tempomaxsegundos": 90,
+            "p_cooldownbarras": 1,
+            "p_periodomedia": 9,
+            "p_periodovolatilidade": 20.0,
+            "p_minrangebarra": 10.0,
+            "p_maxrangebarra": 80.0,
+            "p_minmediarangecompra": 5.0,
+            "p_maxmediarangecompra": 30.0,
+            "p_minmediarangevenda": 5.0,
+            "p_maxmediarangevenda": 30.0,
+            "p_distanciaminmedia": 0.0,
+            "p_distanciamaxmedia": 60.0,
+            "p_recuominpontos": 5.0,
+            "p_recuomaxpontos": 20.0,
+            "p_reacaominpontos": 5.0,
+            "p_validadesetupbarras": 2.0,
+            "p_modobook": 0.0,
+            "p_niveisbook": 5.0,
+            "p_maxspreadticks": 2.0,
+            "p_minqtdtopo": 10.0,
+            "p_minqtdbook": 50.0,
+            "p_minimbalancetopo": 0.1,
+            "p_minimbalancebook": 0.05,
+            "p_mindeslocamentomicroticks": 0.05,
+            "p_minagressaocontratos": 5.0,
+            "p_maxagressaocontratos": 2000.0,
+            "p_minagressaocomprafechada": 5.0,
+            "p_maxagressaocomprafechada": 1500.0,
+            "p_minagressaovendafechada": 5.0,
+            "p_maxagressaovendafechada": 1500.0,
+            "p_minrazaoagressaoentrada": 1.5,
+            "p_maxrazaoagressaoentrada": 8.0,
+            "p_razaoagressaosaida": 1.1,
+            "p_mintradescomprafechada": 10.0,
+            "p_maxtradescomprafechada": 500.0,
+            "p_mintradesvendafechada": 10.0,
+            "p_maxtradesvendafechada": 500.0,
+            "p_confirmacoesbarras": 1.0,
+            "p_pontosminimossetup": 5.0,
+            "p_imbalancesaida": 0.05,
+            "p_maxoperacoesdia": 350.0,
+            "p_maxstopsconsecutivos": 5.0,
+            "p_cooldownstopsbarras": 12.0,
+            "p_limiteperdadia": 150.0,
+            "p_horarioinicio": 945,
+            "p_horariofimentradas": 1815.0,
+            "p_horariozeragem": 1820.0
+          },
+          "metricas": {
+            "pregoes": 2,
+            "barras": 13520,
+            "operacoes": 60,
+            "operacoes_por_dia": 30.0,
+            "acertos": 15,
+            "acerto": 0.25,
+            "delta_meta_acerto_pp": -20.0,
+            "liquido": -300.0,
+            "liquido_por_dia": -150.0,
+            "delta_meta_diaria": -3150.0,
+            "fator_lucro_liquido": 0.4186,
+            "drawdown_max": 302.0,
+            "pior_dia": -150.0,
+            "duracao_mediana_s": 5.0,
+            "duracao_p90_s": 20.0,
+            "dias_meta": 0,
+            "max_exposicao": 2,
+            "ambiguidades": 0,
+            "por_pregao": {
+              "2026-11-11": {
+                "liquido": -150.0,
+                "operacoes": 30
+              },
+              "2026-11-13": {
+                "liquido": -150.0,
+                "operacoes": 30
+              }
+            }
+          },
+          "delta_original_reais": 6.0,
+          "delta_publicado_reais": 6.0
+        },
+        "exploratorio": {
+          "parametros": {
+            "p_alvopontos": 50,
+            "p_stoppontos": 25,
+            "p_offsetstop": 50,
+            "p_lote": 2,
+            "p_segundosporbarra": 5.0,
+            "p_tempominsaidasegundos": 5.0,
+            "p_tempomaxsegundos": 90,
+            "p_cooldownbarras": 1,
+            "p_periodomedia": 9,
+            "p_periodovolatilidade": 20.0,
+            "p_minrangebarra": 10.0,
+            "p_maxrangebarra": 80.0,
+            "p_minmediarangecompra": 5.0,
+            "p_maxmediarangecompra": 30.0,
+            "p_minmediarangevenda": 5.0,
+            "p_maxmediarangevenda": 30.0,
+            "p_distanciaminmedia": 0.0,
+            "p_distanciamaxmedia": 60.0,
+            "p_recuominpontos": 5.0,
+            "p_recuomaxpontos": 20.0,
+            "p_reacaominpontos": 5.0,
+            "p_validadesetupbarras": 2.0,
+            "p_modobook": 0.0,
+            "p_niveisbook": 5.0,
+            "p_maxspreadticks": 2.0,
+            "p_minqtdtopo": 10.0,
+            "p_minqtdbook": 50.0,
+            "p_minimbalancetopo": 0.1,
+            "p_minimbalancebook": 0.05,
+            "p_mindeslocamentomicroticks": 0.05,
+            "p_minagressaocontratos": 5.0,
+            "p_maxagressaocontratos": 2000.0,
+            "p_minagressaocomprafechada": 5.0,
+            "p_maxagressaocomprafechada": 1500.0,
+            "p_minagressaovendafechada": 5.0,
+            "p_maxagressaovendafechada": 1500.0,
+            "p_minrazaoagressaoentrada": 1.5,
+            "p_maxrazaoagressaoentrada": 8.0,
+            "p_razaoagressaosaida": 1.1,
+            "p_mintradescomprafechada": 10.0,
+            "p_maxtradescomprafechada": 500.0,
+            "p_mintradesvendafechada": 10.0,
+            "p_maxtradesvendafechada": 500.0,
+            "p_confirmacoesbarras": 1.0,
+            "p_pontosminimossetup": 5.0,
+            "p_imbalancesaida": 0.05,
+            "p_maxoperacoesdia": 350.0,
+            "p_maxstopsconsecutivos": 5.0,
+            "p_cooldownstopsbarras": 12.0,
+            "p_limiteperdadia": 150.0,
+            "p_horarioinicio": 945,
+            "p_horariofimentradas": 1815.0,
+            "p_horariozeragem": 1820.0
+          },
+          "metricas": {
+            "pregoes": 1,
+            "barras": 6770,
+            "operacoes": 23,
+            "operacoes_por_dia": 23.0,
+            "acertos": 3,
+            "acerto": 0.13043478260869565,
+            "delta_meta_acerto_pp": -31.956521739130437,
+            "liquido": -154.0,
+            "liquido_por_dia": -154.0,
+            "delta_meta_diaria": -3154.0,
+            "fator_lucro_liquido": 0.25962,
+            "drawdown_max": 162.0,
+            "pior_dia": -154.0,
+            "duracao_mediana_s": 10.0,
+            "duracao_p90_s": 25.0,
+            "dias_meta": 0,
+            "max_exposicao": 2,
+            "ambiguidades": 0,
+            "por_pregao": {
+              "2026-11-16": {
+                "liquido": -154.0,
+                "operacoes": 23
+              }
+            }
+          },
+          "delta_original_reais": 2.0,
+          "delta_publicado_reais": 2.0
+        },
+        "validacao_inedita": null,
+        "metricas_agregadas_iguais_a": null
+      }
+    ],
+    "win_1s_2c": [
+      {
+        "versao": "modelo_1c_antecipado_profit_v1_0",
+        "desenvolvimento": {
+          "parametros": {
+            "p_segundosporbarra": 5.0,
+            "p_periodomedia": 9,
+            "p_periodovolatilidade": 20.0,
+            "p_periodoatr": 14.0,
+            "p_periodoeficiencia": 12.0,
+            "p_periodomediatrades": 20.0,
+            "p_minrangebarra": 10.0,
+            "p_maxrangebarra": 80.0,
+            "p_minmediarangecompra": 5.0,
+            "p_maxmediarangecompra": 30.0,
+            "p_minmediarangevenda": 5.0,
+            "p_maxmediarangevenda": 30.0,
+            "p_distanciaminmedia": 0.0,
+            "p_distanciamaxmedia": 60.0,
+            "p_recuominpontos": 5.0,
+            "p_recuomaxpontos": 20.0,
+            "p_reacaominpontos": 5.0,
+            "p_validadesetupbarras": 2.0,
+            "p_modobook": 0.0,
+            "p_niveisbook": 5.0,
+            "p_maxspreadticks": 2.0,
+            "p_minqtdtopo": 10.0,
+            "p_minqtdbook": 50.0,
+            "p_minimbalancetopo": 0.1,
+            "p_minimbalancebook": 0.05,
+            "p_mindeslocamentomicroticks": 0.05,
+            "p_minagressaocontratos": 5.0,
+            "p_maxagressaocontratos": 2000.0,
+            "p_minagressaocomprafechada": 5.0,
+            "p_maxagressaocomprafechada": 1500.0,
+            "p_minagressaovendafechada": 5.0,
+            "p_maxagressaovendafechada": 1500.0,
+            "p_minrazaoagressaoentrada": 1.0,
+            "p_maxrazaoagressaoentrada": 8.0,
+            "p_razaoagressaosaida": 1.1,
+            "p_mintradescomprafechada": 10.0,
+            "p_maxtradescomprafechada": 500.0,
+            "p_mintradesvendafechada": 10.0,
+            "p_maxtradesvendafechada": 500.0,
+            "p_confirmacoesbarras": 1.0,
+            "p_pontosminimossetup": 5.0,
+            "p_imbalancesaida": 0.05,
+            "p_horarioinicio": 915,
+            "p_horariofimentradas": 1815.0,
+            "p_registrarhistoricobook": 0.0,
+            "p_cortescoremodelo": 1.1,
+            "p_barrasaquecimento": 305.0,
+            "p_tempograficosegundos": 1.0,
+            "p_alvopontos": 150,
+            "p_stoppontos": 40,
+            "p_offsetstop": 5,
+            "p_lote": 2,
+            "p_tempomaxsegundos": 12,
+            "p_cooldownbarras": 1,
+            "p_maxoperacoesdia": 1000.0,
+            "p_limiteperdadia": 300.0,
+            "p_horariozeragem": 1820.0
+          },
+          "metricas": {
+            "pregoes": 2,
+            "barras": 67675,
+            "operacoes": 86,
+            "operacoes_por_dia": 43.0,
+            "acertos": 27,
+            "acerto": 0.313953488372093,
+            "delta_meta_acerto_pp": -13.604651162790699,
+            "liquido": -602.0,
+            "liquido_por_dia": -301.0,
+            "delta_meta_diaria": -3301.0,
+            "fator_lucro_liquido": 0.43208,
+            "drawdown_max": 602.0,
+            "pior_dia": -302.0,
+            "duracao_mediana_s": 9.0,
+            "duracao_p90_s": 13.0,
+            "dias_meta": 0,
+            "max_exposicao": 2,
+            "ambiguidades": 0,
+            "por_pregao": {
+              "2026-10-29": {
+                "liquido": -300.0,
+                "operacoes": 48
+              },
+              "2026-11-03": {
+                "liquido": -302.0,
+                "operacoes": 38
+              }
+            }
+          },
+          "delta_original_reais": 2.0,
+          "delta_publicado_reais": 2.0
+        },
+        "exploratorio": {
+          "parametros": {
+            "p_segundosporbarra": 5.0,
+            "p_periodomedia": 9,
+            "p_periodovolatilidade": 20.0,
+            "p_periodoatr": 14.0,
+            "p_periodoeficiencia": 12.0,
+            "p_periodomediatrades": 20.0,
+            "p_minrangebarra": 10.0,
+            "p_maxrangebarra": 80.0,
+            "p_minmediarangecompra": 5.0,
+            "p_maxmediarangecompra": 30.0,
+            "p_minmediarangevenda": 5.0,
+            "p_maxmediarangevenda": 30.0,
+            "p_distanciaminmedia": 0.0,
+            "p_distanciamaxmedia": 60.0,
+            "p_recuominpontos": 5.0,
+            "p_recuomaxpontos": 20.0,
+            "p_reacaominpontos": 5.0,
+            "p_validadesetupbarras": 2.0,
+            "p_modobook": 0.0,
+            "p_niveisbook": 5.0,
+            "p_maxspreadticks": 2.0,
+            "p_minqtdtopo": 10.0,
+            "p_minqtdbook": 50.0,
+            "p_minimbalancetopo": 0.1,
+            "p_minimbalancebook": 0.05,
+            "p_mindeslocamentomicroticks": 0.05,
+            "p_minagressaocontratos": 5.0,
+            "p_maxagressaocontratos": 2000.0,
+            "p_minagressaocomprafechada": 5.0,
+            "p_maxagressaocomprafechada": 1500.0,
+            "p_minagressaovendafechada": 5.0,
+            "p_maxagressaovendafechada": 1500.0,
+            "p_minrazaoagressaoentrada": 1.0,
+            "p_maxrazaoagressaoentrada": 8.0,
+            "p_razaoagressaosaida": 1.1,
+            "p_mintradescomprafechada": 10.0,
+            "p_maxtradescomprafechada": 500.0,
+            "p_mintradesvendafechada": 10.0,
+            "p_maxtradesvendafechada": 500.0,
+            "p_confirmacoesbarras": 1.0,
+            "p_pontosminimossetup": 5.0,
+            "p_imbalancesaida": 0.05,
+            "p_horarioinicio": 915,
+            "p_horariofimentradas": 1815.0,
+            "p_registrarhistoricobook": 0.0,
+            "p_cortescoremodelo": 1.1,
+            "p_barrasaquecimento": 305.0,
+            "p_tempograficosegundos": 1.0,
+            "p_alvopontos": 150,
+            "p_stoppontos": 40,
+            "p_offsetstop": 5,
+            "p_lote": 2,
+            "p_tempomaxsegundos": 12,
+            "p_cooldownbarras": 1,
+            "p_maxoperacoesdia": 1000.0,
+            "p_limiteperdadia": 300.0,
+            "p_horariozeragem": 1820.0
+          },
+          "metricas": {
+            "pregoes": 1,
+            "barras": 33605,
+            "operacoes": 31,
+            "operacoes_por_dia": 31.0,
+            "acertos": 8,
+            "acerto": 0.25806451612903225,
+            "delta_meta_acerto_pp": -19.193548387096776,
+            "liquido": -306.0,
+            "liquido_por_dia": -306.0,
+            "delta_meta_diaria": -3306.0,
+            "fator_lucro_liquido": 0.39044,
+            "drawdown_max": 306.0,
+            "pior_dia": -306.0,
+            "duracao_mediana_s": 4.0,
+            "duracao_p90_s": 13.0,
+            "dias_meta": 0,
+            "max_exposicao": 2,
+            "ambiguidades": 0,
+            "por_pregao": {
+              "2026-11-04": {
+                "liquido": -306.0,
+                "operacoes": 31
+              }
+            }
+          },
+          "delta_original_reais": -4.0,
+          "delta_publicado_reais": -4.0
+        },
+        "validacao_inedita": null,
+        "metricas_agregadas_iguais_a": null
+      },
+      {
+        "versao": "modelo_1c_antecipado_profit_v1_1",
+        "desenvolvimento": {
+          "parametros": {
+            "p_segundosporbarra": 5.0,
+            "p_periodomedia": 5,
+            "p_periodovolatilidade": 20.0,
+            "p_periodoatr": 14.0,
+            "p_periodoeficiencia": 12.0,
+            "p_periodomediatrades": 20.0,
+            "p_minrangebarra": 10.0,
+            "p_maxrangebarra": 80.0,
+            "p_minmediarangecompra": 5.0,
+            "p_maxmediarangecompra": 30.0,
+            "p_minmediarangevenda": 5.0,
+            "p_maxmediarangevenda": 30.0,
+            "p_distanciaminmedia": 0.0,
+            "p_distanciamaxmedia": 60.0,
+            "p_recuominpontos": 5.0,
+            "p_recuomaxpontos": 20.0,
+            "p_reacaominpontos": 5.0,
+            "p_validadesetupbarras": 2.0,
+            "p_modobook": 0.0,
+            "p_niveisbook": 5.0,
+            "p_maxspreadticks": 2.0,
+            "p_minqtdtopo": 10.0,
+            "p_minqtdbook": 50.0,
+            "p_minimbalancetopo": 0.1,
+            "p_minimbalancebook": 0.05,
+            "p_mindeslocamentomicroticks": 0.05,
+            "p_minagressaocontratos": 5.0,
+            "p_maxagressaocontratos": 2000.0,
+            "p_minagressaocomprafechada": 5.0,
+            "p_maxagressaocomprafechada": 1500.0,
+            "p_minagressaovendafechada": 5.0,
+            "p_maxagressaovendafechada": 1500.0,
+            "p_minrazaoagressaoentrada": 1.2,
+            "p_maxrazaoagressaoentrada": 8.0,
+            "p_razaoagressaosaida": 1.1,
+            "p_mintradescomprafechada": 10.0,
+            "p_maxtradescomprafechada": 500.0,
+            "p_mintradesvendafechada": 10.0,
+            "p_maxtradesvendafechada": 500.0,
+            "p_confirmacoesbarras": 1.0,
+            "p_pontosminimossetup": 5.0,
+            "p_imbalancesaida": 0.05,
+            "p_horarioinicio": 915,
+            "p_horariofimentradas": 1815.0,
+            "p_registrarhistoricobook": 0.0,
+            "p_cortescoremodelo": 0.847298,
+            "p_barrasaquecimento": 305.0,
+            "p_tempograficosegundos": 1.0,
+            "p_alvopontos": 200,
+            "p_stoppontos": 15,
+            "p_offsetstop": 5,
+            "p_lote": 2,
+            "p_tempominimomilissegundos": 0.0,
+            "p_tempomaxsegundos": 12,
+            "p_cooldownbarras": 5,
+            "p_maxoperacoesdia": 1000.0,
+            "p_limiteperdadia": 300.0,
+            "p_horariozeragem": 1820.0
+          },
+          "metricas": {
+            "pregoes": 2,
+            "barras": 67675,
+            "operacoes": 107,
+            "operacoes_por_dia": 53.5,
+            "acertos": 15,
+            "acerto": 0.14018691588785046,
+            "delta_meta_acerto_pp": -30.981308411214957,
+            "liquido": -602.0,
+            "liquido_por_dia": -301.0,
+            "delta_meta_diaria": -3301.0,
+            "fator_lucro_liquido": 0.32962,
+            "drawdown_max": 660.0,
+            "pior_dia": -302.0,
+            "duracao_mediana_s": 2.0,
+            "duracao_p90_s": 13.0,
+            "dias_meta": 0,
+            "max_exposicao": 2,
+            "ambiguidades": 0,
+            "por_pregao": {
+              "2026-10-29": {
+                "liquido": -302.0,
+                "operacoes": 57
+              },
+              "2026-11-03": {
+                "liquido": -300.0,
+                "operacoes": 50
+              }
+            }
+          },
+          "delta_original_reais": 6.0,
+          "delta_publicado_reais": 6.0
+        },
+        "exploratorio": {
+          "parametros": {
+            "p_segundosporbarra": 5.0,
+            "p_periodomedia": 5,
+            "p_periodovolatilidade": 20.0,
+            "p_periodoatr": 14.0,
+            "p_periodoeficiencia": 12.0,
+            "p_periodomediatrades": 20.0,
+            "p_minrangebarra": 10.0,
+            "p_maxrangebarra": 80.0,
+            "p_minmediarangecompra": 5.0,
+            "p_maxmediarangecompra": 30.0,
+            "p_minmediarangevenda": 5.0,
+            "p_maxmediarangevenda": 30.0,
+            "p_distanciaminmedia": 0.0,
+            "p_distanciamaxmedia": 60.0,
+            "p_recuominpontos": 5.0,
+            "p_recuomaxpontos": 20.0,
+            "p_reacaominpontos": 5.0,
+            "p_validadesetupbarras": 2.0,
+            "p_modobook": 0.0,
+            "p_niveisbook": 5.0,
+            "p_maxspreadticks": 2.0,
+            "p_minqtdtopo": 10.0,
+            "p_minqtdbook": 50.0,
+            "p_minimbalancetopo": 0.1,
+            "p_minimbalancebook": 0.05,
+            "p_mindeslocamentomicroticks": 0.05,
+            "p_minagressaocontratos": 5.0,
+            "p_maxagressaocontratos": 2000.0,
+            "p_minagressaocomprafechada": 5.0,
+            "p_maxagressaocomprafechada": 1500.0,
+            "p_minagressaovendafechada": 5.0,
+            "p_maxagressaovendafechada": 1500.0,
+            "p_minrazaoagressaoentrada": 1.2,
+            "p_maxrazaoagressaoentrada": 8.0,
+            "p_razaoagressaosaida": 1.1,
+            "p_mintradescomprafechada": 10.0,
+            "p_maxtradescomprafechada": 500.0,
+            "p_mintradesvendafechada": 10.0,
+            "p_maxtradesvendafechada": 500.0,
+            "p_confirmacoesbarras": 1.0,
+            "p_pontosminimossetup": 5.0,
+            "p_imbalancesaida": 0.05,
+            "p_horarioinicio": 915,
+            "p_horariofimentradas": 1815.0,
+            "p_registrarhistoricobook": 0.0,
+            "p_cortescoremodelo": 0.847298,
+            "p_barrasaquecimento": 305.0,
+            "p_tempograficosegundos": 1.0,
+            "p_alvopontos": 200,
+            "p_stoppontos": 15,
+            "p_offsetstop": 5,
+            "p_lote": 2,
+            "p_tempominimomilissegundos": 0.0,
+            "p_tempomaxsegundos": 12,
+            "p_cooldownbarras": 5,
+            "p_maxoperacoesdia": 1000.0,
+            "p_limiteperdadia": 300.0,
+            "p_horariozeragem": 1820.0
+          },
+          "metricas": {
+            "pregoes": 1,
+            "barras": 33605,
+            "operacoes": 44,
+            "operacoes_por_dia": 44.0,
+            "acertos": 6,
+            "acerto": 0.13636363636363635,
+            "delta_meta_acerto_pp": -31.363636363636367,
+            "liquido": -314.0,
+            "liquido_por_dia": -314.0,
+            "delta_meta_diaria": -3314.0,
+            "fator_lucro_liquido": 0.2266,
+            "drawdown_max": 314.0,
+            "pior_dia": -314.0,
+            "duracao_mediana_s": 2.0,
+            "duracao_p90_s": 13.0,
+            "dias_meta": 0,
+            "max_exposicao": 2,
+            "ambiguidades": 0,
+            "por_pregao": {
+              "2026-11-04": {
+                "liquido": -314.0,
+                "operacoes": 44
+              }
+            }
+          },
+          "delta_original_reais": -10.0,
+          "delta_publicado_reais": -10.0
+        },
+        "validacao_inedita": null,
+        "metricas_agregadas_iguais_a": null
+      }
+    ]
+  },
+  "todos_os_perfis_exploratorios": {
+    "win_60s_2c": [
+      {
+        "versao": "Modelo_Unificado_v5_8",
+        "grupo": "win_60s_2c",
+        "recorte": "exploratorio",
+        "perfil": "original",
+        "lote": 2,
+        "delta_original_reais": null,
+        "delta_publicado_reais": null,
+        "pregoes": 20,
+        "barras": 11288,
+        "operacoes": 147,
+        "operacoes_por_dia": 7.35,
+        "acertos": 76,
+        "acerto": 0.5170068027210885,
+        "delta_meta_acerto_pp": 6.700680272108844,
+        "liquido": 1902.0,
+        "liquido_por_dia": 95.1,
+        "delta_meta_diaria": -2904.9,
+        "fator_lucro_liquido": 1.21237,
+        "drawdown_max": 2352.0,
+        "pior_dia": -1046.0,
+        "duracao_mediana_s": 900.0,
+        "duracao_p90_s": 3180.0,
+        "dias_meta": 0,
+        "max_exposicao": 2,
+        "ambiguidades": 0
+      },
+      {
+        "versao": "Modelo_Unificado_Refatorado_v5_7",
+        "grupo": "win_60s_2c",
+        "recorte": "exploratorio",
+        "perfil": "original",
+        "lote": 2,
+        "delta_original_reais": null,
+        "delta_publicado_reais": null,
+        "pregoes": 20,
+        "barras": 11288,
+        "operacoes": 160,
+        "operacoes_por_dia": 8.0,
+        "acertos": 77,
+        "acerto": 0.48125,
+        "delta_meta_acerto_pp": 3.125,
+        "liquido": 1340.0,
+        "liquido_por_dia": 67.0,
+        "delta_meta_diaria": -2933.0,
+        "fator_lucro_liquido": 1.12984,
+        "drawdown_max": 1666.0,
+        "pior_dia": -688.0,
+        "duracao_mediana_s": 900.0,
+        "duracao_p90_s": 3251.999999999999,
+        "dias_meta": 0,
+        "max_exposicao": 2,
+        "ambiguidades": 0
+      },
+      {
+        "versao": "pullback_tendencia_v1_4",
+        "grupo": "win_60s_2c",
+        "recorte": "exploratorio",
+        "perfil": "original",
+        "lote": 2,
+        "delta_original_reais": null,
+        "delta_publicado_reais": null,
+        "pregoes": 20,
+        "barras": 11288,
+        "operacoes": 76,
+        "operacoes_por_dia": 3.8,
+        "acertos": 42,
+        "acerto": 0.5526315789473685,
+        "delta_meta_acerto_pp": 10.263157894736846,
+        "liquido": -52.0,
+        "liquido_por_dia": -2.6,
+        "delta_meta_diaria": -3002.6,
+        "fator_lucro_liquido": 0.98139,
+        "drawdown_max": 998.0,
+        "pior_dia": -538.0,
+        "duracao_mediana_s": 120.0,
+        "duracao_p90_s": 240.0,
+        "dias_meta": 0,
+        "max_exposicao": 2,
+        "ambiguidades": 0
+      },
+      {
+        "versao": "modelo_scalper_v1_1",
+        "grupo": "win_60s_2c",
+        "recorte": "exploratorio",
+        "perfil": "otimizado",
+        "lote": 2,
+        "delta_original_reais": 1740.0,
+        "delta_publicado_reais": 1740.0,
+        "pregoes": 20,
+        "barras": 11288,
+        "operacoes": 83,
+        "operacoes_por_dia": 4.15,
+        "acertos": 49,
+        "acerto": 0.5903614457831325,
+        "delta_meta_acerto_pp": 14.036144578313253,
+        "liquido": -58.0,
+        "liquido_por_dia": -2.9,
+        "delta_meta_diaria": -3002.9,
+        "fator_lucro_liquido": 0.97148,
+        "drawdown_max": 456.0,
+        "pior_dia": -212.0,
+        "duracao_mediana_s": 120.0,
+        "duracao_p90_s": 420.0,
+        "dias_meta": 0,
+        "max_exposicao": 2,
+        "ambiguidades": 0
+      },
+      {
+        "versao": "pullback_tendencia_v1_7",
+        "grupo": "win_60s_2c",
+        "recorte": "exploratorio",
+        "perfil": "otimizado",
+        "lote": 2,
+        "delta_original_reais": 8.0,
+        "delta_publicado_reais": 354.0,
+        "pregoes": 20,
+        "barras": 11288,
+        "operacoes": 76,
+        "operacoes_por_dia": 3.8,
+        "acertos": 28,
+        "acerto": 0.3684210526315789,
+        "delta_meta_acerto_pp": -8.157894736842108,
+        "liquido": -126.0,
+        "liquido_por_dia": -6.3,
+        "delta_meta_diaria": -3006.3,
+        "fator_lucro_liquido": 0.95323,
+        "drawdown_max": 832.0,
+        "pior_dia": -194.0,
+        "duracao_mediana_s": 120.0,
+        "duracao_p90_s": 300.0,
+        "dias_meta": 0,
+        "max_exposicao": 2,
+        "ambiguidades": 1
+      },
+      {
+        "versao": "pullback_tendencia_v1_5",
+        "grupo": "win_60s_2c",
+        "recorte": "exploratorio",
+        "perfil": "original",
+        "lote": 2,
+        "delta_original_reais": null,
+        "delta_publicado_reais": null,
+        "pregoes": 20,
+        "barras": 11288,
+        "operacoes": 78,
+        "operacoes_por_dia": 3.9,
+        "acertos": 32,
+        "acerto": 0.41025641025641024,
+        "delta_meta_acerto_pp": -3.974358974358977,
+        "liquido": -134.0,
+        "liquido_por_dia": -6.7,
+        "delta_meta_diaria": -3006.7,
+        "fator_lucro_liquido": 0.94224,
+        "drawdown_max": 938.0,
+        "pior_dia": -636.0,
+        "duracao_mediana_s": 60.0,
+        "duracao_p90_s": 180.0,
+        "dias_meta": 0,
+        "max_exposicao": 2,
+        "ambiguidades": 2
+      },
+      {
+        "versao": "pullback_tendencia_v1_7",
+        "grupo": "win_60s_2c",
+        "recorte": "exploratorio",
+        "perfil": "original",
+        "lote": 2,
+        "delta_original_reais": null,
+        "delta_publicado_reais": null,
+        "pregoes": 20,
+        "barras": 11288,
+        "operacoes": 78,
+        "operacoes_por_dia": 3.9,
+        "acertos": 32,
+        "acerto": 0.41025641025641024,
+        "delta_meta_acerto_pp": -3.974358974358977,
+        "liquido": -134.0,
+        "liquido_por_dia": -6.7,
+        "delta_meta_diaria": -3006.7,
+        "fator_lucro_liquido": 0.94224,
+        "drawdown_max": 938.0,
+        "pior_dia": -636.0,
+        "duracao_mediana_s": 60.0,
+        "duracao_p90_s": 180.0,
+        "dias_meta": 0,
+        "max_exposicao": 2,
+        "ambiguidades": 2
+      },
+      {
+        "versao": "pullback_tendencia_v1_6",
+        "grupo": "win_60s_2c",
+        "recorte": "exploratorio",
+        "perfil": "original",
+        "lote": 2,
+        "delta_original_reais": null,
+        "delta_publicado_reais": null,
+        "pregoes": 20,
+        "barras": 11288,
+        "operacoes": 78,
+        "operacoes_por_dia": 3.9,
+        "acertos": 29,
+        "acerto": 0.3717948717948718,
+        "delta_meta_acerto_pp": -7.82051282051282,
+        "liquido": -466.0,
+        "liquido_por_dia": -23.3,
+        "delta_meta_diaria": -3023.3,
+        "fator_lucro_liquido": 0.80886,
+        "drawdown_max": 1006.0,
+        "pior_dia": -636.0,
+        "duracao_mediana_s": 60.0,
+        "duracao_p90_s": 180.0,
+        "dias_meta": 0,
+        "max_exposicao": 2,
+        "ambiguidades": 3
+      },
+      {
+        "versao": "pullback_tendencia_v1_5",
+        "grupo": "win_60s_2c",
+        "recorte": "exploratorio",
+        "perfil": "publicado",
+        "lote": 2,
+        "delta_original_reais": null,
+        "delta_publicado_reais": null,
+        "pregoes": 20,
+        "barras": 11288,
+        "operacoes": 230,
+        "operacoes_por_dia": 11.5,
+        "acertos": 84,
+        "acerto": 0.3652173913043478,
+        "delta_meta_acerto_pp": -8.478260869565219,
+        "liquido": -480.0,
+        "liquido_por_dia": -24.0,
+        "delta_meta_diaria": -3024.0,
+        "fator_lucro_liquido": 0.92256,
+        "drawdown_max": 1238.0,
+        "pior_dia": -192.0,
+        "duracao_mediana_s": 60.0,
+        "duracao_p90_s": 300.0,
+        "dias_meta": 0,
+        "max_exposicao": 2,
+        "ambiguidades": 2
+      },
+      {
+        "versao": "pullback_tendencia_v1_7",
+        "grupo": "win_60s_2c",
+        "recorte": "exploratorio",
+        "perfil": "publicado",
+        "lote": 2,
+        "delta_original_reais": null,
+        "delta_publicado_reais": null,
+        "pregoes": 20,
+        "barras": 11288,
+        "operacoes": 230,
+        "operacoes_por_dia": 11.5,
+        "acertos": 84,
+        "acerto": 0.3652173913043478,
+        "delta_meta_acerto_pp": -8.478260869565219,
+        "liquido": -480.0,
+        "liquido_por_dia": -24.0,
+        "delta_meta_diaria": -3024.0,
+        "fator_lucro_liquido": 0.92256,
+        "drawdown_max": 1238.0,
+        "pior_dia": -192.0,
+        "duracao_mediana_s": 60.0,
+        "duracao_p90_s": 300.0,
+        "dias_meta": 0,
+        "max_exposicao": 2,
+        "ambiguidades": 2
+      },
+      {
+        "versao": "pullback_tendencia_v1_6",
+        "grupo": "win_60s_2c",
+        "recorte": "exploratorio",
+        "perfil": "publicado",
+        "lote": 2,
+        "delta_original_reais": null,
+        "delta_publicado_reais": null,
+        "pregoes": 20,
+        "barras": 11288,
+        "operacoes": 45,
+        "operacoes_por_dia": 2.25,
+        "acertos": 12,
+        "acerto": 0.26666666666666666,
+        "delta_meta_acerto_pp": -18.333333333333336,
+        "liquido": -504.0,
+        "liquido_por_dia": -25.2,
+        "delta_meta_diaria": -3025.2,
+        "fator_lucro_liquido": 0.52182,
+        "drawdown_max": 556.0,
+        "pior_dia": -158.0,
+        "duracao_mediana_s": 60.0,
+        "duracao_p90_s": 156.00000000000009,
+        "dias_meta": 0,
+        "max_exposicao": 2,
+        "ambiguidades": 2
+      },
+      {
+        "versao": "pullback_tendencia_v1_4",
+        "grupo": "win_60s_2c",
+        "recorte": "exploratorio",
+        "perfil": "otimizado",
+        "lote": 2,
+        "delta_original_reais": -496.0,
+        "delta_publicado_reais": 736.0,
+        "pregoes": 20,
+        "barras": 11288,
+        "operacoes": 80,
+        "operacoes_por_dia": 4.0,
+        "acertos": 19,
+        "acerto": 0.2375,
+        "delta_meta_acerto_pp": -21.250000000000004,
+        "liquido": -548.0,
+        "liquido_por_dia": -27.4,
+        "delta_meta_diaria": -3027.4,
+        "fator_lucro_liquido": 0.77167,
+        "drawdown_max": 852.0,
+        "pior_dia": -166.0,
+        "duracao_mediana_s": 60.0,
+        "duracao_p90_s": 240.0,
+        "dias_meta": 0,
+        "max_exposicao": 2,
+        "ambiguidades": 2
+      },
+      {
+        "versao": "pullback_tendencia_v1_5",
+        "grupo": "win_60s_2c",
+        "recorte": "exploratorio",
+        "perfil": "otimizado",
+        "lote": 2,
+        "delta_original_reais": -1078.0,
+        "delta_publicado_reais": -732.0,
+        "pregoes": 20,
+        "barras": 11288,
+        "operacoes": 167,
+        "operacoes_por_dia": 8.35,
+        "acertos": 51,
+        "acerto": 0.30538922155688625,
+        "delta_meta_acerto_pp": -14.461077844311376,
+        "liquido": -1212.0,
+        "liquido_por_dia": -60.6,
+        "delta_meta_diaria": -3060.6,
+        "fator_lucro_liquido": 0.76638,
+        "drawdown_max": 1776.0,
+        "pior_dia": -512.0,
+        "duracao_mediana_s": 60.0,
+        "duracao_p90_s": 300.0,
+        "dias_meta": 0,
+        "max_exposicao": 2,
+        "ambiguidades": 2
+      },
+      {
+        "versao": "Modelo_Unificado_Refatorado_v5_7",
+        "grupo": "win_60s_2c",
+        "recorte": "exploratorio",
+        "perfil": "otimizado",
+        "lote": 2,
+        "delta_original_reais": -2558.0,
+        "delta_publicado_reais": -2558.0,
+        "pregoes": 20,
+        "barras": 11288,
+        "operacoes": 137,
+        "operacoes_por_dia": 6.85,
+        "acertos": 54,
+        "acerto": 0.39416058394160586,
+        "delta_meta_acerto_pp": -5.583941605839415,
+        "liquido": -1218.0,
+        "liquido_por_dia": -60.9,
+        "delta_meta_diaria": -3060.9,
+        "fator_lucro_liquido": 0.88117,
+        "drawdown_max": 2030.0,
+        "pior_dia": -998.0,
+        "duracao_mediana_s": 960.0,
+        "duracao_p90_s": 4428.000000000001,
+        "dias_meta": 0,
+        "max_exposicao": 2,
+        "ambiguidades": 0
+      },
+      {
+        "versao": "pullback_tendencia_v1_4",
+        "grupo": "win_60s_2c",
+        "recorte": "exploratorio",
+        "perfil": "publicado",
+        "lote": 2,
+        "delta_original_reais": null,
+        "delta_publicado_reais": null,
+        "pregoes": 20,
+        "barras": 11288,
+        "operacoes": 240,
+        "operacoes_por_dia": 12.0,
+        "acertos": 99,
+        "acerto": 0.4125,
+        "delta_meta_acerto_pp": -3.7500000000000036,
+        "liquido": -1284.0,
+        "liquido_por_dia": -64.2,
+        "delta_meta_diaria": -3064.2,
+        "fator_lucro_liquido": 0.76873,
+        "drawdown_max": 1504.0,
+        "pior_dia": -208.0,
+        "duracao_mediana_s": 60.0,
+        "duracao_p90_s": 180.0,
+        "dias_meta": 0,
+        "max_exposicao": 2,
+        "ambiguidades": 12
+      },
+      {
+        "versao": "modelo_scalper_v1_1",
+        "grupo": "win_60s_2c",
+        "recorte": "exploratorio",
+        "perfil": "original",
+        "lote": 2,
+        "delta_original_reais": null,
+        "delta_publicado_reais": null,
+        "pregoes": 20,
+        "barras": 11288,
+        "operacoes": 291,
+        "operacoes_por_dia": 14.55,
+        "acertos": 130,
+        "acerto": 0.44673539518900346,
+        "delta_meta_acerto_pp": -0.3264604810996552,
+        "liquido": -1798.0,
+        "liquido_por_dia": -89.9,
+        "delta_meta_diaria": -3089.9,
+        "fator_lucro_liquido": 0.67685,
+        "drawdown_max": 2152.0,
+        "pior_dia": -396.0,
+        "duracao_mediana_s": 60.0,
+        "duracao_p90_s": 180.0,
+        "dias_meta": 0,
+        "max_exposicao": 2,
+        "ambiguidades": 48
+      },
+      {
+        "versao": "pullback_tendencia_v1_6",
+        "grupo": "win_60s_2c",
+        "recorte": "exploratorio",
+        "perfil": "otimizado",
+        "lote": 2,
+        "delta_original_reais": -1370.0,
+        "delta_publicado_reais": -1332.0,
+        "pregoes": 20,
+        "barras": 11288,
+        "operacoes": 200,
+        "operacoes_por_dia": 10.0,
+        "acertos": 62,
+        "acerto": 0.31,
+        "delta_meta_acerto_pp": -14.000000000000002,
+        "liquido": -1836.0,
+        "liquido_por_dia": -91.8,
+        "delta_meta_diaria": -3091.8,
+        "fator_lucro_liquido": 0.76771,
+        "drawdown_max": 1836.0,
+        "pior_dia": -210.0,
+        "duracao_mediana_s": 120.0,
+        "duracao_p90_s": 420.0,
+        "dias_meta": 0,
+        "max_exposicao": 2,
+        "ambiguidades": 1
+      },
+      {
+        "versao": "Modelo_Unificado_v5_8",
+        "grupo": "win_60s_2c",
+        "recorte": "exploratorio",
+        "perfil": "otimizado",
+        "lote": 2,
+        "delta_original_reais": -3924.0,
+        "delta_publicado_reais": -3924.0,
+        "pregoes": 20,
+        "barras": 11288,
+        "operacoes": 86,
+        "operacoes_por_dia": 4.3,
+        "acertos": 36,
+        "acerto": 0.4186046511627907,
+        "delta_meta_acerto_pp": -3.139534883720929,
+        "liquido": -2022.0,
+        "liquido_por_dia": -101.1,
+        "delta_meta_diaria": -3101.1,
+        "fator_lucro_liquido": 0.73147,
+        "drawdown_max": 2056.0,
+        "pior_dia": -862.0,
+        "duracao_mediana_s": 1500.0,
+        "duracao_p90_s": 5640.0,
+        "dias_meta": 0,
+        "max_exposicao": 2,
+        "ambiguidades": 0
+      }
+    ],
+    "win_60s_1c": [
+      {
+        "versao": "pullback_tendencia_v1_0",
+        "grupo": "win_60s_1c",
+        "recorte": "exploratorio",
+        "perfil": "otimizado",
+        "lote": 1,
+        "delta_original_reais": 744.0,
+        "delta_publicado_reais": 940.0,
+        "pregoes": 20,
+        "barras": 11288,
+        "operacoes": 84,
+        "operacoes_por_dia": 4.2,
+        "acertos": 38,
+        "acerto": 0.4523809523809524,
+        "delta_meta_acerto_pp": 0.23809523809523725,
+        "liquido": 766.0,
+        "liquido_por_dia": 38.3,
+        "delta_meta_diaria": -2961.7,
+        "fator_lucro_liquido": 1.86359,
+        "drawdown_max": 129.0,
+        "pior_dia": -82.0,
+        "duracao_mediana_s": 60.0,
+        "duracao_p90_s": 240.0,
+        "dias_meta": 0,
+        "max_exposicao": 1,
+        "ambiguidades": 3
+      },
+      {
+        "versao": "pullback_tendencia_v1_1",
+        "grupo": "win_60s_1c",
+        "recorte": "exploratorio",
+        "perfil": "otimizado",
+        "lote": 1,
+        "delta_original_reais": 550.0,
+        "delta_publicado_reais": 1000.0,
+        "pregoes": 20,
+        "barras": 11288,
+        "operacoes": 82,
+        "operacoes_por_dia": 4.1,
+        "acertos": 52,
+        "acerto": 0.6341463414634146,
+        "delta_meta_acerto_pp": 18.414634146341463,
+        "liquido": 714.0,
+        "liquido_por_dia": 35.7,
+        "delta_meta_diaria": -2964.3,
+        "fator_lucro_liquido": 1.38387,
+        "drawdown_max": 339.0,
+        "pior_dia": -137.0,
+        "duracao_mediana_s": 300.0,
+        "duracao_p90_s": 954.0000000000003,
+        "dias_meta": 0,
+        "max_exposicao": 1,
+        "ambiguidades": 1
+      },
+      {
+        "versao": "pullback_tendencia_v1_2",
+        "grupo": "win_60s_1c",
+        "recorte": "exploratorio",
+        "perfil": "otimizado",
+        "lote": 1,
+        "delta_original_reais": 213.0,
+        "delta_publicado_reais": 518.0,
+        "pregoes": 20,
+        "barras": 11288,
+        "operacoes": 42,
+        "operacoes_por_dia": 2.1,
+        "acertos": 23,
+        "acerto": 0.5476190476190477,
+        "delta_meta_acerto_pp": 9.761904761904766,
+        "liquido": 434.0,
+        "liquido_por_dia": 21.7,
+        "delta_meta_diaria": -2978.3,
+        "fator_lucro_liquido": 1.83784,
+        "drawdown_max": 98.0,
+        "pior_dia": -98.0,
+        "duracao_mediana_s": 60.0,
+        "duracao_p90_s": 180.0,
+        "dias_meta": 0,
+        "max_exposicao": 1,
+        "ambiguidades": 0
+      },
+      {
+        "versao": "pullback_tendencia_v1_2",
+        "grupo": "win_60s_1c",
+        "recorte": "exploratorio",
+        "perfil": "original",
+        "lote": 1,
+        "delta_original_reais": null,
+        "delta_publicado_reais": null,
+        "pregoes": 20,
+        "barras": 11288,
+        "operacoes": 84,
+        "operacoes_por_dia": 4.2,
+        "acertos": 41,
+        "acerto": 0.4880952380952381,
+        "delta_meta_acerto_pp": 3.809523809523807,
+        "liquido": 221.0,
+        "liquido_por_dia": 11.05,
+        "delta_meta_diaria": -2988.95,
+        "fator_lucro_liquido": 1.15541,
+        "drawdown_max": 352.0,
+        "pior_dia": -128.0,
+        "duracao_mediana_s": 120.0,
+        "duracao_p90_s": 402.00000000000017,
+        "dias_meta": 0,
+        "max_exposicao": 1,
+        "ambiguidades": 0
+      },
+      {
+        "versao": "pullback_tendencia_v1_1",
+        "grupo": "win_60s_1c",
+        "recorte": "exploratorio",
+        "perfil": "original",
+        "lote": 1,
+        "delta_original_reais": null,
+        "delta_publicado_reais": null,
+        "pregoes": 20,
+        "barras": 11288,
+        "operacoes": 83,
+        "operacoes_por_dia": 4.15,
+        "acertos": 43,
+        "acerto": 0.5180722891566265,
+        "delta_meta_acerto_pp": 6.80722891566265,
+        "liquido": 164.0,
+        "liquido_por_dia": 8.2,
+        "delta_meta_diaria": -2991.8,
+        "fator_lucro_liquido": 1.10426,
+        "drawdown_max": 494.0,
+        "pior_dia": -294.0,
+        "duracao_mediana_s": 120.0,
+        "duracao_p90_s": 420.0,
+        "dias_meta": 0,
+        "max_exposicao": 1,
+        "ambiguidades": 0
+      },
+      {
+        "versao": "pullback_tendencia_v1_0",
+        "grupo": "win_60s_1c",
+        "recorte": "exploratorio",
+        "perfil": "original",
+        "lote": 1,
+        "delta_original_reais": null,
+        "delta_publicado_reais": null,
+        "pregoes": 20,
+        "barras": 11288,
+        "operacoes": 84,
+        "operacoes_por_dia": 4.2,
+        "acertos": 42,
+        "acerto": 0.5,
+        "delta_meta_acerto_pp": 4.999999999999999,
+        "liquido": 22.0,
+        "liquido_por_dia": 1.1,
+        "delta_meta_diaria": -2998.9,
+        "fator_lucro_liquido": 1.01361,
+        "drawdown_max": 455.0,
+        "pior_dia": -326.0,
+        "duracao_mediana_s": 120.0,
+        "duracao_p90_s": 462.00000000000017,
+        "dias_meta": 0,
+        "max_exposicao": 1,
+        "ambiguidades": 0
+      },
+      {
+        "versao": "pullback_tendencia_v1_3",
+        "grupo": "win_60s_1c",
+        "recorte": "exploratorio",
+        "perfil": "original",
+        "lote": 1,
+        "delta_original_reais": null,
+        "delta_publicado_reais": null,
+        "pregoes": 20,
+        "barras": 11288,
+        "operacoes": 82,
+        "operacoes_por_dia": 4.1,
+        "acertos": 40,
+        "acerto": 0.4878048780487805,
+        "delta_meta_acerto_pp": 3.780487804878047,
+        "liquido": -7.0,
+        "liquido_por_dia": -0.35,
+        "delta_meta_diaria": -3000.35,
+        "fator_lucro_liquido": 0.99577,
+        "drawdown_max": 502.0,
+        "pior_dia": -262.0,
+        "duracao_mediana_s": 120.0,
+        "duracao_p90_s": 360.0,
+        "dias_meta": 0,
+        "max_exposicao": 1,
+        "ambiguidades": 0
+      },
+      {
+        "versao": "pullback_tendencia_v1_2",
+        "grupo": "win_60s_1c",
+        "recorte": "exploratorio",
+        "perfil": "publicado",
+        "lote": 1,
+        "delta_original_reais": null,
+        "delta_publicado_reais": null,
+        "pregoes": 20,
+        "barras": 11288,
+        "operacoes": 42,
+        "operacoes_por_dia": 2.1,
+        "acertos": 25,
+        "acerto": 0.5952380952380952,
+        "delta_meta_acerto_pp": 14.523809523809522,
+        "liquido": -84.0,
+        "liquido_por_dia": -4.2,
+        "delta_meta_diaria": -3004.2,
+        "fator_lucro_liquido": 0.9203,
+        "drawdown_max": 492.0,
+        "pior_dia": -147.0,
+        "duracao_mediana_s": 180.0,
+        "duracao_p90_s": 587.9999999999998,
+        "dias_meta": 0,
+        "max_exposicao": 1,
+        "ambiguidades": 0
+      },
+      {
+        "versao": "pullback_tendencia_v1_3",
+        "grupo": "win_60s_1c",
+        "recorte": "exploratorio",
+        "perfil": "publicado",
+        "lote": 1,
+        "delta_original_reais": null,
+        "delta_publicado_reais": null,
+        "pregoes": 20,
+        "barras": 11288,
+        "operacoes": 230,
+        "operacoes_por_dia": 11.5,
+        "acertos": 81,
+        "acerto": 0.3521739130434783,
+        "delta_meta_acerto_pp": -9.782608695652172,
+        "liquido": -173.0,
+        "liquido_por_dia": -8.65,
+        "delta_meta_diaria": -3008.65,
+        "fator_lucro_liquido": 0.94092,
+        "drawdown_max": 413.0,
+        "pior_dia": -165.0,
+        "duracao_mediana_s": 60.0,
+        "duracao_p90_s": 360.0,
+        "dias_meta": 0,
+        "max_exposicao": 1,
+        "ambiguidades": 5
+      },
+      {
+        "versao": "pullback_tendencia_v1_0",
+        "grupo": "win_60s_1c",
+        "recorte": "exploratorio",
+        "perfil": "publicado",
+        "lote": 1,
+        "delta_original_reais": null,
+        "delta_publicado_reais": null,
+        "pregoes": 20,
+        "barras": 11288,
+        "operacoes": 42,
+        "operacoes_por_dia": 2.1,
+        "acertos": 24,
+        "acerto": 0.5714285714285714,
+        "delta_meta_acerto_pp": 12.142857142857139,
+        "liquido": -174.0,
+        "liquido_por_dia": -8.7,
+        "delta_meta_diaria": -3008.7,
+        "fator_lucro_liquido": 0.84409,
+        "drawdown_max": 481.0,
+        "pior_dia": -124.0,
+        "duracao_mediana_s": 180.0,
+        "duracao_p90_s": 480.0,
+        "dias_meta": 0,
+        "max_exposicao": 1,
+        "ambiguidades": 1
+      },
+      {
+        "versao": "pullback_tendencia_v1_3",
+        "grupo": "win_60s_1c",
+        "recorte": "exploratorio",
+        "perfil": "otimizado",
+        "lote": 1,
+        "delta_original_reais": -196.0,
+        "delta_publicado_reais": -30.0,
+        "pregoes": 20,
+        "barras": 11288,
+        "operacoes": 192,
+        "operacoes_por_dia": 9.6,
+        "acertos": 60,
+        "acerto": 0.3125,
+        "delta_meta_acerto_pp": -13.750000000000002,
+        "liquido": -203.0,
+        "liquido_por_dia": -10.15,
+        "delta_meta_diaria": -3010.15,
+        "fator_lucro_liquido": 0.92423,
+        "drawdown_max": 510.0,
+        "pior_dia": -163.0,
+        "duracao_mediana_s": 60.0,
+        "duracao_p90_s": 600.0,
+        "dias_meta": 0,
+        "max_exposicao": 1,
+        "ambiguidades": 3
+      },
+      {
+        "versao": "pullback_tendencia_v1_1",
+        "grupo": "win_60s_1c",
+        "recorte": "exploratorio",
+        "perfil": "publicado",
+        "lote": 1,
+        "delta_original_reais": null,
+        "delta_publicado_reais": null,
+        "pregoes": 20,
+        "barras": 11288,
+        "operacoes": 42,
+        "operacoes_por_dia": 2.1,
+        "acertos": 23,
+        "acerto": 0.5476190476190477,
+        "delta_meta_acerto_pp": 9.761904761904766,
+        "liquido": -286.0,
+        "liquido_por_dia": -14.3,
+        "delta_meta_diaria": -3014.3,
+        "fator_lucro_liquido": 0.75722,
+        "drawdown_max": 421.0,
+        "pior_dia": -147.0,
+        "duracao_mediana_s": 180.0,
+        "duracao_p90_s": 653.9999999999999,
+        "dias_meta": 0,
+        "max_exposicao": 1,
+        "ambiguidades": 0
+      }
+    ],
+    "win_5s_2c": [
+      {
+        "versao": "modelo_scalper_v2_0",
+        "grupo": "win_5s_2c",
+        "recorte": "exploratorio",
+        "perfil": "original",
+        "lote": 2,
+        "delta_original_reais": null,
+        "delta_publicado_reais": null,
+        "pregoes": 1,
+        "barras": 6770,
+        "operacoes": 2,
+        "operacoes_por_dia": 2.0,
+        "acertos": 2,
+        "acerto": 1.0,
+        "delta_meta_acerto_pp": 55.00000000000001,
+        "liquido": 90.0,
+        "liquido_por_dia": 90.0,
+        "delta_meta_diaria": -2910.0,
+        "fator_lucro_liquido": null,
+        "drawdown_max": 0.0,
+        "pior_dia": 90.0,
+        "duracao_mediana_s": 95.0,
+        "duracao_p90_s": 95.0,
+        "dias_meta": 0,
+        "max_exposicao": 2,
+        "ambiguidades": 0
+      },
+      {
+        "versao": "modelo_scalper_v2_3",
+        "grupo": "win_5s_2c",
+        "recorte": "exploratorio",
+        "perfil": "otimizado",
+        "lote": 2,
+        "delta_original_reais": 174.0,
+        "delta_publicado_reais": 174.0,
+        "pregoes": 1,
+        "barras": 6770,
+        "operacoes": 30,
+        "operacoes_por_dia": 30.0,
+        "acertos": 7,
+        "acerto": 0.23333333333333334,
+        "delta_meta_acerto_pp": -21.666666666666668,
+        "liquido": 66.0,
+        "liquido_por_dia": 66.0,
+        "delta_meta_diaria": -2934.0,
+        "fator_lucro_liquido": 1.264,
+        "drawdown_max": 72.0,
+        "pior_dia": 66.0,
+        "duracao_mediana_s": 10.0,
+        "duracao_p90_s": 80.0,
+        "dias_meta": 0,
+        "max_exposicao": 2,
+        "ambiguidades": 0
+      },
+      {
+        "versao": "modelo_scalper_v2_0",
+        "grupo": "win_5s_2c",
+        "recorte": "exploratorio",
+        "perfil": "otimizado",
+        "lote": 2,
+        "delta_original_reais": -112.0,
+        "delta_publicado_reais": -112.0,
+        "pregoes": 1,
+        "barras": 6770,
+        "operacoes": 2,
+        "operacoes_por_dia": 2.0,
+        "acertos": 0,
+        "acerto": 0.0,
+        "delta_meta_acerto_pp": -45.0,
+        "liquido": -22.0,
+        "liquido_por_dia": -22.0,
+        "delta_meta_diaria": -3022.0,
+        "fator_lucro_liquido": 0.0,
+        "drawdown_max": 22.0,
+        "pior_dia": -22.0,
+        "duracao_mediana_s": 5.0,
+        "duracao_p90_s": 5.0,
+        "dias_meta": 0,
+        "max_exposicao": 2,
+        "ambiguidades": 0
+      },
+      {
+        "versao": "modelo_scalper_v2_1",
+        "grupo": "win_5s_2c",
+        "recorte": "exploratorio",
+        "perfil": "otimizado",
+        "lote": 2,
+        "delta_original_reais": 288.0,
+        "delta_publicado_reais": 288.0,
+        "pregoes": 1,
+        "barras": 6770,
+        "operacoes": 2,
+        "operacoes_por_dia": 2.0,
+        "acertos": 0,
+        "acerto": 0.0,
+        "delta_meta_acerto_pp": -45.0,
+        "liquido": -22.0,
+        "liquido_por_dia": -22.0,
+        "delta_meta_diaria": -3022.0,
+        "fator_lucro_liquido": 0.0,
+        "drawdown_max": 22.0,
+        "pior_dia": -22.0,
+        "duracao_mediana_s": 5.0,
+        "duracao_p90_s": 5.0,
+        "dias_meta": 0,
+        "max_exposicao": 2,
+        "ambiguidades": 0
+      },
+      {
+        "versao": "modelo_scalper_v2_2",
+        "grupo": "win_5s_2c",
+        "recorte": "exploratorio",
+        "perfil": "otimizado",
+        "lote": 2,
+        "delta_original_reais": 282.0,
+        "delta_publicado_reais": 282.0,
+        "pregoes": 1,
+        "barras": 6770,
+        "operacoes": 2,
+        "operacoes_por_dia": 2.0,
+        "acertos": 0,
+        "acerto": 0.0,
+        "delta_meta_acerto_pp": -45.0,
+        "liquido": -22.0,
+        "liquido_por_dia": -22.0,
+        "delta_meta_diaria": -3022.0,
+        "fator_lucro_liquido": 0.0,
+        "drawdown_max": 22.0,
+        "pior_dia": -22.0,
+        "duracao_mediana_s": 5.0,
+        "duracao_p90_s": 5.0,
+        "dias_meta": 0,
+        "max_exposicao": 2,
+        "ambiguidades": 0
+      },
+      {
+        "versao": "modelo_scalper_v2_3",
+        "grupo": "win_5s_2c",
+        "recorte": "exploratorio",
+        "perfil": "original",
+        "lote": 2,
+        "delta_original_reais": null,
+        "delta_publicado_reais": null,
+        "pregoes": 1,
+        "barras": 6770,
+        "operacoes": 30,
+        "operacoes_por_dia": 30.0,
+        "acertos": 10,
+        "acerto": 0.3333333333333333,
+        "delta_meta_acerto_pp": -11.66666666666667,
+        "liquido": -108.0,
+        "liquido_por_dia": -108.0,
+        "delta_meta_diaria": -3108.0,
+        "fator_lucro_liquido": 0.77215,
+        "drawdown_max": 218.0,
+        "pior_dia": -108.0,
+        "duracao_mediana_s": 55.0,
+        "duracao_p90_s": 95.0,
+        "dias_meta": 0,
+        "max_exposicao": 2,
+        "ambiguidades": 0
+      },
+      {
+        "versao": "modelo_micro_scalper_v4_2_5s",
+        "grupo": "win_5s_2c",
+        "recorte": "exploratorio",
+        "perfil": "otimizado",
+        "lote": 2,
+        "delta_original_reais": 10.0,
+        "delta_publicado_reais": 10.0,
+        "pregoes": 1,
+        "barras": 6770,
+        "operacoes": 36,
+        "operacoes_por_dia": 36.0,
+        "acertos": 9,
+        "acerto": 0.25,
+        "delta_meta_acerto_pp": -20.0,
+        "liquido": -154.0,
+        "liquido_por_dia": -154.0,
+        "delta_meta_diaria": -3154.0,
+        "fator_lucro_liquido": 0.60914,
+        "drawdown_max": 154.0,
+        "pior_dia": -154.0,
+        "duracao_mediana_s": 20.0,
+        "duracao_p90_s": 30.0,
+        "dias_meta": 0,
+        "max_exposicao": 2,
+        "ambiguidades": 0
+      },
+      {
+        "versao": "modelo_micro_scalper_v4_3_ranges_5s",
+        "grupo": "win_5s_2c",
+        "recorte": "exploratorio",
+        "perfil": "otimizado",
+        "lote": 2,
+        "delta_original_reais": 2.0,
+        "delta_publicado_reais": 2.0,
+        "pregoes": 1,
+        "barras": 6770,
+        "operacoes": 23,
+        "operacoes_por_dia": 23.0,
+        "acertos": 3,
+        "acerto": 0.13043478260869565,
+        "delta_meta_acerto_pp": -31.956521739130437,
+        "liquido": -154.0,
+        "liquido_por_dia": -154.0,
+        "delta_meta_diaria": -3154.0,
+        "fator_lucro_liquido": 0.25962,
+        "drawdown_max": 162.0,
+        "pior_dia": -154.0,
+        "duracao_mediana_s": 10.0,
+        "duracao_p90_s": 25.0,
+        "dias_meta": 0,
+        "max_exposicao": 2,
+        "ambiguidades": 0
+      },
+      {
+        "versao": "modelo_micro_scalper_v4_3_ranges_5s",
+        "grupo": "win_5s_2c",
+        "recorte": "exploratorio",
+        "perfil": "original",
+        "lote": 2,
+        "delta_original_reais": null,
+        "delta_publicado_reais": null,
+        "pregoes": 1,
+        "barras": 6770,
+        "operacoes": 35,
+        "operacoes_por_dia": 35.0,
+        "acertos": 8,
+        "acerto": 0.22857142857142856,
+        "delta_meta_acerto_pp": -22.142857142857146,
+        "liquido": -156.0,
+        "liquido_por_dia": -156.0,
+        "delta_meta_diaria": -3156.0,
+        "fator_lucro_liquido": 0.36585,
+        "drawdown_max": 164.0,
+        "pior_dia": -156.0,
+        "duracao_mediana_s": 10.0,
+        "duracao_p90_s": 23.000000000000007,
+        "dias_meta": 0,
+        "max_exposicao": 2,
+        "ambiguidades": 0
+      },
+      {
+        "versao": "modelo_micro_scalper_v4_2_5s",
+        "grupo": "win_5s_2c",
+        "recorte": "exploratorio",
+        "perfil": "original",
+        "lote": 2,
+        "delta_original_reais": null,
+        "delta_publicado_reais": null,
+        "pregoes": 1,
+        "barras": 6770,
+        "operacoes": 20,
+        "operacoes_por_dia": 20.0,
+        "acertos": 3,
+        "acerto": 0.15,
+        "delta_meta_acerto_pp": -30.000000000000004,
+        "liquido": -164.0,
+        "liquido_por_dia": -164.0,
+        "delta_meta_diaria": -3164.0,
+        "fator_lucro_liquido": 0.19608,
+        "drawdown_max": 164.0,
+        "pior_dia": -164.0,
+        "duracao_mediana_s": 10.0,
+        "duracao_p90_s": 20.0,
+        "dias_meta": 0,
+        "max_exposicao": 2,
+        "ambiguidades": 0
+      },
+      {
+        "versao": "modelo_scalper_v2_2",
+        "grupo": "win_5s_2c",
+        "recorte": "exploratorio",
+        "perfil": "original",
+        "lote": 2,
+        "delta_original_reais": null,
+        "delta_publicado_reais": null,
+        "pregoes": 1,
+        "barras": 6770,
+        "operacoes": 35,
+        "operacoes_por_dia": 35.0,
+        "acertos": 9,
+        "acerto": 0.2571428571428571,
+        "delta_meta_acerto_pp": -19.28571428571429,
+        "liquido": -304.0,
+        "liquido_por_dia": -304.0,
+        "delta_meta_diaria": -3304.0,
+        "fator_lucro_liquido": 0.21649,
+        "drawdown_max": 304.0,
+        "pior_dia": -304.0,
+        "duracao_mediana_s": 20.0,
+        "duracao_p90_s": 38.00000000000001,
+        "dias_meta": 0,
+        "max_exposicao": 2,
+        "ambiguidades": 0
+      },
+      {
+        "versao": "modelo_scalper_v2_1",
+        "grupo": "win_5s_2c",
+        "recorte": "exploratorio",
+        "perfil": "original",
+        "lote": 2,
+        "delta_original_reais": null,
+        "delta_publicado_reais": null,
+        "pregoes": 1,
+        "barras": 6770,
+        "operacoes": 58,
+        "operacoes_por_dia": 58.0,
+        "acertos": 24,
+        "acerto": 0.41379310344827586,
+        "delta_meta_acerto_pp": -3.6206896551724155,
+        "liquido": -310.0,
+        "liquido_por_dia": -310.0,
+        "delta_meta_diaria": -3310.0,
+        "fator_lucro_liquido": 0.42593,
+        "drawdown_max": 310.0,
+        "pior_dia": -310.0,
+        "duracao_mediana_s": 15.0,
+        "duracao_p90_s": 35.0,
+        "dias_meta": 0,
+        "max_exposicao": 2,
+        "ambiguidades": 0
+      }
+    ],
+    "win_1s_2c": [
+      {
+        "versao": "modelo_scalper_micro_hft_v3_0",
+        "grupo": "win_1s_2c",
+        "recorte": "exploratorio",
+        "perfil": "original",
+        "lote": 2,
+        "delta_original_reais": null,
+        "delta_publicado_reais": null,
+        "pregoes": 1,
+        "barras": 33605,
+        "operacoes": 0,
+        "operacoes_por_dia": 0.0,
+        "acertos": 0,
+        "acerto": null,
+        "delta_meta_acerto_pp": null,
+        "liquido": 0.0,
+        "liquido_por_dia": 0.0,
+        "delta_meta_diaria": -3000.0,
+        "fator_lucro_liquido": null,
+        "drawdown_max": 0.0,
+        "pior_dia": 0.0,
+        "duracao_mediana_s": null,
+        "duracao_p90_s": null,
+        "dias_meta": 0,
+        "max_exposicao": 0,
+        "ambiguidades": 0
+      },
+      {
+        "versao": "modelo_1c_antecipado_profit_v1_0",
+        "grupo": "win_1s_2c",
+        "recorte": "exploratorio",
+        "perfil": "original",
+        "lote": 2,
+        "delta_original_reais": null,
+        "delta_publicado_reais": null,
+        "pregoes": 1,
+        "barras": 33605,
+        "operacoes": 72,
+        "operacoes_por_dia": 72.0,
+        "acertos": 25,
+        "acerto": 0.3472222222222222,
+        "delta_meta_acerto_pp": -10.27777777777778,
+        "liquido": -302.0,
+        "liquido_por_dia": -302.0,
+        "delta_meta_diaria": -3302.0,
+        "fator_lucro_liquido": 0.33772,
+        "drawdown_max": 324.0,
+        "pior_dia": -302.0,
+        "duracao_mediana_s": 1.0,
+        "duracao_p90_s": 3.0,
+        "dias_meta": 0,
+        "max_exposicao": 2,
+        "ambiguidades": 3
+      },
+      {
+        "versao": "modelo_1c_antecipado_profit_v1_1",
+        "grupo": "win_1s_2c",
+        "recorte": "exploratorio",
+        "perfil": "original",
+        "lote": 2,
+        "delta_original_reais": null,
+        "delta_publicado_reais": null,
+        "pregoes": 1,
+        "barras": 33605,
+        "operacoes": 54,
+        "operacoes_por_dia": 54.0,
+        "acertos": 19,
+        "acerto": 0.35185185185185186,
+        "delta_meta_acerto_pp": -9.814814814814815,
+        "liquido": -304.0,
+        "liquido_por_dia": -304.0,
+        "delta_meta_diaria": -3304.0,
+        "fator_lucro_liquido": 0.2963,
+        "drawdown_max": 304.0,
+        "pior_dia": -304.0,
+        "duracao_mediana_s": 1.0,
+        "duracao_p90_s": 2.0,
+        "dias_meta": 0,
+        "max_exposicao": 2,
+        "ambiguidades": 5
+      },
+      {
+        "versao": "modelo_1c_antecipado_profit_v1_0",
+        "grupo": "win_1s_2c",
+        "recorte": "exploratorio",
+        "perfil": "otimizado",
+        "lote": 2,
+        "delta_original_reais": -4.0,
+        "delta_publicado_reais": -4.0,
+        "pregoes": 1,
+        "barras": 33605,
+        "operacoes": 31,
+        "operacoes_por_dia": 31.0,
+        "acertos": 8,
+        "acerto": 0.25806451612903225,
+        "delta_meta_acerto_pp": -19.193548387096776,
+        "liquido": -306.0,
+        "liquido_por_dia": -306.0,
+        "delta_meta_diaria": -3306.0,
+        "fator_lucro_liquido": 0.39044,
+        "drawdown_max": 306.0,
+        "pior_dia": -306.0,
+        "duracao_mediana_s": 4.0,
+        "duracao_p90_s": 13.0,
+        "dias_meta": 0,
+        "max_exposicao": 2,
+        "ambiguidades": 0
+      },
+      {
+        "versao": "modelo_1c_antecipado_profit_v1_1",
+        "grupo": "win_1s_2c",
+        "recorte": "exploratorio",
+        "perfil": "otimizado",
+        "lote": 2,
+        "delta_original_reais": -10.0,
+        "delta_publicado_reais": -10.0,
+        "pregoes": 1,
+        "barras": 33605,
+        "operacoes": 44,
+        "operacoes_por_dia": 44.0,
+        "acertos": 6,
+        "acerto": 0.13636363636363635,
+        "delta_meta_acerto_pp": -31.363636363636367,
+        "liquido": -314.0,
+        "liquido_por_dia": -314.0,
+        "delta_meta_diaria": -3314.0,
+        "fator_lucro_liquido": 0.2266,
+        "drawdown_max": 314.0,
+        "pior_dia": -314.0,
+        "duracao_mediana_s": 2.0,
+        "duracao_p90_s": 13.0,
+        "dias_meta": 0,
+        "max_exposicao": 2,
+        "ambiguidades": 0
+      }
+    ]
+  },
+  "validacao_inedita": null,
+  "grupos": {
+    "win_60s_2c": {
+      "segundos": 60,
+      "formato": "ohlc",
+      "desenvolvimento": [
+        "2026-09-15",
+        "2026-09-16",
+        "2026-09-17",
+        "2026-09-23",
+        "2026-09-24",
+        "2026-09-25",
+        "2026-09-29",
+        "2026-09-30",
+        "2026-10-01",
+        "2026-10-02",
+        "2026-10-05",
+        "2026-10-06",
+        "2026-10-07",
+        "2026-10-08",
+        "2026-10-09",
+        "2026-10-13",
+        "2026-10-14",
+        "2026-10-15",
+        "2026-10-16"
+      ],
+      "interno_ag": [],
+      "exploratorio": [
+        "2026-10-19",
+        "2026-10-20",
+        "2026-10-22",
+        "2026-10-23",
+        "2026-10-27",
+        "2026-10-28",
+        "2026-10-29",
+        "2026-10-30",
+        "2026-11-03",
+        "2026-11-04",
+        "2026-11-05",
+        "2026-11-06",
+        "2026-11-09",
+        "2026-11-10",
+        "2026-11-11",
+        "2026-11-12",
+        "2026-11-13",
+        "2026-11-16",
+        "2026-11-17",
+        "2026-11-18"
+      ],
+      "validacao_inedita": [],
+      "drawdown_max_reais": 1500,
+      "lote": 2,
+      "base_sha256": "ed9230c941c186e81fb06a50c79755d4f4b0317d76ddf6bdf84be2e6773cd9d7",
+      "minimo_operacoes_desenvolvimento": 19
+    },
+    "win_60s_1c": {
+      "segundos": 60,
+      "formato": "ohlc",
+      "desenvolvimento": [
+        "2026-09-15",
+        "2026-09-16",
+        "2026-09-17",
+        "2026-09-23",
+        "2026-09-24",
+        "2026-09-25",
+        "2026-09-29",
+        "2026-09-30",
+        "2026-10-01",
+        "2026-10-02",
+        "2026-10-05",
+        "2026-10-06",
+        "2026-10-07",
+        "2026-10-08",
+        "2026-10-09",
+        "2026-10-13",
+        "2026-10-14",
+        "2026-10-15",
+        "2026-10-16"
+      ],
+      "interno_ag": [],
+      "exploratorio": [
+        "2026-10-19",
+        "2026-10-20",
+        "2026-10-22",
+        "2026-10-23",
+        "2026-10-27",
+        "2026-10-28",
+        "2026-10-29",
+        "2026-10-30",
+        "2026-11-03",
+        "2026-11-04",
+        "2026-11-05",
+        "2026-11-06",
+        "2026-11-09",
+        "2026-11-10",
+        "2026-11-11",
+        "2026-11-12",
+        "2026-11-13",
+        "2026-11-16",
+        "2026-11-17",
+        "2026-11-18"
+      ],
+      "validacao_inedita": [],
+      "drawdown_max_reais": 1500,
+      "lote": 1,
+      "base_sha256": "ed9230c941c186e81fb06a50c79755d4f4b0317d76ddf6bdf84be2e6773cd9d7",
+      "minimo_operacoes_desenvolvimento": 19
+    },
+    "win_5s_2c": {
+      "segundos": 5,
+      "formato": "profit",
+      "lote": 2,
+      "desenvolvimento": [
+        "2026-11-11",
+        "2026-11-13"
+      ],
+      "interno_ag": [],
+      "exploratorio": [
+        "2026-11-16"
+      ],
+      "validacao_inedita": [],
+      "drawdown_max_reais": 1000,
+      "base_sha256": "9e364afae043dcef57811b23d29c393a17df619540be45c87d75c17b70ac37ed",
+      "minimo_operacoes_desenvolvimento": 2
+    },
+    "win_1s_2c": {
+      "segundos": 1,
+      "formato": "profit",
+      "lote": 2,
+      "desenvolvimento": [
+        "2026-10-29",
+        "2026-11-03"
+      ],
+      "interno_ag": [],
+      "exploratorio": [
+        "2026-11-04"
+      ],
+      "validacao_inedita": [],
+      "drawdown_max_reais": 1000,
+      "base_sha256": "4888127b93b78bb7ef2dc0c86a0e7667e5497873766833c62e0ee67e07d13c03",
+      "minimo_operacoes_desenvolvimento": 2
+    }
+  },
+  "criterio": "Líquido exploratório dos candidatos congelados por grupo; ordem de relato sem reseleção."
+}

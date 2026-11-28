@@ -1,0 +1,323 @@
+{
+  "fontes": [
+    {
+      "arquivo": "Coleta_Reserva_WINZ26_1Min_V1_0.csv",
+      "sha256": "eb9d86e58a6a32b4499657f0c4bb2163e3978b666daea2cd44b0c8e768aaa4c5",
+      "bytes": 1621285
+    },
+    {
+      "arquivo": "SONDA_S1_STOP_barras.csv",
+      "sha256": "530d7efaed5c29d0973c9343ba55629915685cd4528e4e885ca3d5424935b8b5",
+      "bytes": 920086
+    }
+  ],
+  "estatisticas_fontes": [
+    {
+      "barras": 20001,
+      "colunas": [
+        "Data",
+        "Abertura",
+        "Máxima",
+        "Mínima",
+        "Fechamento",
+        "v_Trades",
+        "v_Quantidade_Contratos",
+        "v_Volume_Financeiro",
+        "v_Saldo_Agressao",
+        "v_VWAP_Diaria"
+      ],
+      "pregoes": 36,
+      "primeiro_timestamp": "2026-10-01T11:34:00",
+      "ultimo_timestamp": "2026-11-24T18:24:00",
+      "fisicamente_descendente": true,
+      "datas_invalidas": 0,
+      "timestamps_duplicados": 0,
+      "linhas_duplicadas": 0,
+      "ausentes_ou_invalidos_por_campo": {
+        "Abertura": 0,
+        "Máxima": 0,
+        "Mínima": 0,
+        "Fechamento": 0,
+        "v_Trades": 0,
+        "v_Quantidade_Contratos": 0,
+        "v_Volume_Financeiro": 0,
+        "v_Saldo_Agressao": 0,
+        "v_VWAP_Diaria": 0
+      }
+    },
+    {
+      "barras": 20001,
+      "colunas": [
+        "Data",
+        "Abertura",
+        "Máxima",
+        "Mínima",
+        "Fechamento"
+      ],
+      "pregoes": 36,
+      "primeiro_timestamp": "2026-09-30T10:55:00",
+      "ultimo_timestamp": "2026-11-23T18:14:00",
+      "fisicamente_descendente": true,
+      "datas_invalidas": 0,
+      "timestamps_duplicados": 0,
+      "linhas_duplicadas": 0,
+      "ausentes_ou_invalidos_por_campo": {
+        "Abertura": 0,
+        "Máxima": 0,
+        "Mínima": 0,
+        "Fechamento": 0
+      }
+    }
+  ],
+  "por_pregao": {
+    "2026-11-19": {
+      "captura": {
+        "barras": 565,
+        "primeiro": "09:00",
+        "ultimo": "18:24",
+        "ausencias_na_janela_0900_1824": 0,
+        "fora_da_janela_0900_1824": 0,
+        "lacunas_internas_minutos": 0,
+        "ohlc_invalidos": 0,
+        "timestamps_duplicados": 0,
+        "series": {
+          "v_Trades": {
+            "presentes": 565,
+            "ausentes_ou_invalidos": 0,
+            "zeros": 0,
+            "negativos": 0
+          },
+          "v_Quantidade_Contratos": {
+            "presentes": 565,
+            "ausentes_ou_invalidos": 0,
+            "zeros": 0,
+            "negativos": 0
+          },
+          "v_Volume_Financeiro": {
+            "presentes": 565,
+            "ausentes_ou_invalidos": 0,
+            "zeros": 0,
+            "negativos": 0
+          },
+          "v_Saldo_Agressao": {
+            "presentes": 565,
+            "ausentes_ou_invalidos": 0,
+            "zeros": 0,
+            "negativos": 292
+          },
+          "v_VWAP_Diaria": {
+            "presentes": 565,
+            "ausentes_ou_invalidos": 0,
+            "zeros": 0,
+            "negativos": 0
+          }
+        },
+        "trades_acima_da_quantidade": 0,
+        "barras_com_trades_ou_contratos_fracionarios": 0,
+        "preco_implicito_fora_ohlc_margem_001_pt": 0
+      },
+      "referencia_barras": 565,
+      "cruzamento": {
+        "intersecao": 565,
+        "somente_nova": 0,
+        "somente_referencia": 0,
+        "ohlc_igual": 565,
+        "ohlc_diferente": 0,
+        "comparacao_de_cada_preco": {
+          "Abertura": {
+            "diferentes": 0,
+            "desvio_absoluto_maximo": 0.0
+          },
+          "Máxima": {
+            "diferentes": 0,
+            "desvio_absoluto_maximo": 0.0
+          },
+          "Mínima": {
+            "diferentes": 0,
+            "desvio_absoluto_maximo": 0.0
+          },
+          "Fechamento": {
+            "diferentes": 0,
+            "desvio_absoluto_maximo": 0.0
+          }
+        },
+        "divergencia_na_ultima_barra_da_referencia": false
+      }
+    },
+    "2026-11-23": {
+      "captura": {
+        "barras": 562,
+        "primeiro": "09:03",
+        "ultimo": "18:24",
+        "ausencias_na_janela_0900_1824": 3,
+        "fora_da_janela_0900_1824": 0,
+        "lacunas_internas_minutos": 0,
+        "ohlc_invalidos": 0,
+        "timestamps_duplicados": 0,
+        "series": {
+          "v_Trades": {
+            "presentes": 562,
+            "ausentes_ou_invalidos": 0,
+            "zeros": 0,
+            "negativos": 0
+          },
+          "v_Quantidade_Contratos": {
+            "presentes": 562,
+            "ausentes_ou_invalidos": 0,
+            "zeros": 0,
+            "negativos": 0
+          },
+          "v_Volume_Financeiro": {
+            "presentes": 562,
+            "ausentes_ou_invalidos": 0,
+            "zeros": 0,
+            "negativos": 0
+          },
+          "v_Saldo_Agressao": {
+            "presentes": 562,
+            "ausentes_ou_invalidos": 0,
+            "zeros": 0,
+            "negativos": 271
+          },
+          "v_VWAP_Diaria": {
+            "presentes": 562,
+            "ausentes_ou_invalidos": 0,
+            "zeros": 0,
+            "negativos": 0
+          }
+        },
+        "trades_acima_da_quantidade": 0,
+        "barras_com_trades_ou_contratos_fracionarios": 0,
+        "preco_implicito_fora_ohlc_margem_001_pt": 0
+      },
+      "referencia_barras": 552,
+      "cruzamento": {
+        "intersecao": 552,
+        "somente_nova": 10,
+        "somente_referencia": 0,
+        "ohlc_igual": 551,
+        "ohlc_diferente": 1,
+        "comparacao_de_cada_preco": {
+          "Abertura": {
+            "diferentes": 0,
+            "desvio_absoluto_maximo": 0.0
+          },
+          "Máxima": {
+            "diferentes": 0,
+            "desvio_absoluto_maximo": 0.0
+          },
+          "Mínima": {
+            "diferentes": 1,
+            "desvio_absoluto_maximo": 10.0
+          },
+          "Fechamento": {
+            "diferentes": 1,
+            "desvio_absoluto_maximo": 45.0
+          }
+        },
+        "divergencia_na_ultima_barra_da_referencia": true
+      }
+    },
+    "2026-11-24": {
+      "captura": {
+        "barras": 565,
+        "primeiro": "09:00",
+        "ultimo": "18:24",
+        "ausencias_na_janela_0900_1824": 0,
+        "fora_da_janela_0900_1824": 0,
+        "lacunas_internas_minutos": 0,
+        "ohlc_invalidos": 0,
+        "timestamps_duplicados": 0,
+        "series": {
+          "v_Trades": {
+            "presentes": 565,
+            "ausentes_ou_invalidos": 0,
+            "zeros": 0,
+            "negativos": 0
+          },
+          "v_Quantidade_Contratos": {
+            "presentes": 565,
+            "ausentes_ou_invalidos": 0,
+            "zeros": 0,
+            "negativos": 0
+          },
+          "v_Volume_Financeiro": {
+            "presentes": 565,
+            "ausentes_ou_invalidos": 0,
+            "zeros": 0,
+            "negativos": 0
+          },
+          "v_Saldo_Agressao": {
+            "presentes": 565,
+            "ausentes_ou_invalidos": 0,
+            "zeros": 0,
+            "negativos": 262
+          },
+          "v_VWAP_Diaria": {
+            "presentes": 565,
+            "ausentes_ou_invalidos": 0,
+            "zeros": 0,
+            "negativos": 0
+          }
+        },
+        "trades_acima_da_quantidade": 0,
+        "barras_com_trades_ou_contratos_fracionarios": 0,
+        "preco_implicito_fora_ohlc_margem_001_pt": 0
+      },
+      "referencia_barras": 0,
+      "cruzamento": {
+        "intersecao": 0,
+        "somente_nova": 565,
+        "somente_referencia": 0,
+        "ohlc_igual": 0,
+        "ohlc_diferente": 0,
+        "comparacao_de_cada_preco": {
+          "Abertura": {
+            "diferentes": 0,
+            "desvio_absoluto_maximo": null
+          },
+          "Máxima": {
+            "diferentes": 0,
+            "desvio_absoluto_maximo": null
+          },
+          "Mínima": {
+            "diferentes": 0,
+            "desvio_absoluto_maximo": null
+          },
+          "Fechamento": {
+            "diferentes": 0,
+            "desvio_absoluto_maximo": null
+          }
+        },
+        "divergencia_na_ultima_barra_da_referencia": false
+      }
+    }
+  },
+  "cruzamento_total": {
+    "intersecao": 19426,
+    "somente_nova": 575,
+    "somente_referencia": 575,
+    "ohlc_igual": 19425,
+    "ohlc_diferente": 1,
+    "comparacao_de_cada_preco": {
+      "Abertura": {
+        "diferentes": 0,
+        "desvio_absoluto_maximo": 0.0
+      },
+      "Máxima": {
+        "diferentes": 0,
+        "desvio_absoluto_maximo": 0.0
+      },
+      "Mínima": {
+        "diferentes": 1,
+        "desvio_absoluto_maximo": 10.0
+      },
+      "Fechamento": {
+        "diferentes": 1,
+        "desvio_absoluto_maximo": 45.0
+      }
+    },
+    "divergencia_na_ultima_barra_da_referencia": true
+  },
+  "replays_na_reserva": 0
+}

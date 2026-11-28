@@ -1,0 +1,5 @@
+ordem_console;data;hora_barra_profit;rotulo_barra_profit;seq_ntsl;posicao;antes;depois
+1;2026-10-26;13:03;27005;1;0;0;0
+2;2026-10-26;13:03;27005;2;1;0;1
+3;2026-10-26;13:04;27006;3;0;1;0
+4;2026-10-26;13:05;27007;4;0;0;0

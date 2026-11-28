@@ -1,0 +1,5 @@
+pregao;modo;exec_tick;barras_ohlc_comuns;barras_elegiveis;operacoes_profit;operacoes_replay;operacoes_exatas;solicitacoes_comparadas_pregao;solicitacoes_divergentes_pregao;primeira_divergencia_solicitacao_contexto;avaliacoes_estado_comparadas;avaliacoes_estado_divergentes;divergencias_sinais;divergencias_filtros;divergencias_indicadores;divergencias_posicao;hora_primeiro_fill_divergente_profit;hora_primeiro_fill_divergente_simulador;evento_primeiro_fill_divergente;lacunas_com_historico_prefixado;posicao_exposta_em_lacunas;ordens_canceladas_em_lacunas
+2026-10-21;reinicio;0;565;502;7;7;7;306;0;;509;0;0;0;0;0;;;;0;0;0
+2026-10-21;continuidade;0;565;502;7;7;7;306;0;;509;0;0;0;0;0;;;;0;0;0
+2026-10-26;reinicio;0;553;463;10;10;8;68;18;09:50;472;263;1;1;1;4;10:15;09:51;long;2;0;0
+2026-10-26;continuidade;0;553;463;10;10;9;62;0;;472;0;0;0;0;0;10:15;10:15;exit_long;2;0;0

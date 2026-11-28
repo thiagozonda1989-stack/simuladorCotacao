@@ -1,0 +1,216 @@
+{ Modelo Unificado Refatorado v5.7 - Captura de paridade no Profit }
+{ Funcoes e assinaturas alinhadas ao Manual NTSL consultado em 08/11/2026. }
+
+input
+  p_Periodo_ATR(14);
+  p_Periodo_Regime_ATR(50);
+  p_Desvio_VWAP(2.1);
+  p_ZScore_Vol(1.5);
+  p_Stop_Pontos(350);
+  p_Alvo_Pontos(450);
+  p_MinimoTrades(100);
+  p_Lote(1);
+  p_Offset_Limite_Stop(5);
+  p_LogData(1261026);  { 26/10/2026; 0 registra qualquer data }
+  p_LogInicio(1258);
+  p_LogFim(1407);
+
+var
+  v_VWAP_Diaria       : Float;
+  v_Desvio_Padrao     : Float;
+  v_Banda_Superior    : Float;
+  v_Banda_Inferior    : Float;
+  v_TrueRange         : Float;
+  v_ATR               : Float;
+  v_Media_ATR         : Float;
+  v_Saldo_Agressao    : Float;
+  v_Media_Volume      : Float;
+  v_Desvio_Volume     : Float;
+  v_Volume_ZScore     : Float;
+  v_Regime_Mercado    : Integer;
+  v_Filtro_Horario    : Boolean;
+  v_Densidade_OK      : Boolean;
+  v_Sinal_Compra      : Boolean;
+  v_Sinal_Venda       : Boolean;
+
+  v_LogAtivo          : Boolean;
+  v_PosicaoAnterior   : Float;
+  v_PosicaoAtual      : Float;
+  v_PrecoMedioLog     : Float;
+  v_ChaveLog          : String;
+  v_AvaliacaoLog      : Integer;
+
+begin
+  v_LogAtivo := ((p_LogData = 0) or (Date = p_LogData))
+                and (Time >= p_LogInicio) and (Time <= p_LogFim);
+  v_PosicaoAtual := PositionQty;
+  v_PrecoMedioLog := 0;
+  if IsBought then
+    v_PrecoMedioLog := BuyPrice
+  else if IsSold then
+    v_PrecoMedioLog := SellPrice;
+
+  if v_LogAtivo then
+  begin
+    v_AvaliacaoLog := v_AvaliacaoLog + 1;
+    v_ChaveLog := "barra=" + FloatToString(CurrentBar, 0)
+                  + "|avaliacao=" + FloatToString(v_AvaliacaoLog, 0);
+    if v_PosicaoAtual <> v_PosicaoAnterior then
+      ConsoleLog(FloatToString(Date, 0) + ";" + FloatToString(Time, 0) + ";" + v_ChaveLog + ";PARIDADE;POSICAO_OBSERVADA"
+                 + ";anterior=" + FloatToString(v_PosicaoAnterior, 0)
+                 + ";atual=" + FloatToString(v_PosicaoAtual, 0)
+                 + ";preco_medio_atual=" + FloatToString(v_PrecoMedioLog, 2), clYellow);
+  end;
+  v_PosicaoAnterior := v_PosicaoAtual;
+
+  v_Filtro_Horario := (Time >= 0915) and (Time <= 1700)
+                      and not ((Time >= 1025) and (Time <= 1035))
+                      and not ((Time >= 1425) and (Time <= 1435));
+  v_Densidade_OK := Trades > p_MinimoTrades;
+
+  v_VWAP_Diaria    := VWAP(1);
+  v_Desvio_Padrao  := StdDevs(Close, 20);
+  v_Banda_Superior := v_VWAP_Diaria + (p_Desvio_VWAP * v_Desvio_Padrao);
+  v_Banda_Inferior := v_VWAP_Diaria - (p_Desvio_VWAP * v_Desvio_Padrao);
+  v_TrueRange      := TrueRange;
+  v_ATR            := Media(p_Periodo_ATR, v_TrueRange);
+  v_Media_ATR      := Media(p_Periodo_Regime_ATR, v_ATR);
+  v_Saldo_Agressao := AgressionVolBalance;
+  v_Media_Volume   := Media(20, Volume);
+  v_Desvio_Volume  := StdDevs(Volume, 20);
+
+  if v_Desvio_Volume > 0 then
+    v_Volume_ZScore := (Volume - v_Media_Volume) / v_Desvio_Volume
+  else
+    v_Volume_ZScore := 0;
+
+  { 1 = tendencia; 2 = reversao por exaustao; 0 = ruido/bloqueado }
+  if (v_ATR > v_Media_ATR)
+     and (Abs(Close - v_VWAP_Diaria) > (1.2 * v_Desvio_Padrao)) then
+    v_Regime_Mercado := 1
+  else if ((Low <= v_Banda_Inferior) or (High >= v_Banda_Superior))
+          and (v_Volume_ZScore > p_ZScore_Vol) then
+    v_Regime_Mercado := 2
+  else
+    v_Regime_Mercado := 0;
+
+  { Tendencia: segue preco e agressao. Exaustao: reverte nas bandas. }
+  v_Sinal_Compra :=
+    ((v_Regime_Mercado = 1) and (Close > v_VWAP_Diaria)
+     and (v_Saldo_Agressao > 0) and (v_Volume_ZScore > p_ZScore_Vol))
+    or
+    ((v_Regime_Mercado = 2) and (Low <= v_Banda_Inferior)
+     and (v_Saldo_Agressao > 0));
+
+  v_Sinal_Venda :=
+    ((v_Regime_Mercado = 1) and (Close < v_VWAP_Diaria)
+     and (v_Saldo_Agressao < 0) and (v_Volume_ZScore > p_ZScore_Vol))
+    or
+    ((v_Regime_Mercado = 2) and (High >= v_Banda_Superior)
+     and (v_Saldo_Agressao < 0));
+
+  if v_LogAtivo then
+  begin
+    ConsoleLog(FloatToString(Date, 0) + ";" + FloatToString(Time, 0) + ";" + v_ChaveLog
+               + ";PARIDADE;AVALIACAO"
+               + ";abertura=" + FloatToString(Open, 2)
+               + ";maxima=" + FloatToString(High, 2)
+               + ";minima=" + FloatToString(Low, 2)
+               + ";fechamento=" + FloatToString(Close, 2)
+               + ";posicao=" + FloatToString(v_PosicaoAtual, 0)
+               + ";preco_medio=" + FloatToString(v_PrecoMedioLog, 2)
+               + ";regime=" + FloatToString(v_Regime_Mercado, 0)
+               + ";trades=" + FloatToString(Trades, 0)
+               + ";vwap=" + FloatToString(v_VWAP_Diaria, 2)
+               + ";agressao=" + FloatToString(v_Saldo_Agressao, 2)
+               + ";zvolume=" + FloatToString(v_Volume_ZScore, 4), clYellow);
+    if v_Sinal_Compra then
+      ConsoleLog(FloatToString(Date, 0) + ";" + FloatToString(Time, 0) + ";" + v_ChaveLog
+                 + ";PARIDADE;SINAL_COMPRA", clYellow);
+    if v_Sinal_Venda then
+      ConsoleLog(FloatToString(Date, 0) + ";" + FloatToString(Time, 0) + ";" + v_ChaveLog
+                 + ";PARIDADE;SINAL_VENDA", clYellow);
+    if HasPendingOrders then
+      ConsoleLog(FloatToString(Date, 0) + ";" + FloatToString(Time, 0) + ";" + v_ChaveLog
+                 + ";PARIDADE;ORDENS_PENDENTES", clYellow);
+  end;
+
+  if (not v_Filtro_Horario) or (not v_Densidade_OK) then
+  begin
+    if HasPendingOrders then
+    begin
+      if v_LogAtivo then
+        ConsoleLog(FloatToString(Date, 0) + ";" + FloatToString(Time, 0) + ";" + v_ChaveLog + ";PARIDADE;SOLICITA_CANCELAMENTO", clYellow);
+      CancelPendingOrders;
+    end;
+    if IsBought then
+    begin
+      if v_LogAtivo then
+        ConsoleLog(FloatToString(Date, 0) + ";" + FloatToString(Time, 0) + ";" + v_ChaveLog + ";PARIDADE;SOLICITA_SAIDA_MERCADO_VENDA" + ";qtd=" + FloatToString(p_Lote, 2), clYellow);
+      SellToCoverAtMarket(p_Lote);
+    end
+    else if IsSold then
+    begin
+      if v_LogAtivo then
+        ConsoleLog(FloatToString(Date, 0) + ";" + FloatToString(Time, 0) + ";" + v_ChaveLog + ";PARIDADE;SOLICITA_SAIDA_MERCADO_COMPRA" + ";qtd=" + FloatToString(p_Lote, 2), clYellow);
+      BuyToCoverAtMarket(p_Lote);
+    end;
+  end
+  else
+  begin
+    if IsBought then
+    begin
+      if v_LogAtivo then
+        ConsoleLog(FloatToString(Date, 0) + ";" + FloatToString(Time, 0) + ";" + v_ChaveLog + ";PARIDADE;SOLICITA_ALVO_VENDA"
+                   + ";qtd=" + FloatToString(p_Lote, 2)
+                   + ";limite=" + FloatToString(BuyPrice + p_Alvo_Pontos, 2), clYellow);
+      SellToCoverLimit(BuyPrice + p_Alvo_Pontos, p_Lote);
+      if v_LogAtivo then
+        ConsoleLog(FloatToString(Date, 0) + ";" + FloatToString(Time, 0) + ";" + v_ChaveLog + ";PARIDADE;SOLICITA_STOP_VENDA"
+                   + ";qtd=" + FloatToString(p_Lote, 2)
+                   + ";gatilho=" + FloatToString(BuyPrice - p_Stop_Pontos, 2)
+                   + ";limite=" + FloatToString(BuyPrice - p_Stop_Pontos - p_Offset_Limite_Stop, 2), clYellow);
+      SellToCoverStop(BuyPrice - p_Stop_Pontos,
+                      BuyPrice - p_Stop_Pontos - p_Offset_Limite_Stop,
+                      p_Lote);
+    end
+    else if IsSold then
+    begin
+      if v_LogAtivo then
+        ConsoleLog(FloatToString(Date, 0) + ";" + FloatToString(Time, 0) + ";" + v_ChaveLog + ";PARIDADE;SOLICITA_ALVO_COMPRA"
+                   + ";qtd=" + FloatToString(p_Lote, 2)
+                   + ";limite=" + FloatToString(SellPrice - p_Alvo_Pontos, 2), clYellow);
+      BuyToCoverLimit(SellPrice - p_Alvo_Pontos, p_Lote);
+      if v_LogAtivo then
+        ConsoleLog(FloatToString(Date, 0) + ";" + FloatToString(Time, 0) + ";" + v_ChaveLog + ";PARIDADE;SOLICITA_STOP_COMPRA"
+                   + ";qtd=" + FloatToString(p_Lote, 2)
+                   + ";gatilho=" + FloatToString(SellPrice + p_Stop_Pontos, 2)
+                   + ";limite=" + FloatToString(SellPrice + p_Stop_Pontos + p_Offset_Limite_Stop, 2), clYellow);
+      BuyToCoverStop(SellPrice + p_Stop_Pontos,
+                     SellPrice + p_Stop_Pontos + p_Offset_Limite_Stop,
+                     p_Lote);
+    end
+    else if not HasPendingOrders then
+    begin
+      if v_Sinal_Compra then
+      begin
+        if v_LogAtivo then
+          ConsoleLog(FloatToString(Date, 0) + ";" + FloatToString(Time, 0) + ";" + v_ChaveLog + ";PARIDADE;SOLICITA_ENTRADA_COMPRA" + ";qtd=" + FloatToString(p_Lote, 2), clYellow);
+        BuyAtMarket(p_Lote);
+      end
+      else if v_Sinal_Venda then
+      begin
+        if v_LogAtivo then
+          ConsoleLog(FloatToString(Date, 0) + ";" + FloatToString(Time, 0) + ";" + v_ChaveLog + ";PARIDADE;SOLICITA_ENTRADA_VENDA" + ";qtd=" + FloatToString(p_Lote, 2), clYellow);
+        SellShortAtMarket(p_Lote);
+      end;
+    end;
+  end;
+  Plot(PositionQty);
+  if IsBought then
+    Plot2(BuyPrice)
+  else if IsSold then
+    Plot2(SellPrice)
+  else
+    Plot2(0);
+end;

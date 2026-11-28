@@ -1,0 +1,279 @@
+{
+  "data_auditoria": "2026-11-24",
+  "fuso": "America/Sao_Paulo",
+  "variacao_exata": {
+    "tabela": null,
+    "operacoes": null,
+    "ordens": null,
+    "barras_associadas": null
+  },
+  "notas": "Datas são a primeira e a última observação. Lacunas contam minutos ausentes entre rótulos no mesmo pregão. Preambulos de conta e dados individuais foram omitidos.",
+  "arqs": [
+    {
+      "arquivo": "Modelo_Unificado_Refatorado_v5_7.ntsl",
+      "origem": "duas cópias Windows da v5.7 e fonte Git idênticas",
+      "bytes": 3596,
+      "sha256": "0cf2d0d90973a46c38af6dd5bbe4cfeba9d97d3b9242f9ad5cc490318395a22a"
+    },
+    {
+      "arquivo": "Modelo_Unificado_Refatorado_v5_7.ntsl",
+      "origem": "cópia legenda_visual_v1",
+      "bytes": 4300,
+      "sha256": "ebc28bbd0436a73472e3bc9fc131732b9794ea41018b9b2f13bf4e585b5c349c"
+    },
+    {
+      "arquivo": "Modelo_Unificado_Refatorado_v5_7_Captura_Paridade.ntsl",
+      "origem": "captura instrumentada anterior, lote 1",
+      "bytes": 8810,
+      "sha256": "53d165350fd66902df9d0e7e340f8dc07335c47d8d47413a3cf1057aec18f018"
+    },
+    {
+      "arquivo": "operacoes_teste_v.csv",
+      "bytes": 48497,
+      "sha256": "da6261fcdcd58bb6313ab409bd220fae39766665b513da2a9b554c17511d0a97",
+      "colunas": [
+        "Ativo",
+        "Abertura",
+        "Fechamento",
+        "Tempo Operação",
+        "Qtd Compra",
+        "Qtd Venda",
+        "Lado",
+        "Preço Compra",
+        "Preço Venda",
+        "Preço de Mercado",
+        "Médio",
+        "Res. Intervalo Bruto",
+        "Res. Intervalo (%)",
+        "Número Operação",
+        "Res. Operação",
+        "Res. Operação (%)",
+        "TET",
+        "Comissões",
+        "Total"
+      ],
+      "operacoes": 330,
+      "lote": 1,
+      "intervalo": [
+        "2026-08-13",
+        "2026-11-19"
+      ],
+      "liquido_reais": 670,
+      "fator_lucro": 1.08
+    },
+    {
+      "arquivo": "profit_WINZ26_20261021_posicao.csv",
+      "bytes": 48371,
+      "sha256": "549e22dea388e5f4e272bc906ac3309e9e88a1de7f53e6184ded5796dbe64479",
+      "colunas": [
+        "Ativo",
+        "Abertura",
+        "Fechamento",
+        "Tempo Operação",
+        "Qtd Compra",
+        "Qtd Venda",
+        "Lado",
+        "Preço Compra",
+        "Preço Venda",
+        "Preço de Mercado",
+        "Médio",
+        "Res. Intervalo Bruto",
+        "Res. Intervalo (%)",
+        "Número Operação",
+        "Res. Operação",
+        "Res. Operação (%)",
+        "TET",
+        "Comissões",
+        "Total"
+      ],
+      "operacoes": 329,
+      "lote": 1,
+      "intervalo": [
+        "2026-08-19",
+        "2026-11-19"
+      ],
+      "liquido_reais": 657,
+      "fator_lucro": 1.07
+    },
+    {
+      "arquivo": "operacoes_v58.csv",
+      "bytes": 43885,
+      "sha256": "66cece48ff5c3e1aca3d42d4482665451d39195bf0be50fc497d302a77585c7d",
+      "colunas": [
+        "Ativo",
+        "Abertura",
+        "Fechamento",
+        "Tempo Operação",
+        "Qtd Compra",
+        "Qtd Venda",
+        "Lado",
+        "Preço Compra",
+        "Preço Venda",
+        "Preço de Mercado",
+        "Médio",
+        "Res. Intervalo Bruto",
+        "Res. Intervalo (%)",
+        "Número Operação",
+        "Res. Operação",
+        "Res. Operação (%)",
+        "TET",
+        "Comissões",
+        "Total"
+      ],
+      "operacoes": 290,
+      "lote": 5,
+      "intervalo": [
+        "2026-08-13",
+        "2026-11-19"
+      ],
+      "liquido_reais": 10365,
+      "fator_lucro": 1.23
+    },
+    {
+      "arquivo": "operacoes_modelo.csv",
+      "bytes": 410195,
+      "sha256": "d2af68e770d9367a7ef797fc2aa23517013ac62e64205ccfec76ae64c34deac2",
+      "colunas": [
+        "Ativo",
+        "Abertura",
+        "Fechamento",
+        "Tempo Operação",
+        "Qtd Compra",
+        "Qtd Venda",
+        "Lado",
+        "Preço Compra",
+        "Preço Venda",
+        "Preço de Mercado",
+        "Médio",
+        "Res. Intervalo Bruto",
+        "Res. Intervalo (%)",
+        "Número Operação",
+        "Res. Operação",
+        "Res. Operação (%)",
+        "TET",
+        "Comissões",
+        "Total"
+      ],
+      "operacoes": 3000,
+      "lote": 1,
+      "intervalo": [
+        "2026-11-12",
+        "2026-11-16"
+      ]
+    },
+    {
+      "arquivo": "operacoes_dia26102026.csv",
+      "bytes": 2006,
+      "sha256": "c0b661e3feda8b7e2394f281a6a046c83898c152aa7c6d1906452a51fc0ad4c9",
+      "colunas": [
+        "Ativo",
+        "Abertura",
+        "Fechamento",
+        "Tempo Operação",
+        "Qtd Compra",
+        "Qtd Venda",
+        "Lado",
+        "Preço Compra",
+        "Preço Venda",
+        "Preço de Mercado",
+        "Médio",
+        "Res. Intervalo Bruto",
+        "Res. Intervalo (%)",
+        "Número Operação",
+        "Res. Operação",
+        "Res. Operação (%)",
+        "TET",
+        "Comissões",
+        "Total"
+      ],
+      "operacoes": 12,
+      "lote": 1,
+      "intervalo": [
+        "2026-10-26",
+        "2026-10-26"
+      ]
+    },
+    {
+      "arquivo": "relatorio_backtest.pdf",
+      "bytes": 11018,
+      "sha256": "87a8691f3cd57cf71ccfdcdaec13e3f83509d0d9d446efa3507831d39f8af8e2",
+      "operacoes": 329,
+      "liquido_reais": 657,
+      "fator_lucro": 1.07
+    },
+    {
+      "arquivo": "profit_WINZ26_20261021_barras_1min.csv",
+      "bytes": 1952280,
+      "sha256": "3726e7dd9a821a109120765e4115e6eb352079e9402d9370ae7565ac9555bb2a",
+      "colunas": [
+        "Data",
+        "Abertura",
+        "Máxima",
+        "Mínima",
+        "Fechamento",
+        "Trades",
+        "Quantity",
+        "Volume"
+      ],
+      "barras": 30964,
+      "pregoes": 59,
+      "duplicatas_de_timestamp": 0,
+      "lacunas": 1388,
+      "minutos_ausentes": 2071,
+      "intervalo": [
+        "2026-08-26",
+        "2026-11-19"
+      ]
+    },
+    {
+      "arquivo": "profit_WINZ26_20261021_indicadores_v5_7.csv",
+      "bytes": 2666570,
+      "sha256": "76b79ef839ab6b142a0976c7c3ef1a6b7bb7dc2d013434551e861c892a56b946",
+      "colunas": [
+        "Data",
+        "Abertura",
+        "Máxima",
+        "Mínima",
+        "Fechamento",
+        "v_VWAP_Diaria",
+        "v_Desvio_Padrao",
+        "v_ATR",
+        "v_Media_ATR",
+        "v_Saldo_Agressao",
+        "v_Volume_ZScore",
+        "v_Regime_Mercado",
+        "v_Sinal"
+      ],
+      "barras": 29983,
+      "pregoes": 57,
+      "duplicatas_de_timestamp": 0,
+      "lacunas": 1225,
+      "minutos_ausentes": 1802,
+      "intervalo": [
+        "2026-08-28",
+        "2026-11-19"
+      ]
+    },
+    {
+      "arquivo": "barras_v58.csv",
+      "bytes": 920086,
+      "sha256": "1036ce183e5e0ff371ca10b21b2774e2f8420598c50d71b107cbe6a1eebf6863",
+      "colunas": [
+        "Data",
+        "Abertura",
+        "Máxima",
+        "Mínima",
+        "Fechamento"
+      ],
+      "barras": 20001,
+      "pregoes": 36,
+      "duplicatas_de_timestamp": 0,
+      "lacunas": 173,
+      "minutos_ausentes": 243,
+      "intervalo": [
+        "2026-09-29",
+        "2026-11-19"
+      ]
+    }
+  ]
+}

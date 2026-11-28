@@ -1,0 +1,109 @@
+{
+  "sha_executado": "599e3f0f84a570c345a63e6c52f7a7bc4e677ab1",
+  "amostra_sha256": "9ce41bd27a6ae5be5c7a286389a48a4439998b58178004c0b299fce5d4928897",
+  "datas_expostas": [
+    "2026-11-23",
+    "2026-11-24"
+  ],
+  "pregao_relatorio": "2026-11-24",
+  "aquecimento": "2026-11-23",
+  "avaliacoes_por_perfil": 1,
+  "perfis": {
+    "v58_original": {
+      "totais": {
+        "operacoes": 10,
+        "acertos": 3,
+        "liquido": -676.0,
+        "media_operacao": -67.6,
+        "fator_lucro_liquido": 0.32937,
+        "drawdown_max": 706.0,
+        "duracao_mediana_s": 660.0,
+        "duracao_p90_s": 2843.999999999999
+      },
+      "exposicao_maxima": 2,
+      "ambiguidades_ohlc": 0,
+      "operacoes_por_motivo_saida": {
+        "alvo": 2,
+        "noticia": 1,
+        "stop_limit": 7
+      },
+      "no_inicio": {
+        "currentbar": 563,
+        "barras_previas_disponiveis": 562,
+        "barras_no_segmento": 1,
+        "lacuna_intradiaria": false
+      },
+      "avaliacao": {
+        "decisao": "piloto_descritivo",
+        "criterios": {
+          "liquido_positivo": false,
+          "media_diaria": false,
+          "fator_lucro": false,
+          "concentracao": false,
+          "drawdown": true,
+          "liquido_sobre_drawdown": false,
+          "pior_pregao": false,
+          "acerto": false,
+          "frequencia": true,
+          "exposicao": true
+        },
+        "operacoes": 10,
+        "acertos": 3,
+        "liquido": -676.0,
+        "liquido_por_pregao": -676.0,
+        "operacoes_por_pregao": 10.0,
+        "drawdown": 706.0,
+        "top2_liquido_positivo": 0.0,
+        "concentracao_top2": null
+      }
+    },
+    "scalper_v11_otimizada": {
+      "totais": {
+        "operacoes": 8,
+        "acertos": 7,
+        "liquido": 142.0,
+        "media_operacao": 17.75,
+        "fator_lucro_liquido": 3.21875,
+        "drawdown_max": 64.0,
+        "duracao_mediana_s": 120.0,
+        "duracao_p90_s": 420.0
+      },
+      "exposicao_maxima": 2,
+      "ambiguidades_ohlc": 0,
+      "operacoes_por_motivo_saida": {
+        "alvo": 5,
+        "duracao_maxima": 2,
+        "stop_limit": 1
+      },
+      "no_inicio": {
+        "currentbar": 563,
+        "barras_previas_disponiveis": 562,
+        "barras_no_segmento": 1,
+        "lacuna_intradiaria": false
+      },
+      "avaliacao": {
+        "decisao": "piloto_descritivo",
+        "criterios": {
+          "liquido_positivo": true,
+          "media_diaria": true,
+          "fator_lucro": true,
+          "concentracao": false,
+          "drawdown": true,
+          "liquido_sobre_drawdown": true,
+          "pior_pregao": true,
+          "acerto": true,
+          "frequencia": true,
+          "exposicao": true
+        },
+        "operacoes": 8,
+        "acertos": 7,
+        "liquido": 142.0,
+        "liquido_por_pregao": 142.0,
+        "operacoes_por_pregao": 8.0,
+        "drawdown": 64.0,
+        "top2_liquido_positivo": 142.0,
+        "concentracao_top2": 1.0
+      }
+    }
+  }
+}

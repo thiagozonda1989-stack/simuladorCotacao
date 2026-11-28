@@ -1,0 +1,7 @@
+sonda;sequencia_exportacao;ordem_alias;lado;tipo_ordem;estado_linha;data_hora_replay_coluna_criacao;data_ultima_atualizacao_linha;quantidade_executada;media_pts_entrada_replay;limite_pts_entrada_replay;campo_preco_stop_informado
+s1_alvo;1;protecao;V;Limite;Executada;26/10/2026 10:53:00.189;23/11/2026;1;430.00;430.00;0
+s1_alvo;2;protecao;V;Limite;Trade;26/10/2026 10:55:08.155;;1;430.00;;0
+s1_alvo;3;entrada;C;a Mercado;Executada;26/10/2026 10:52:00.265;23/11/2026;1;0.00;;0
+s1_alvo;4;entrada;C;a Mercado;Trade;26/10/2026 10:52:00.265;;1;0.00;;0
+s1_stop;1;protecao;V;Limite;Executada;26/10/2026 10:53:03.665;23/11/2026;1;-795.00;-895.00;0
+s1_stop;2;entrada;C;a Mercado;Executada;26/10/2026 10:52:02.143;23/11/2026;1;0.00;;0

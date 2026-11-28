@@ -1,0 +1,2564 @@
+{
+  "grupo": "win_60s_2c",
+  "identificacao": "pullback_tendencia_v1_7",
+  "chave": "pesquisa:estrategias/execucao/pullback_tendencia_v1_7.ntsl",
+  "configuracao": {
+    "busca": "genetica",
+    "classe_alvo": "1C",
+    "pregoes_teste": 0,
+    "cache_ram_mb": 0,
+    "threads": 8,
+    "regras_execucao": {
+      "custo_por_contrato_lado": 0.5,
+      "slippage_ticks": 1,
+      "limite_exige_ultrapassar": false,
+      "ordem_so_proxima_barra": true,
+      "historico_continuo": true,
+      "latencia_barras": 0,
+      "motor_ticks": false,
+      "latencia_ticks_ms": 0,
+      "lacuna_ticks_ms": 5000,
+      "volume_financeiro_ntsl": true,
+      "agressao_por_barra": false,
+      "agressao_referencia_injetada": true,
+      "vwap_continuo_lacunas": true,
+      "protecao_no_candle_entrada": false,
+      "rastrear_ordens": false,
+      "avaliacao_pos_preenchimento": false,
+      "historico_continuo_lacunas": false,
+      "entrada_mercado_atraves_lacuna": false,
+      "protecoes_ate_cancelar": false,
+      "ajuste_tick_saidas_venda": false
+    },
+    "parametros": {
+      "p_alvo": {
+        "valores": [
+          60,
+          100,
+          150,
+          200,
+          250
+        ]
+      },
+      "p_ativarsaidafalha": {
+        "valores": [
+          0
+        ]
+      },
+      "p_espera": {
+        "valores": [
+          1,
+          3,
+          5
+        ]
+      },
+      "p_fatoramplitude": {
+        "valores": [
+          0.8,
+          1.0,
+          1.2,
+          1.6
+        ]
+      },
+      "p_fatorstop": {
+        "valores": [
+          0.55,
+          0.65,
+          0.8
+        ]
+      },
+      "p_folgastop": {
+        "valores": [
+          25,
+          50,
+          100
+        ]
+      },
+      "p_horafimentradas": {
+        "valores": [
+          1530,
+          1630,
+          1700
+        ]
+      },
+      "p_horainicio": {
+        "valores": [
+          930,
+          1000,
+          1030
+        ]
+      },
+      "p_janelaamplitude": {
+        "valores": [
+          5,
+          10,
+          15
+        ]
+      },
+      "p_lenta": {
+        "valores": [
+          21,
+          27,
+          34,
+          48
+        ]
+      },
+      "p_maxentradasdia": {
+        "valores": [
+          4,
+          8,
+          12,
+          24
+        ]
+      },
+      "p_rapida": {
+        "valores": [
+          5,
+          9,
+          15,
+          20
+        ]
+      },
+      "p_rompimento": {
+        "valores": [
+          0,
+          1
+        ]
+      },
+      "p_stop": {
+        "valores": [
+          75,
+          110,
+          150,
+          200,
+          300
+        ]
+      },
+      "p_tempomax": {
+        "valores": [
+          5,
+          10,
+          15,
+          30
+        ]
+      },
+      "p_usaralvodinamico": {
+        "valores": [
+          0,
+          1
+        ]
+      }
+    },
+    "genetico": {
+      "populacao": 24,
+      "geracoes": 3,
+      "semente": 18024,
+      "mutacao": 0.28,
+      "min_sinais": 0,
+      "paciencia": 0,
+      "metrica": "resultado"
+    }
+  },
+  "recursos": {
+    "paginacao_contadores_sistema_delta": {
+      "PagesInputPersec": 11,
+      "PagesOutputPersec": 0,
+      "PageReadsPersec": 4
+    },
+    "trabalhadores": 8,
+    "nucleos_logicos": 24,
+    "modo": "processos",
+    "segundos": 12.031,
+    "avaliados": 70,
+    "segundos_ag": 11.89,
+    "avaliacoes_minuto": 353.24,
+    "rss_somado_pico_mib": 659.8,
+    "memoria_disponivel_min_mib": 41590.6,
+    "cpu_total_media_pct": 55.8,
+    "arquivo_paginacao_variacao_mib": 0.0,
+    "base_worker_mib": 1.94,
+    "atende_restricoes": true
+  },
+  "congelado": {
+    "parametros": {
+      "p_rapida": 15,
+      "p_lenta": 21,
+      "p_alvo": 250,
+      "p_usaralvodinamico": 0,
+      "p_janelaamplitude": 10,
+      "p_fatoramplitude": 1.2,
+      "p_alvomin": 50.0,
+      "p_alvomax": 220.0,
+      "p_rompimento": 1,
+      "p_stop": 150,
+      "p_fatorstop": 0.8,
+      "p_folgastop": 25,
+      "p_tempomax": 10,
+      "p_maxentradasdia": 4,
+      "p_espera": 1,
+      "p_perdamaxdia": 150.0,
+      "p_horainicio": 1000,
+      "p_horafimentradas": 1700,
+      "p_horazeragem": 1745.0,
+      "p_ativarsaidafalha": 0,
+      "p_janelafalha": 1.0,
+      "p_toleranciafalhaticks": 0.0
+    },
+    "apta": true,
+    "semente": 18024,
+    "grupo": "win_60s_2c",
+    "sha256": "ec5904bce4b7f429287eff55f975c9c3598cf38bc65e8f50948c34f7c0726ba4",
+    "objetivo": "resultado após custos",
+    "referencia_exploratoria_sem_reselecao": [
+      "2026-10-19",
+      "2026-10-20",
+      "2026-10-22",
+      "2026-10-23",
+      "2026-10-27",
+      "2026-10-28",
+      "2026-10-29",
+      "2026-10-30",
+      "2026-11-03",
+      "2026-11-04",
+      "2026-11-05",
+      "2026-11-06",
+      "2026-11-09",
+      "2026-11-10",
+      "2026-11-11",
+      "2026-11-12",
+      "2026-11-13",
+      "2026-11-16",
+      "2026-11-17",
+      "2026-11-18"
+    ]
+  },
+  "parada": "limite de gerações",
+  "desenvolvimento": {
+    "original": {
+      "parametros": {
+        "p_rapida": 9.0,
+        "p_lenta": 34.0,
+        "p_alvo": 150.0,
+        "p_usaralvodinamico": 1.0,
+        "p_janelaamplitude": 10.0,
+        "p_fatoramplitude": 1.0,
+        "p_alvomin": 50.0,
+        "p_alvomax": 220.0,
+        "p_rompimento": 1.0,
+        "p_stop": 75.0,
+        "p_fatorstop": 0.65,
+        "p_folgastop": 50.0,
+        "p_tempomax": 30.0,
+        "p_maxentradasdia": 4.0,
+        "p_espera": 3.0,
+        "p_perdamaxdia": 150.0,
+        "p_horainicio": 930.0,
+        "p_horafimentradas": 1700.0,
+        "p_horazeragem": 1745.0,
+        "p_ativarsaidafalha": 0.0,
+        "p_janelafalha": 1.0,
+        "p_toleranciafalhaticks": 0.0
+      },
+      "metricas": {
+        "pregoes": 19,
+        "barras": 10186,
+        "operacoes": 73,
+        "operacoes_por_dia": 3.8421052631578947,
+        "acertos": 30,
+        "acerto": 0.410958904109589,
+        "delta_meta_acerto_pp": -3.9041095890410995,
+        "liquido": 226.0,
+        "liquido_por_dia": 11.89,
+        "delta_meta_diaria": -2988.11,
+        "fator_lucro_liquido": 1.11958,
+        "drawdown_max": 388.0,
+        "pior_dia": -302.0,
+        "duracao_mediana_s": 60.0,
+        "duracao_p90_s": 180.0,
+        "dias_meta": 0,
+        "max_exposicao": 2,
+        "ambiguidades": 2,
+        "por_pregao": {
+          "2026-09-15": {
+            "liquido": -302.0,
+            "operacoes": 1
+          },
+          "2026-09-16": {
+            "liquido": -52.0,
+            "operacoes": 4
+          },
+          "2026-09-17": {
+            "liquido": 184.0,
+            "operacoes": 4
+          },
+          "2026-09-23": {
+            "liquido": 36.0,
+            "operacoes": 4
+          },
+          "2026-09-24": {
+            "liquido": -164.0,
+            "operacoes": 4
+          },
+          "2026-09-25": {
+            "liquido": 70.0,
+            "operacoes": 4
+          },
+          "2026-09-29": {
+            "liquido": 202.0,
+            "operacoes": 4
+          },
+          "2026-09-30": {
+            "liquido": -36.0,
+            "operacoes": 4
+          },
+          "2026-10-01": {
+            "liquido": -122.0,
+            "operacoes": 4
+          },
+          "2026-10-02": {
+            "liquido": 68.0,
+            "operacoes": 4
+          },
+          "2026-10-05": {
+            "liquido": 10.0,
+            "operacoes": 4
+          },
+          "2026-10-06": {
+            "liquido": 160.0,
+            "operacoes": 4
+          },
+          "2026-10-07": {
+            "liquido": 78.0,
+            "operacoes": 4
+          },
+          "2026-10-08": {
+            "liquido": -2.0,
+            "operacoes": 4
+          },
+          "2026-10-09": {
+            "liquido": 82.0,
+            "operacoes": 4
+          },
+          "2026-10-13": {
+            "liquido": -144.0,
+            "operacoes": 4
+          },
+          "2026-10-14": {
+            "liquido": -36.0,
+            "operacoes": 4
+          },
+          "2026-10-15": {
+            "liquido": 90.0,
+            "operacoes": 4
+          },
+          "2026-10-16": {
+            "liquido": 104.0,
+            "operacoes": 4
+          }
+        }
+      }
+    },
+    "publicado": {
+      "parametros": {
+        "p_rapida": 20,
+        "p_lenta": 21,
+        "p_alvo": 200,
+        "p_usaralvodinamico": 1,
+        "p_janelaamplitude": 5,
+        "p_fatoramplitude": 1.6,
+        "p_alvomin": 50,
+        "p_alvomax": 220,
+        "p_rompimento": 1,
+        "p_stop": 110,
+        "p_fatorstop": 0.8,
+        "p_folgastop": 50,
+        "p_tempomax": 5,
+        "p_maxentradasdia": 24,
+        "p_espera": 1,
+        "p_perdamaxdia": 150,
+        "p_horainicio": 1000,
+        "p_horafimentradas": 1700,
+        "p_horazeragem": 1745,
+        "p_ativarsaidafalha": 0,
+        "p_janelafalha": 1.0,
+        "p_toleranciafalhaticks": 0.0
+      },
+      "metricas": {
+        "pregoes": 19,
+        "barras": 10186,
+        "operacoes": 139,
+        "operacoes_por_dia": 7.315789473684211,
+        "acertos": 60,
+        "acerto": 0.4316546762589928,
+        "delta_meta_acerto_pp": -1.8345323741007225,
+        "liquido": 698.0,
+        "liquido_por_dia": 36.74,
+        "delta_meta_diaria": -2963.26,
+        "fator_lucro_liquido": 1.2,
+        "drawdown_max": 472.0,
+        "pior_dia": -172.0,
+        "duracao_mediana_s": 120.0,
+        "duracao_p90_s": 300.0,
+        "dias_meta": 0,
+        "max_exposicao": 2,
+        "ambiguidades": 1,
+        "por_pregao": {
+          "2026-09-15": {
+            "liquido": 90.0,
+            "operacoes": 4
+          },
+          "2026-09-16": {
+            "liquido": 94.0,
+            "operacoes": 3
+          },
+          "2026-09-17": {
+            "liquido": -36.0,
+            "operacoes": 6
+          },
+          "2026-09-23": {
+            "liquido": -64.0,
+            "operacoes": 2
+          },
+          "2026-09-24": {
+            "liquido": 184.0,
+            "operacoes": 5
+          },
+          "2026-09-25": {
+            "liquido": -172.0,
+            "operacoes": 4
+          },
+          "2026-09-29": {
+            "liquido": 32.0,
+            "operacoes": 6
+          },
+          "2026-09-30": {
+            "liquido": -8.0,
+            "operacoes": 3
+          },
+          "2026-10-01": {
+            "liquido": 126.0,
+            "operacoes": 10
+          },
+          "2026-10-02": {
+            "liquido": 112.0,
+            "operacoes": 12
+          },
+          "2026-10-05": {
+            "liquido": -160.0,
+            "operacoes": 5
+          },
+          "2026-10-06": {
+            "liquido": 140.0,
+            "operacoes": 12
+          },
+          "2026-10-07": {
+            "liquido": 80.0,
+            "operacoes": 6
+          },
+          "2026-10-08": {
+            "liquido": 428.0,
+            "operacoes": 8
+          },
+          "2026-10-09": {
+            "liquido": -160.0,
+            "operacoes": 3
+          },
+          "2026-10-13": {
+            "liquido": 50.0,
+            "operacoes": 13
+          },
+          "2026-10-14": {
+            "liquido": 248.0,
+            "operacoes": 15
+          },
+          "2026-10-15": {
+            "liquido": -118.0,
+            "operacoes": 15
+          },
+          "2026-10-16": {
+            "liquido": -168.0,
+            "operacoes": 7
+          }
+        }
+      }
+    },
+    "otimizado": {
+      "parametros": {
+        "p_rapida": 15,
+        "p_lenta": 21,
+        "p_alvo": 250,
+        "p_usaralvodinamico": 0,
+        "p_janelaamplitude": 10,
+        "p_fatoramplitude": 1.2,
+        "p_alvomin": 50.0,
+        "p_alvomax": 220.0,
+        "p_rompimento": 1,
+        "p_stop": 150,
+        "p_fatorstop": 0.8,
+        "p_folgastop": 25,
+        "p_tempomax": 10,
+        "p_maxentradasdia": 4,
+        "p_espera": 1,
+        "p_perdamaxdia": 150.0,
+        "p_horainicio": 1000,
+        "p_horafimentradas": 1700,
+        "p_horazeragem": 1745.0,
+        "p_ativarsaidafalha": 0,
+        "p_janelafalha": 1.0,
+        "p_toleranciafalhaticks": 0.0
+      },
+      "metricas": {
+        "pregoes": 19,
+        "barras": 10186,
+        "operacoes": 74,
+        "operacoes_por_dia": 3.8947368421052633,
+        "acertos": 36,
+        "acerto": 0.4864864864864865,
+        "delta_meta_acerto_pp": 3.64864864864865,
+        "liquido": 1480.0,
+        "liquido_por_dia": 77.89,
+        "delta_meta_diaria": -2922.11,
+        "fator_lucro_liquido": 1.69746,
+        "drawdown_max": 262.0,
+        "pior_dia": -200.0,
+        "duracao_mediana_s": 120.0,
+        "duracao_p90_s": 360.0,
+        "dias_meta": 0,
+        "max_exposicao": 2,
+        "ambiguidades": 0,
+        "por_pregao": {
+          "2026-09-15": {
+            "liquido": -88.0,
+            "operacoes": 3
+          },
+          "2026-09-16": {
+            "liquido": -152.0,
+            "operacoes": 4
+          },
+          "2026-09-17": {
+            "liquido": 422.0,
+            "operacoes": 4
+          },
+          "2026-09-23": {
+            "liquido": -36.0,
+            "operacoes": 4
+          },
+          "2026-09-24": {
+            "liquido": 156.0,
+            "operacoes": 4
+          },
+          "2026-09-25": {
+            "liquido": -4.0,
+            "operacoes": 4
+          },
+          "2026-09-29": {
+            "liquido": 90.0,
+            "operacoes": 4
+          },
+          "2026-09-30": {
+            "liquido": 68.0,
+            "operacoes": 4
+          },
+          "2026-10-01": {
+            "liquido": 60.0,
+            "operacoes": 4
+          },
+          "2026-10-02": {
+            "liquido": 252.0,
+            "operacoes": 4
+          },
+          "2026-10-05": {
+            "liquido": 110.0,
+            "operacoes": 4
+          },
+          "2026-10-06": {
+            "liquido": 172.0,
+            "operacoes": 4
+          },
+          "2026-10-07": {
+            "liquido": 74.0,
+            "operacoes": 4
+          },
+          "2026-10-08": {
+            "liquido": 270.0,
+            "operacoes": 4
+          },
+          "2026-10-09": {
+            "liquido": 68.0,
+            "operacoes": 4
+          },
+          "2026-10-13": {
+            "liquido": 76.0,
+            "operacoes": 4
+          },
+          "2026-10-14": {
+            "liquido": 72.0,
+            "operacoes": 4
+          },
+          "2026-10-15": {
+            "liquido": 70.0,
+            "operacoes": 4
+          },
+          "2026-10-16": {
+            "liquido": -200.0,
+            "operacoes": 3
+          }
+        }
+      },
+      "delta_original_reais": 1254.0,
+      "delta_publicado_reais": 782.0
+    }
+  },
+  "exploratorio": {
+    "original": {
+      "parametros": {
+        "p_rapida": 9.0,
+        "p_lenta": 34.0,
+        "p_alvo": 150.0,
+        "p_usaralvodinamico": 1.0,
+        "p_janelaamplitude": 10.0,
+        "p_fatoramplitude": 1.0,
+        "p_alvomin": 50.0,
+        "p_alvomax": 220.0,
+        "p_rompimento": 1.0,
+        "p_stop": 75.0,
+        "p_fatorstop": 0.65,
+        "p_folgastop": 50.0,
+        "p_tempomax": 30.0,
+        "p_maxentradasdia": 4.0,
+        "p_espera": 3.0,
+        "p_perdamaxdia": 150.0,
+        "p_horainicio": 930.0,
+        "p_horafimentradas": 1700.0,
+        "p_horazeragem": 1745.0,
+        "p_ativarsaidafalha": 0.0,
+        "p_janelafalha": 1.0,
+        "p_toleranciafalhaticks": 0.0
+      },
+      "metricas": {
+        "pregoes": 20,
+        "barras": 11288,
+        "operacoes": 78,
+        "operacoes_por_dia": 3.9,
+        "acertos": 32,
+        "acerto": 0.41025641025641024,
+        "delta_meta_acerto_pp": -3.974358974358977,
+        "liquido": -134.0,
+        "liquido_por_dia": -6.7,
+        "delta_meta_diaria": -3006.7,
+        "fator_lucro_liquido": 0.94224,
+        "drawdown_max": 938.0,
+        "pior_dia": -636.0,
+        "duracao_mediana_s": 60.0,
+        "duracao_p90_s": 180.0,
+        "dias_meta": 0,
+        "max_exposicao": 2,
+        "ambiguidades": 2,
+        "por_pregao": {
+          "2026-10-19": {
+            "liquido": 92.0,
+            "operacoes": 4
+          },
+          "2026-10-20": {
+            "liquido": 142.0,
+            "operacoes": 4
+          },
+          "2026-10-22": {
+            "liquido": -46.0,
+            "operacoes": 4
+          },
+          "2026-10-23": {
+            "liquido": -56.0,
+            "operacoes": 4
+          },
+          "2026-10-27": {
+            "liquido": 138.0,
+            "operacoes": 4
+          },
+          "2026-10-28": {
+            "liquido": 62.0,
+            "operacoes": 4
+          },
+          "2026-10-29": {
+            "liquido": -16.0,
+            "operacoes": 4
+          },
+          "2026-10-30": {
+            "liquido": -636.0,
+            "operacoes": 2
+          },
+          "2026-11-03": {
+            "liquido": -136.0,
+            "operacoes": 4
+          },
+          "2026-11-04": {
+            "liquido": -26.0,
+            "operacoes": 4
+          },
+          "2026-11-05": {
+            "liquido": 128.0,
+            "operacoes": 4
+          },
+          "2026-11-06": {
+            "liquido": 72.0,
+            "operacoes": 4
+          },
+          "2026-11-09": {
+            "liquido": 20.0,
+            "operacoes": 4
+          },
+          "2026-11-10": {
+            "liquido": 22.0,
+            "operacoes": 4
+          },
+          "2026-11-11": {
+            "liquido": 38.0,
+            "operacoes": 4
+          },
+          "2026-11-12": {
+            "liquido": -32.0,
+            "operacoes": 4
+          },
+          "2026-11-13": {
+            "liquido": 20.0,
+            "operacoes": 4
+          },
+          "2026-11-16": {
+            "liquido": 4.0,
+            "operacoes": 4
+          },
+          "2026-11-17": {
+            "liquido": -44.0,
+            "operacoes": 4
+          },
+          "2026-11-18": {
+            "liquido": 120.0,
+            "operacoes": 4
+          }
+        }
+      }
+    },
+    "publicado": {
+      "parametros": {
+        "p_rapida": 20,
+        "p_lenta": 21,
+        "p_alvo": 200,
+        "p_usaralvodinamico": 1,
+        "p_janelaamplitude": 5,
+        "p_fatoramplitude": 1.6,
+        "p_alvomin": 50,
+        "p_alvomax": 220,
+        "p_rompimento": 1,
+        "p_stop": 110,
+        "p_fatorstop": 0.8,
+        "p_folgastop": 50,
+        "p_tempomax": 5,
+        "p_maxentradasdia": 24,
+        "p_espera": 1,
+        "p_perdamaxdia": 150,
+        "p_horainicio": 1000,
+        "p_horafimentradas": 1700,
+        "p_horazeragem": 1745,
+        "p_ativarsaidafalha": 0,
+        "p_janelafalha": 1.0,
+        "p_toleranciafalhaticks": 0.0
+      },
+      "metricas": {
+        "pregoes": 20,
+        "barras": 11288,
+        "operacoes": 230,
+        "operacoes_por_dia": 11.5,
+        "acertos": 84,
+        "acerto": 0.3652173913043478,
+        "delta_meta_acerto_pp": -8.478260869565219,
+        "liquido": -480.0,
+        "liquido_por_dia": -24.0,
+        "delta_meta_diaria": -3024.0,
+        "fator_lucro_liquido": 0.92256,
+        "drawdown_max": 1238.0,
+        "pior_dia": -192.0,
+        "duracao_mediana_s": 60.0,
+        "duracao_p90_s": 300.0,
+        "dias_meta": 0,
+        "max_exposicao": 2,
+        "ambiguidades": 2,
+        "por_pregao": {
+          "2026-10-19": {
+            "liquido": -164.0,
+            "operacoes": 3
+          },
+          "2026-10-20": {
+            "liquido": -192.0,
+            "operacoes": 4
+          },
+          "2026-10-22": {
+            "liquido": 236.0,
+            "operacoes": 13
+          },
+          "2026-10-23": {
+            "liquido": 568.0,
+            "operacoes": 19
+          },
+          "2026-10-27": {
+            "liquido": -56.0,
+            "operacoes": 17
+          },
+          "2026-10-28": {
+            "liquido": -150.0,
+            "operacoes": 6
+          },
+          "2026-10-29": {
+            "liquido": -100.0,
+            "operacoes": 18
+          },
+          "2026-10-30": {
+            "liquido": -182.0,
+            "operacoes": 4
+          },
+          "2026-11-03": {
+            "liquido": -72.0,
+            "operacoes": 15
+          },
+          "2026-11-04": {
+            "liquido": -40.0,
+            "operacoes": 18
+          },
+          "2026-11-05": {
+            "liquido": -162.0,
+            "operacoes": 6
+          },
+          "2026-11-06": {
+            "liquido": 120.0,
+            "operacoes": 24
+          },
+          "2026-11-09": {
+            "liquido": -158.0,
+            "operacoes": 3
+          },
+          "2026-11-10": {
+            "liquido": 162.0,
+            "operacoes": 6
+          },
+          "2026-11-11": {
+            "liquido": -162.0,
+            "operacoes": 6
+          },
+          "2026-11-12": {
+            "liquido": 0.0,
+            "operacoes": 22
+          },
+          "2026-11-13": {
+            "liquido": -190.0,
+            "operacoes": 4
+          },
+          "2026-11-16": {
+            "liquido": 54.0,
+            "operacoes": 13
+          },
+          "2026-11-17": {
+            "liquido": -190.0,
+            "operacoes": 13
+          },
+          "2026-11-18": {
+            "liquido": 198.0,
+            "operacoes": 16
+          }
+        }
+      }
+    },
+    "otimizado": {
+      "parametros": {
+        "p_rapida": 15,
+        "p_lenta": 21,
+        "p_alvo": 250,
+        "p_usaralvodinamico": 0,
+        "p_janelaamplitude": 10,
+        "p_fatoramplitude": 1.2,
+        "p_alvomin": 50.0,
+        "p_alvomax": 220.0,
+        "p_rompimento": 1,
+        "p_stop": 150,
+        "p_fatorstop": 0.8,
+        "p_folgastop": 25,
+        "p_tempomax": 10,
+        "p_maxentradasdia": 4,
+        "p_espera": 1,
+        "p_perdamaxdia": 150.0,
+        "p_horainicio": 1000,
+        "p_horafimentradas": 1700,
+        "p_horazeragem": 1745.0,
+        "p_ativarsaidafalha": 0,
+        "p_janelafalha": 1.0,
+        "p_toleranciafalhaticks": 0.0
+      },
+      "metricas": {
+        "pregoes": 20,
+        "barras": 11288,
+        "operacoes": 76,
+        "operacoes_por_dia": 3.8,
+        "acertos": 28,
+        "acerto": 0.3684210526315789,
+        "delta_meta_acerto_pp": -8.157894736842108,
+        "liquido": -126.0,
+        "liquido_por_dia": -6.3,
+        "delta_meta_diaria": -3006.3,
+        "fator_lucro_liquido": 0.95323,
+        "drawdown_max": 832.0,
+        "pior_dia": -194.0,
+        "duracao_mediana_s": 120.0,
+        "duracao_p90_s": 300.0,
+        "dias_meta": 0,
+        "max_exposicao": 2,
+        "ambiguidades": 1,
+        "por_pregao": {
+          "2026-10-19": {
+            "liquido": 136.0,
+            "operacoes": 4
+          },
+          "2026-10-20": {
+            "liquido": -30.0,
+            "operacoes": 4
+          },
+          "2026-10-22": {
+            "liquido": 68.0,
+            "operacoes": 4
+          },
+          "2026-10-23": {
+            "liquido": 392.0,
+            "operacoes": 4
+          },
+          "2026-10-27": {
+            "liquido": -192.0,
+            "operacoes": 3
+          },
+          "2026-10-28": {
+            "liquido": -192.0,
+            "operacoes": 3
+          },
+          "2026-10-29": {
+            "liquido": -98.0,
+            "operacoes": 4
+          },
+          "2026-10-30": {
+            "liquido": -192.0,
+            "operacoes": 3
+          },
+          "2026-11-03": {
+            "liquido": 230.0,
+            "operacoes": 4
+          },
+          "2026-11-04": {
+            "liquido": -86.0,
+            "operacoes": 4
+          },
+          "2026-11-05": {
+            "liquido": 230.0,
+            "operacoes": 4
+          },
+          "2026-11-06": {
+            "liquido": 86.0,
+            "operacoes": 4
+          },
+          "2026-11-09": {
+            "liquido": -172.0,
+            "operacoes": 3
+          },
+          "2026-11-10": {
+            "liquido": 76.0,
+            "operacoes": 4
+          },
+          "2026-11-11": {
+            "liquido": -194.0,
+            "operacoes": 4
+          },
+          "2026-11-12": {
+            "liquido": -48.0,
+            "operacoes": 4
+          },
+          "2026-11-13": {
+            "liquido": -186.0,
+            "operacoes": 4
+          },
+          "2026-11-16": {
+            "liquido": 102.0,
+            "operacoes": 4
+          },
+          "2026-11-17": {
+            "liquido": 24.0,
+            "operacoes": 4
+          },
+          "2026-11-18": {
+            "liquido": -80.0,
+            "operacoes": 4
+          }
+        }
+      },
+      "delta_original_reais": 8.0,
+      "delta_publicado_reais": 354.0
+    }
+  },
+  "validacao_inedita": null,
+  "evolucao": [
+    {
+      "geracao": 1,
+      "avaliados": 24,
+      "segundos": 7.02,
+      "aptidao": 5070.0
+    },
+    {
+      "geracao": 2,
+      "avaliados": 47,
+      "segundos": 9.49,
+      "aptidao": 5950.0
+    },
+    {
+      "geracao": 3,
+      "avaliados": 70,
+      "segundos": 11.89,
+      "aptidao": 7400.0
+    }
+  ],
+  "avaliacoes": [
+    {
+      "input:p_alvo": 250.0,
+      "input:p_ativarsaidafalha": 0.0,
+      "input:p_espera": 1.0,
+      "input:p_fatoramplitude": 1.2,
+      "input:p_fatorstop": 0.8,
+      "input:p_folgastop": 25.0,
+      "input:p_horafimentradas": 1700.0,
+      "input:p_horainicio": 1000.0,
+      "input:p_janelaamplitude": 10.0,
+      "input:p_lenta": 21.0,
+      "input:p_maxentradasdia": 4.0,
+      "input:p_rapida": 15.0,
+      "input:p_rompimento": 1.0,
+      "input:p_stop": 150.0,
+      "input:p_tempomax": 10.0,
+      "input:p_usaralvodinamico": 0.0,
+      "aptidao": 7400.0,
+      "resultado_reais": 1480.0,
+      "drawdown_reais": 262.0,
+      "saidas": 74
+    },
+    {
+      "input:p_alvo": 60.0,
+      "input:p_ativarsaidafalha": 0.0,
+      "input:p_espera": 5.0,
+      "input:p_fatoramplitude": 1.6,
+      "input:p_fatorstop": 0.55,
+      "input:p_folgastop": 25.0,
+      "input:p_horafimentradas": 1700.0,
+      "input:p_horainicio": 930.0,
+      "input:p_janelaamplitude": 15.0,
+      "input:p_lenta": 48.0,
+      "input:p_maxentradasdia": 4.0,
+      "input:p_rapida": 20.0,
+      "input:p_rompimento": 1.0,
+      "input:p_stop": 200.0,
+      "input:p_tempomax": 15.0,
+      "input:p_usaralvodinamico": 1.0,
+      "aptidao": 5950.0,
+      "resultado_reais": 1190.0,
+      "drawdown_reais": 377.0,
+      "saidas": 68
+    },
+    {
+      "input:p_alvo": 100.0,
+      "input:p_ativarsaidafalha": 0.0,
+      "input:p_espera": 1.0,
+      "input:p_fatoramplitude": 1.0,
+      "input:p_fatorstop": 0.65,
+      "input:p_folgastop": 100.0,
+      "input:p_horafimentradas": 1530.0,
+      "input:p_horainicio": 930.0,
+      "input:p_janelaamplitude": 10.0,
+      "input:p_lenta": 27.0,
+      "input:p_maxentradasdia": 8.0,
+      "input:p_rapida": 9.0,
+      "input:p_rompimento": 1.0,
+      "input:p_stop": 300.0,
+      "input:p_tempomax": 15.0,
+      "input:p_usaralvodinamico": 0.0,
+      "aptidao": 5070.0,
+      "resultado_reais": 1014.0,
+      "drawdown_reais": 403.0,
+      "saidas": 140
+    },
+    {
+      "input:p_alvo": 100.0,
+      "input:p_ativarsaidafalha": 0.0,
+      "input:p_espera": 5.0,
+      "input:p_fatoramplitude": 0.8,
+      "input:p_fatorstop": 0.65,
+      "input:p_folgastop": 100.0,
+      "input:p_horafimentradas": 1630.0,
+      "input:p_horainicio": 930.0,
+      "input:p_janelaamplitude": 10.0,
+      "input:p_lenta": 21.0,
+      "input:p_maxentradasdia": 8.0,
+      "input:p_rapida": 9.0,
+      "input:p_rompimento": 1.0,
+      "input:p_stop": 200.0,
+      "input:p_tempomax": 30.0,
+      "input:p_usaralvodinamico": 1.0,
+      "aptidao": 5000.0,
+      "resultado_reais": 1000.0,
+      "drawdown_reais": 481.0,
+      "saidas": 136
+    },
+    {
+      "input:p_alvo": 150.0,
+      "input:p_ativarsaidafalha": 0.0,
+      "input:p_espera": 5.0,
+      "input:p_fatoramplitude": 1.6,
+      "input:p_fatorstop": 0.55,
+      "input:p_folgastop": 100.0,
+      "input:p_horafimentradas": 1700.0,
+      "input:p_horainicio": 1030.0,
+      "input:p_janelaamplitude": 15.0,
+      "input:p_lenta": 34.0,
+      "input:p_maxentradasdia": 8.0,
+      "input:p_rapida": 5.0,
+      "input:p_rompimento": 1.0,
+      "input:p_stop": 200.0,
+      "input:p_tempomax": 15.0,
+      "input:p_usaralvodinamico": 1.0,
+      "aptidao": 4570.0,
+      "resultado_reais": 914.0,
+      "drawdown_reais": 469.0,
+      "saidas": 120
+    },
+    {
+      "input:p_alvo": 100.0,
+      "input:p_ativarsaidafalha": 0.0,
+      "input:p_espera": 1.0,
+      "input:p_fatoramplitude": 0.8,
+      "input:p_fatorstop": 0.65,
+      "input:p_folgastop": 100.0,
+      "input:p_horafimentradas": 1530.0,
+      "input:p_horainicio": 930.0,
+      "input:p_janelaamplitude": 10.0,
+      "input:p_lenta": 34.0,
+      "input:p_maxentradasdia": 4.0,
+      "input:p_rapida": 9.0,
+      "input:p_rompimento": 1.0,
+      "input:p_stop": 200.0,
+      "input:p_tempomax": 30.0,
+      "input:p_usaralvodinamico": 0.0,
+      "aptidao": 4300.0,
+      "resultado_reais": 860.0,
+      "drawdown_reais": 213.0,
+      "saidas": 76
+    },
+    {
+      "input:p_alvo": 150.0,
+      "input:p_ativarsaidafalha": 0.0,
+      "input:p_espera": 1.0,
+      "input:p_fatoramplitude": 1.6,
+      "input:p_fatorstop": 0.8,
+      "input:p_folgastop": 25.0,
+      "input:p_horafimentradas": 1700.0,
+      "input:p_horainicio": 1000.0,
+      "input:p_janelaamplitude": 10.0,
+      "input:p_lenta": 34.0,
+      "input:p_maxentradasdia": 24.0,
+      "input:p_rapida": 20.0,
+      "input:p_rompimento": 1.0,
+      "input:p_stop": 110.0,
+      "input:p_tempomax": 30.0,
+      "input:p_usaralvodinamico": 0.0,
+      "aptidao": 4100.0,
+      "resultado_reais": 820.0,
+      "drawdown_reais": 446.0,
+      "saidas": 136
+    },
+    {
+      "input:p_alvo": 60.0,
+      "input:p_ativarsaidafalha": 0.0,
+      "input:p_espera": 5.0,
+      "input:p_fatoramplitude": 1.6,
+      "input:p_fatorstop": 0.65,
+      "input:p_folgastop": 100.0,
+      "input:p_horafimentradas": 1700.0,
+      "input:p_horainicio": 930.0,
+      "input:p_janelaamplitude": 10.0,
+      "input:p_lenta": 48.0,
+      "input:p_maxentradasdia": 4.0,
+      "input:p_rapida": 20.0,
+      "input:p_rompimento": 1.0,
+      "input:p_stop": 200.0,
+      "input:p_tempomax": 10.0,
+      "input:p_usaralvodinamico": 1.0,
+      "aptidao": 4030.0,
+      "resultado_reais": 806.0,
+      "drawdown_reais": 463.0,
+      "saidas": 66
+    },
+    {
+      "input:p_alvo": 60.0,
+      "input:p_ativarsaidafalha": 0.0,
+      "input:p_espera": 1.0,
+      "input:p_fatoramplitude": 1.6,
+      "input:p_fatorstop": 0.8,
+      "input:p_folgastop": 25.0,
+      "input:p_horafimentradas": 1700.0,
+      "input:p_horainicio": 1000.0,
+      "input:p_janelaamplitude": 15.0,
+      "input:p_lenta": 34.0,
+      "input:p_maxentradasdia": 4.0,
+      "input:p_rapida": 20.0,
+      "input:p_rompimento": 1.0,
+      "input:p_stop": 110.0,
+      "input:p_tempomax": 10.0,
+      "input:p_usaralvodinamico": 1.0,
+      "aptidao": 4020.0,
+      "resultado_reais": 804.0,
+      "drawdown_reais": 268.0,
+      "saidas": 68
+    },
+    {
+      "input:p_alvo": 150.0,
+      "input:p_ativarsaidafalha": 0.0,
+      "input:p_espera": 3.0,
+      "input:p_fatoramplitude": 1.6,
+      "input:p_fatorstop": 0.8,
+      "input:p_folgastop": 25.0,
+      "input:p_horafimentradas": 1700.0,
+      "input:p_horainicio": 1030.0,
+      "input:p_janelaamplitude": 15.0,
+      "input:p_lenta": 34.0,
+      "input:p_maxentradasdia": 4.0,
+      "input:p_rapida": 20.0,
+      "input:p_rompimento": 1.0,
+      "input:p_stop": 110.0,
+      "input:p_tempomax": 10.0,
+      "input:p_usaralvodinamico": 0.0,
+      "aptidao": 2620.0,
+      "resultado_reais": 524.0,
+      "drawdown_reais": 333.0,
+      "saidas": 65
+    },
+    {
+      "input:p_alvo": 150.0,
+      "input:p_ativarsaidafalha": 0.0,
+      "input:p_espera": 5.0,
+      "input:p_fatoramplitude": 0.8,
+      "input:p_fatorstop": 0.65,
+      "input:p_folgastop": 100.0,
+      "input:p_horafimentradas": 1700.0,
+      "input:p_horainicio": 930.0,
+      "input:p_janelaamplitude": 10.0,
+      "input:p_lenta": 34.0,
+      "input:p_maxentradasdia": 4.0,
+      "input:p_rapida": 15.0,
+      "input:p_rompimento": 1.0,
+      "input:p_stop": 200.0,
+      "input:p_tempomax": 15.0,
+      "input:p_usaralvodinamico": 1.0,
+      "aptidao": 2580.0,
+      "resultado_reais": 516.0,
+      "drawdown_reais": 321.0,
+      "saidas": 75
+    },
+    {
+      "input:p_alvo": 100.0,
+      "input:p_ativarsaidafalha": 0.0,
+      "input:p_espera": 1.0,
+      "input:p_fatoramplitude": 0.8,
+      "input:p_fatorstop": 0.55,
+      "input:p_folgastop": 100.0,
+      "input:p_horafimentradas": 1530.0,
+      "input:p_horainicio": 930.0,
+      "input:p_janelaamplitude": 15.0,
+      "input:p_lenta": 21.0,
+      "input:p_maxentradasdia": 4.0,
+      "input:p_rapida": 9.0,
+      "input:p_rompimento": 1.0,
+      "input:p_stop": 200.0,
+      "input:p_tempomax": 30.0,
+      "input:p_usaralvodinamico": 1.0,
+      "aptidao": 2340.0,
+      "resultado_reais": 468.0,
+      "drawdown_reais": 415.0,
+      "saidas": 74
+    },
+    {
+      "input:p_alvo": 60.0,
+      "input:p_ativarsaidafalha": 0.0,
+      "input:p_espera": 1.0,
+      "input:p_fatoramplitude": 1.6,
+      "input:p_fatorstop": 0.55,
+      "input:p_folgastop": 100.0,
+      "input:p_horafimentradas": 1630.0,
+      "input:p_horainicio": 930.0,
+      "input:p_janelaamplitude": 15.0,
+      "input:p_lenta": 21.0,
+      "input:p_maxentradasdia": 4.0,
+      "input:p_rapida": 9.0,
+      "input:p_rompimento": 1.0,
+      "input:p_stop": 150.0,
+      "input:p_tempomax": 30.0,
+      "input:p_usaralvodinamico": 1.0,
+      "aptidao": 2090.0,
+      "resultado_reais": 418.0,
+      "drawdown_reais": 431.0,
+      "saidas": 74
+    },
+    {
+      "input:p_alvo": 250.0,
+      "input:p_ativarsaidafalha": 0.0,
+      "input:p_espera": 3.0,
+      "input:p_fatoramplitude": 1.6,
+      "input:p_fatorstop": 0.55,
+      "input:p_folgastop": 100.0,
+      "input:p_horafimentradas": 1700.0,
+      "input:p_horainicio": 1030.0,
+      "input:p_janelaamplitude": 15.0,
+      "input:p_lenta": 34.0,
+      "input:p_maxentradasdia": 8.0,
+      "input:p_rapida": 5.0,
+      "input:p_rompimento": 1.0,
+      "input:p_stop": 300.0,
+      "input:p_tempomax": 15.0,
+      "input:p_usaralvodinamico": 1.0,
+      "aptidao": 1990.0,
+      "resultado_reais": 398.0,
+      "drawdown_reais": 641.0,
+      "saidas": 121
+    },
+    {
+      "input:p_alvo": 250.0,
+      "input:p_ativarsaidafalha": 0.0,
+      "input:p_espera": 1.0,
+      "input:p_fatoramplitude": 0.8,
+      "input:p_fatorstop": 0.65,
+      "input:p_folgastop": 25.0,
+      "input:p_horafimentradas": 1700.0,
+      "input:p_horainicio": 1030.0,
+      "input:p_janelaamplitude": 10.0,
+      "input:p_lenta": 21.0,
+      "input:p_maxentradasdia": 4.0,
+      "input:p_rapida": 15.0,
+      "input:p_rompimento": 1.0,
+      "input:p_stop": 110.0,
+      "input:p_tempomax": 15.0,
+      "input:p_usaralvodinamico": 1.0,
+      "aptidao": 1560.0,
+      "resultado_reais": 312.0,
+      "drawdown_reais": 397.0,
+      "saidas": 75
+    },
+    {
+      "input:p_alvo": 100.0,
+      "input:p_ativarsaidafalha": 0.0,
+      "input:p_espera": 1.0,
+      "input:p_fatoramplitude": 1.2,
+      "input:p_fatorstop": 0.8,
+      "input:p_folgastop": 100.0,
+      "input:p_horafimentradas": 1530.0,
+      "input:p_horainicio": 1030.0,
+      "input:p_janelaamplitude": 5.0,
+      "input:p_lenta": 21.0,
+      "input:p_maxentradasdia": 8.0,
+      "input:p_rapida": 9.0,
+      "input:p_rompimento": 1.0,
+      "input:p_stop": 300.0,
+      "input:p_tempomax": 15.0,
+      "input:p_usaralvodinamico": 0.0,
+      "aptidao": 1540.0,
+      "resultado_reais": 308.0,
+      "drawdown_reais": 525.0,
+      "saidas": 124
+    },
+    {
+      "input:p_alvo": 60.0,
+      "input:p_ativarsaidafalha": 0.0,
+      "input:p_espera": 1.0,
+      "input:p_fatoramplitude": 0.8,
+      "input:p_fatorstop": 0.55,
+      "input:p_folgastop": 50.0,
+      "input:p_horafimentradas": 1700.0,
+      "input:p_horainicio": 1000.0,
+      "input:p_janelaamplitude": 15.0,
+      "input:p_lenta": 48.0,
+      "input:p_maxentradasdia": 4.0,
+      "input:p_rapida": 20.0,
+      "input:p_rompimento": 1.0,
+      "input:p_stop": 150.0,
+      "input:p_tempomax": 10.0,
+      "input:p_usaralvodinamico": 1.0,
+      "aptidao": 1520.0,
+      "resultado_reais": 304.0,
+      "drawdown_reais": 378.0,
+      "saidas": 66
+    },
+    {
+      "input:p_alvo": 250.0,
+      "input:p_ativarsaidafalha": 0.0,
+      "input:p_espera": 3.0,
+      "input:p_fatoramplitude": 1.6,
+      "input:p_fatorstop": 0.65,
+      "input:p_folgastop": 100.0,
+      "input:p_horafimentradas": 1530.0,
+      "input:p_horainicio": 1030.0,
+      "input:p_janelaamplitude": 10.0,
+      "input:p_lenta": 27.0,
+      "input:p_maxentradasdia": 8.0,
+      "input:p_rapida": 15.0,
+      "input:p_rompimento": 1.0,
+      "input:p_stop": 300.0,
+      "input:p_tempomax": 15.0,
+      "input:p_usaralvodinamico": 0.0,
+      "aptidao": 1510.0,
+      "resultado_reais": 302.0,
+      "drawdown_reais": 549.0,
+      "saidas": 95
+    },
+    {
+      "input:p_alvo": 150.0,
+      "input:p_ativarsaidafalha": 0.0,
+      "input:p_espera": 3.0,
+      "input:p_fatoramplitude": 0.8,
+      "input:p_fatorstop": 0.55,
+      "input:p_folgastop": 50.0,
+      "input:p_horafimentradas": 1530.0,
+      "input:p_horainicio": 1000.0,
+      "input:p_janelaamplitude": 15.0,
+      "input:p_lenta": 21.0,
+      "input:p_maxentradasdia": 4.0,
+      "input:p_rapida": 9.0,
+      "input:p_rompimento": 1.0,
+      "input:p_stop": 300.0,
+      "input:p_tempomax": 10.0,
+      "input:p_usaralvodinamico": 1.0,
+      "aptidao": 1280.0,
+      "resultado_reais": 256.0,
+      "drawdown_reais": 517.0,
+      "saidas": 71
+    },
+    {
+      "input:p_alvo": 100.0,
+      "input:p_ativarsaidafalha": 0.0,
+      "input:p_espera": 1.0,
+      "input:p_fatoramplitude": 0.8,
+      "input:p_fatorstop": 0.65,
+      "input:p_folgastop": 50.0,
+      "input:p_horafimentradas": 1700.0,
+      "input:p_horainicio": 1030.0,
+      "input:p_janelaamplitude": 10.0,
+      "input:p_lenta": 21.0,
+      "input:p_maxentradasdia": 4.0,
+      "input:p_rapida": 15.0,
+      "input:p_rompimento": 1.0,
+      "input:p_stop": 300.0,
+      "input:p_tempomax": 30.0,
+      "input:p_usaralvodinamico": 1.0,
+      "aptidao": 1150.0,
+      "resultado_reais": 230.0,
+      "drawdown_reais": 384.0,
+      "saidas": 73
+    },
+    {
+      "input:p_alvo": 150.0,
+      "input:p_ativarsaidafalha": 0.0,
+      "input:p_espera": 3.0,
+      "input:p_fatoramplitude": 1.0,
+      "input:p_fatorstop": 0.65,
+      "input:p_folgastop": 50.0,
+      "input:p_horafimentradas": 1700.0,
+      "input:p_horainicio": 930.0,
+      "input:p_janelaamplitude": 10.0,
+      "input:p_lenta": 34.0,
+      "input:p_maxentradasdia": 4.0,
+      "input:p_rapida": 9.0,
+      "input:p_rompimento": 1.0,
+      "input:p_stop": 75.0,
+      "input:p_tempomax": 30.0,
+      "input:p_usaralvodinamico": 1.0,
+      "aptidao": 1130.0,
+      "resultado_reais": 226.0,
+      "drawdown_reais": 389.0,
+      "saidas": 73
+    },
+    {
+      "input:p_alvo": 150.0,
+      "input:p_ativarsaidafalha": 0.0,
+      "input:p_espera": 3.0,
+      "input:p_fatoramplitude": 1.2,
+      "input:p_fatorstop": 0.65,
+      "input:p_folgastop": 100.0,
+      "input:p_horafimentradas": 1530.0,
+      "input:p_horainicio": 930.0,
+      "input:p_janelaamplitude": 15.0,
+      "input:p_lenta": 34.0,
+      "input:p_maxentradasdia": 4.0,
+      "input:p_rapida": 9.0,
+      "input:p_rompimento": 1.0,
+      "input:p_stop": 110.0,
+      "input:p_tempomax": 10.0,
+      "input:p_usaralvodinamico": 0.0,
+      "aptidao": 1070.0,
+      "resultado_reais": 214.0,
+      "drawdown_reais": 369.0,
+      "saidas": 72
+    },
+    {
+      "input:p_alvo": 150.0,
+      "input:p_ativarsaidafalha": 0.0,
+      "input:p_espera": 1.0,
+      "input:p_fatoramplitude": 1.0,
+      "input:p_fatorstop": 0.55,
+      "input:p_folgastop": 100.0,
+      "input:p_horafimentradas": 1700.0,
+      "input:p_horainicio": 1000.0,
+      "input:p_janelaamplitude": 15.0,
+      "input:p_lenta": 48.0,
+      "input:p_maxentradasdia": 4.0,
+      "input:p_rapida": 20.0,
+      "input:p_rompimento": 1.0,
+      "input:p_stop": 150.0,
+      "input:p_tempomax": 10.0,
+      "input:p_usaralvodinamico": 1.0,
+      "aptidao": 1030.0,
+      "resultado_reais": 206.0,
+      "drawdown_reais": 381.0,
+      "saidas": 65
+    },
+    {
+      "input:p_alvo": 250.0,
+      "input:p_ativarsaidafalha": 0.0,
+      "input:p_espera": 3.0,
+      "input:p_fatoramplitude": 1.6,
+      "input:p_fatorstop": 0.8,
+      "input:p_folgastop": 50.0,
+      "input:p_horafimentradas": 1630.0,
+      "input:p_horainicio": 1030.0,
+      "input:p_janelaamplitude": 15.0,
+      "input:p_lenta": 34.0,
+      "input:p_maxentradasdia": 24.0,
+      "input:p_rapida": 15.0,
+      "input:p_rompimento": 1.0,
+      "input:p_stop": 300.0,
+      "input:p_tempomax": 15.0,
+      "input:p_usaralvodinamico": 1.0,
+      "aptidao": 1010.0,
+      "resultado_reais": 202.0,
+      "drawdown_reais": 439.0,
+      "saidas": 105
+    },
+    {
+      "input:p_alvo": 100.0,
+      "input:p_ativarsaidafalha": 0.0,
+      "input:p_espera": 1.0,
+      "input:p_fatoramplitude": 1.0,
+      "input:p_fatorstop": 0.8,
+      "input:p_folgastop": 25.0,
+      "input:p_horafimentradas": 1700.0,
+      "input:p_horainicio": 930.0,
+      "input:p_janelaamplitude": 10.0,
+      "input:p_lenta": 34.0,
+      "input:p_maxentradasdia": 8.0,
+      "input:p_rapida": 9.0,
+      "input:p_rompimento": 1.0,
+      "input:p_stop": 300.0,
+      "input:p_tempomax": 10.0,
+      "input:p_usaralvodinamico": 0.0,
+      "aptidao": 1000.0,
+      "resultado_reais": 200.0,
+      "drawdown_reais": 619.0,
+      "saidas": 138
+    },
+    {
+      "input:p_alvo": 60.0,
+      "input:p_ativarsaidafalha": 0.0,
+      "input:p_espera": 1.0,
+      "input:p_fatoramplitude": 1.2,
+      "input:p_fatorstop": 0.8,
+      "input:p_folgastop": 50.0,
+      "input:p_horafimentradas": 1700.0,
+      "input:p_horainicio": 1000.0,
+      "input:p_janelaamplitude": 10.0,
+      "input:p_lenta": 34.0,
+      "input:p_maxentradasdia": 4.0,
+      "input:p_rapida": 20.0,
+      "input:p_rompimento": 1.0,
+      "input:p_stop": 200.0,
+      "input:p_tempomax": 10.0,
+      "input:p_usaralvodinamico": 1.0,
+      "aptidao": 760.0,
+      "resultado_reais": 152.0,
+      "drawdown_reais": 414.0,
+      "saidas": 67
+    },
+    {
+      "input:p_alvo": 250.0,
+      "input:p_ativarsaidafalha": 0.0,
+      "input:p_espera": 1.0,
+      "input:p_fatoramplitude": 0.8,
+      "input:p_fatorstop": 0.8,
+      "input:p_folgastop": 50.0,
+      "input:p_horafimentradas": 1630.0,
+      "input:p_horainicio": 1000.0,
+      "input:p_janelaamplitude": 15.0,
+      "input:p_lenta": 48.0,
+      "input:p_maxentradasdia": 8.0,
+      "input:p_rapida": 15.0,
+      "input:p_rompimento": 1.0,
+      "input:p_stop": 150.0,
+      "input:p_tempomax": 10.0,
+      "input:p_usaralvodinamico": 1.0,
+      "aptidao": 350.0,
+      "resultado_reais": 70.0,
+      "drawdown_reais": 403.0,
+      "saidas": 119
+    },
+    {
+      "input:p_alvo": 250.0,
+      "input:p_ativarsaidafalha": 0.0,
+      "input:p_espera": 3.0,
+      "input:p_fatoramplitude": 1.6,
+      "input:p_fatorstop": 0.55,
+      "input:p_folgastop": 25.0,
+      "input:p_horafimentradas": 1700.0,
+      "input:p_horainicio": 1030.0,
+      "input:p_janelaamplitude": 15.0,
+      "input:p_lenta": 48.0,
+      "input:p_maxentradasdia": 4.0,
+      "input:p_rapida": 20.0,
+      "input:p_rompimento": 1.0,
+      "input:p_stop": 300.0,
+      "input:p_tempomax": 15.0,
+      "input:p_usaralvodinamico": 1.0,
+      "aptidao": -450.0,
+      "resultado_reais": -90.0,
+      "drawdown_reais": 469.0,
+      "saidas": 62
+    },
+    {
+      "input:p_alvo": 250.0,
+      "input:p_ativarsaidafalha": 0.0,
+      "input:p_espera": 3.0,
+      "input:p_fatoramplitude": 1.6,
+      "input:p_fatorstop": 0.8,
+      "input:p_folgastop": 50.0,
+      "input:p_horafimentradas": 1630.0,
+      "input:p_horainicio": 1030.0,
+      "input:p_janelaamplitude": 15.0,
+      "input:p_lenta": 27.0,
+      "input:p_maxentradasdia": 24.0,
+      "input:p_rapida": 15.0,
+      "input:p_rompimento": 1.0,
+      "input:p_stop": 300.0,
+      "input:p_tempomax": 15.0,
+      "input:p_usaralvodinamico": 0.0,
+      "aptidao": -470.0,
+      "resultado_reais": -94.0,
+      "drawdown_reais": 575.0,
+      "saidas": 117
+    },
+    {
+      "input:p_alvo": 250.0,
+      "input:p_ativarsaidafalha": 0.0,
+      "input:p_espera": 1.0,
+      "input:p_fatoramplitude": 1.6,
+      "input:p_fatorstop": 0.55,
+      "input:p_folgastop": 50.0,
+      "input:p_horafimentradas": 1630.0,
+      "input:p_horainicio": 1000.0,
+      "input:p_janelaamplitude": 15.0,
+      "input:p_lenta": 27.0,
+      "input:p_maxentradasdia": 8.0,
+      "input:p_rapida": 20.0,
+      "input:p_rompimento": 1.0,
+      "input:p_stop": 150.0,
+      "input:p_tempomax": 10.0,
+      "input:p_usaralvodinamico": 1.0,
+      "aptidao": -630.0,
+      "resultado_reais": -126.0,
+      "drawdown_reais": 602.0,
+      "saidas": 109
+    },
+    {
+      "input:p_alvo": 100.0,
+      "input:p_ativarsaidafalha": 0.0,
+      "input:p_espera": 1.0,
+      "input:p_fatoramplitude": 1.2,
+      "input:p_fatorstop": 0.8,
+      "input:p_folgastop": 50.0,
+      "input:p_horafimentradas": 1630.0,
+      "input:p_horainicio": 930.0,
+      "input:p_janelaamplitude": 5.0,
+      "input:p_lenta": 27.0,
+      "input:p_maxentradasdia": 4.0,
+      "input:p_rapida": 5.0,
+      "input:p_rompimento": 1.0,
+      "input:p_stop": 150.0,
+      "input:p_tempomax": 30.0,
+      "input:p_usaralvodinamico": 0.0,
+      "aptidao": -890.0,
+      "resultado_reais": -178.0,
+      "drawdown_reais": 554.0,
+      "saidas": 75
+    },
+    {
+      "input:p_alvo": 250.0,
+      "input:p_ativarsaidafalha": 0.0,
+      "input:p_espera": 3.0,
+      "input:p_fatoramplitude": 1.6,
+      "input:p_fatorstop": 0.8,
+      "input:p_folgastop": 100.0,
+      "input:p_horafimentradas": 1700.0,
+      "input:p_horainicio": 1030.0,
+      "input:p_janelaamplitude": 15.0,
+      "input:p_lenta": 34.0,
+      "input:p_maxentradasdia": 8.0,
+      "input:p_rapida": 20.0,
+      "input:p_rompimento": 1.0,
+      "input:p_stop": 300.0,
+      "input:p_tempomax": 15.0,
+      "input:p_usaralvodinamico": 1.0,
+      "aptidao": -1010.0,
+      "resultado_reais": -202.0,
+      "drawdown_reais": 837.0,
+      "saidas": 93
+    },
+    {
+      "input:p_alvo": 100.0,
+      "input:p_ativarsaidafalha": 0.0,
+      "input:p_espera": 3.0,
+      "input:p_fatoramplitude": 1.6,
+      "input:p_fatorstop": 0.65,
+      "input:p_folgastop": 100.0,
+      "input:p_horafimentradas": 1530.0,
+      "input:p_horainicio": 1030.0,
+      "input:p_janelaamplitude": 5.0,
+      "input:p_lenta": 27.0,
+      "input:p_maxentradasdia": 8.0,
+      "input:p_rapida": 20.0,
+      "input:p_rompimento": 1.0,
+      "input:p_stop": 75.0,
+      "input:p_tempomax": 10.0,
+      "input:p_usaralvodinamico": 0.0,
+      "aptidao": -1020.0,
+      "resultado_reais": -204.0,
+      "drawdown_reais": 405.0,
+      "saidas": 90
+    },
+    {
+      "input:p_alvo": 250.0,
+      "input:p_ativarsaidafalha": 0.0,
+      "input:p_espera": 5.0,
+      "input:p_fatoramplitude": 1.6,
+      "input:p_fatorstop": 0.55,
+      "input:p_folgastop": 100.0,
+      "input:p_horafimentradas": 1530.0,
+      "input:p_horainicio": 1030.0,
+      "input:p_janelaamplitude": 15.0,
+      "input:p_lenta": 27.0,
+      "input:p_maxentradasdia": 8.0,
+      "input:p_rapida": 20.0,
+      "input:p_rompimento": 1.0,
+      "input:p_stop": 200.0,
+      "input:p_tempomax": 5.0,
+      "input:p_usaralvodinamico": 0.0,
+      "aptidao": -1120.0,
+      "resultado_reais": -224.0,
+      "drawdown_reais": 565.0,
+      "saidas": 81
+    },
+    {
+      "input:p_alvo": 100.0,
+      "input:p_ativarsaidafalha": 0.0,
+      "input:p_espera": 3.0,
+      "input:p_fatoramplitude": 1.2,
+      "input:p_fatorstop": 0.65,
+      "input:p_folgastop": 50.0,
+      "input:p_horafimentradas": 1530.0,
+      "input:p_horainicio": 1030.0,
+      "input:p_janelaamplitude": 10.0,
+      "input:p_lenta": 48.0,
+      "input:p_maxentradasdia": 24.0,
+      "input:p_rapida": 20.0,
+      "input:p_rompimento": 0.0,
+      "input:p_stop": 200.0,
+      "input:p_tempomax": 15.0,
+      "input:p_usaralvodinamico": 0.0,
+      "aptidao": -1280.0,
+      "resultado_reais": -256.0,
+      "drawdown_reais": 683.0,
+      "saidas": 100
+    },
+    {
+      "input:p_alvo": 100.0,
+      "input:p_ativarsaidafalha": 0.0,
+      "input:p_espera": 1.0,
+      "input:p_fatoramplitude": 1.0,
+      "input:p_fatorstop": 0.55,
+      "input:p_folgastop": 50.0,
+      "input:p_horafimentradas": 1700.0,
+      "input:p_horainicio": 930.0,
+      "input:p_janelaamplitude": 10.0,
+      "input:p_lenta": 21.0,
+      "input:p_maxentradasdia": 4.0,
+      "input:p_rapida": 20.0,
+      "input:p_rompimento": 0.0,
+      "input:p_stop": 110.0,
+      "input:p_tempomax": 15.0,
+      "input:p_usaralvodinamico": 1.0,
+      "aptidao": -1430.0,
+      "resultado_reais": -286.0,
+      "drawdown_reais": 479.0,
+      "saidas": 75
+    },
+    {
+      "input:p_alvo": 150.0,
+      "input:p_ativarsaidafalha": 0.0,
+      "input:p_espera": 1.0,
+      "input:p_fatoramplitude": 1.2,
+      "input:p_fatorstop": 0.8,
+      "input:p_folgastop": 100.0,
+      "input:p_horafimentradas": 1530.0,
+      "input:p_horainicio": 930.0,
+      "input:p_janelaamplitude": 15.0,
+      "input:p_lenta": 34.0,
+      "input:p_maxentradasdia": 4.0,
+      "input:p_rapida": 5.0,
+      "input:p_rompimento": 1.0,
+      "input:p_stop": 300.0,
+      "input:p_tempomax": 15.0,
+      "input:p_usaralvodinamico": 1.0,
+      "aptidao": -1860.0,
+      "resultado_reais": -372.0,
+      "drawdown_reais": 858.0,
+      "saidas": 71
+    },
+    {
+      "input:p_alvo": 60.0,
+      "input:p_ativarsaidafalha": 0.0,
+      "input:p_espera": 5.0,
+      "input:p_fatoramplitude": 1.6,
+      "input:p_fatorstop": 0.65,
+      "input:p_folgastop": 25.0,
+      "input:p_horafimentradas": 1530.0,
+      "input:p_horainicio": 1030.0,
+      "input:p_janelaamplitude": 15.0,
+      "input:p_lenta": 21.0,
+      "input:p_maxentradasdia": 4.0,
+      "input:p_rapida": 20.0,
+      "input:p_rompimento": 1.0,
+      "input:p_stop": 110.0,
+      "input:p_tempomax": 10.0,
+      "input:p_usaralvodinamico": 0.0,
+      "aptidao": -2350.0,
+      "resultado_reais": -470.0,
+      "drawdown_reais": 516.0,
+      "saidas": 62
+    },
+    {
+      "input:p_alvo": 250.0,
+      "input:p_ativarsaidafalha": 0.0,
+      "input:p_espera": 3.0,
+      "input:p_fatoramplitude": 1.0,
+      "input:p_fatorstop": 0.55,
+      "input:p_folgastop": 100.0,
+      "input:p_horafimentradas": 1700.0,
+      "input:p_horainicio": 1000.0,
+      "input:p_janelaamplitude": 5.0,
+      "input:p_lenta": 27.0,
+      "input:p_maxentradasdia": 12.0,
+      "input:p_rapida": 20.0,
+      "input:p_rompimento": 0.0,
+      "input:p_stop": 110.0,
+      "input:p_tempomax": 30.0,
+      "input:p_usaralvodinamico": 0.0,
+      "aptidao": -2620.0,
+      "resultado_reais": -524.0,
+      "drawdown_reais": 897.0,
+      "saidas": 117
+    },
+    {
+      "input:p_alvo": 60.0,
+      "input:p_ativarsaidafalha": 0.0,
+      "input:p_espera": 3.0,
+      "input:p_fatoramplitude": 0.8,
+      "input:p_fatorstop": 0.8,
+      "input:p_folgastop": 50.0,
+      "input:p_horafimentradas": 1700.0,
+      "input:p_horainicio": 930.0,
+      "input:p_janelaamplitude": 15.0,
+      "input:p_lenta": 48.0,
+      "input:p_maxentradasdia": 24.0,
+      "input:p_rapida": 15.0,
+      "input:p_rompimento": 1.0,
+      "input:p_stop": 150.0,
+      "input:p_tempomax": 10.0,
+      "input:p_usaralvodinamico": 1.0,
+      "aptidao": -2620.0,
+      "resultado_reais": -524.0,
+      "drawdown_reais": 833.0,
+      "saidas": 140
+    },
+    {
+      "input:p_alvo": 150.0,
+      "input:p_ativarsaidafalha": 0.0,
+      "input:p_espera": 3.0,
+      "input:p_fatoramplitude": 1.6,
+      "input:p_fatorstop": 0.8,
+      "input:p_folgastop": 25.0,
+      "input:p_horafimentradas": 1630.0,
+      "input:p_horainicio": 1030.0,
+      "input:p_janelaamplitude": 15.0,
+      "input:p_lenta": 34.0,
+      "input:p_maxentradasdia": 8.0,
+      "input:p_rapida": 20.0,
+      "input:p_rompimento": 0.0,
+      "input:p_stop": 75.0,
+      "input:p_tempomax": 10.0,
+      "input:p_usaralvodinamico": 0.0,
+      "aptidao": -3000.0,
+      "resultado_reais": -600.0,
+      "drawdown_reais": 1217.0,
+      "saidas": 101
+    },
+    {
+      "input:p_alvo": 100.0,
+      "input:p_ativarsaidafalha": 0.0,
+      "input:p_espera": 5.0,
+      "input:p_fatoramplitude": 0.8,
+      "input:p_fatorstop": 0.65,
+      "input:p_folgastop": 100.0,
+      "input:p_horafimentradas": 1630.0,
+      "input:p_horainicio": 1030.0,
+      "input:p_janelaamplitude": 15.0,
+      "input:p_lenta": 34.0,
+      "input:p_maxentradasdia": 4.0,
+      "input:p_rapida": 20.0,
+      "input:p_rompimento": 0.0,
+      "input:p_stop": 75.0,
+      "input:p_tempomax": 5.0,
+      "input:p_usaralvodinamico": 0.0,
+      "aptidao": -3200.0,
+      "resultado_reais": -640.0,
+      "drawdown_reais": 885.0,
+      "saidas": 64
+    },
+    {
+      "input:p_alvo": 100.0,
+      "input:p_ativarsaidafalha": 0.0,
+      "input:p_espera": 3.0,
+      "input:p_fatoramplitude": 1.6,
+      "input:p_fatorstop": 0.55,
+      "input:p_folgastop": 25.0,
+      "input:p_horafimentradas": 1630.0,
+      "input:p_horainicio": 1030.0,
+      "input:p_janelaamplitude": 5.0,
+      "input:p_lenta": 21.0,
+      "input:p_maxentradasdia": 4.0,
+      "input:p_rapida": 5.0,
+      "input:p_rompimento": 0.0,
+      "input:p_stop": 150.0,
+      "input:p_tempomax": 30.0,
+      "input:p_usaralvodinamico": 1.0,
+      "aptidao": -3470.0,
+      "resultado_reais": -694.0,
+      "drawdown_reais": 1023.0,
+      "saidas": 71
+    },
+    {
+      "input:p_alvo": 60.0,
+      "input:p_ativarsaidafalha": 0.0,
+      "input:p_espera": 5.0,
+      "input:p_fatoramplitude": 1.6,
+      "input:p_fatorstop": 0.55,
+      "input:p_folgastop": 25.0,
+      "input:p_horafimentradas": 1700.0,
+      "input:p_horainicio": 930.0,
+      "input:p_janelaamplitude": 15.0,
+      "input:p_lenta": 48.0,
+      "input:p_maxentradasdia": 12.0,
+      "input:p_rapida": 20.0,
+      "input:p_rompimento": 0.0,
+      "input:p_stop": 150.0,
+      "input:p_tempomax": 10.0,
+      "input:p_usaralvodinamico": 1.0,
+      "aptidao": -3800.0,
+      "resultado_reais": -760.0,
+      "drawdown_reais": 983.0,
+      "saidas": 138
+    },
+    {
+      "input:p_alvo": 250.0,
+      "input:p_ativarsaidafalha": 0.0,
+      "input:p_espera": 5.0,
+      "input:p_fatoramplitude": 0.8,
+      "input:p_fatorstop": 0.55,
+      "input:p_folgastop": 100.0,
+      "input:p_horafimentradas": 1630.0,
+      "input:p_horainicio": 1030.0,
+      "input:p_janelaamplitude": 10.0,
+      "input:p_lenta": 27.0,
+      "input:p_maxentradasdia": 12.0,
+      "input:p_rapida": 5.0,
+      "input:p_rompimento": 0.0,
+      "input:p_stop": 200.0,
+      "input:p_tempomax": 10.0,
+      "input:p_usaralvodinamico": 0.0,
+      "aptidao": -3850.0,
+      "resultado_reais": -770.0,
+      "drawdown_reais": 908.0,
+      "saidas": 116
+    },
+    {
+      "input:p_alvo": 150.0,
+      "input:p_ativarsaidafalha": 0.0,
+      "input:p_espera": 5.0,
+      "input:p_fatoramplitude": 1.2,
+      "input:p_fatorstop": 0.65,
+      "input:p_folgastop": 100.0,
+      "input:p_horafimentradas": 1530.0,
+      "input:p_horainicio": 930.0,
+      "input:p_janelaamplitude": 15.0,
+      "input:p_lenta": 27.0,
+      "input:p_maxentradasdia": 8.0,
+      "input:p_rapida": 9.0,
+      "input:p_rompimento": 1.0,
+      "input:p_stop": 110.0,
+      "input:p_tempomax": 15.0,
+      "input:p_usaralvodinamico": 0.0,
+      "aptidao": -3990.0,
+      "resultado_reais": -798.0,
+      "drawdown_reais": 1453.0,
+      "saidas": 119
+    },
+    {
+      "input:p_alvo": 150.0,
+      "input:p_ativarsaidafalha": 0.0,
+      "input:p_espera": 3.0,
+      "input:p_fatoramplitude": 1.2,
+      "input:p_fatorstop": 0.8,
+      "input:p_folgastop": 25.0,
+      "input:p_horafimentradas": 1530.0,
+      "input:p_horainicio": 930.0,
+      "input:p_janelaamplitude": 10.0,
+      "input:p_lenta": 21.0,
+      "input:p_maxentradasdia": 8.0,
+      "input:p_rapida": 9.0,
+      "input:p_rompimento": 1.0,
+      "input:p_stop": 75.0,
+      "input:p_tempomax": 15.0,
+      "input:p_usaralvodinamico": 0.0,
+      "aptidao": -4030.0,
+      "resultado_reais": -806.0,
+      "drawdown_reais": 1395.0,
+      "saidas": 125
+    },
+    {
+      "input:p_alvo": 250.0,
+      "input:p_ativarsaidafalha": 0.0,
+      "input:p_espera": 1.0,
+      "input:p_fatoramplitude": 1.6,
+      "input:p_fatorstop": 0.55,
+      "input:p_folgastop": 25.0,
+      "input:p_horafimentradas": 1530.0,
+      "input:p_horainicio": 1030.0,
+      "input:p_janelaamplitude": 10.0,
+      "input:p_lenta": 27.0,
+      "input:p_maxentradasdia": 4.0,
+      "input:p_rapida": 9.0,
+      "input:p_rompimento": 1.0,
+      "input:p_stop": 75.0,
+      "input:p_tempomax": 15.0,
+      "input:p_usaralvodinamico": 0.0,
+      "aptidao": -4060.0,
+      "resultado_reais": -812.0,
+      "drawdown_reais": 1393.0,
+      "saidas": 73
+    },
+    {
+      "input:p_alvo": 200.0,
+      "input:p_ativarsaidafalha": 0.0,
+      "input:p_espera": 5.0,
+      "input:p_fatoramplitude": 1.2,
+      "input:p_fatorstop": 0.65,
+      "input:p_folgastop": 100.0,
+      "input:p_horafimentradas": 1530.0,
+      "input:p_horainicio": 930.0,
+      "input:p_janelaamplitude": 10.0,
+      "input:p_lenta": 27.0,
+      "input:p_maxentradasdia": 8.0,
+      "input:p_rapida": 20.0,
+      "input:p_rompimento": 0.0,
+      "input:p_stop": 300.0,
+      "input:p_tempomax": 15.0,
+      "input:p_usaralvodinamico": 1.0,
+      "aptidao": -4060.0,
+      "resultado_reais": -812.0,
+      "drawdown_reais": 1135.0,
+      "saidas": 107
+    },
+    {
+      "input:p_alvo": 250.0,
+      "input:p_ativarsaidafalha": 0.0,
+      "input:p_espera": 1.0,
+      "input:p_fatoramplitude": 1.0,
+      "input:p_fatorstop": 0.55,
+      "input:p_folgastop": 50.0,
+      "input:p_horafimentradas": 1700.0,
+      "input:p_horainicio": 1000.0,
+      "input:p_janelaamplitude": 10.0,
+      "input:p_lenta": 34.0,
+      "input:p_maxentradasdia": 4.0,
+      "input:p_rapida": 9.0,
+      "input:p_rompimento": 1.0,
+      "input:p_stop": 75.0,
+      "input:p_tempomax": 30.0,
+      "input:p_usaralvodinamico": 1.0,
+      "aptidao": -4560.0,
+      "resultado_reais": -912.0,
+      "drawdown_reais": 1127.0,
+      "saidas": 73
+    },
+    {
+      "input:p_alvo": 60.0,
+      "input:p_ativarsaidafalha": 0.0,
+      "input:p_espera": 1.0,
+      "input:p_fatoramplitude": 0.8,
+      "input:p_fatorstop": 0.65,
+      "input:p_folgastop": 100.0,
+      "input:p_horafimentradas": 1630.0,
+      "input:p_horainicio": 1030.0,
+      "input:p_janelaamplitude": 5.0,
+      "input:p_lenta": 27.0,
+      "input:p_maxentradasdia": 24.0,
+      "input:p_rapida": 9.0,
+      "input:p_rompimento": 1.0,
+      "input:p_stop": 200.0,
+      "input:p_tempomax": 5.0,
+      "input:p_usaralvodinamico": 1.0,
+      "aptidao": -4590.0,
+      "resultado_reais": -918.0,
+      "drawdown_reais": 1412.0,
+      "saidas": 166
+    },
+    {
+      "input:p_alvo": 100.0,
+      "input:p_ativarsaidafalha": 0.0,
+      "input:p_espera": 3.0,
+      "input:p_fatoramplitude": 0.8,
+      "input:p_fatorstop": 0.65,
+      "input:p_folgastop": 50.0,
+      "input:p_horafimentradas": 1700.0,
+      "input:p_horainicio": 930.0,
+      "input:p_janelaamplitude": 10.0,
+      "input:p_lenta": 27.0,
+      "input:p_maxentradasdia": 8.0,
+      "input:p_rapida": 9.0,
+      "input:p_rompimento": 1.0,
+      "input:p_stop": 150.0,
+      "input:p_tempomax": 15.0,
+      "input:p_usaralvodinamico": 1.0,
+      "aptidao": -4660.0,
+      "resultado_reais": -932.0,
+      "drawdown_reais": 1329.0,
+      "saidas": 126
+    },
+    {
+      "input:p_alvo": 250.0,
+      "input:p_ativarsaidafalha": 0.0,
+      "input:p_espera": 3.0,
+      "input:p_fatoramplitude": 1.6,
+      "input:p_fatorstop": 0.65,
+      "input:p_folgastop": 25.0,
+      "input:p_horafimentradas": 1700.0,
+      "input:p_horainicio": 930.0,
+      "input:p_janelaamplitude": 15.0,
+      "input:p_lenta": 34.0,
+      "input:p_maxentradasdia": 4.0,
+      "input:p_rapida": 9.0,
+      "input:p_rompimento": 0.0,
+      "input:p_stop": 110.0,
+      "input:p_tempomax": 15.0,
+      "input:p_usaralvodinamico": 0.0,
+      "aptidao": -4940.0,
+      "resultado_reais": -988.0,
+      "drawdown_reais": 1307.0,
+      "saidas": 70
+    },
+    {
+      "input:p_alvo": 250.0,
+      "input:p_ativarsaidafalha": 0.0,
+      "input:p_espera": 5.0,
+      "input:p_fatoramplitude": 1.6,
+      "input:p_fatorstop": 0.65,
+      "input:p_folgastop": 100.0,
+      "input:p_horafimentradas": 1530.0,
+      "input:p_horainicio": 1000.0,
+      "input:p_janelaamplitude": 10.0,
+      "input:p_lenta": 21.0,
+      "input:p_maxentradasdia": 24.0,
+      "input:p_rapida": 20.0,
+      "input:p_rompimento": 0.0,
+      "input:p_stop": 110.0,
+      "input:p_tempomax": 5.0,
+      "input:p_usaralvodinamico": 0.0,
+      "aptidao": -5160.0,
+      "resultado_reais": -1032.0,
+      "drawdown_reais": 1193.0,
+      "saidas": 119
+    },
+    {
+      "input:p_alvo": 150.0,
+      "input:p_ativarsaidafalha": 0.0,
+      "input:p_espera": 1.0,
+      "input:p_fatoramplitude": 1.2,
+      "input:p_fatorstop": 0.8,
+      "input:p_folgastop": 50.0,
+      "input:p_horafimentradas": 1530.0,
+      "input:p_horainicio": 930.0,
+      "input:p_janelaamplitude": 10.0,
+      "input:p_lenta": 34.0,
+      "input:p_maxentradasdia": 4.0,
+      "input:p_rapida": 9.0,
+      "input:p_rompimento": 0.0,
+      "input:p_stop": 75.0,
+      "input:p_tempomax": 15.0,
+      "input:p_usaralvodinamico": 1.0,
+      "aptidao": -5450.0,
+      "resultado_reais": -1090.0,
+      "drawdown_reais": 1395.0,
+      "saidas": 71
+    },
+    {
+      "input:p_alvo": 150.0,
+      "input:p_ativarsaidafalha": 0.0,
+      "input:p_espera": 5.0,
+      "input:p_fatoramplitude": 0.8,
+      "input:p_fatorstop": 0.55,
+      "input:p_folgastop": 50.0,
+      "input:p_horafimentradas": 1630.0,
+      "input:p_horainicio": 1000.0,
+      "input:p_janelaamplitude": 15.0,
+      "input:p_lenta": 48.0,
+      "input:p_maxentradasdia": 24.0,
+      "input:p_rapida": 20.0,
+      "input:p_rompimento": 0.0,
+      "input:p_stop": 200.0,
+      "input:p_tempomax": 10.0,
+      "input:p_usaralvodinamico": 1.0,
+      "aptidao": -5880.0,
+      "resultado_reais": -1176.0,
+      "drawdown_reais": 1249.0,
+      "saidas": 128
+    },
+    {
+      "input:p_alvo": 60.0,
+      "input:p_ativarsaidafalha": 0.0,
+      "input:p_espera": 5.0,
+      "input:p_fatoramplitude": 1.0,
+      "input:p_fatorstop": 0.8,
+      "input:p_folgastop": 25.0,
+      "input:p_horafimentradas": 1530.0,
+      "input:p_horainicio": 930.0,
+      "input:p_janelaamplitude": 5.0,
+      "input:p_lenta": 21.0,
+      "input:p_maxentradasdia": 24.0,
+      "input:p_rapida": 9.0,
+      "input:p_rompimento": 1.0,
+      "input:p_stop": 75.0,
+      "input:p_tempomax": 5.0,
+      "input:p_usaralvodinamico": 1.0,
+      "aptidao": null,
+      "resultado_reais": -1638.0,
+      "drawdown_reais": 1950.0,
+      "saidas": 174
+    },
+    {
+      "input:p_alvo": 100.0,
+      "input:p_ativarsaidafalha": 0.0,
+      "input:p_espera": 1.0,
+      "input:p_fatoramplitude": 0.8,
+      "input:p_fatorstop": 0.8,
+      "input:p_folgastop": 100.0,
+      "input:p_horafimentradas": 1630.0,
+      "input:p_horainicio": 1000.0,
+      "input:p_janelaamplitude": 15.0,
+      "input:p_lenta": 34.0,
+      "input:p_maxentradasdia": 8.0,
+      "input:p_rapida": 9.0,
+      "input:p_rompimento": 0.0,
+      "input:p_stop": 200.0,
+      "input:p_tempomax": 15.0,
+      "input:p_usaralvodinamico": 1.0,
+      "aptidao": null,
+      "resultado_reais": -1498.0,
+      "drawdown_reais": 1511.0,
+      "saidas": 96
+    },
+    {
+      "input:p_alvo": 100.0,
+      "input:p_ativarsaidafalha": 0.0,
+      "input:p_espera": 3.0,
+      "input:p_fatoramplitude": 1.0,
+      "input:p_fatorstop": 0.65,
+      "input:p_folgastop": 50.0,
+      "input:p_horafimentradas": 1700.0,
+      "input:p_horainicio": 1000.0,
+      "input:p_janelaamplitude": 10.0,
+      "input:p_lenta": 27.0,
+      "input:p_maxentradasdia": 12.0,
+      "input:p_rapida": 5.0,
+      "input:p_rompimento": 1.0,
+      "input:p_stop": 75.0,
+      "input:p_tempomax": 5.0,
+      "input:p_usaralvodinamico": 1.0,
+      "aptidao": null,
+      "resultado_reais": -1106.0,
+      "drawdown_reais": 1684.0,
+      "saidas": 155
+    },
+    {
+      "input:p_alvo": 100.0,
+      "input:p_ativarsaidafalha": 0.0,
+      "input:p_espera": 5.0,
+      "input:p_fatoramplitude": 1.6,
+      "input:p_fatorstop": 0.55,
+      "input:p_folgastop": 25.0,
+      "input:p_horafimentradas": 1630.0,
+      "input:p_horainicio": 1030.0,
+      "input:p_janelaamplitude": 5.0,
+      "input:p_lenta": 27.0,
+      "input:p_maxentradasdia": 8.0,
+      "input:p_rapida": 5.0,
+      "input:p_rompimento": 1.0,
+      "input:p_stop": 75.0,
+      "input:p_tempomax": 10.0,
+      "input:p_usaralvodinamico": 0.0,
+      "aptidao": null,
+      "resultado_reais": -1758.0,
+      "drawdown_reais": 2064.0,
+      "saidas": 116
+    },
+    {
+      "input:p_alvo": 60.0,
+      "input:p_ativarsaidafalha": 0.0,
+      "input:p_espera": 1.0,
+      "input:p_fatoramplitude": 1.2,
+      "input:p_fatorstop": 0.65,
+      "input:p_folgastop": 25.0,
+      "input:p_horafimentradas": 1530.0,
+      "input:p_horainicio": 930.0,
+      "input:p_janelaamplitude": 15.0,
+      "input:p_lenta": 21.0,
+      "input:p_maxentradasdia": 8.0,
+      "input:p_rapida": 5.0,
+      "input:p_rompimento": 1.0,
+      "input:p_stop": 110.0,
+      "input:p_tempomax": 15.0,
+      "input:p_usaralvodinamico": 0.0,
+      "aptidao": null,
+      "resultado_reais": -2456.0,
+      "drawdown_reais": 2686.0,
+      "saidas": 131
+    },
+    {
+      "input:p_alvo": 60.0,
+      "input:p_ativarsaidafalha": 0.0,
+      "input:p_espera": 3.0,
+      "input:p_fatoramplitude": 1.0,
+      "input:p_fatorstop": 0.55,
+      "input:p_folgastop": 50.0,
+      "input:p_horafimentradas": 1530.0,
+      "input:p_horainicio": 930.0,
+      "input:p_janelaamplitude": 5.0,
+      "input:p_lenta": 48.0,
+      "input:p_maxentradasdia": 12.0,
+      "input:p_rapida": 5.0,
+      "input:p_rompimento": 1.0,
+      "input:p_stop": 150.0,
+      "input:p_tempomax": 15.0,
+      "input:p_usaralvodinamico": 0.0,
+      "aptidao": null,
+      "resultado_reais": -1358.0,
+      "drawdown_reais": 2047.0,
+      "saidas": 162
+    },
+    {
+      "input:p_alvo": 100.0,
+      "input:p_ativarsaidafalha": 0.0,
+      "input:p_espera": 3.0,
+      "input:p_fatoramplitude": 0.8,
+      "input:p_fatorstop": 0.65,
+      "input:p_folgastop": 25.0,
+      "input:p_horafimentradas": 1530.0,
+      "input:p_horainicio": 1000.0,
+      "input:p_janelaamplitude": 15.0,
+      "input:p_lenta": 21.0,
+      "input:p_maxentradasdia": 24.0,
+      "input:p_rapida": 5.0,
+      "input:p_rompimento": 1.0,
+      "input:p_stop": 75.0,
+      "input:p_tempomax": 5.0,
+      "input:p_usaralvodinamico": 0.0,
+      "aptidao": null,
+      "resultado_reais": -1258.0,
+      "drawdown_reais": 2033.0,
+      "saidas": 223
+    },
+    {
+      "input:p_alvo": 150.0,
+      "input:p_ativarsaidafalha": 0.0,
+      "input:p_espera": 3.0,
+      "input:p_fatoramplitude": 0.8,
+      "input:p_fatorstop": 0.55,
+      "input:p_folgastop": 25.0,
+      "input:p_horafimentradas": 1530.0,
+      "input:p_horainicio": 930.0,
+      "input:p_janelaamplitude": 5.0,
+      "input:p_lenta": 27.0,
+      "input:p_maxentradasdia": 24.0,
+      "input:p_rapida": 5.0,
+      "input:p_rompimento": 1.0,
+      "input:p_stop": 150.0,
+      "input:p_tempomax": 10.0,
+      "input:p_usaralvodinamico": 0.0,
+      "aptidao": null,
+      "resultado_reais": -2092.0,
+      "drawdown_reais": 2695.0,
+      "saidas": 216
+    },
+    {
+      "input:p_alvo": 200.0,
+      "input:p_ativarsaidafalha": 0.0,
+      "input:p_espera": 1.0,
+      "input:p_fatoramplitude": 1.6,
+      "input:p_fatorstop": 0.8,
+      "input:p_folgastop": 100.0,
+      "input:p_horafimentradas": 1630.0,
+      "input:p_horainicio": 1000.0,
+      "input:p_janelaamplitude": 10.0,
+      "input:p_lenta": 27.0,
+      "input:p_maxentradasdia": 24.0,
+      "input:p_rapida": 9.0,
+      "input:p_rompimento": 1.0,
+      "input:p_stop": 150.0,
+      "input:p_tempomax": 30.0,
+      "input:p_usaralvodinamico": 1.0,
+      "aptidao": null,
+      "resultado_reais": -1040.0,
+      "drawdown_reais": 1534.0,
+      "saidas": 188
+    },
+    {
+      "input:p_alvo": 150.0,
+      "input:p_ativarsaidafalha": 0.0,
+      "input:p_espera": 3.0,
+      "input:p_fatoramplitude": 1.6,
+      "input:p_fatorstop": 0.65,
+      "input:p_folgastop": 100.0,
+      "input:p_horafimentradas": 1700.0,
+      "input:p_horainicio": 1030.0,
+      "input:p_janelaamplitude": 5.0,
+      "input:p_lenta": 48.0,
+      "input:p_maxentradasdia": 8.0,
+      "input:p_rapida": 15.0,
+      "input:p_rompimento": 0.0,
+      "input:p_stop": 300.0,
+      "input:p_tempomax": 15.0,
+      "input:p_usaralvodinamico": 1.0,
+      "aptidao": null,
+      "resultado_reais": -1614.0,
+      "drawdown_reais": 1614.0,
+      "saidas": 105
+    },
+    {
+      "input:p_alvo": 150.0,
+      "input:p_ativarsaidafalha": 0.0,
+      "input:p_espera": 5.0,
+      "input:p_fatoramplitude": 1.6,
+      "input:p_fatorstop": 0.55,
+      "input:p_folgastop": 100.0,
+      "input:p_horafimentradas": 1630.0,
+      "input:p_horainicio": 1000.0,
+      "input:p_janelaamplitude": 5.0,
+      "input:p_lenta": 48.0,
+      "input:p_maxentradasdia": 24.0,
+      "input:p_rapida": 5.0,
+      "input:p_rompimento": 0.0,
+      "input:p_stop": 75.0,
+      "input:p_tempomax": 15.0,
+      "input:p_usaralvodinamico": 0.0,
+      "aptidao": null,
+      "resultado_reais": -1238.0,
+      "drawdown_reais": 1840.0,
+      "saidas": 261
+    },
+    {
+      "input:p_alvo": 100.0,
+      "input:p_ativarsaidafalha": 0.0,
+      "input:p_espera": 1.0,
+      "input:p_fatoramplitude": 1.2,
+      "input:p_fatorstop": 0.65,
+      "input:p_folgastop": 100.0,
+      "input:p_horafimentradas": 1700.0,
+      "input:p_horainicio": 930.0,
+      "input:p_janelaamplitude": 10.0,
+      "input:p_lenta": 34.0,
+      "input:p_maxentradasdia": 8.0,
+      "input:p_rapida": 9.0,
+      "input:p_rompimento": 0.0,
+      "input:p_stop": 150.0,
+      "input:p_tempomax": 15.0,
+      "input:p_usaralvodinamico": 0.0,
+      "aptidao": null,
+      "resultado_reais": -1424.0,
+      "drawdown_reais": 1529.0,
+      "saidas": 113
+    },
+    {
+      "input:p_alvo": 100.0,
+      "input:p_ativarsaidafalha": 0.0,
+      "input:p_espera": 1.0,
+      "input:p_fatoramplitude": 1.0,
+      "input:p_fatorstop": 0.65,
+      "input:p_folgastop": 100.0,
+      "input:p_horafimentradas": 1530.0,
+      "input:p_horainicio": 930.0,
+      "input:p_janelaamplitude": 10.0,
+      "input:p_lenta": 34.0,
+      "input:p_maxentradasdia": 12.0,
+      "input:p_rapida": 9.0,
+      "input:p_rompimento": 1.0,
+      "input:p_stop": 110.0,
+      "input:p_tempomax": 5.0,
+      "input:p_usaralvodinamico": 1.0,
+      "aptidao": null,
+      "resultado_reais": -778.0,
+      "drawdown_reais": 1581.0,
+      "saidas": 164
+    },
+    {
+      "input:p_alvo": 250.0,
+      "input:p_ativarsaidafalha": 0.0,
+      "input:p_espera": 3.0,
+      "input:p_fatoramplitude": 1.6,
+      "input:p_fatorstop": 0.55,
+      "input:p_folgastop": 100.0,
+      "input:p_horafimentradas": 1700.0,
+      "input:p_horainicio": 1030.0,
+      "input:p_janelaamplitude": 10.0,
+      "input:p_lenta": 34.0,
+      "input:p_maxentradasdia": 8.0,
+      "input:p_rapida": 5.0,
+      "input:p_rompimento": 1.0,
+      "input:p_stop": 110.0,
+      "input:p_tempomax": 15.0,
+      "input:p_usaralvodinamico": 1.0,
+      "aptidao": null,
+      "resultado_reais": -740.0,
+      "drawdown_reais": 1771.0,
+      "saidas": 123
+    }
+  ],
+  "erros_ag": 0
+}

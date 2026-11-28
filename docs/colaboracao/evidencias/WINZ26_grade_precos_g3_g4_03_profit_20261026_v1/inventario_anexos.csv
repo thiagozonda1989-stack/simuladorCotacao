@@ -1,0 +1,13 @@
+sonda;fonte;pregao;periodo;itens_originais;itens_derivados;campos;blocos_identicos;arquivo;bytes;sha256
+G3;console;2026-10-26;10:51–10:58;22;11;evento,data,hora,barra,seq,posicao,pendentes,abertura,maxima,minima,fechamento,base,gatilho,limite (conforme evento e sonda);2;G3_877_console.txt;3039;a26584828c68fb5db557ff45344dc2eca357e0f9252e2c69f8b534081b4325e8
+G3;operacoes;2026-10-26;10:52:00–10:55:00;1;1;Ativo,Abertura,Fechamento,Tempo Operação,Qtd Compra,Qtd Venda,Lado,Preço Compra,Preço Venda,Preço de Mercado,Médio,Res. Intervalo Bruto,Res. Intervalo (%),Número Operação,Res. Operação,Res. Operação (%),TET,Comissões,Total;;G3_877_OPERACOES.csv;434;14857c2af3688e55e44d20b73da130fec8d74f3611be512f7fef4a7d7eb9127d
+G3;relatorio;2026-10-26;;1;1;;;G3_877_RELATORIO.pdf;10888;c2ae09e65dc68bf7c1f82c43e3f85e91fbe4c2413dc8e2fb086dc8debdda8603
+G3;configuracao;2026-10-26;;1;1;;;G3_877_configuracao.png;276755;c3d810e46a003995d03e3d3e91549efd6fd9b67b87a1f263f718fd46c5f84439
+G4;console;2026-10-26;10:51–10:58;22;11;evento,data,hora,barra,seq,posicao,pendentes,abertura,maxima,minima,fechamento,base,gatilho,limite (conforme evento e sonda);2;G4_447_1000_console.txt;3071;b1632ac2f09b671c6420d55f1594785d41f21308d789398eca81c1ca6b2cd98f
+G4;operacoes;2026-10-26;10:52:00–10:55:00;1;1;Ativo,Abertura,Fechamento,Tempo Operação,Qtd Compra,Qtd Venda,Lado,Preço Compra,Preço Venda,Preço de Mercado,Médio,Res. Intervalo Bruto,Res. Intervalo (%),Número Operação,Res. Operação,Res. Operação (%),TET,Comissões,Total;;G4_447_1000_operacoes.csv;436;4224417d4533ef0a95f4df41533677abcc2213cd849379aa59c21348513af920
+G4;relatorio;2026-10-26;;1;1;;;G4_447_1000_relatorio.pdf;10886;f0cf2eb1974392fff91e86e9d8681c383e3306b61b0d8f66be028a757461eb5e
+G4;configuracao;2026-10-26;;1;1;;;G4_447_1000_configuracoes.png;266366;5fcc0e440ade8234498da7ef2e1f38a9ab452468c0947c5928cfaa6de10a9b88
+03;console;2026-10-26;10:51–10:58;22;11;evento,data,hora,barra,seq,posicao,pendentes,abertura,maxima,minima,fechamento,base,gatilho,limite (conforme evento e sonda);2;SONDA_03_CONSOLE.txt;3083;b408277daaa120aab292dbe576d7a64e1efef247638a1da24fac0e1433a1cc56
+03;operacoes;2026-10-26;10:52:00–10:55:00;1;1;Ativo,Abertura,Fechamento,Tempo Operação,Qtd Compra,Qtd Venda,Lado,Preço Compra,Preço Venda,Preço de Mercado,Médio,Res. Intervalo Bruto,Res. Intervalo (%),Número Operação,Res. Operação,Res. Operação (%),TET,Comissões,Total;;SONDA_03_OPERACOES.csv;439;a258827c20b1d39dbe7fd2ba27abc20d4c23e1f0346bdaed4cbce4f434c0f88b
+03;relatorio;2026-10-26;;1;1;;;SONDA_03_RELATORIO.pdf;10901;2ab7b332c3e19bb352ba23c33dde9cdf7ca747890e087f25766cb9c417a2a564
+03;configuracao;2026-10-26;;1;1;;;SONDA_03_CONFIGURACAO.png;272719;ff38ef18f89c7481adb1f9ecfbc4648efa05ee693e09d7a74354f38a572aadac

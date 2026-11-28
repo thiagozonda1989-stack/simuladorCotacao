@@ -1,0 +1,397 @@
+{
+  "sha_executado": "0eb89ccd18bc3b3928f58d42215e56cb342c5011",
+  "resumo": {
+    "v58_original": {
+      "operacoes": 147,
+      "acertos": 76,
+      "liquido": 1902.0,
+      "media_operacao": 12.93878,
+      "fator_lucro_liquido": 1.21237,
+      "drawdown_max": 2352.0,
+      "duracao_mediana_s": 900.0,
+      "duracao_p90_s": 3180.0,
+      "pregoes": 20,
+      "barras": 11288,
+      "operacoes_por_pregao": 7.35,
+      "liquido_por_pregao": 95.1,
+      "pior_pregao": -1046.0,
+      "ambiguidades_ohlc": 0,
+      "pregoes_meta_3000": 0,
+      "melhor_pregao": "2026-11-17",
+      "liquido_melhor_pregao": 796.0,
+      "sem_melhor_pregao": {
+        "operacoes": 137,
+        "acertos": 68,
+        "liquido": 1106.0,
+        "media_operacao": 8.07299,
+        "fator_lucro_liquido": 1.1276,
+        "drawdown_max": 2352.0,
+        "duracao_mediana_s": 900.0,
+        "duracao_p90_s": 3180.0
+      },
+      "liquido_por_pregao_sem_melhor": 58.21
+    },
+    "scalper_v11_otimizada": {
+      "operacoes": 83,
+      "acertos": 49,
+      "liquido": -58.0,
+      "media_operacao": -0.6988,
+      "fator_lucro_liquido": 0.97148,
+      "drawdown_max": 456.0,
+      "duracao_mediana_s": 120.0,
+      "duracao_p90_s": 420.0,
+      "pregoes": 20,
+      "barras": 11288,
+      "operacoes_por_pregao": 4.15,
+      "liquido_por_pregao": -2.9,
+      "pior_pregao": -212.0,
+      "ambiguidades_ohlc": 0,
+      "pregoes_meta_3000": 0,
+      "melhor_pregao": "2026-11-12",
+      "liquido_melhor_pregao": 196.0,
+      "sem_melhor_pregao": {
+        "operacoes": 79,
+        "acertos": 45,
+        "liquido": -254.0,
+        "media_operacao": -3.21519,
+        "fator_lucro_liquido": 0.87512,
+        "drawdown_max": 462.0,
+        "duracao_mediana_s": 120.0,
+        "duracao_p90_s": 420.0
+      },
+      "liquido_por_pregao_sem_melhor": -13.37
+    },
+    "v58_otimizada_diagnostico": {
+      "operacoes": 86,
+      "acertos": 36,
+      "liquido": -2022.0,
+      "media_operacao": -23.51163,
+      "fator_lucro_liquido": 0.73147,
+      "drawdown_max": 2056.0,
+      "duracao_mediana_s": 1500.0,
+      "duracao_p90_s": 5640.0,
+      "pregoes": 20,
+      "barras": 11288,
+      "operacoes_por_pregao": 4.3,
+      "liquido_por_pregao": -101.1,
+      "pior_pregao": -862.0,
+      "ambiguidades_ohlc": 0,
+      "pregoes_meta_3000": 0,
+      "melhor_pregao": "2026-11-13",
+      "liquido_melhor_pregao": 296.0,
+      "sem_melhor_pregao": {
+        "operacoes": 83,
+        "acertos": 33,
+        "liquido": -2318.0,
+        "media_operacao": -27.92771,
+        "fator_lucro_liquido": 0.69216,
+        "drawdown_max": 2352.0,
+        "duracao_mediana_s": 1500.0,
+        "duracao_p90_s": 5603.999999999999
+      },
+      "liquido_por_pregao_sem_melhor": -122.0
+    }
+  },
+  "diagnostico_v58": {
+    "delta_reais": -3924.0,
+    "frequencia_reais": 322.47,
+    "composicao_reais": 726.67,
+    "resultado_dentro_dos_grupos_reais": -4973.15,
+    "pareadas": 48,
+    "delta_pareadas_reais": -668.0,
+    "exclusivas_original": 99,
+    "liquido_exclusivas_original": 2364.0,
+    "exclusivas_otimizada": 38,
+    "liquido_exclusivas_otimizada": -892.0,
+    "grupos": [
+      {
+        "hora_entrada": "09:00",
+        "direcao": "compra",
+        "regime_entrada": "exaustao",
+        "n_original": 5,
+        "n_otimizado": 0,
+        "liquido_original": 488.0,
+        "liquido_otimizado": 0.0
+      },
+      {
+        "hora_entrada": "09:00",
+        "direcao": "compra",
+        "regime_entrada": "tendencia",
+        "n_original": 2,
+        "n_otimizado": 2,
+        "liquido_original": 316.0,
+        "liquido_otimizado": 436.0
+      },
+      {
+        "hora_entrada": "09:00",
+        "direcao": "venda",
+        "regime_entrada": "exaustao",
+        "n_original": 3,
+        "n_otimizado": 1,
+        "liquido_original": 172.0,
+        "liquido_otimizado": -184.0
+      },
+      {
+        "hora_entrada": "09:00",
+        "direcao": "venda",
+        "regime_entrada": "tendencia",
+        "n_original": 0,
+        "n_otimizado": 3,
+        "liquido_original": 0.0,
+        "liquido_otimizado": -552.0
+      },
+      {
+        "hora_entrada": "10:00",
+        "direcao": "compra",
+        "regime_entrada": "exaustao",
+        "n_original": 1,
+        "n_otimizado": 3,
+        "liquido_original": 158.0,
+        "liquido_otimizado": 8.0
+      },
+      {
+        "hora_entrada": "10:00",
+        "direcao": "compra",
+        "regime_entrada": "tendencia",
+        "n_original": 12,
+        "n_otimizado": 6,
+        "liquido_original": -226.0,
+        "liquido_otimizado": -434.0
+      },
+      {
+        "hora_entrada": "10:00",
+        "direcao": "venda",
+        "regime_entrada": "exaustao",
+        "n_original": 5,
+        "n_otimizado": 3,
+        "liquido_original": -116.0,
+        "liquido_otimizado": -510.0
+      },
+      {
+        "hora_entrada": "10:00",
+        "direcao": "venda",
+        "regime_entrada": "tendencia",
+        "n_original": 6,
+        "n_otimizado": 4,
+        "liquido_original": 244.0,
+        "liquido_otimizado": 282.0
+      },
+      {
+        "hora_entrada": "11:00",
+        "direcao": "compra",
+        "regime_entrada": "exaustao",
+        "n_original": 6,
+        "n_otimizado": 2,
+        "liquido_original": 42.0,
+        "liquido_otimizado": 34.0
+      },
+      {
+        "hora_entrada": "11:00",
+        "direcao": "compra",
+        "regime_entrada": "tendencia",
+        "n_original": 9,
+        "n_otimizado": 5,
+        "liquido_original": 516.0,
+        "liquido_otimizado": -116.0
+      },
+      {
+        "hora_entrada": "11:00",
+        "direcao": "venda",
+        "regime_entrada": "exaustao",
+        "n_original": 2,
+        "n_otimizado": 2,
+        "liquido_original": 316.0,
+        "liquido_otimizado": -368.0
+      },
+      {
+        "hora_entrada": "11:00",
+        "direcao": "venda",
+        "regime_entrada": "tendencia",
+        "n_original": 4,
+        "n_otimizado": 3,
+        "liquido_original": 330.0,
+        "liquido_otimizado": 252.0
+      },
+      {
+        "hora_entrada": "12:00",
+        "direcao": "compra",
+        "regime_entrada": "exaustao",
+        "n_original": 6,
+        "n_otimizado": 5,
+        "liquido_original": 42.0,
+        "liquido_otimizado": -168.0
+      },
+      {
+        "hora_entrada": "12:00",
+        "direcao": "compra",
+        "regime_entrada": "tendencia",
+        "n_original": 3,
+        "n_otimizado": 2,
+        "liquido_original": 172.0,
+        "liquido_otimizado": 34.0
+      },
+      {
+        "hora_entrada": "12:00",
+        "direcao": "venda",
+        "regime_entrada": "exaustao",
+        "n_original": 6,
+        "n_otimizado": 2,
+        "liquido_original": -562.0,
+        "liquido_otimizado": -110.0
+      },
+      {
+        "hora_entrada": "12:00",
+        "direcao": "venda",
+        "regime_entrada": "tendencia",
+        "n_original": 1,
+        "n_otimizado": 0,
+        "liquido_original": -144.0,
+        "liquido_otimizado": 0.0
+      },
+      {
+        "hora_entrada": "13:00",
+        "direcao": "compra",
+        "regime_entrada": "exaustao",
+        "n_original": 9,
+        "n_otimizado": 6,
+        "liquido_original": -576.0,
+        "liquido_otimizado": -432.0
+      },
+      {
+        "hora_entrada": "13:00",
+        "direcao": "compra",
+        "regime_entrada": "tendencia",
+        "n_original": 3,
+        "n_otimizado": 0,
+        "liquido_original": 108.0,
+        "liquido_otimizado": 0.0
+      },
+      {
+        "hora_entrada": "13:00",
+        "direcao": "venda",
+        "regime_entrada": "exaustao",
+        "n_original": 5,
+        "n_otimizado": 5,
+        "liquido_original": -222.0,
+        "liquido_otimizado": -334.0
+      },
+      {
+        "hora_entrada": "13:00",
+        "direcao": "venda",
+        "regime_entrada": "tendencia",
+        "n_original": 7,
+        "n_otimizado": 1,
+        "liquido_original": 200.0,
+        "liquido_otimizado": -184.0
+      },
+      {
+        "hora_entrada": "14:00",
+        "direcao": "compra",
+        "regime_entrada": "exaustao",
+        "n_original": 7,
+        "n_otimizado": 6,
+        "liquido_original": -10.0,
+        "liquido_otimizado": -192.0
+      },
+      {
+        "hora_entrada": "14:00",
+        "direcao": "compra",
+        "regime_entrada": "tendencia",
+        "n_original": 2,
+        "n_otimizado": 3,
+        "liquido_original": 214.0,
+        "liquido_otimizado": 220.0
+      },
+      {
+        "hora_entrada": "14:00",
+        "direcao": "venda",
+        "regime_entrada": "exaustao",
+        "n_original": 10,
+        "n_otimizado": 3,
+        "liquido_original": 440.0,
+        "liquido_otimizado": -70.0
+      },
+      {
+        "hora_entrada": "14:00",
+        "direcao": "venda",
+        "regime_entrada": "tendencia",
+        "n_original": 5,
+        "n_otimizado": 3,
+        "liquido_original": 222.0,
+        "liquido_otimizado": 52.0
+      },
+      {
+        "hora_entrada": "15:00",
+        "direcao": "compra",
+        "regime_entrada": "exaustao",
+        "n_original": 6,
+        "n_otimizado": 4,
+        "liquido_original": 646.0,
+        "liquido_otimizado": 470.0
+      },
+      {
+        "hora_entrada": "15:00",
+        "direcao": "compra",
+        "regime_entrada": "tendencia",
+        "n_original": 2,
+        "n_otimizado": 3,
+        "liquido_original": 14.0,
+        "liquido_otimizado": 122.0
+      },
+      {
+        "hora_entrada": "15:00",
+        "direcao": "venda",
+        "regime_entrada": "exaustao",
+        "n_original": 2,
+        "n_otimizado": 2,
+        "liquido_original": 120.0,
+        "liquido_otimizado": 258.0
+      },
+      {
+        "hora_entrada": "15:00",
+        "direcao": "venda",
+        "regime_entrada": "tendencia",
+        "n_original": 6,
+        "n_otimizado": 4,
+        "liquido_original": -160.0,
+        "liquido_otimizado": -194.0
+      },
+      {
+        "hora_entrada": "16:00",
+        "direcao": "compra",
+        "regime_entrada": "exaustao",
+        "n_original": 6,
+        "n_otimizado": 0,
+        "liquido_original": -598.0,
+        "liquido_otimizado": 0.0
+      },
+      {
+        "hora_entrada": "16:00",
+        "direcao": "compra",
+        "regime_entrada": "tendencia",
+        "n_original": 1,
+        "n_otimizado": 1,
+        "liquido_original": 158.0,
+        "liquido_otimizado": 26.0
+      },
+      {
+        "hora_entrada": "16:00",
+        "direcao": "venda",
+        "regime_entrada": "exaustao",
+        "n_original": 2,
+        "n_otimizado": 0,
+        "liquido_original": -122.0,
+        "liquido_otimizado": 0.0
+      },
+      {
+        "hora_entrada": "16:00",
+        "direcao": "venda",
+        "regime_entrada": "tendencia",
+        "n_original": 3,
+        "n_otimizado": 2,
+        "liquido_original": -280.0,
+        "liquido_otimizado": -368.0
+      }
+    ]
+  }
+}

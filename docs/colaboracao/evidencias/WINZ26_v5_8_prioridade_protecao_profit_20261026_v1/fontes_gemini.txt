@@ -1,0 +1,519 @@
+Profit WINZ26 26/10/2026 | Sonda nativa de prioridade | PR #2
+Motor executado d67a8731bfa1597b0bdfe4cc4064e6502822f81a
+Base e protocolo 7fb2598546be3d1793b2cdf5f51106b228d7002e
+
+===== docs/colaboracao/evidencias/WINZ26_v5_8_prioridade_protecao_profit_20261026_v1/README.md =====
+# Sonda nativa de prioridade entre saída a mercado e proteção
+
+WINZ26 em 26/10/2026, barras de 1 minuto, fuso America/Sao_Paulo. Motor executado `d67a8731bfa1597b0bdfe4cc4064e6502822f81a`. Protocolo e referência do simulador publicados em `7fb2598546be3d1793b2cdf5f51106b228d7002e`. [Sonda e protocolo](../WINZ26_v5_8_protecoes_ate_cancelar_20261026_v1/README.md) · [Matriz local anterior](../WINZ26_v5_8_protecoes_ate_cancelar_20261026_v1/sonda_prioridade_simulador.csv)
+
+Nas duas variantes com saída a mercado, o Profit registrou **uma única saída de 1 contrato às 10:55:00, no preço da abertura da barra**, a +220 pontos (R$ 44,00), sem segunda venda registrada e com posição e pendências zeradas até 10:58. O simulador reproduziu ambas com os parâmetros do painel. Nos controles, o Profit preencheu no tick de 5 pontos mais próximo do nível solicitado, enquanto o simulador executou no nível bruto. [Matriz Profit × simulador](matriz_profit_simulador.csv)
+
+## Associação e configuração
+
+| Rodada | `p_Perna` | `p_SaidaMercado` | Proteção no console | `SOLICITA_MERCADO` | Operação exportada |
+|---|---:|---:|---|---|---:|
+| 01 · alvo controle | 1 | 0 | Alvo, +428 pts | Ausente | +430 pts |
+| 02 · alvo com mercado | 1 | 1 | Alvo, +428 pts | 10:54, seq. 5 | +220 pts |
+| 03 · stop controle | 2 | 0 | Gatilho −793, limite −894 pts | Ausente | −795 pts |
+| 04 · stop com mercado | 2 | 1 | Gatilho −793, limite −894 pts | 10:54, seq. 5 | +220 pts |
+
+O print **`01_alvo_mercado_configuracao.png` pertence ao alvo controle**. O painel mostra `p_Perna=1` e `p_SaidaMercado=0`. No trecho visível, há solicitação de alvo e a avaliação de 10:54 segue diretamente para 10:55, como no TXT do controle. O CSV e o PDF desse conjunto confirmam +430 pontos e R$ 86,00, respectivamente. O arquivo original mantém seu nome. Os CSVs 02 e 04 têm o mesmo SHA-256 e a mesma operação. A associação entre essas duas variantes vem dos prints e dos eventos de proteção no console. Os PDFs confirmam os resultados e a contagem, e por si sós também não identificam a perna nessas duas variantes. [Inventário dos 16 originais](inventario_anexos.csv) · [Parâmetros por rodada](parametros_por_rodada.csv)
+
+Os quatro prints registram Profit Ultra 5.0.4.33, a aba Backtest, WINZ26, 1 minuto, período de análise de 26/10 a 26/10/2026, quantidade e máxima 1, slippage de 0 ticks e **Executar nos Limites** ativo. O relógio inferior de Replay mostra outra data, enquanto a janela de análise, `p_Data`, console, CSV e PDF concordam em 26/10. Os quatro PDFs registram custo zero e uma operação, e os CSVs registram comissões zero e 1 compra/1 venda. **O seletor OHLC/Tick a Tick está fora da área visível nos prints.** O protocolo prescreve OHLC, e as observações são compatíveis com ele. Os anexos não certificam a posição do seletor em nenhuma das quatro rodadas.
+
+Parâmetros comuns vistos no painel: `p_Data=1261026`, `p_Entrada=1051`, `p_Protecao=1052`, `p_EnvioMercado=1054`, `p_Limpeza=1056`, `p_Fim=1058`, `p_Alvo=428`, `p_Stop=793`, `p_Folga=101`. O editor exibe padrões 430/795/100, diferentes dos valores carregados no painel. Os níveis calculados nos consoles confirmam os parâmetros relevantes de cada perna.
+
+## Sequência observada e preços
+
+Todos os quatro consoles contêm dois blocos completos idênticos, comparados linha a linha incluindo o cabeçalho Debug. Foi retido o primeiro bloco na ordem física, com 11 eventos nos controles e 12 nas variantes com mercado. Não houve avisos de execução. O rótulo 10:51 aparece duas vezes para o mesmo `CurrentBar` (26.873), com posição 0 na sequência 1 e +1 na sequência 2. A compra é solicitada na sequência 1 e sua execução é registrada em outro arquivo, às **10:52:00**. [Console derivado e linhas de origem](console_profit.csv)
+
+Na sequência 3 (rótulo 10:52) há uma única solicitação de proteção. A posição permanece +1 com `HasPendingOrders=1` nos rótulos 10:53 e 10:54. A solicitação a mercado aparece imediatamente após a avaliação 5 apenas nas rodadas 02 e 04. Nas quatro rodadas, a avaliação 6 (rótulo 10:55) já vê posição 0 e pendências 0. Esse estado segue até 10:58, sem solicitação de limpeza. O CSV registra a única saída às 10:55:00.
+
+| Rodada | Preço solicitado (pts desde a entrada) | Abertura de 10:55 (pts) | Profit (pts e resultado) | Simulador com painel | Simulador com padrões |
+|---|---|---:|---:|---:|---:|
+| 01 · alvo controle | Limite +428 | +220 | +430 · R$ 86,00 | +428 · R$ 85,60 | +430 |
+| 02 · alvo com mercado | Limite +428 | +220 | +220 · R$ 44,00 | +220 · R$ 44,00 | +220 |
+| 03 · stop controle | Gatilho −793, limite −894 | +220 | −795 · −R$ 159,00 | −793 · −R$ 158,60 | −795 |
+| 04 · stop com mercado | Gatilho −793, limite −894 | +220 | +220 · R$ 44,00 | +220 · R$ 44,00 | +220 |
+
+A máxima de 10:55 é +445 e a mínima −875. A barra abre abaixo do alvo e acima do gatilho, e alcança ambos os níveis em suas respectivas rodadas. A mínima fica acima do limite do stop enviado (−894) e também do tick mais próximo desse limite (−895). No controle do alvo, a execução fica 2 pontos acima do limite calculado. No controle do stop, a execução fica 2 pontos abaixo do gatilho calculado. Os dois preços correspondem ao tick de 5 pontos mais próximo e ao resultado anterior com os padrões do código. Isso evidencia a diferença de preços da execução nativa no controle, sem estabelecer um algoritmo geral de arredondamento. O preço limite aceito pelo Profit no stop-limit continua indeterminado. A saída no preço da abertura ocorre nas duas rodadas com solicitação a mercado, independentemente da perna pendente.
+
+Os CSVs de operações e o console evidenciam a solicitação a mercado, o preço, o volume, os horários exportados e o estado que a estratégia observou. Sem histórico nativo de ordens da mesma execução, não há confirmação do tipo da venda preenchida, da ordem temporal subminuto de disparos e execuções, da causa da remoção da pendência ou de cancelamento OCO. Apenas as linhas do simulador têm tipo de saída e contagem de gatilhos atribuídos.
+
+## Conferência de barras e reprodução
+
+Não foi anexado um CSV de barras exportado na mesma rodada. Os quatro consoles concordam nos 32 valores OHLC da janela (quatro por barra). Esse recorte também coincide com três CSVs locais independentes de exportações anteriores do Profit (`SONDA_S1_ALVO_barras.csv`, `SONDA_S1_STOP_barras.csv`, `barras_v58.csv`) e com o arquivo de referência preparado para o simulador. A janela 10:51 a 10:58 contém oito barras consecutivas sem lacunas ou timestamps duplicados. A repetição no rótulo de 10:51 corresponde às duas avaliações. [Barras relativas](barras_conferencia.csv) · [Hashes das fontes de barras](fontes_barras.csv)
+
+Foram reexecutadas as quatro combinações com os parâmetros do painel e com os padrões do código, no mesmo motor e com a mesma série preparada `WINZ26_20261026_profit_1min_privado.csv`. Os dois perfis reproduzem os horários, as quantidades, as solicitações e os estados observados. O perfil padrão reproduz as quatro linhas de `sonda_prioridade_simulador.csv` anterior. O perfil do painel reproduz os níveis solicitados nos quatro consoles, as saídas da abertura e a diferença de dois pontos nos controles. O motor e a sonda versionada permanecem intactos. Para rodar, use as pastas privadas indicadas pelas variáveis e crie um destino novo.
+
+```powershell
+# $ref é a pasta da rodada 7fb2598. $barras é a série privada preparada.
+# $originais contém os 16 anexos mais os três CSVs de barras anteriores.
+New-Item -ItemType Directory -Path $replays
+$ntsl = Join-Path $replays 'sonda_prioridade_simulador.ntsl'
+$codigo = [IO.File]::ReadAllText((Join-Path $ref 'sonda_prioridade_mercado_protecao_profit_v1_0.ntsl'))
+$codigo = $codigo -creplace 'FloatToString\((\w+), 0\)', '($1)' -creplace ', clYellow\);', ');'
+[IO.File]::WriteAllText($ntsl, $codigo)
+foreach ($perfil in @('painel','padrao')) {
+    $config = if ($perfil -eq 'painel') { @{p_Alvo=428; p_Stop=793; p_Folga=101} } else { @{p_Alvo=430; p_Stop=795; p_Folga=100} }
+    foreach ($perna in @(1,2)) {
+        foreach ($mercado in @(0,1)) {
+            $nome = "$perfil-$perna-$mercado"
+            $p = $config + @{p_Perna=$perna; p_SaidaMercado=$mercado; p_Data=1261026; p_Entrada=1051; p_Protecao=1052; p_EnvioMercado=1054; p_Limpeza=1056; p_Fim=1058}
+            [IO.File]::WriteAllText("$replays/$nome.inputs.json", ($p | ConvertTo-Json))
+            py -3.11 estrategia.py --csv $barras --ntsl $ntsl --inputs "$replays/$nome.inputs.json" `
+              --saida "$replays/$nome" --segundos 60 --formato ohlc --tick 5 --valor-ponto 0.2 `
+              --avaliacao-pos-preenchimento --rastrear-ordens --protecoes-ate-cancelar
+        }
+    }
+}
+# O extrator lê os PDFs com PyMuPDF (disponível no PYTHONPATH da conferência).
+py -3.11 -m tools.publicar_prioridade_protecao_profit --originais $originais --replays $replays `
+  --referencia $ref --barras $barras --saida $saidaPublicavel
+py -3.11 -m pytest -q
+```
+
+A suíte local passou com **108 testes** e 12 avisos de fuso do pandas já conhecidos. Nenhuma rodada precisa ser repetida para determinar preço, quantidade e número de saídas. Se a comprovação documental do modo for necessária, recapture o seletor nas quatro configurações ou repita as rodadas cuja configuração original não puder ser recuperada. Para comprovar o tipo de saída, a ordem temporal ou o ciclo das ordens, obtenha o histórico nativo das rodadas 02 e 04. Os originais e os preços absolutos ficam no Windows. [Manifesto dos derivados](SHA256SUMS.txt) · [Fontes para o Gemini](fontes_gemini.txt)
+
+===== docs/colaboracao/evidencias/WINZ26_v5_8_prioridade_protecao_profit_20261026_v1/barras_conferencia.csv =====
+hora_barra;abertura_pts_entrada;maxima_pts_entrada;minima_pts_entrada;fechamento_pts_entrada;consoles_concordantes;csvs_anteriores_concordantes;conteudos_csv_anteriores_distintos
+10:51;110;375;-200;-5;4;3;2
+10:52;0;175;-425;-290;4;3;2
+10:53;-285;225;-355;35;4;3;2
+10:54;35;405;-85;220;4;3;2
+10:55;220;445;-875;-260;4;3;2
+10:56;-260;-70;-705;-90;4;3;2
+10:57;-95;200;-425;-375;4;3;2
+10:58;-375;-235;-615;-540;4;3;2
+
+===== docs/colaboracao/evidencias/WINZ26_v5_8_prioridade_protecao_profit_20261026_v1/console_profit.csv =====
+sonda;seq_console;evento;seq_avaliacao;data_ntsl;hora_contexto;currentbar;posicao;pendentes;gatilho_pts_entrada;limite_pts_entrada;linha_original;abertura_pts_entrada;maxima_pts_entrada;minima_pts_entrada;fechamento_pts_entrada
+01_alvo_controle;1;AVALIACAO;1;1261026;10:51;26873;0;0;;;3;110.00;375.00;-200.00;-5.00
+01_alvo_controle;2;SOLICITA_COMPRA;1;1261026;10:51;26873;0;0;;;4;;;;
+01_alvo_controle;3;AVALIACAO;2;1261026;10:51;26873;1;0;;;5;110.00;375.00;-200.00;-5.00
+01_alvo_controle;4;AVALIACAO;3;1261026;10:52;26874;1;0;;;6;0.00;175.00;-425.00;-290.00
+01_alvo_controle;5;SOLICITA_ALVO;3;1261026;10:52;26874;1;0;;428.00;7;;;;
+01_alvo_controle;6;AVALIACAO;4;1261026;10:53;26875;1;1;;;8;-285.00;225.00;-355.00;35.00
+01_alvo_controle;7;AVALIACAO;5;1261026;10:54;26876;1;1;;;9;35.00;405.00;-85.00;220.00
+01_alvo_controle;8;AVALIACAO;6;1261026;10:55;26877;0;0;;;10;220.00;445.00;-875.00;-260.00
+01_alvo_controle;9;AVALIACAO;7;1261026;10:56;26878;0;0;;;11;-260.00;-70.00;-705.00;-90.00
+01_alvo_controle;10;AVALIACAO;8;1261026;10:57;26879;0;0;;;12;-95.00;200.00;-425.00;-375.00
+01_alvo_controle;11;AVALIACAO;9;1261026;10:58;26880;0;0;;;13;-375.00;-235.00;-615.00;-540.00
+02_alvo_mercado;1;AVALIACAO;1;1261026;10:51;26873;0;0;;;3;110.00;375.00;-200.00;-5.00
+02_alvo_mercado;2;SOLICITA_COMPRA;1;1261026;10:51;26873;0;0;;;4;;;;
+02_alvo_mercado;3;AVALIACAO;2;1261026;10:51;26873;1;0;;;5;110.00;375.00;-200.00;-5.00
+02_alvo_mercado;4;AVALIACAO;3;1261026;10:52;26874;1;0;;;6;0.00;175.00;-425.00;-290.00
+02_alvo_mercado;5;SOLICITA_ALVO;3;1261026;10:52;26874;1;0;;428.00;7;;;;
+02_alvo_mercado;6;AVALIACAO;4;1261026;10:53;26875;1;1;;;8;-285.00;225.00;-355.00;35.00
+02_alvo_mercado;7;AVALIACAO;5;1261026;10:54;26876;1;1;;;9;35.00;405.00;-85.00;220.00
+02_alvo_mercado;8;SOLICITA_MERCADO;5;1261026;10:54;26876;1;1;;;10;;;;
+02_alvo_mercado;9;AVALIACAO;6;1261026;10:55;26877;0;0;;;11;220.00;445.00;-875.00;-260.00
+02_alvo_mercado;10;AVALIACAO;7;1261026;10:56;26878;0;0;;;12;-260.00;-70.00;-705.00;-90.00
+02_alvo_mercado;11;AVALIACAO;8;1261026;10:57;26879;0;0;;;13;-95.00;200.00;-425.00;-375.00
+02_alvo_mercado;12;AVALIACAO;9;1261026;10:58;26880;0;0;;;14;-375.00;-235.00;-615.00;-540.00
+03_stop_controle;1;AVALIACAO;1;1261026;10:51;26873;0;0;;;3;110.00;375.00;-200.00;-5.00
+03_stop_controle;2;SOLICITA_COMPRA;1;1261026;10:51;26873;0;0;;;4;;;;
+03_stop_controle;3;AVALIACAO;2;1261026;10:51;26873;1;0;;;5;110.00;375.00;-200.00;-5.00
+03_stop_controle;4;AVALIACAO;3;1261026;10:52;26874;1;0;;;6;0.00;175.00;-425.00;-290.00
+03_stop_controle;5;SOLICITA_STOP;3;1261026;10:52;26874;1;0;-793.00;-894.00;7;;;;
+03_stop_controle;6;AVALIACAO;4;1261026;10:53;26875;1;1;;;8;-285.00;225.00;-355.00;35.00
+03_stop_controle;7;AVALIACAO;5;1261026;10:54;26876;1;1;;;9;35.00;405.00;-85.00;220.00
+03_stop_controle;8;AVALIACAO;6;1261026;10:55;26877;0;0;;;10;220.00;445.00;-875.00;-260.00
+03_stop_controle;9;AVALIACAO;7;1261026;10:56;26878;0;0;;;11;-260.00;-70.00;-705.00;-90.00
+03_stop_controle;10;AVALIACAO;8;1261026;10:57;26879;0;0;;;12;-95.00;200.00;-425.00;-375.00
+03_stop_controle;11;AVALIACAO;9;1261026;10:58;26880;0;0;;;13;-375.00;-235.00;-615.00;-540.00
+04_stop_mercado;1;AVALIACAO;1;1261026;10:51;26873;0;0;;;3;110.00;375.00;-200.00;-5.00
+04_stop_mercado;2;SOLICITA_COMPRA;1;1261026;10:51;26873;0;0;;;4;;;;
+04_stop_mercado;3;AVALIACAO;2;1261026;10:51;26873;1;0;;;5;110.00;375.00;-200.00;-5.00
+04_stop_mercado;4;AVALIACAO;3;1261026;10:52;26874;1;0;;;6;0.00;175.00;-425.00;-290.00
+04_stop_mercado;5;SOLICITA_STOP;3;1261026;10:52;26874;1;0;-793.00;-894.00;7;;;;
+04_stop_mercado;6;AVALIACAO;4;1261026;10:53;26875;1;1;;;8;-285.00;225.00;-355.00;35.00
+04_stop_mercado;7;AVALIACAO;5;1261026;10:54;26876;1;1;;;9;35.00;405.00;-85.00;220.00
+04_stop_mercado;8;SOLICITA_MERCADO;5;1261026;10:54;26876;1;1;;;10;;;;
+04_stop_mercado;9;AVALIACAO;6;1261026;10:55;26877;0;0;;;11;220.00;445.00;-875.00;-260.00
+04_stop_mercado;10;AVALIACAO;7;1261026;10:56;26878;0;0;;;12;-260.00;-70.00;-705.00;-90.00
+04_stop_mercado;11;AVALIACAO;8;1261026;10:57;26879;0;0;;;13;-95.00;200.00;-425.00;-375.00
+04_stop_mercado;12;AVALIACAO;9;1261026;10:58;26880;0;0;;;14;-375.00;-235.00;-615.00;-540.00
+
+===== docs/colaboracao/evidencias/WINZ26_v5_8_prioridade_protecao_profit_20261026_v1/fontes_barras.csv =====
+arquivo;bytes;sha256;barras_total;barras_janela
+SONDA_S1_ALVO_barras.csv;920086;1036ce183e5e0ff371ca10b21b2774e2f8420598c50d71b107cbe6a1eebf6863;20001;8
+SONDA_S1_STOP_barras.csv;920086;530d7efaed5c29d0973c9343ba55629915685cd4528e4e885ca3d5424935b8b5;20001;8
+barras_v58.csv;920086;1036ce183e5e0ff371ca10b21b2774e2f8420598c50d71b107cbe6a1eebf6863;20001;8
+WINZ26_20261026_profit_1min_privado.csv;62218;adace8f7c2ab691c3686e9e85533e2094b4bfd957ff7d377b3854fcb90fd92b9;553;8
+
+===== docs/colaboracao/evidencias/WINZ26_v5_8_prioridade_protecao_profit_20261026_v1/inventario_anexos.csv =====
+rodada;fonte;arquivo;bytes;sha256;bloco_copias;unidades_derivadas
+01_alvo_controle;console;01_alvo_controle_console.txt;3051;2f4495fa61fd3b6cbbfb7354168264718c61b042f854b29419410c9ab4cb65d2;2;11
+01_alvo_controle;operacoes;01_alvo_controle_operacoes.csv;431;1bf2fc67137576ad946028992ef5ee66e0189ed19887dd731720679fb9442c5c;;1
+01_alvo_controle;relatorio;01_alvo_controle_relatorio.pdf;10889;8a2dbc21617d1914552678a24c6c85fb74d27070d40195a771ff23efba35c39b;;1
+01_alvo_controle;print;01_alvo_mercado_configuracao.png;222153;144da411cf2dbbc23fc1811a1cc80428d8a9a95c5f226b98371b717f0f832d02;;1
+02_alvo_mercado;console;02_alvo_mercado_console.txt;3121;97f9d807f12ada30afb4876c2ba1fe66b9d77671e4b3d2b19db54fd97e6f947b;2;12
+02_alvo_mercado;operacoes;02_alvo_mercado_operacoes.csv;431;1eb6e46f8b2c1f65dee1de2cf2963ebdc0330e7909222d72b97f3c8498ef2cdd;;1
+02_alvo_mercado;relatorio;02_alvo_mercado_relatorio.pdf;10887;efa8759c3bc7c897f90d00375830e55b0ba789646d36d0a03c63ac3c25d42f97;;1
+02_alvo_mercado;print;02_alvo_mercado_configuracao.png;233914;fd1cc4b9114bfbb37e136763406a2a6621d1c733bd918b48df49ced0fcf0e4a0;;1
+03_stop_controle;console;03_stop_controle_console.txt;3083;b408277daaa120aab292dbe576d7a64e1efef247638a1da24fac0e1433a1cc56;2;11
+03_stop_controle;operacoes;03_stop_controle_operacoes.csv;439;a258827c20b1d39dbe7fd2ba27abc20d4c23e1f0346bdaed4cbce4f434c0f88b;;1
+03_stop_controle;relatorio;03_stop_controle_relatorio.pdf;10901;30504e33c60e3e508b30ab5ddedd1d514f24a30b5b318ac8fb10a3576e0e1b9c;;1
+03_stop_controle;print;03_stop_controle_configuracao.png;231776;6ff84bccddf024f7f265496d8eeb5c9263f7896f694e1290158013ccdf3720af;;1
+04_stop_mercado;console;04_stop_mercado_console.txt;3153;ef05f6246b45b8a2f38bd1a9a575b1cb4336c6f7a07d026cab912c66c4d249c4;2;12
+04_stop_mercado;operacoes;04_stop_mercado_operacoes.csv;431;1eb6e46f8b2c1f65dee1de2cf2963ebdc0330e7909222d72b97f3c8498ef2cdd;;1
+04_stop_mercado;relatorio;04_stop_mercado_relatorio.pdf;10887;dce4e4fdfa2c3d0585048dadb7d82dda3a4c3e49f58a2f9a1819d7a2a474cab5;;1
+04_stop_mercado;print;04_stop_mercado_configuracao.png;233951;bae46f6bfe156a57d55d01a0dbcb4f4c87814e4a0d904029caf20eeda583b03f;;1
+
+===== docs/colaboracao/evidencias/WINZ26_v5_8_prioridade_protecao_profit_20261026_v1/matriz_profit_simulador.csv =====
+rodada;p_Perna;p_SaidaMercado;entrada_contexto;entrada_execucao;protecao_contexto;posicao_1054;pendentes_1054;solicita_mercado_contexto;abertura_1055_pts_entrada;saida_execucao;qtd_compra;qtd_venda;operacoes;posicao_1055;pendentes_1055;posicao_1058;pendentes_1058;alvo_ou_limite_solicitado_pts_entrada;gatilho_solicitado_pts_entrada;fonte;saida_pts_entrada;saida_menos_abertura_pts;resultado_liquido_brl;ordem_simulador;gatilhos_simulador;ambiguidades_simulador
+01_alvo_controle;1;0;10:51;10:52:00;10:52;1;1;;220.00;10:55:00;1;1;1;0;0;0;0;428.00;;Profit;430.00;210.00;86.00;;;
+01_alvo_controle;1;0;10:51;10:52:00;10:52;1;1;;220.00;10:55:00;1;1;1;0;0;0;0;428.00;;Simulador painel;428.0;208.00;85.60;selltocoverlimit;0;0
+01_alvo_controle;1;0;10:51;10:52:00;10:52;1;1;;220.00;10:55:00;1;1;1;0;0;0;0;430;;Simulador padrões;430.0;210.00;86.00;selltocoverlimit;0;0
+02_alvo_mercado;1;1;10:51;10:52:00;10:52;1;1;10:54;220.00;10:55:00;1;1;1;0;0;0;0;428.00;;Profit;220.00;0.00;44.00;;;
+02_alvo_mercado;1;1;10:51;10:52:00;10:52;1;1;10:54;220.00;10:55:00;1;1;1;0;0;0;0;428.00;;Simulador painel;220.0;0.00;44.00;selltocoveratmarket;0;0
+02_alvo_mercado;1;1;10:51;10:52:00;10:52;1;1;10:54;220.00;10:55:00;1;1;1;0;0;0;0;430;;Simulador padrões;220.0;0.00;44.00;selltocoveratmarket;0;0
+03_stop_controle;2;0;10:51;10:52:00;10:52;1;1;;220.00;10:55:00;1;1;1;0;0;0;0;-894.00;-793.00;Profit;-795.00;-1015.00;-159.00;;;
+03_stop_controle;2;0;10:51;10:52:00;10:52;1;1;;220.00;10:55:00;1;1;1;0;0;0;0;-894.00;-793.00;Simulador painel;-793.0;-1013.00;-158.60;selltocoverstop;1;0
+03_stop_controle;2;0;10:51;10:52:00;10:52;1;1;;220.00;10:55:00;1;1;1;0;0;0;0;-895;-795;Simulador padrões;-795.0;-1015.00;-159.00;selltocoverstop;1;0
+04_stop_mercado;2;1;10:51;10:52:00;10:52;1;1;10:54;220.00;10:55:00;1;1;1;0;0;0;0;-894.00;-793.00;Profit;220.00;0.00;44.00;;;
+04_stop_mercado;2;1;10:51;10:52:00;10:52;1;1;10:54;220.00;10:55:00;1;1;1;0;0;0;0;-894.00;-793.00;Simulador painel;220.0;0.00;44.00;selltocoveratmarket;0;0
+04_stop_mercado;2;1;10:51;10:52:00;10:52;1;1;10:54;220.00;10:55:00;1;1;1;0;0;0;0;-895;-795;Simulador padrões;220.0;0.00;44.00;selltocoveratmarket;0;0
+
+===== docs/colaboracao/evidencias/WINZ26_v5_8_prioridade_protecao_profit_20261026_v1/parametros_por_rodada.csv =====
+rodada;print_original;ativo;minutos;analise_inicio;analise_fim;quantidade;quantidade_maxima;slippage_ticks;custos_brl;executar_nos_limites;backtest_visivel;seletor_ohlc_visivel;p_Perna;p_SaidaMercado;p_Data;p_Entrada;p_Protecao;p_EnvioMercado;p_Limpeza;p_Fim;p_Alvo;p_Stop;p_Folga
+01_alvo_controle;01_alvo_mercado_configuracao.png;WINZ26;1;2026-10-26;2026-10-26;1;1;0;0.00;1;1;0;1;0;1261026;1051;1052;1054;1056;1058;428;793;101
+02_alvo_mercado;02_alvo_mercado_configuracao.png;WINZ26;1;2026-10-26;2026-10-26;1;1;0;0.00;1;1;0;1;1;1261026;1051;1052;1054;1056;1058;428;793;101
+03_stop_controle;03_stop_controle_configuracao.png;WINZ26;1;2026-10-26;2026-10-26;1;1;0;0.00;1;1;0;2;0;1261026;1051;1052;1054;1056;1058;428;793;101
+04_stop_mercado;04_stop_mercado_configuracao.png;WINZ26;1;2026-10-26;2026-10-26;1;1;0;0.00;1;1;0;2;1;1261026;1051;1052;1054;1056;1058;428;793;101
+
+===== docs/colaboracao/evidencias/WINZ26_v5_8_prioridade_protecao_profit_20261026_v1/SHA256SUMS.txt =====
+e78c70e6117c5e2d1d0361bd10365d9657957e708cd0d9d62dfa99dd52556f91  README.md
+7dace690974e181495e56fcc1dc89ceeb249cc4c791bca4527618b18fb0da4fd  barras_conferencia.csv
+9f0152b92ea0dede19624348319e86b250e6909607ad41c36a8202c56fb9013e  console_profit.csv
+df0826ab037e610895dc49d6a378c242d1400edfc3f71ad920ec1b21b86089bf  fontes_barras.csv
+68be6354f8fc19594153b7459bf3a79e24518a5d38b251004e036f7d5a5ba7fc  inventario_anexos.csv
+c621434685143fa689fe87e9b94c71a6e0594a75fabad919a19c8202443eb3c3  matriz_profit_simulador.csv
+30ae6f0786c140bde49a0f3e7ff0623704bb4d4a1aec04084fed93ab118d0869  parametros_por_rodada.csv
+
+===== docs/colaboracao/evidencias/WINZ26_v5_8_protecoes_ate_cancelar_20261026_v1/sonda_prioridade_mercado_protecao_profit_v1_0.ntsl =====
+{ Sonda de prioridade: uma perna por execução. Somente Backtest OHLC. }
+input
+  p_Data(1261026);
+  p_Entrada(1051);
+  p_Protecao(1052);
+  p_EnvioMercado(1054);
+  p_Limpeza(1056);
+  p_Fim(1058);
+  p_Perna(1);
+  p_SaidaMercado(1);
+  p_Alvo(430);
+  p_Stop(795);
+  p_Folga(100);
+
+var
+  v_Seq, v_Pendentes : Integer;
+  v_EntradaEnviada, v_ProtecaoEnviada, v_MercadoEnviado, v_LimpezaEnviada : Boolean;
+  v_Limite, v_Gatilho : Float;
+
+begin
+  if (Date = p_Data) and (Time >= p_Entrada) and (Time <= p_Fim) then
+  begin
+    v_Seq := v_Seq + 1;
+    if HasPendingOrders then v_Pendentes := 1 else v_Pendentes := 0;
+    ConsoleLog("PRIORIDADE;AVALIACAO"
+      + ";data=" + FloatToString(Date, 0)
+      + ";hora=" + FloatToString(Time, 0)
+      + ";barra=" + FloatToString(CurrentBar, 0)
+      + ";seq=" + FloatToString(v_Seq, 0)
+      + ";posicao=" + FloatToString(PositionQty, 0)
+      + ";pendentes=" + FloatToString(v_Pendentes, 0)
+      + ";abertura=" + FloatToString(Open, 0)
+      + ";maxima=" + FloatToString(High, 0)
+      + ";minima=" + FloatToString(Low, 0)
+      + ";fechamento=" + FloatToString(Close, 0), clYellow);
+
+    if (Time = p_Entrada) and not v_EntradaEnviada and not HasPosition and not HasPendingOrders then
+    begin
+      v_EntradaEnviada := True;
+      ConsoleLog("PRIORIDADE;SOLICITA_COMPRA;seq=" + FloatToString(v_Seq, 0), clYellow);
+      BuyAtMarket(1);
+    end;
+
+    if (Time = p_Protecao) and IsBought and not v_ProtecaoEnviada then
+    begin
+      v_ProtecaoEnviada := True;
+      if p_Perna = 1 then
+      begin
+        v_Limite := BuyPrice + p_Alvo;
+        ConsoleLog("PRIORIDADE;SOLICITA_ALVO;seq=" + FloatToString(v_Seq, 0)
+          + ";limite=" + FloatToString(v_Limite, 0), clYellow);
+        SellToCoverLimit(v_Limite, 1);
+      end
+      else if p_Perna = 2 then
+      begin
+        v_Gatilho := BuyPrice - p_Stop;
+        v_Limite := v_Gatilho - p_Folga;
+        ConsoleLog("PRIORIDADE;SOLICITA_STOP;seq=" + FloatToString(v_Seq, 0)
+          + ";gatilho=" + FloatToString(v_Gatilho, 0)
+          + ";limite=" + FloatToString(v_Limite, 0), clYellow);
+        SellToCoverStop(v_Gatilho, v_Limite, 1);
+      end;
+    end;
+
+    if (p_SaidaMercado = 1) and (Time = p_EnvioMercado)
+      and IsBought and HasPendingOrders and not v_MercadoEnviado then
+    begin
+      v_MercadoEnviado := True;
+      ConsoleLog("PRIORIDADE;SOLICITA_MERCADO;seq=" + FloatToString(v_Seq, 0), clYellow);
+      SellToCoverAtMarket(1);
+    end;
+
+    if (Time = p_Limpeza) and (HasPosition or HasPendingOrders) and not v_LimpezaEnviada then
+    begin
+      v_LimpezaEnviada := True;
+      ConsoleLog("PRIORIDADE;SOLICITA_LIMPEZA;seq=" + FloatToString(v_Seq, 0), clYellow);
+      CancelPendingOrders;
+      if HasPosition then ClosePosition;
+    end;
+  end;
+end;
+
+===== docs/colaboracao/evidencias/WINZ26_v5_8_protecoes_ate_cancelar_20261026_v1/sonda_prioridade_simulador.csv =====
+perna;solicita_saida_mercado;hora_entrada;hora_saida;tipo_saida;pontos;fechamento_1055_posicao;eventos_disparo_stop;barras_ambiguas
+alvo;0;10:52;10:55;selltocoverlimit;430.0;0;0;0
+alvo;1;10:52;10:55;selltocoveratmarket;220.0;0;0;0
+stop;0;10:52;10:55;selltocoverstop;-795.0;0;1;0
+stop;1;10:52;10:55;selltocoveratmarket;220.0;0;0;0
+
+===== tools/publicar_prioridade_protecao_profit.py =====
+"""Publica a conferência da sonda nativa sem divulgar cotações absolutas."""
+
+import argparse
+import json
+from datetime import datetime, timedelta
+from decimal import Decimal
+from hashlib import sha256
+from pathlib import Path
+
+from tools.publicar_s1_toque_tardio_profit import profit_bars
+from tools.publicar_sonda_lacuna_profit import debug_blocks, number, raw_operation, write_csv
+from tools.publicar_sondas_protecao_profit import (
+    TIMESTAMP_FORMAT, bar_window, normalize_console, read_csv,
+)
+
+
+CASES = (
+    ("01_alvo_controle", 1, 0, "01_alvo_mercado_configuracao.png"),
+    ("02_alvo_mercado", 1, 1, "02_alvo_mercado_configuracao.png"),
+    ("03_stop_controle", 2, 0, "03_stop_controle_configuracao.png"),
+    ("04_stop_mercado", 2, 1, "04_stop_mercado_configuracao.png"),
+)
+OHLC = ("abertura", "maxima", "minima", "fechamento")
+HOURS = [f"10:{minute}" for minute in range(51, 59)]
+REFERENCES = ("SONDA_S1_ALVO_barras.csv", "SONDA_S1_STOP_barras.csv", "barras_v58.csv")
+PANEL = dict(p_Data=1261026, p_Entrada=1051, p_Protecao=1052, p_EnvioMercado=1054,
+             p_Limpeza=1056, p_Fim=1058, p_Alvo=428, p_Stop=793, p_Folga=101)
+
+
+def file_info(path, data):
+    return dict(arquivo=path.name, bytes=len(data), sha256=sha256(data).hexdigest())
+
+
+def window_references(root, prepared):
+    window = bar_window(prepared, HOURS[0], HOURS[-1])
+    references = []
+    for name in REFERENCES:
+        path = root / name
+        raw = path.read_bytes()
+        records = profit_bars(raw)
+        target = {stamp.strftime("%H:%M"): prices for stamp, *prices in records
+                  if stamp.date().isoformat() == "2026-10-26" and stamp.strftime("%H:%M") in HOURS}
+        assert sum(row[0].date().isoformat() == "2026-10-26" and row[0].strftime("%H:%M") in HOURS
+                   for row in records) == len(HOURS)
+        assert all(tuple(target[hour]) == tuple(window[hour][key] for key in OHLC) for hour in HOURS)
+        references.append(file_info(path, raw) | dict(barras_total=len(records), barras_janela=len(target)))
+    raw = prepared.read_bytes()
+    references.append(file_info(prepared, raw) | dict(barras_total=len(read_csv(prepared, ";")),
+                                                    barras_janela=len(window)))
+    return window, references
+
+
+def native_log(case, raw, entry, bars, leg, market):
+    blocks = debug_blocks(raw)
+    if len(blocks) != 2 or blocks[0] != blocks[1]:
+        raise ValueError(f"{case}: blocos completos diferentes, sem deduplicação.")
+    lines = raw.decode("utf-8-sig").splitlines()
+    retained = [(i, line) for i, line in enumerate(lines, 1) if i <= len(blocks[0]) + 1]
+    non_events = [line for _, line in retained if not line.startswith("PRIORIDADE;")]
+    if non_events != ["Código em Execução", "Modo de Debug"]:
+        raise ValueError(f"{case}: há mensagens adicionais a preservar na inspeção do original.")
+    structured = [(i, line) for i, line in retained if line.startswith("PRIORIDADE;")]
+    console = normalize_console(case, [line for _, line in structured], entry, number)
+    expected_states = [(HOURS[0], 0, 0), (HOURS[0], 1, 0), (HOURS[1], 1, 0),
+                       (HOURS[2], 1, 1), (HOURS[3], 1, 1),
+                       *((hour, 0, 0) for hour in HOURS[4:])]
+    observed_states = []
+    for (line_number, line), row in zip(structured, console, strict=True):
+        row["linha_original"] = line_number
+        assert row["data_ntsl"] == PANEL["p_Data"]
+        for key in OHLC:
+            row[f"{key}_pts_entrada"] = ""
+        if row["evento"] == "AVALIACAO":
+            pairs = dict(part.split("=", 1) for part in line.split(";")[2:])
+            hour = row["hora_contexto"]
+            prices = {key: number(pairs[key]) for key in OHLC}
+            assert prices == bars[hour], (case, hour)
+            observed_states.append((hour, row["posicao"], row["pendentes"]))
+            for key, value in prices.items():
+                row[f"{key}_pts_entrada"] = value - entry
+    assert observed_states == expected_states
+    assert [r["currentbar"] for r in console if r["evento"] == "AVALIACAO"] == [26873, *range(26873, 26881)]
+    protection = "SOLICITA_ALVO" if leg == 1 else "SOLICITA_STOP"
+    requested = [r for r in console if r["evento"] != "AVALIACAO"]
+    orders = [("SOLICITA_COMPRA", "10:51"), (protection, "10:52")]
+    if market:
+        orders.append(("SOLICITA_MERCADO", "10:54"))
+    assert [(r["evento"], r["hora_contexto"]) for r in requested] == orders
+    return console, len(blocks)
+
+
+def pdf_totals(path):
+    import pymupdf
+
+    with pymupdf.open(path) as doc:
+        page, = doc
+        lines = page.get_text().splitlines()
+    assert lines[lines.index("Data:") + 1] == "26/10/2026"
+    net = lines[lines.index("Saldo Líquido Total") + 2]
+    cost = lines[lines.index("Custos") + 2]
+    count = int(lines[lines.index("Número Total de Operações") + 2])
+    return number(net.removeprefix("R$ ")), number(cost.removeprefix("R$ ")), count
+
+
+def replay(path, query):
+    entry, exit_fill = read_csv(path / "execucoes.csv")
+    assert [r["acao"] for r in (entry, exit_fill)] == ["long", "exit_long"]
+    assert all(int(r["quantidade"]) == 1 and r["pregao"] == "2026-10-26" for r in (entry, exit_fill))
+    candles = read_csv(path / "candles.csv")
+    times = [candles[int(r["barra"]) - 1]["timestamp"][11:19] for r in (entry, exit_fill)]
+    assert times == ["10:52:00", "10:55:00"]
+    base = Decimal(entry["preco"])
+    messages = [row["mensagem"] for row in read_csv(path / "console.csv")
+                if row["mensagem"].startswith("PRIORIDADE;")]
+    logs = normalize_console(path.name, messages, base, Decimal)
+    signature = [(r["hora_contexto"], r["evento"], r["posicao"], r["pendentes"]) for r in logs]
+    assert signature == query
+    metrics = json.loads((path / "metricas.json").read_text(encoding="utf-8"))
+    trace = read_csv(path / "eventos_ordens.csv")
+    assert metrics["barras_ambiguas"] == 0 and int(exit_fill["posicao"]) == 0
+    return dict(
+        entrada=base, entrada_execucao=times[0], saida_execucao=times[1],
+        qtd=int(exit_fill["quantidade"]), pontos=Decimal(exit_fill["pontos_contrato"]),
+        liquido_brl=Decimal(exit_fill["liquido_reais"]).quantize(Decimal("0.01")),
+        ordem_motor=exit_fill["ordem"],
+        gatilhos_motor=sum(r["evento"] == "gatilho_stop" for r in trace),
+        ambiguidades_motor=metrics["barras_ambiguas"],
+    )
+
+
+def collect(args):
+    bars, references = window_references(args.originais, args.barras)
+    prior = {(row["perna"], int(row["solicita_saida_mercado"])): row
+             for row in read_csv(args.referencia / "sonda_prioridade_simulador.csv", ";")}
+    inventory, panels, logs, matrix = [], [], [], []
+    entry_reference = bars["10:52"]["abertura"]
+    for case, leg, market, screenshot in CASES:
+        perna = "alvo" if leg == 1 else "stop"
+        names = {"console": f"{case}_console.txt", "operacoes": f"{case}_operacoes.csv",
+                 "relatorio": f"{case}_relatorio.pdf", "print": screenshot}
+        paths = {kind: args.originais / name for kind, name in names.items()}
+        data = {kind: path.read_bytes() for kind, path in paths.items()}
+        operation = raw_operation(data["operacoes"])
+        assert (operation["Ativo"], operation["Lado"], operation["Qtd Compra"], operation["Qtd Venda"]) == (
+            "WINZ26", "C", "1", "1")
+        entry, closing = (number(operation[key]) for key in ("Preço Compra", "Preço Venda"))
+        entry_at, exit_at = (datetime.strptime(operation[key], TIMESTAMP_FORMAT)
+                             for key in ("Abertura", "Fechamento"))
+        assert entry == entry_reference and entry_at.isoformat() == "2026-10-26T10:52:00"
+        assert exit_at.isoformat() == "2026-10-26T10:55:00" and exit_at - entry_at == timedelta(minutes=3)
+        profit_points = closing - entry
+        total, costs, count = pdf_totals(paths["relatorio"])
+        assert (total, costs, count) == (number(operation["Total"]), number(operation["Comissões"]), 1)
+        console, copies = native_log(case, data["console"], entry, bars, leg, market)
+        protection, = [r for r in console if r["evento"] in {"SOLICITA_ALVO", "SOLICITA_STOP"}]
+        assert protection["limite_pts_entrada"] == (PANEL["p_Alvo"] if leg == 1 else -PANEL["p_Stop"] - PANEL["p_Folga"])
+        assert protection["gatilho_pts_entrada"] == ("" if leg == 1 else -PANEL["p_Stop"])
+        logs.extend(console)
+        panels.append(dict(rodada=case, print_original=screenshot, ativo="WINZ26", minutos=1,
+                           analise_inicio="2026-10-26", analise_fim="2026-10-26",
+                           quantidade=1, quantidade_maxima=1, slippage_ticks=0, custos_brl=costs,
+                           executar_nos_limites=1, backtest_visivel=1, seletor_ohlc_visivel=0,
+                           p_Perna=leg, p_SaidaMercado=market, **PANEL))
+        for kind in names:
+            inventory.append(dict(rodada=case, fonte=kind) | file_info(paths[kind], data[kind]) | dict(
+                bloco_copias=copies if kind == "console" else "",
+                unidades_derivadas=len(console) if kind == "console" else 1,
+            ))
+
+        signature = [(r["hora_contexto"], r["evento"], r["posicao"], r["pendentes"]) for r in console]
+        effective = replay(args.replays / f"painel-{leg}-{market}", signature)
+        defaults = replay(args.replays / f"padrao-{leg}-{market}", signature)
+        historical = prior[perna, market]
+        assert effective["entrada"] == defaults["entrada"] == entry
+        assert (defaults["pontos"], defaults["ordem_motor"], defaults["gatilhos_motor"]) == (
+            Decimal(historical["pontos"]), historical["tipo_saida"], int(historical["eventos_disparo_stop"]))
+        assert [defaults["entrada_execucao"][:5], defaults["saida_execucao"][:5]] == [
+            historical["hora_entrada"], historical["hora_saida"]]
+        opening_points = bars["10:55"]["abertura"] - entry
+        common = dict(
+            rodada=case, p_Perna=leg, p_SaidaMercado=market, entrada_contexto="10:51",
+            entrada_execucao=str(entry_at.time()), protecao_contexto="10:52",
+            posicao_1054=1, pendentes_1054=1, solicita_mercado_contexto="10:54" if market else "",
+            abertura_1055_pts_entrada=opening_points, saida_execucao=str(exit_at.time()),
+            qtd_compra=1, qtd_venda=1, operacoes=1, posicao_1055=0, pendentes_1055=0,
+            posicao_1058=0, pendentes_1058=0,
+            alvo_ou_limite_solicitado_pts_entrada=protection["limite_pts_entrada"],
+            gatilho_solicitado_pts_entrada=protection["gatilho_pts_entrada"],
+        )
+        for label, result in (
+            ("Profit", dict(pontos=profit_points, liquido_brl=total, ordem_motor="",
+                            gatilhos_motor="", ambiguidades_motor="")),
+            ("Simulador painel", effective), ("Simulador padrões", defaults),
+        ):
+            row = common.copy()
+            if label == "Simulador padrões":
+                row["alvo_ou_limite_solicitado_pts_entrada"] = 430 if leg == 1 else -895
+                row["gatilho_solicitado_pts_entrada"] = "" if leg == 1 else -795
+            matrix.append(row | dict(
+                fonte=label, saida_pts_entrada=result["pontos"],
+                saida_menos_abertura_pts=result["pontos"] - opening_points,
+                resultado_liquido_brl=result["liquido_brl"],
+                ordem_simulador=result["ordem_motor"], gatilhos_simulador=result["gatilhos_motor"],
+                ambiguidades_simulador=result["ambiguidades_motor"],
+            ))
+
+    distinct_exports = len({row["sha256"] for row in references[:-1]})
+    geometry = [
+        dict(hora_barra=hour, **{f"{key}_pts_entrada": prices[key] - entry_reference for key in OHLC},
+             consoles_concordantes=len(CASES), csvs_anteriores_concordantes=len(REFERENCES),
+             conteudos_csv_anteriores_distintos=distinct_exports)
+        for hour, prices in bars.items()
+    ]
+    return {
+        "inventario_anexos.csv": inventory, "parametros_por_rodada.csv": panels,
+        "console_profit.csv": logs, "barras_conferencia.csv": geometry,
+        "fontes_barras.csv": references, "matriz_profit_simulador.csv": matrix,
+    }
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    for field in ("originais", "replays", "referencia", "barras", "saida"):
+        parser.add_argument(f"--{field}", type=Path, required=True)
+    args = parser.parse_args()
+    outputs = collect(args)
+    args.saida.mkdir()
+    for filename, values in outputs.items():
+        write_csv(args.saida / filename, values)
+
+
+if __name__ == "__main__":
+    main()

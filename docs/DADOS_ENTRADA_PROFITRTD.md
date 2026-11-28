@@ -1,6 +1,6 @@
 # Dados de entrada do ProfitRTD
 
-## Limitação atual
+## Situação no commit de origem do catálogo
 
 O repositório não contém dados reais de mercado. Os arquivos brutos locais são grandes e permanecem fora do Git. O simulador atual recebe um único CSV por execução e não relaciona automaticamente arquivos separados de Negócios, Preços e Ofertas.
 
@@ -66,3 +66,29 @@ python tools/inventariar_dados.py --origem C:\dados\ProfitRTD --saida inventario
 ```
 
 Uma lacuna é apenas um alerta: em dados orientados a eventos, a ausência de negócios ou mudanças no book pode ser legítima.
+
+## Integração disponível a partir da v0.13.0
+
+O comando `integrar` recebe três CSVs **normalizados**, separados por ponto e vírgula.
+Todas as fontes precisam de `timestamp_evento`, `sequencia_fonte`, `pregao` e `ativo_origem`.
+O timestamp sem fuso é interpretado em America/Sao_Paulo. Use ISO 8601 com fuso na preparação dos dados para evitar ambiguidades.
+
+| Fonte | Demais colunas |
+|---|---|
+| Negócios | `preco_ultimo`, `quantidade_negocio`. Opcionais em conjunto: `agressao_compra`, `agressao_venda`. |
+| Preços | `preco_snapshot`. |
+| Ofertas | `bid`, `ask`, `qtd_bid`, `qtd_ask`, `qtd_compra_book`, `qtd_venda_book`. |
+
+```powershell
+SimuladorCotacao-CLI.exe integrar --negocios negocios.csv --precos precos.csv --ofertas ofertas.csv --saida integrado.csv --idade-maxima-ms 1000 --lacuna-ms 5000
+```
+
+O integrador agrupa por ativo e pregão. Por padrão, um snapshot precisa ter timestamp estritamente anterior ao negócio.
+Use `--sequencia-compartilhada` somente quando as três fontes tiverem uma mesma sequência causal. Nesse modo, um snapshot com
+timestamp igual pode ser usado se sua sequência for menor ou igual. Duplicatas exatas são colapsadas e chaves conflitantes são rejeitadas.
+As idades ficam registradas mesmo quando o snapshot é descartado por antiguidade. Após uma lacuna, o integrador exige
+uma atualização posterior ao negócio que precedeu a lacuna. Campos sem cobertura ficam vazios.
+A saída inclui um manifesto com hashes de origem e saída, versão, parâmetros e contagens de qualidade.
+O replay aceita o formato **Eventos ProfitRTD integrados** e agrega os eventos causalmente em candles de um único ativo.
+O topo do book do último negócio do candle só entra na avaliação de fechamento. Código que exige book sem cobertura recebe erro em vez de valores fictícios.
+A exportação não reconstrói níveis individuais nem normaliza automaticamente arquivos RTD brutos fora do contrato.

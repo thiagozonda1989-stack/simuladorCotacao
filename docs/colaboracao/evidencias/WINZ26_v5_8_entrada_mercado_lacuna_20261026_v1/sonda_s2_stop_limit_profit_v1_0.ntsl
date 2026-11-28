@@ -1,0 +1,79 @@
+{ S2: stop-limit em barras consecutivas com abertura abaixo do gatilho.
+  Variante 1: a primeira barra apos o envio cobre o gatilho.
+  Variante 2: somente a segunda barra cobre o gatilho.
+  Somente Backtest OHLC. }
+input
+  p_Data(1261026);
+  p_Variante(1);
+  p_DistanciaGatilho(5);
+  p_FolgaStop(500);
+
+var
+  v_Entrada, v_Protecao, v_Limpeza, v_Fim, v_Seq, v_Pendentes : Integer;
+  v_EntradaEnviada, v_StopEnviado, v_Limpou : Boolean;
+  v_Gatilho, v_Limite : Float;
+
+begin
+  if p_Variante = 1 then
+  begin
+    v_Entrada := 1344;
+    v_Protecao := 1345;
+    v_Limpeza := 1348;
+    v_Fim := 1350;
+  end
+  else
+  begin
+    v_Entrada := 1527;
+    v_Protecao := 1528;
+    v_Limpeza := 1531;
+    v_Fim := 1533;
+  end;
+
+  if ((p_Variante = 1) or (p_Variante = 2)) and (Date = p_Data)
+    and (Time >= v_Entrada) and (Time <= v_Fim) then
+  begin
+      v_Seq := v_Seq + 1;
+      if HasPendingOrders then v_Pendentes := 1 else v_Pendentes := 0;
+      ConsoleLog("SONDA_S2;AVALIACAO"
+        + ";data=" + FloatToString(Date, 0)
+        + ";hora=" + FloatToString(Time, 0)
+        + ";barra=" + FloatToString(CurrentBar, 0)
+        + ";seq=" + FloatToString(v_Seq, 0)
+        + ";posicao=" + FloatToString(PositionQty, 0)
+        + ";pendentes=" + FloatToString(v_Pendentes, 0), clYellow);
+
+    if (Time = v_Entrada) and not HasPosition and not HasPendingOrders
+      and not v_EntradaEnviada then
+    begin
+      v_EntradaEnviada := True;
+      ConsoleLog("SONDA_S2;SOLICITA_COMPRA;seq=" + FloatToString(v_Seq, 0), clYellow);
+      BuyAtMarket(1);
+    end;
+
+    if (Time = v_Protecao) and IsBought and not v_StopEnviado then
+    begin
+      v_StopEnviado := True;
+      v_Gatilho := Close - p_DistanciaGatilho;
+      v_Limite := v_Gatilho - p_FolgaStop;
+      ConsoleLog("SONDA_S2;SOLICITA_STOP;seq=" + FloatToString(v_Seq, 0)
+        + ";gatilho=" + FloatToString(v_Gatilho, 0)
+        + ";limite=" + FloatToString(v_Limite, 0), clYellow);
+      SellToCoverStop(v_Gatilho, v_Limite, 1);
+    end;
+
+    if (Time = v_Limpeza) and not v_Limpou then
+    begin
+      v_Limpou := True;
+      if HasPosition then
+      begin
+        ConsoleLog("SONDA_S2;SOLICITA_ZERAGEM_LIMPEZA;seq=" + FloatToString(v_Seq, 0), clYellow);
+        ClosePosition;
+      end
+      else if HasPendingOrders then
+      begin
+        ConsoleLog("SONDA_S2;SOLICITA_CANCELAMENTO_LIMPEZA;seq=" + FloatToString(v_Seq, 0), clYellow);
+        CancelPendingOrders;
+      end;
+    end;
+  end;
+end;

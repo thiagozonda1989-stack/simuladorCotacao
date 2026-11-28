@@ -1,0 +1,5003 @@
+{
+  "referencias": {
+    "pr2": "d2429a4549b497fcdbdb0cfef04e02c01d6be997",
+    "pesquisa": "3e2720016e83436c7a648eac51f134de4e68393a"
+  },
+  "regras_1min": {
+    "custo_por_contrato_lado": 0.5,
+    "slippage_ticks": 1,
+    "limite_exige_ultrapassar": false,
+    "ordem_so_proxima_barra": true,
+    "historico_continuo": true,
+    "latencia_barras": 0,
+    "motor_ticks": false,
+    "latencia_ticks_ms": 0,
+    "lacuna_ticks_ms": 5000,
+    "volume_financeiro_ntsl": true,
+    "agressao_por_barra": false,
+    "agressao_referencia_injetada": true,
+    "vwap_continuo_lacunas": true,
+    "protecao_no_candle_entrada": false,
+    "rastrear_ordens": false,
+    "avaliacao_pos_preenchimento": false,
+    "historico_continuo_lacunas": false,
+    "entrada_mercado_atraves_lacuna": false,
+    "protecoes_ate_cancelar": false,
+    "ajuste_tick_saidas_venda": false
+  },
+  "regras_subminuto": {
+    "custo_por_contrato_lado": 0.5,
+    "slippage_ticks": 1,
+    "limite_exige_ultrapassar": false,
+    "ordem_so_proxima_barra": true,
+    "historico_continuo": true,
+    "latencia_barras": 0,
+    "motor_ticks": false,
+    "latencia_ticks_ms": 0,
+    "lacuna_ticks_ms": 5000,
+    "volume_financeiro_ntsl": false,
+    "agressao_por_barra": false,
+    "agressao_referencia_injetada": false,
+    "vwap_continuo_lacunas": false,
+    "protecao_no_candle_entrada": false,
+    "rastrear_ordens": false,
+    "avaliacao_pos_preenchimento": false,
+    "historico_continuo_lacunas": false,
+    "entrada_mercado_atraves_lacuna": false,
+    "protecoes_ate_cancelar": false,
+    "ajuste_tick_saidas_venda": false
+  },
+  "win": {
+    "tick": 5,
+    "valor_ponto": 0.2
+  },
+  "metas": {
+    "acerto": 0.45,
+    "liquido_diario": 3000
+  },
+  "ag": {
+    "populacao": 24,
+    "geracoes": 3,
+    "orcamento_1s": {
+      "populacao": 8,
+      "geracoes": 2
+    },
+    "semente": 18024,
+    "mutacao": 0.28,
+    "objetivo": "líquido após custos; mínimo de operações e teto de drawdown"
+  },
+  "grupos": {
+    "win_60s_2c": {
+      "segundos": 60,
+      "formato": "ohlc",
+      "desenvolvimento": [
+        "2026-09-15",
+        "2026-09-16",
+        "2026-09-17",
+        "2026-09-23",
+        "2026-09-24",
+        "2026-09-25",
+        "2026-09-29",
+        "2026-09-30",
+        "2026-10-01",
+        "2026-10-02",
+        "2026-10-05",
+        "2026-10-06",
+        "2026-10-07",
+        "2026-10-08",
+        "2026-10-09",
+        "2026-10-13",
+        "2026-10-14",
+        "2026-10-15",
+        "2026-10-16"
+      ],
+      "interno_ag": [],
+      "exploratorio": [
+        "2026-10-19",
+        "2026-10-20",
+        "2026-10-22",
+        "2026-10-23",
+        "2026-10-27",
+        "2026-10-28",
+        "2026-10-29",
+        "2026-10-30",
+        "2026-11-03",
+        "2026-11-04",
+        "2026-11-05",
+        "2026-11-06",
+        "2026-11-09",
+        "2026-11-10",
+        "2026-11-11",
+        "2026-11-12",
+        "2026-11-13",
+        "2026-11-16",
+        "2026-11-17",
+        "2026-11-18"
+      ],
+      "validacao_inedita": [],
+      "drawdown_max_reais": 1500,
+      "lote": 2,
+      "base_sha256": "ed9230c941c186e81fb06a50c79755d4f4b0317d76ddf6bdf84be2e6773cd9d7",
+      "minimo_operacoes_desenvolvimento": 19
+    },
+    "win_60s_1c": {
+      "segundos": 60,
+      "formato": "ohlc",
+      "desenvolvimento": [
+        "2026-09-15",
+        "2026-09-16",
+        "2026-09-17",
+        "2026-09-23",
+        "2026-09-24",
+        "2026-09-25",
+        "2026-09-29",
+        "2026-09-30",
+        "2026-10-01",
+        "2026-10-02",
+        "2026-10-05",
+        "2026-10-06",
+        "2026-10-07",
+        "2026-10-08",
+        "2026-10-09",
+        "2026-10-13",
+        "2026-10-14",
+        "2026-10-15",
+        "2026-10-16"
+      ],
+      "interno_ag": [],
+      "exploratorio": [
+        "2026-10-19",
+        "2026-10-20",
+        "2026-10-22",
+        "2026-10-23",
+        "2026-10-27",
+        "2026-10-28",
+        "2026-10-29",
+        "2026-10-30",
+        "2026-11-03",
+        "2026-11-04",
+        "2026-11-05",
+        "2026-11-06",
+        "2026-11-09",
+        "2026-11-10",
+        "2026-11-11",
+        "2026-11-12",
+        "2026-11-13",
+        "2026-11-16",
+        "2026-11-17",
+        "2026-11-18"
+      ],
+      "validacao_inedita": [],
+      "drawdown_max_reais": 1500,
+      "lote": 1,
+      "base_sha256": "ed9230c941c186e81fb06a50c79755d4f4b0317d76ddf6bdf84be2e6773cd9d7",
+      "minimo_operacoes_desenvolvimento": 19
+    },
+    "win_5s_2c": {
+      "segundos": 5,
+      "formato": "profit",
+      "lote": 2,
+      "desenvolvimento": [
+        "2026-11-11",
+        "2026-11-13"
+      ],
+      "interno_ag": [],
+      "exploratorio": [
+        "2026-11-16"
+      ],
+      "validacao_inedita": [],
+      "drawdown_max_reais": 1000,
+      "base_sha256": "9e364afae043dcef57811b23d29c393a17df619540be45c87d75c17b70ac37ed",
+      "minimo_operacoes_desenvolvimento": 2
+    },
+    "win_1s_2c": {
+      "segundos": 1,
+      "formato": "profit",
+      "lote": 2,
+      "desenvolvimento": [
+        "2026-10-29",
+        "2026-11-03"
+      ],
+      "interno_ag": [],
+      "exploratorio": [
+        "2026-11-04"
+      ],
+      "validacao_inedita": [],
+      "drawdown_max_reais": 1000,
+      "base_sha256": "4888127b93b78bb7ef2dc0c86a0e7667e5497873766833c62e0ee67e07d13c03",
+      "minimo_operacoes_desenvolvimento": 2
+    }
+  },
+  "elegibilidade": "1 min: recortes conhecidos da R16 com junção OHLC exata. Subminuto: 98% de 565 minutos e cobertura da janela operacional.",
+  "validacao_inedita": "sem pregão posterior elegível e ineditismo demonstrado; a reserva permanece fechada",
+  "estrategias": [
+    {
+      "id": "pr2:estrategias/execucao/Modelo_Unificado_Refatorado_v5_7.ntsl",
+      "local": "github",
+      "commit": "d2429a4549b497fcdbdb0cfef04e02c01d6be997",
+      "arquivo": "estrategias/execucao/Modelo_Unificado_Refatorado_v5_7.ntsl",
+      "versao": "5.7",
+      "sha256": "0cf2d0d90973a46c38af6dd5bbe4cfeba9d97d3b9242f9ad5cc490318395a22a",
+      "sha256_texto_lf": "0cf2d0d90973a46c38af6dd5bbe4cfeba9d97d3b9242f9ad5cc490318395a22a",
+      "bytes": 3596,
+      "tipo": "estrategia",
+      "compilador": "aceito",
+      "inputs": {
+        "p_periodo_atr": 14.0,
+        "p_periodo_regime_atr": 50.0,
+        "p_desvio_vwap": 2.1,
+        "p_zscore_vol": 1.5,
+        "p_stop_pontos": 350.0,
+        "p_alvo_pontos": 450.0,
+        "p_minimotrades": 100.0,
+        "p_lote": 5.0,
+        "p_offset_limite_stop": 5.0
+      },
+      "usados": [
+        "p_alvo_pontos",
+        "p_desvio_vwap",
+        "p_lote",
+        "p_minimotrades",
+        "p_offset_limite_stop",
+        "p_periodo_atr",
+        "p_periodo_regime_atr",
+        "p_stop_pontos",
+        "p_zscore_vol"
+      ],
+      "dependencias": [
+        "agressionvolbalance",
+        "trades",
+        "volume",
+        "vwap"
+      ],
+      "grupo": "win_60s_2c",
+      "status": "apta",
+      "ranking_original": {
+        "p_periodo_atr": 14.0,
+        "p_periodo_regime_atr": 50.0,
+        "p_desvio_vwap": 2.1,
+        "p_zscore_vol": 1.5,
+        "p_stop_pontos": 350.0,
+        "p_alvo_pontos": 450.0,
+        "p_minimotrades": 100.0,
+        "p_lote": 2,
+        "p_offset_limite_stop": 5.0
+      },
+      "modo_ohlc_original": {
+        "p_periodo_atr": 14.0,
+        "p_periodo_regime_atr": 50.0,
+        "p_desvio_vwap": 2.1,
+        "p_zscore_vol": 1.5,
+        "p_stop_pontos": 350.0,
+        "p_alvo_pontos": 450.0,
+        "p_minimotrades": 100.0,
+        "p_lote": 5.0,
+        "p_offset_limite_stop": 5.0
+      },
+      "perfil_publicado": {
+        "p_periodo_atr": 14.0,
+        "p_periodo_regime_atr": 50.0,
+        "p_desvio_vwap": 2.1,
+        "p_zscore_vol": 1.5,
+        "p_stop_pontos": 350.0,
+        "p_alvo_pontos": 450.0,
+        "p_minimotrades": 100.0,
+        "p_lote": 2,
+        "p_offset_limite_stop": 5.0
+      },
+      "busca": {
+        "p_alvo_pontos": {
+          "valores": [
+            250,
+            350,
+            400,
+            450,
+            550
+          ]
+        },
+        "p_desvio_vwap": {
+          "valores": [
+            1.6,
+            2.1,
+            2.6
+          ]
+        },
+        "p_lote": {
+          "valores": [
+            2
+          ]
+        },
+        "p_minimotrades": {
+          "valores": [
+            50,
+            100,
+            150,
+            250
+          ]
+        },
+        "p_offset_limite_stop": {
+          "valores": [
+            5,
+            25,
+            50,
+            100
+          ]
+        },
+        "p_periodo_atr": {
+          "valores": [
+            10,
+            14,
+            20
+          ]
+        },
+        "p_periodo_regime_atr": {
+          "valores": [
+            35,
+            50,
+            65
+          ]
+        },
+        "p_stop_pontos": {
+          "valores": [
+            200,
+            275,
+            350,
+            450
+          ]
+        },
+        "p_zscore_vol": {
+          "valores": [
+            1.0,
+            1.5,
+            2.0
+          ]
+        }
+      }
+    },
+    {
+      "id": "pr2:estrategias/execucao/Modelo_Unificado_v5_8.ntsl",
+      "local": "github",
+      "commit": "d2429a4549b497fcdbdb0cfef04e02c01d6be997",
+      "arquivo": "estrategias/execucao/Modelo_Unificado_v5_8.ntsl",
+      "versao": "5.8",
+      "sha256": "16ee74d277add73798e26cd9d2653d26b7b375eac37c9d23455dd64b3662b20a",
+      "sha256_texto_lf": "16ee74d277add73798e26cd9d2653d26b7b375eac37c9d23455dd64b3662b20a",
+      "bytes": 7891,
+      "tipo": "estrategia",
+      "compilador": "aceito",
+      "inputs": {
+        "p_exec_tick": 1.0,
+        "p_periodo_atr": 14.0,
+        "p_periodo_regime_atr": 50.0,
+        "p_desvio_vwap": 2.1,
+        "p_modo_banda": 0.0,
+        "p_periodo_desvio": 20.0,
+        "p_zscore_vol": 1.5,
+        "p_stop_pontos": 350.0,
+        "p_alvo_pontos": 400.0,
+        "p_minimotrades": 100.0,
+        "p_lote": 5.0,
+        "p_offset_limite_stop": 50.0,
+        "p_barras_espera": 3.0,
+        "p_max_entradas_dia": 10.0,
+        "p_hora_inicio": 915.0,
+        "p_hora_fim_entradas": 1645.0,
+        "p_hora_zeragem": 1700.0,
+        "p_noticia1_ini": 1025.0,
+        "p_noticia1_fim": 1035.0,
+        "p_noticia2_ini": 1425.0,
+        "p_noticia2_fim": 1435.0,
+        "p_zerar_na_noticia": 1.0
+      },
+      "usados": [
+        "p_alvo_pontos",
+        "p_barras_espera",
+        "p_desvio_vwap",
+        "p_exec_tick",
+        "p_hora_fim_entradas",
+        "p_hora_inicio",
+        "p_hora_zeragem",
+        "p_lote",
+        "p_max_entradas_dia",
+        "p_minimotrades",
+        "p_modo_banda",
+        "p_noticia1_fim",
+        "p_noticia1_ini",
+        "p_noticia2_fim",
+        "p_noticia2_ini",
+        "p_offset_limite_stop",
+        "p_periodo_atr",
+        "p_periodo_desvio",
+        "p_periodo_regime_atr",
+        "p_stop_pontos",
+        "p_zerar_na_noticia",
+        "p_zscore_vol"
+      ],
+      "dependencias": [
+        "agressionvolbalance",
+        "trades",
+        "volume",
+        "vwap"
+      ],
+      "grupo": "win_60s_2c",
+      "status": "apta",
+      "ranking_original": {
+        "p_exec_tick": 0,
+        "p_periodo_atr": 14.0,
+        "p_periodo_regime_atr": 50.0,
+        "p_desvio_vwap": 2.1,
+        "p_modo_banda": 0.0,
+        "p_periodo_desvio": 20.0,
+        "p_zscore_vol": 1.5,
+        "p_stop_pontos": 350.0,
+        "p_alvo_pontos": 400.0,
+        "p_minimotrades": 100.0,
+        "p_lote": 2,
+        "p_offset_limite_stop": 50.0,
+        "p_barras_espera": 3.0,
+        "p_max_entradas_dia": 10.0,
+        "p_hora_inicio": 915.0,
+        "p_hora_fim_entradas": 1645.0,
+        "p_hora_zeragem": 1700.0,
+        "p_noticia1_ini": 1025.0,
+        "p_noticia1_fim": 1035.0,
+        "p_noticia2_ini": 1425.0,
+        "p_noticia2_fim": 1435.0,
+        "p_zerar_na_noticia": 1.0
+      },
+      "modo_ohlc_original": {
+        "p_exec_tick": 0,
+        "p_periodo_atr": 14.0,
+        "p_periodo_regime_atr": 50.0,
+        "p_desvio_vwap": 2.1,
+        "p_modo_banda": 0.0,
+        "p_periodo_desvio": 20.0,
+        "p_zscore_vol": 1.5,
+        "p_stop_pontos": 350.0,
+        "p_alvo_pontos": 400.0,
+        "p_minimotrades": 100.0,
+        "p_lote": 5.0,
+        "p_offset_limite_stop": 50.0,
+        "p_barras_espera": 3.0,
+        "p_max_entradas_dia": 10.0,
+        "p_hora_inicio": 915.0,
+        "p_hora_fim_entradas": 1645.0,
+        "p_hora_zeragem": 1700.0,
+        "p_noticia1_ini": 1025.0,
+        "p_noticia1_fim": 1035.0,
+        "p_noticia2_ini": 1425.0,
+        "p_noticia2_fim": 1435.0,
+        "p_zerar_na_noticia": 1.0
+      },
+      "perfil_publicado": {
+        "p_exec_tick": 0,
+        "p_periodo_atr": 14.0,
+        "p_periodo_regime_atr": 50.0,
+        "p_desvio_vwap": 2.1,
+        "p_modo_banda": 0.0,
+        "p_periodo_desvio": 20.0,
+        "p_zscore_vol": 1.5,
+        "p_stop_pontos": 350.0,
+        "p_alvo_pontos": 400.0,
+        "p_minimotrades": 100.0,
+        "p_lote": 2,
+        "p_offset_limite_stop": 50.0,
+        "p_barras_espera": 3.0,
+        "p_max_entradas_dia": 10.0,
+        "p_hora_inicio": 915.0,
+        "p_hora_fim_entradas": 1645.0,
+        "p_hora_zeragem": 1700.0,
+        "p_noticia1_ini": 1025.0,
+        "p_noticia1_fim": 1035.0,
+        "p_noticia2_ini": 1425.0,
+        "p_noticia2_fim": 1435.0,
+        "p_zerar_na_noticia": 1.0
+      },
+      "busca": {
+        "p_alvo_pontos": {
+          "valores": [
+            250,
+            350,
+            400,
+            450,
+            550
+          ]
+        },
+        "p_barras_espera": {
+          "valores": [
+            1,
+            3,
+            5
+          ]
+        },
+        "p_desvio_vwap": {
+          "valores": [
+            1.6,
+            2.1,
+            2.6
+          ]
+        },
+        "p_exec_tick": {
+          "valores": [
+            0
+          ]
+        },
+        "p_hora_fim_entradas": {
+          "valores": [
+            1550,
+            1615,
+            1645
+          ]
+        },
+        "p_hora_inicio": {
+          "valores": [
+            915,
+            930,
+            1000
+          ]
+        },
+        "p_lote": {
+          "valores": [
+            2
+          ]
+        },
+        "p_max_entradas_dia": {
+          "valores": [
+            5,
+            10,
+            15
+          ]
+        },
+        "p_minimotrades": {
+          "valores": [
+            50,
+            100,
+            150,
+            250
+          ]
+        },
+        "p_modo_banda": {
+          "valores": [
+            0,
+            1
+          ]
+        },
+        "p_offset_limite_stop": {
+          "valores": [
+            5,
+            25,
+            50,
+            100
+          ]
+        },
+        "p_periodo_atr": {
+          "valores": [
+            10,
+            14,
+            20
+          ]
+        },
+        "p_periodo_desvio": {
+          "valores": [
+            15,
+            20,
+            30
+          ]
+        },
+        "p_periodo_regime_atr": {
+          "valores": [
+            35,
+            50,
+            65
+          ]
+        },
+        "p_stop_pontos": {
+          "valores": [
+            200,
+            275,
+            350,
+            450
+          ]
+        },
+        "p_zscore_vol": {
+          "valores": [
+            1.0,
+            1.5,
+            2.0
+          ]
+        }
+      }
+    },
+    {
+      "id": "pr2:estrategias/execucao/modelo_1c_antecipado_profit_v1_0.ntsl",
+      "local": "github",
+      "commit": "d2429a4549b497fcdbdb0cfef04e02c01d6be997",
+      "arquivo": "estrategias/execucao/modelo_1c_antecipado_profit_v1_0.ntsl",
+      "versao": "1.0",
+      "sha256": "45c1d1fb0acca14905ab00028cad065bfc325065b365a5cdfa675ca5f07b4538",
+      "sha256_texto_lf": "45c1d1fb0acca14905ab00028cad065bfc325065b365a5cdfa675ca5f07b4538",
+      "bytes": 230762,
+      "tipo": "estrategia",
+      "compilador": "aceito",
+      "inputs": {
+        "p_segundosporbarra": 5.0,
+        "p_periodomedia": 9.0,
+        "p_periodovolatilidade": 20.0,
+        "p_periodoatr": 14.0,
+        "p_periodoeficiencia": 12.0,
+        "p_periodomediatrades": 20.0,
+        "p_minrangebarra": 10.0,
+        "p_maxrangebarra": 80.0,
+        "p_minmediarangecompra": 5.0,
+        "p_maxmediarangecompra": 30.0,
+        "p_minmediarangevenda": 5.0,
+        "p_maxmediarangevenda": 30.0,
+        "p_distanciaminmedia": 0.0,
+        "p_distanciamaxmedia": 60.0,
+        "p_recuominpontos": 5.0,
+        "p_recuomaxpontos": 20.0,
+        "p_reacaominpontos": 5.0,
+        "p_validadesetupbarras": 2.0,
+        "p_modobook": 0.0,
+        "p_niveisbook": 5.0,
+        "p_maxspreadticks": 2.0,
+        "p_minqtdtopo": 10.0,
+        "p_minqtdbook": 50.0,
+        "p_minimbalancetopo": 0.1,
+        "p_minimbalancebook": 0.05,
+        "p_mindeslocamentomicroticks": 0.05,
+        "p_minagressaocontratos": 5.0,
+        "p_maxagressaocontratos": 2000.0,
+        "p_minagressaocomprafechada": 5.0,
+        "p_maxagressaocomprafechada": 1500.0,
+        "p_minagressaovendafechada": 5.0,
+        "p_maxagressaovendafechada": 1500.0,
+        "p_minrazaoagressaoentrada": 1.2,
+        "p_maxrazaoagressaoentrada": 8.0,
+        "p_razaoagressaosaida": 1.1,
+        "p_mintradescomprafechada": 10.0,
+        "p_maxtradescomprafechada": 500.0,
+        "p_mintradesvendafechada": 10.0,
+        "p_maxtradesvendafechada": 500.0,
+        "p_confirmacoesbarras": 1.0,
+        "p_pontosminimossetup": 5.0,
+        "p_imbalancesaida": 0.05,
+        "p_horarioinicio": 915.0,
+        "p_horariofimentradas": 1815.0,
+        "p_registrarhistoricobook": 0.0,
+        "p_cortescoremodelo": 0.0,
+        "p_barrasaquecimento": 305.0,
+        "p_tempograficosegundos": 1.0,
+        "p_alvopontos": 20.0,
+        "p_stoppontos": 15.0,
+        "p_offsetstop": 5.0,
+        "p_lote": 1.0,
+        "p_tempomaxsegundos": 2.0,
+        "p_cooldownbarras": 0.0,
+        "p_maxoperacoesdia": 1000.0,
+        "p_limiteperdadia": 300.0,
+        "p_horariozeragem": 1820.0
+      },
+      "usados": [
+        "p_alvopontos",
+        "p_barrasaquecimento",
+        "p_confirmacoesbarras",
+        "p_cooldownbarras",
+        "p_cortescoremodelo",
+        "p_distanciamaxmedia",
+        "p_distanciaminmedia",
+        "p_horariofimentradas",
+        "p_horarioinicio",
+        "p_horariozeragem",
+        "p_imbalancesaida",
+        "p_limiteperdadia",
+        "p_lote",
+        "p_maxagressaocomprafechada",
+        "p_maxagressaocontratos",
+        "p_maxagressaovendafechada",
+        "p_maxmediarangecompra",
+        "p_maxmediarangevenda",
+        "p_maxoperacoesdia",
+        "p_maxrangebarra",
+        "p_maxrazaoagressaoentrada",
+        "p_maxspreadticks",
+        "p_maxtradescomprafechada",
+        "p_maxtradesvendafechada",
+        "p_minagressaocomprafechada",
+        "p_minagressaocontratos",
+        "p_minagressaovendafechada",
+        "p_mindeslocamentomicroticks",
+        "p_minimbalancebook",
+        "p_minimbalancetopo",
+        "p_minmediarangecompra",
+        "p_minmediarangevenda",
+        "p_minqtdbook",
+        "p_minqtdtopo",
+        "p_minrangebarra",
+        "p_minrazaoagressaoentrada",
+        "p_mintradescomprafechada",
+        "p_mintradesvendafechada",
+        "p_modobook",
+        "p_niveisbook",
+        "p_offsetstop",
+        "p_periodoatr",
+        "p_periodoeficiencia",
+        "p_periodomedia",
+        "p_periodomediatrades",
+        "p_periodovolatilidade",
+        "p_pontosminimossetup",
+        "p_razaoagressaosaida",
+        "p_reacaominpontos",
+        "p_recuomaxpontos",
+        "p_recuominpontos",
+        "p_registrarhistoricobook",
+        "p_segundosporbarra",
+        "p_stoppontos",
+        "p_tempograficosegundos",
+        "p_tempomaxsegundos",
+        "p_validadesetupbarras"
+      ],
+      "dependencias": [
+        "agressionvolbuy",
+        "agressionvolsell",
+        "askprice",
+        "asksize",
+        "bidprice",
+        "bidsize",
+        "totalbuyqtd",
+        "totalsellqtd",
+        "trades"
+      ],
+      "grupo": "win_1s_2c",
+      "status": "apta",
+      "ranking_original": {
+        "p_segundosporbarra": 5.0,
+        "p_periodomedia": 9.0,
+        "p_periodovolatilidade": 20.0,
+        "p_periodoatr": 14.0,
+        "p_periodoeficiencia": 12.0,
+        "p_periodomediatrades": 20.0,
+        "p_minrangebarra": 10.0,
+        "p_maxrangebarra": 80.0,
+        "p_minmediarangecompra": 5.0,
+        "p_maxmediarangecompra": 30.0,
+        "p_minmediarangevenda": 5.0,
+        "p_maxmediarangevenda": 30.0,
+        "p_distanciaminmedia": 0.0,
+        "p_distanciamaxmedia": 60.0,
+        "p_recuominpontos": 5.0,
+        "p_recuomaxpontos": 20.0,
+        "p_reacaominpontos": 5.0,
+        "p_validadesetupbarras": 2.0,
+        "p_modobook": 0.0,
+        "p_niveisbook": 5.0,
+        "p_maxspreadticks": 2.0,
+        "p_minqtdtopo": 10.0,
+        "p_minqtdbook": 50.0,
+        "p_minimbalancetopo": 0.1,
+        "p_minimbalancebook": 0.05,
+        "p_mindeslocamentomicroticks": 0.05,
+        "p_minagressaocontratos": 5.0,
+        "p_maxagressaocontratos": 2000.0,
+        "p_minagressaocomprafechada": 5.0,
+        "p_maxagressaocomprafechada": 1500.0,
+        "p_minagressaovendafechada": 5.0,
+        "p_maxagressaovendafechada": 1500.0,
+        "p_minrazaoagressaoentrada": 1.2,
+        "p_maxrazaoagressaoentrada": 8.0,
+        "p_razaoagressaosaida": 1.1,
+        "p_mintradescomprafechada": 10.0,
+        "p_maxtradescomprafechada": 500.0,
+        "p_mintradesvendafechada": 10.0,
+        "p_maxtradesvendafechada": 500.0,
+        "p_confirmacoesbarras": 1.0,
+        "p_pontosminimossetup": 5.0,
+        "p_imbalancesaida": 0.05,
+        "p_horarioinicio": 915.0,
+        "p_horariofimentradas": 1815.0,
+        "p_registrarhistoricobook": 0.0,
+        "p_cortescoremodelo": 0.0,
+        "p_barrasaquecimento": 305.0,
+        "p_tempograficosegundos": 1.0,
+        "p_alvopontos": 20.0,
+        "p_stoppontos": 15.0,
+        "p_offsetstop": 5.0,
+        "p_lote": 2,
+        "p_tempomaxsegundos": 2.0,
+        "p_cooldownbarras": 0.0,
+        "p_maxoperacoesdia": 1000.0,
+        "p_limiteperdadia": 300.0,
+        "p_horariozeragem": 1820.0
+      },
+      "modo_ohlc_original": {
+        "p_segundosporbarra": 5.0,
+        "p_periodomedia": 9.0,
+        "p_periodovolatilidade": 20.0,
+        "p_periodoatr": 14.0,
+        "p_periodoeficiencia": 12.0,
+        "p_periodomediatrades": 20.0,
+        "p_minrangebarra": 10.0,
+        "p_maxrangebarra": 80.0,
+        "p_minmediarangecompra": 5.0,
+        "p_maxmediarangecompra": 30.0,
+        "p_minmediarangevenda": 5.0,
+        "p_maxmediarangevenda": 30.0,
+        "p_distanciaminmedia": 0.0,
+        "p_distanciamaxmedia": 60.0,
+        "p_recuominpontos": 5.0,
+        "p_recuomaxpontos": 20.0,
+        "p_reacaominpontos": 5.0,
+        "p_validadesetupbarras": 2.0,
+        "p_modobook": 0.0,
+        "p_niveisbook": 5.0,
+        "p_maxspreadticks": 2.0,
+        "p_minqtdtopo": 10.0,
+        "p_minqtdbook": 50.0,
+        "p_minimbalancetopo": 0.1,
+        "p_minimbalancebook": 0.05,
+        "p_mindeslocamentomicroticks": 0.05,
+        "p_minagressaocontratos": 5.0,
+        "p_maxagressaocontratos": 2000.0,
+        "p_minagressaocomprafechada": 5.0,
+        "p_maxagressaocomprafechada": 1500.0,
+        "p_minagressaovendafechada": 5.0,
+        "p_maxagressaovendafechada": 1500.0,
+        "p_minrazaoagressaoentrada": 1.2,
+        "p_maxrazaoagressaoentrada": 8.0,
+        "p_razaoagressaosaida": 1.1,
+        "p_mintradescomprafechada": 10.0,
+        "p_maxtradescomprafechada": 500.0,
+        "p_mintradesvendafechada": 10.0,
+        "p_maxtradesvendafechada": 500.0,
+        "p_confirmacoesbarras": 1.0,
+        "p_pontosminimossetup": 5.0,
+        "p_imbalancesaida": 0.05,
+        "p_horarioinicio": 915.0,
+        "p_horariofimentradas": 1815.0,
+        "p_registrarhistoricobook": 0.0,
+        "p_cortescoremodelo": 0.0,
+        "p_barrasaquecimento": 305.0,
+        "p_tempograficosegundos": 1.0,
+        "p_alvopontos": 20.0,
+        "p_stoppontos": 15.0,
+        "p_offsetstop": 5.0,
+        "p_lote": 1.0,
+        "p_tempomaxsegundos": 2.0,
+        "p_cooldownbarras": 0.0,
+        "p_maxoperacoesdia": 1000.0,
+        "p_limiteperdadia": 300.0,
+        "p_horariozeragem": 1820.0
+      },
+      "perfil_publicado": {
+        "p_segundosporbarra": 5.0,
+        "p_periodomedia": 9.0,
+        "p_periodovolatilidade": 20.0,
+        "p_periodoatr": 14.0,
+        "p_periodoeficiencia": 12.0,
+        "p_periodomediatrades": 20.0,
+        "p_minrangebarra": 10.0,
+        "p_maxrangebarra": 80.0,
+        "p_minmediarangecompra": 5.0,
+        "p_maxmediarangecompra": 30.0,
+        "p_minmediarangevenda": 5.0,
+        "p_maxmediarangevenda": 30.0,
+        "p_distanciaminmedia": 0.0,
+        "p_distanciamaxmedia": 60.0,
+        "p_recuominpontos": 5.0,
+        "p_recuomaxpontos": 20.0,
+        "p_reacaominpontos": 5.0,
+        "p_validadesetupbarras": 2.0,
+        "p_modobook": 0.0,
+        "p_niveisbook": 5.0,
+        "p_maxspreadticks": 2.0,
+        "p_minqtdtopo": 10.0,
+        "p_minqtdbook": 50.0,
+        "p_minimbalancetopo": 0.1,
+        "p_minimbalancebook": 0.05,
+        "p_mindeslocamentomicroticks": 0.05,
+        "p_minagressaocontratos": 5.0,
+        "p_maxagressaocontratos": 2000.0,
+        "p_minagressaocomprafechada": 5.0,
+        "p_maxagressaocomprafechada": 1500.0,
+        "p_minagressaovendafechada": 5.0,
+        "p_maxagressaovendafechada": 1500.0,
+        "p_minrazaoagressaoentrada": 1.2,
+        "p_maxrazaoagressaoentrada": 8.0,
+        "p_razaoagressaosaida": 1.1,
+        "p_mintradescomprafechada": 10.0,
+        "p_maxtradescomprafechada": 500.0,
+        "p_mintradesvendafechada": 10.0,
+        "p_maxtradesvendafechada": 500.0,
+        "p_confirmacoesbarras": 1.0,
+        "p_pontosminimossetup": 5.0,
+        "p_imbalancesaida": 0.05,
+        "p_horarioinicio": 915.0,
+        "p_horariofimentradas": 1815.0,
+        "p_registrarhistoricobook": 0.0,
+        "p_cortescoremodelo": 0.0,
+        "p_barrasaquecimento": 305.0,
+        "p_tempograficosegundos": 1.0,
+        "p_alvopontos": 20.0,
+        "p_stoppontos": 15.0,
+        "p_offsetstop": 5.0,
+        "p_lote": 2,
+        "p_tempomaxsegundos": 2.0,
+        "p_cooldownbarras": 0.0,
+        "p_maxoperacoesdia": 1000.0,
+        "p_limiteperdadia": 300.0,
+        "p_horariozeragem": 1820.0
+      },
+      "busca": {
+        "p_alvopontos": {
+          "valores": [
+            20,
+            35,
+            50,
+            100,
+            150,
+            200
+          ]
+        },
+        "p_cooldownbarras": {
+          "valores": [
+            0,
+            1,
+            3,
+            5
+          ]
+        },
+        "p_cortescoremodelo": {
+          "valores": [
+            0.0,
+            0.5,
+            0.847298,
+            1.1
+          ]
+        },
+        "p_horarioinicio": {
+          "valores": [
+            915,
+            945,
+            1015
+          ]
+        },
+        "p_lote": {
+          "valores": [
+            2
+          ]
+        },
+        "p_minrazaoagressaoentrada": {
+          "valores": [
+            1.0,
+            1.2,
+            1.5
+          ]
+        },
+        "p_offsetstop": {
+          "valores": [
+            5,
+            10,
+            20,
+            50
+          ]
+        },
+        "p_periodomedia": {
+          "valores": [
+            5,
+            9,
+            15
+          ]
+        },
+        "p_stoppontos": {
+          "valores": [
+            15,
+            25,
+            40,
+            75,
+            150
+          ]
+        },
+        "p_tempomaxsegundos": {
+          "valores": [
+            2,
+            5,
+            8,
+            12
+          ]
+        }
+      }
+    },
+    {
+      "id": "pr2:estrategias/execucao/modelo_1c_antecipado_profit_v1_1.ntsl",
+      "local": "github",
+      "commit": "d2429a4549b497fcdbdb0cfef04e02c01d6be997",
+      "arquivo": "estrategias/execucao/modelo_1c_antecipado_profit_v1_1.ntsl",
+      "versao": "1.1",
+      "sha256": "3b71b1158075aa7b981d281c7184a50ef71c401e6d0161f213bcab9fd5c1bcf0",
+      "sha256_texto_lf": "3b71b1158075aa7b981d281c7184a50ef71c401e6d0161f213bcab9fd5c1bcf0",
+      "bytes": 231816,
+      "tipo": "estrategia",
+      "compilador": "aceito",
+      "inputs": {
+        "p_segundosporbarra": 5.0,
+        "p_periodomedia": 9.0,
+        "p_periodovolatilidade": 20.0,
+        "p_periodoatr": 14.0,
+        "p_periodoeficiencia": 12.0,
+        "p_periodomediatrades": 20.0,
+        "p_minrangebarra": 10.0,
+        "p_maxrangebarra": 80.0,
+        "p_minmediarangecompra": 5.0,
+        "p_maxmediarangecompra": 30.0,
+        "p_minmediarangevenda": 5.0,
+        "p_maxmediarangevenda": 30.0,
+        "p_distanciaminmedia": 0.0,
+        "p_distanciamaxmedia": 60.0,
+        "p_recuominpontos": 5.0,
+        "p_recuomaxpontos": 20.0,
+        "p_reacaominpontos": 5.0,
+        "p_validadesetupbarras": 2.0,
+        "p_modobook": 0.0,
+        "p_niveisbook": 5.0,
+        "p_maxspreadticks": 2.0,
+        "p_minqtdtopo": 10.0,
+        "p_minqtdbook": 50.0,
+        "p_minimbalancetopo": 0.1,
+        "p_minimbalancebook": 0.05,
+        "p_mindeslocamentomicroticks": 0.05,
+        "p_minagressaocontratos": 5.0,
+        "p_maxagressaocontratos": 2000.0,
+        "p_minagressaocomprafechada": 5.0,
+        "p_maxagressaocomprafechada": 1500.0,
+        "p_minagressaovendafechada": 5.0,
+        "p_maxagressaovendafechada": 1500.0,
+        "p_minrazaoagressaoentrada": 1.2,
+        "p_maxrazaoagressaoentrada": 8.0,
+        "p_razaoagressaosaida": 1.1,
+        "p_mintradescomprafechada": 10.0,
+        "p_maxtradescomprafechada": 500.0,
+        "p_mintradesvendafechada": 10.0,
+        "p_maxtradesvendafechada": 500.0,
+        "p_confirmacoesbarras": 1.0,
+        "p_pontosminimossetup": 5.0,
+        "p_imbalancesaida": 0.05,
+        "p_horarioinicio": 915.0,
+        "p_horariofimentradas": 1815.0,
+        "p_registrarhistoricobook": 0.0,
+        "p_cortescoremodelo": 0.847298,
+        "p_barrasaquecimento": 305.0,
+        "p_tempograficosegundos": 1.0,
+        "p_alvopontos": 20.0,
+        "p_stoppontos": 15.0,
+        "p_offsetstop": 5.0,
+        "p_lote": 1.0,
+        "p_tempominimomilissegundos": 0.0,
+        "p_tempomaxsegundos": 2.0,
+        "p_cooldownbarras": 5.0,
+        "p_maxoperacoesdia": 1000.0,
+        "p_limiteperdadia": 300.0,
+        "p_horariozeragem": 1820.0
+      },
+      "usados": [
+        "p_alvopontos",
+        "p_barrasaquecimento",
+        "p_confirmacoesbarras",
+        "p_cooldownbarras",
+        "p_cortescoremodelo",
+        "p_distanciamaxmedia",
+        "p_distanciaminmedia",
+        "p_horariofimentradas",
+        "p_horarioinicio",
+        "p_horariozeragem",
+        "p_imbalancesaida",
+        "p_limiteperdadia",
+        "p_lote",
+        "p_maxagressaocomprafechada",
+        "p_maxagressaocontratos",
+        "p_maxagressaovendafechada",
+        "p_maxmediarangecompra",
+        "p_maxmediarangevenda",
+        "p_maxoperacoesdia",
+        "p_maxrangebarra",
+        "p_maxrazaoagressaoentrada",
+        "p_maxspreadticks",
+        "p_maxtradescomprafechada",
+        "p_maxtradesvendafechada",
+        "p_minagressaocomprafechada",
+        "p_minagressaocontratos",
+        "p_minagressaovendafechada",
+        "p_mindeslocamentomicroticks",
+        "p_minimbalancebook",
+        "p_minimbalancetopo",
+        "p_minmediarangecompra",
+        "p_minmediarangevenda",
+        "p_minqtdbook",
+        "p_minqtdtopo",
+        "p_minrangebarra",
+        "p_minrazaoagressaoentrada",
+        "p_mintradescomprafechada",
+        "p_mintradesvendafechada",
+        "p_modobook",
+        "p_niveisbook",
+        "p_offsetstop",
+        "p_periodoatr",
+        "p_periodoeficiencia",
+        "p_periodomedia",
+        "p_periodomediatrades",
+        "p_periodovolatilidade",
+        "p_pontosminimossetup",
+        "p_razaoagressaosaida",
+        "p_reacaominpontos",
+        "p_recuomaxpontos",
+        "p_recuominpontos",
+        "p_registrarhistoricobook",
+        "p_segundosporbarra",
+        "p_stoppontos",
+        "p_tempograficosegundos",
+        "p_tempomaxsegundos",
+        "p_tempominimomilissegundos",
+        "p_validadesetupbarras"
+      ],
+      "dependencias": [
+        "agressionvolbuy",
+        "agressionvolsell",
+        "askprice",
+        "asksize",
+        "bidprice",
+        "bidsize",
+        "totalbuyqtd",
+        "totalsellqtd",
+        "trades"
+      ],
+      "grupo": "win_1s_2c",
+      "status": "apta",
+      "ranking_original": {
+        "p_segundosporbarra": 5.0,
+        "p_periodomedia": 9.0,
+        "p_periodovolatilidade": 20.0,
+        "p_periodoatr": 14.0,
+        "p_periodoeficiencia": 12.0,
+        "p_periodomediatrades": 20.0,
+        "p_minrangebarra": 10.0,
+        "p_maxrangebarra": 80.0,
+        "p_minmediarangecompra": 5.0,
+        "p_maxmediarangecompra": 30.0,
+        "p_minmediarangevenda": 5.0,
+        "p_maxmediarangevenda": 30.0,
+        "p_distanciaminmedia": 0.0,
+        "p_distanciamaxmedia": 60.0,
+        "p_recuominpontos": 5.0,
+        "p_recuomaxpontos": 20.0,
+        "p_reacaominpontos": 5.0,
+        "p_validadesetupbarras": 2.0,
+        "p_modobook": 0.0,
+        "p_niveisbook": 5.0,
+        "p_maxspreadticks": 2.0,
+        "p_minqtdtopo": 10.0,
+        "p_minqtdbook": 50.0,
+        "p_minimbalancetopo": 0.1,
+        "p_minimbalancebook": 0.05,
+        "p_mindeslocamentomicroticks": 0.05,
+        "p_minagressaocontratos": 5.0,
+        "p_maxagressaocontratos": 2000.0,
+        "p_minagressaocomprafechada": 5.0,
+        "p_maxagressaocomprafechada": 1500.0,
+        "p_minagressaovendafechada": 5.0,
+        "p_maxagressaovendafechada": 1500.0,
+        "p_minrazaoagressaoentrada": 1.2,
+        "p_maxrazaoagressaoentrada": 8.0,
+        "p_razaoagressaosaida": 1.1,
+        "p_mintradescomprafechada": 10.0,
+        "p_maxtradescomprafechada": 500.0,
+        "p_mintradesvendafechada": 10.0,
+        "p_maxtradesvendafechada": 500.0,
+        "p_confirmacoesbarras": 1.0,
+        "p_pontosminimossetup": 5.0,
+        "p_imbalancesaida": 0.05,
+        "p_horarioinicio": 915.0,
+        "p_horariofimentradas": 1815.0,
+        "p_registrarhistoricobook": 0.0,
+        "p_cortescoremodelo": 0.847298,
+        "p_barrasaquecimento": 305.0,
+        "p_tempograficosegundos": 1.0,
+        "p_alvopontos": 20.0,
+        "p_stoppontos": 15.0,
+        "p_offsetstop": 5.0,
+        "p_lote": 2,
+        "p_tempominimomilissegundos": 0.0,
+        "p_tempomaxsegundos": 2.0,
+        "p_cooldownbarras": 5.0,
+        "p_maxoperacoesdia": 1000.0,
+        "p_limiteperdadia": 300.0,
+        "p_horariozeragem": 1820.0
+      },
+      "modo_ohlc_original": {
+        "p_segundosporbarra": 5.0,
+        "p_periodomedia": 9.0,
+        "p_periodovolatilidade": 20.0,
+        "p_periodoatr": 14.0,
+        "p_periodoeficiencia": 12.0,
+        "p_periodomediatrades": 20.0,
+        "p_minrangebarra": 10.0,
+        "p_maxrangebarra": 80.0,
+        "p_minmediarangecompra": 5.0,
+        "p_maxmediarangecompra": 30.0,
+        "p_minmediarangevenda": 5.0,
+        "p_maxmediarangevenda": 30.0,
+        "p_distanciaminmedia": 0.0,
+        "p_distanciamaxmedia": 60.0,
+        "p_recuominpontos": 5.0,
+        "p_recuomaxpontos": 20.0,
+        "p_reacaominpontos": 5.0,
+        "p_validadesetupbarras": 2.0,
+        "p_modobook": 0.0,
+        "p_niveisbook": 5.0,
+        "p_maxspreadticks": 2.0,
+        "p_minqtdtopo": 10.0,
+        "p_minqtdbook": 50.0,
+        "p_minimbalancetopo": 0.1,
+        "p_minimbalancebook": 0.05,
+        "p_mindeslocamentomicroticks": 0.05,
+        "p_minagressaocontratos": 5.0,
+        "p_maxagressaocontratos": 2000.0,
+        "p_minagressaocomprafechada": 5.0,
+        "p_maxagressaocomprafechada": 1500.0,
+        "p_minagressaovendafechada": 5.0,
+        "p_maxagressaovendafechada": 1500.0,
+        "p_minrazaoagressaoentrada": 1.2,
+        "p_maxrazaoagressaoentrada": 8.0,
+        "p_razaoagressaosaida": 1.1,
+        "p_mintradescomprafechada": 10.0,
+        "p_maxtradescomprafechada": 500.0,
+        "p_mintradesvendafechada": 10.0,
+        "p_maxtradesvendafechada": 500.0,
+        "p_confirmacoesbarras": 1.0,
+        "p_pontosminimossetup": 5.0,
+        "p_imbalancesaida": 0.05,
+        "p_horarioinicio": 915.0,
+        "p_horariofimentradas": 1815.0,
+        "p_registrarhistoricobook": 0.0,
+        "p_cortescoremodelo": 0.847298,
+        "p_barrasaquecimento": 305.0,
+        "p_tempograficosegundos": 1.0,
+        "p_alvopontos": 20.0,
+        "p_stoppontos": 15.0,
+        "p_offsetstop": 5.0,
+        "p_lote": 1.0,
+        "p_tempominimomilissegundos": 0.0,
+        "p_tempomaxsegundos": 2.0,
+        "p_cooldownbarras": 5.0,
+        "p_maxoperacoesdia": 1000.0,
+        "p_limiteperdadia": 300.0,
+        "p_horariozeragem": 1820.0
+      },
+      "perfil_publicado": {
+        "p_segundosporbarra": 5.0,
+        "p_periodomedia": 9.0,
+        "p_periodovolatilidade": 20.0,
+        "p_periodoatr": 14.0,
+        "p_periodoeficiencia": 12.0,
+        "p_periodomediatrades": 20.0,
+        "p_minrangebarra": 10.0,
+        "p_maxrangebarra": 80.0,
+        "p_minmediarangecompra": 5.0,
+        "p_maxmediarangecompra": 30.0,
+        "p_minmediarangevenda": 5.0,
+        "p_maxmediarangevenda": 30.0,
+        "p_distanciaminmedia": 0.0,
+        "p_distanciamaxmedia": 60.0,
+        "p_recuominpontos": 5.0,
+        "p_recuomaxpontos": 20.0,
+        "p_reacaominpontos": 5.0,
+        "p_validadesetupbarras": 2.0,
+        "p_modobook": 0.0,
+        "p_niveisbook": 5.0,
+        "p_maxspreadticks": 2.0,
+        "p_minqtdtopo": 10.0,
+        "p_minqtdbook": 50.0,
+        "p_minimbalancetopo": 0.1,
+        "p_minimbalancebook": 0.05,
+        "p_mindeslocamentomicroticks": 0.05,
+        "p_minagressaocontratos": 5.0,
+        "p_maxagressaocontratos": 2000.0,
+        "p_minagressaocomprafechada": 5.0,
+        "p_maxagressaocomprafechada": 1500.0,
+        "p_minagressaovendafechada": 5.0,
+        "p_maxagressaovendafechada": 1500.0,
+        "p_minrazaoagressaoentrada": 1.2,
+        "p_maxrazaoagressaoentrada": 8.0,
+        "p_razaoagressaosaida": 1.1,
+        "p_mintradescomprafechada": 10.0,
+        "p_maxtradescomprafechada": 500.0,
+        "p_mintradesvendafechada": 10.0,
+        "p_maxtradesvendafechada": 500.0,
+        "p_confirmacoesbarras": 1.0,
+        "p_pontosminimossetup": 5.0,
+        "p_imbalancesaida": 0.05,
+        "p_horarioinicio": 915.0,
+        "p_horariofimentradas": 1815.0,
+        "p_registrarhistoricobook": 0.0,
+        "p_cortescoremodelo": 0.847298,
+        "p_barrasaquecimento": 305.0,
+        "p_tempograficosegundos": 1.0,
+        "p_alvopontos": 20.0,
+        "p_stoppontos": 15.0,
+        "p_offsetstop": 5.0,
+        "p_lote": 2,
+        "p_tempominimomilissegundos": 0.0,
+        "p_tempomaxsegundos": 2.0,
+        "p_cooldownbarras": 5.0,
+        "p_maxoperacoesdia": 1000.0,
+        "p_limiteperdadia": 300.0,
+        "p_horariozeragem": 1820.0
+      },
+      "busca": {
+        "p_alvopontos": {
+          "valores": [
+            20,
+            35,
+            50,
+            100,
+            150,
+            200
+          ]
+        },
+        "p_cooldownbarras": {
+          "valores": [
+            0,
+            1,
+            3,
+            5
+          ]
+        },
+        "p_cortescoremodelo": {
+          "valores": [
+            0.0,
+            0.5,
+            0.847298,
+            1.1
+          ]
+        },
+        "p_horarioinicio": {
+          "valores": [
+            915,
+            945,
+            1015
+          ]
+        },
+        "p_lote": {
+          "valores": [
+            2
+          ]
+        },
+        "p_minrazaoagressaoentrada": {
+          "valores": [
+            1.0,
+            1.2,
+            1.5
+          ]
+        },
+        "p_offsetstop": {
+          "valores": [
+            5,
+            10,
+            20,
+            50
+          ]
+        },
+        "p_periodomedia": {
+          "valores": [
+            5,
+            9,
+            15
+          ]
+        },
+        "p_stoppontos": {
+          "valores": [
+            15,
+            25,
+            40,
+            75,
+            150
+          ]
+        },
+        "p_tempomaxsegundos": {
+          "valores": [
+            2,
+            5,
+            8,
+            12
+          ]
+        }
+      }
+    },
+    {
+      "id": "pr2:estrategias/execucao/modelo_micro_scalper_v4_2_5s.ntsl",
+      "local": "github",
+      "commit": "d2429a4549b497fcdbdb0cfef04e02c01d6be997",
+      "arquivo": "estrategias/execucao/modelo_micro_scalper_v4_2_5s.ntsl",
+      "versao": "4.2.5",
+      "sha256": "55762a608a165615ce78176a78cdfd91a69c3f21b655cda4ed321e5d2d1a1c27",
+      "sha256_texto_lf": "55762a608a165615ce78176a78cdfd91a69c3f21b655cda4ed321e5d2d1a1c27",
+      "bytes": 15478,
+      "tipo": "estrategia",
+      "compilador": "aceito",
+      "inputs": {
+        "p_alvopontos": 50.0,
+        "p_stoppontos": 15.0,
+        "p_offsetstop": 5.0,
+        "p_lote": 1.0,
+        "p_segundosporbarra": 5.0,
+        "p_tempominsaidasegundos": 5.0,
+        "p_tempomaxsegundos": 20.0,
+        "p_cooldownbarras": 1.0,
+        "p_periodomedia": 9.0,
+        "p_minrangebarra": 10.0,
+        "p_maxrangebarra": 80.0,
+        "p_distanciamaxmedia": 60.0,
+        "p_recuominpontos": 5.0,
+        "p_recuomaxpontos": 20.0,
+        "p_reacaominpontos": 5.0,
+        "p_validadesetupbarras": 2.0,
+        "p_modobook": 0.0,
+        "p_niveisbook": 5.0,
+        "p_maxspreadticks": 2.0,
+        "p_minqtdtopo": 10.0,
+        "p_minqtdbook": 50.0,
+        "p_minimbalancetopo": 0.1,
+        "p_minimbalancebook": 0.05,
+        "p_mindeslocamentomicroticks": 0.05,
+        "p_minagressaocontratos": 5.0,
+        "p_razaoagressaoentrada": 1.2,
+        "p_razaoagressaosaida": 1.1,
+        "p_mintradesbarrafechada": 10.0,
+        "p_confirmacoesbarras": 1.0,
+        "p_pontosminimossetup": 5.0,
+        "p_imbalancesaida": 0.05,
+        "p_maxoperacoesdia": 350.0,
+        "p_maxstopsconsecutivos": 5.0,
+        "p_cooldownstopsbarras": 12.0,
+        "p_limiteperdadia": 150.0,
+        "p_horarioinicio": 915.0,
+        "p_horariofimentradas": 1815.0,
+        "p_horariozeragem": 1820.0
+      },
+      "usados": [
+        "p_alvopontos",
+        "p_confirmacoesbarras",
+        "p_cooldownbarras",
+        "p_cooldownstopsbarras",
+        "p_distanciamaxmedia",
+        "p_horariofimentradas",
+        "p_horarioinicio",
+        "p_horariozeragem",
+        "p_imbalancesaida",
+        "p_limiteperdadia",
+        "p_lote",
+        "p_maxoperacoesdia",
+        "p_maxrangebarra",
+        "p_maxspreadticks",
+        "p_maxstopsconsecutivos",
+        "p_minagressaocontratos",
+        "p_mindeslocamentomicroticks",
+        "p_minimbalancebook",
+        "p_minimbalancetopo",
+        "p_minqtdbook",
+        "p_minqtdtopo",
+        "p_minrangebarra",
+        "p_mintradesbarrafechada",
+        "p_modobook",
+        "p_niveisbook",
+        "p_offsetstop",
+        "p_periodomedia",
+        "p_pontosminimossetup",
+        "p_razaoagressaoentrada",
+        "p_razaoagressaosaida",
+        "p_reacaominpontos",
+        "p_recuomaxpontos",
+        "p_recuominpontos",
+        "p_segundosporbarra",
+        "p_stoppontos",
+        "p_tempomaxsegundos",
+        "p_tempominsaidasegundos",
+        "p_validadesetupbarras"
+      ],
+      "dependencias": [
+        "agressionvolbuy",
+        "agressionvolsell",
+        "askprice",
+        "asksize",
+        "bidprice",
+        "bidsize",
+        "totalbuyqtd",
+        "totalsellqtd",
+        "trades"
+      ],
+      "grupo": "win_5s_2c",
+      "status": "apta",
+      "ranking_original": {
+        "p_alvopontos": 50.0,
+        "p_stoppontos": 15.0,
+        "p_offsetstop": 5.0,
+        "p_lote": 2,
+        "p_segundosporbarra": 5.0,
+        "p_tempominsaidasegundos": 5.0,
+        "p_tempomaxsegundos": 20.0,
+        "p_cooldownbarras": 1.0,
+        "p_periodomedia": 9.0,
+        "p_minrangebarra": 10.0,
+        "p_maxrangebarra": 80.0,
+        "p_distanciamaxmedia": 60.0,
+        "p_recuominpontos": 5.0,
+        "p_recuomaxpontos": 20.0,
+        "p_reacaominpontos": 5.0,
+        "p_validadesetupbarras": 2.0,
+        "p_modobook": 0.0,
+        "p_niveisbook": 5.0,
+        "p_maxspreadticks": 2.0,
+        "p_minqtdtopo": 10.0,
+        "p_minqtdbook": 50.0,
+        "p_minimbalancetopo": 0.1,
+        "p_minimbalancebook": 0.05,
+        "p_mindeslocamentomicroticks": 0.05,
+        "p_minagressaocontratos": 5.0,
+        "p_razaoagressaoentrada": 1.2,
+        "p_razaoagressaosaida": 1.1,
+        "p_mintradesbarrafechada": 10.0,
+        "p_confirmacoesbarras": 1.0,
+        "p_pontosminimossetup": 5.0,
+        "p_imbalancesaida": 0.05,
+        "p_maxoperacoesdia": 350.0,
+        "p_maxstopsconsecutivos": 5.0,
+        "p_cooldownstopsbarras": 12.0,
+        "p_limiteperdadia": 150.0,
+        "p_horarioinicio": 915.0,
+        "p_horariofimentradas": 1815.0,
+        "p_horariozeragem": 1820.0
+      },
+      "modo_ohlc_original": {
+        "p_alvopontos": 50.0,
+        "p_stoppontos": 15.0,
+        "p_offsetstop": 5.0,
+        "p_lote": 1.0,
+        "p_segundosporbarra": 5.0,
+        "p_tempominsaidasegundos": 5.0,
+        "p_tempomaxsegundos": 20.0,
+        "p_cooldownbarras": 1.0,
+        "p_periodomedia": 9.0,
+        "p_minrangebarra": 10.0,
+        "p_maxrangebarra": 80.0,
+        "p_distanciamaxmedia": 60.0,
+        "p_recuominpontos": 5.0,
+        "p_recuomaxpontos": 20.0,
+        "p_reacaominpontos": 5.0,
+        "p_validadesetupbarras": 2.0,
+        "p_modobook": 0.0,
+        "p_niveisbook": 5.0,
+        "p_maxspreadticks": 2.0,
+        "p_minqtdtopo": 10.0,
+        "p_minqtdbook": 50.0,
+        "p_minimbalancetopo": 0.1,
+        "p_minimbalancebook": 0.05,
+        "p_mindeslocamentomicroticks": 0.05,
+        "p_minagressaocontratos": 5.0,
+        "p_razaoagressaoentrada": 1.2,
+        "p_razaoagressaosaida": 1.1,
+        "p_mintradesbarrafechada": 10.0,
+        "p_confirmacoesbarras": 1.0,
+        "p_pontosminimossetup": 5.0,
+        "p_imbalancesaida": 0.05,
+        "p_maxoperacoesdia": 350.0,
+        "p_maxstopsconsecutivos": 5.0,
+        "p_cooldownstopsbarras": 12.0,
+        "p_limiteperdadia": 150.0,
+        "p_horarioinicio": 915.0,
+        "p_horariofimentradas": 1815.0,
+        "p_horariozeragem": 1820.0
+      },
+      "perfil_publicado": {
+        "p_alvopontos": 50.0,
+        "p_stoppontos": 15.0,
+        "p_offsetstop": 5.0,
+        "p_lote": 2,
+        "p_segundosporbarra": 5.0,
+        "p_tempominsaidasegundos": 5.0,
+        "p_tempomaxsegundos": 20.0,
+        "p_cooldownbarras": 1.0,
+        "p_periodomedia": 9.0,
+        "p_minrangebarra": 10.0,
+        "p_maxrangebarra": 80.0,
+        "p_distanciamaxmedia": 60.0,
+        "p_recuominpontos": 5.0,
+        "p_recuomaxpontos": 20.0,
+        "p_reacaominpontos": 5.0,
+        "p_validadesetupbarras": 2.0,
+        "p_modobook": 0.0,
+        "p_niveisbook": 5.0,
+        "p_maxspreadticks": 2.0,
+        "p_minqtdtopo": 10.0,
+        "p_minqtdbook": 50.0,
+        "p_minimbalancetopo": 0.1,
+        "p_minimbalancebook": 0.05,
+        "p_mindeslocamentomicroticks": 0.05,
+        "p_minagressaocontratos": 5.0,
+        "p_razaoagressaoentrada": 1.2,
+        "p_razaoagressaosaida": 1.1,
+        "p_mintradesbarrafechada": 10.0,
+        "p_confirmacoesbarras": 1.0,
+        "p_pontosminimossetup": 5.0,
+        "p_imbalancesaida": 0.05,
+        "p_maxoperacoesdia": 350.0,
+        "p_maxstopsconsecutivos": 5.0,
+        "p_cooldownstopsbarras": 12.0,
+        "p_limiteperdadia": 150.0,
+        "p_horarioinicio": 915.0,
+        "p_horariofimentradas": 1815.0,
+        "p_horariozeragem": 1820.0
+      },
+      "busca": {
+        "p_alvopontos": {
+          "valores": [
+            20,
+            35,
+            50,
+            100,
+            150,
+            200
+          ]
+        },
+        "p_cooldownbarras": {
+          "valores": [
+            0,
+            1,
+            3,
+            5
+          ]
+        },
+        "p_horarioinicio": {
+          "valores": [
+            915,
+            945,
+            1015
+          ]
+        },
+        "p_lote": {
+          "valores": [
+            2
+          ]
+        },
+        "p_offsetstop": {
+          "valores": [
+            5,
+            10,
+            20,
+            50
+          ]
+        },
+        "p_periodomedia": {
+          "valores": [
+            5,
+            9,
+            15
+          ]
+        },
+        "p_stoppontos": {
+          "valores": [
+            15,
+            25,
+            40,
+            75,
+            150
+          ]
+        },
+        "p_tempomaxsegundos": {
+          "valores": [
+            15,
+            20.0,
+            25,
+            45,
+            90
+          ]
+        }
+      }
+    },
+    {
+      "id": "pr2:estrategias/execucao/modelo_micro_scalper_v4_3_ranges_5s.ntsl",
+      "local": "github",
+      "commit": "d2429a4549b497fcdbdb0cfef04e02c01d6be997",
+      "arquivo": "estrategias/execucao/modelo_micro_scalper_v4_3_ranges_5s.ntsl",
+      "versao": "4.3",
+      "sha256": "f3584ba27fb5f26692730a31be55321b7674b2bd92435150d65abc403c1321e5",
+      "sha256_texto_lf": "f3584ba27fb5f26692730a31be55321b7674b2bd92435150d65abc403c1321e5",
+      "bytes": 18962,
+      "tipo": "estrategia",
+      "compilador": "aceito",
+      "inputs": {
+        "p_alvopontos": 50.0,
+        "p_stoppontos": 15.0,
+        "p_offsetstop": 5.0,
+        "p_lote": 1.0,
+        "p_segundosporbarra": 5.0,
+        "p_tempominsaidasegundos": 5.0,
+        "p_tempomaxsegundos": 20.0,
+        "p_cooldownbarras": 1.0,
+        "p_periodomedia": 9.0,
+        "p_periodovolatilidade": 20.0,
+        "p_minrangebarra": 10.0,
+        "p_maxrangebarra": 80.0,
+        "p_minmediarangecompra": 5.0,
+        "p_maxmediarangecompra": 30.0,
+        "p_minmediarangevenda": 5.0,
+        "p_maxmediarangevenda": 30.0,
+        "p_distanciaminmedia": 0.0,
+        "p_distanciamaxmedia": 60.0,
+        "p_recuominpontos": 5.0,
+        "p_recuomaxpontos": 20.0,
+        "p_reacaominpontos": 5.0,
+        "p_validadesetupbarras": 2.0,
+        "p_modobook": 0.0,
+        "p_niveisbook": 5.0,
+        "p_maxspreadticks": 2.0,
+        "p_minqtdtopo": 10.0,
+        "p_minqtdbook": 50.0,
+        "p_minimbalancetopo": 0.1,
+        "p_minimbalancebook": 0.05,
+        "p_mindeslocamentomicroticks": 0.05,
+        "p_minagressaocontratos": 5.0,
+        "p_maxagressaocontratos": 2000.0,
+        "p_minagressaocomprafechada": 5.0,
+        "p_maxagressaocomprafechada": 1500.0,
+        "p_minagressaovendafechada": 5.0,
+        "p_maxagressaovendafechada": 1500.0,
+        "p_minrazaoagressaoentrada": 1.2,
+        "p_maxrazaoagressaoentrada": 8.0,
+        "p_razaoagressaosaida": 1.1,
+        "p_mintradescomprafechada": 10.0,
+        "p_maxtradescomprafechada": 500.0,
+        "p_mintradesvendafechada": 10.0,
+        "p_maxtradesvendafechada": 500.0,
+        "p_confirmacoesbarras": 1.0,
+        "p_pontosminimossetup": 5.0,
+        "p_imbalancesaida": 0.05,
+        "p_maxoperacoesdia": 350.0,
+        "p_maxstopsconsecutivos": 5.0,
+        "p_cooldownstopsbarras": 12.0,
+        "p_limiteperdadia": 150.0,
+        "p_horarioinicio": 915.0,
+        "p_horariofimentradas": 1815.0,
+        "p_horariozeragem": 1820.0
+      },
+      "usados": [
+        "p_alvopontos",
+        "p_confirmacoesbarras",
+        "p_cooldownbarras",
+        "p_cooldownstopsbarras",
+        "p_distanciamaxmedia",
+        "p_distanciaminmedia",
+        "p_horariofimentradas",
+        "p_horarioinicio",
+        "p_horariozeragem",
+        "p_imbalancesaida",
+        "p_limiteperdadia",
+        "p_lote",
+        "p_maxagressaocomprafechada",
+        "p_maxagressaocontratos",
+        "p_maxagressaovendafechada",
+        "p_maxmediarangecompra",
+        "p_maxmediarangevenda",
+        "p_maxoperacoesdia",
+        "p_maxrangebarra",
+        "p_maxrazaoagressaoentrada",
+        "p_maxspreadticks",
+        "p_maxstopsconsecutivos",
+        "p_maxtradescomprafechada",
+        "p_maxtradesvendafechada",
+        "p_minagressaocomprafechada",
+        "p_minagressaocontratos",
+        "p_minagressaovendafechada",
+        "p_mindeslocamentomicroticks",
+        "p_minimbalancebook",
+        "p_minimbalancetopo",
+        "p_minmediarangecompra",
+        "p_minmediarangevenda",
+        "p_minqtdbook",
+        "p_minqtdtopo",
+        "p_minrangebarra",
+        "p_minrazaoagressaoentrada",
+        "p_mintradescomprafechada",
+        "p_mintradesvendafechada",
+        "p_modobook",
+        "p_niveisbook",
+        "p_offsetstop",
+        "p_periodomedia",
+        "p_periodovolatilidade",
+        "p_pontosminimossetup",
+        "p_razaoagressaosaida",
+        "p_reacaominpontos",
+        "p_recuomaxpontos",
+        "p_recuominpontos",
+        "p_segundosporbarra",
+        "p_stoppontos",
+        "p_tempomaxsegundos",
+        "p_tempominsaidasegundos",
+        "p_validadesetupbarras"
+      ],
+      "dependencias": [
+        "agressionvolbuy",
+        "agressionvolsell",
+        "askprice",
+        "asksize",
+        "bidprice",
+        "bidsize",
+        "totalbuyqtd",
+        "totalsellqtd",
+        "trades"
+      ],
+      "grupo": "win_5s_2c",
+      "status": "apta",
+      "ranking_original": {
+        "p_alvopontos": 50.0,
+        "p_stoppontos": 15.0,
+        "p_offsetstop": 5.0,
+        "p_lote": 2,
+        "p_segundosporbarra": 5.0,
+        "p_tempominsaidasegundos": 5.0,
+        "p_tempomaxsegundos": 20.0,
+        "p_cooldownbarras": 1.0,
+        "p_periodomedia": 9.0,
+        "p_periodovolatilidade": 20.0,
+        "p_minrangebarra": 10.0,
+        "p_maxrangebarra": 80.0,
+        "p_minmediarangecompra": 5.0,
+        "p_maxmediarangecompra": 30.0,
+        "p_minmediarangevenda": 5.0,
+        "p_maxmediarangevenda": 30.0,
+        "p_distanciaminmedia": 0.0,
+        "p_distanciamaxmedia": 60.0,
+        "p_recuominpontos": 5.0,
+        "p_recuomaxpontos": 20.0,
+        "p_reacaominpontos": 5.0,
+        "p_validadesetupbarras": 2.0,
+        "p_modobook": 0.0,
+        "p_niveisbook": 5.0,
+        "p_maxspreadticks": 2.0,
+        "p_minqtdtopo": 10.0,
+        "p_minqtdbook": 50.0,
+        "p_minimbalancetopo": 0.1,
+        "p_minimbalancebook": 0.05,
+        "p_mindeslocamentomicroticks": 0.05,
+        "p_minagressaocontratos": 5.0,
+        "p_maxagressaocontratos": 2000.0,
+        "p_minagressaocomprafechada": 5.0,
+        "p_maxagressaocomprafechada": 1500.0,
+        "p_minagressaovendafechada": 5.0,
+        "p_maxagressaovendafechada": 1500.0,
+        "p_minrazaoagressaoentrada": 1.2,
+        "p_maxrazaoagressaoentrada": 8.0,
+        "p_razaoagressaosaida": 1.1,
+        "p_mintradescomprafechada": 10.0,
+        "p_maxtradescomprafechada": 500.0,
+        "p_mintradesvendafechada": 10.0,
+        "p_maxtradesvendafechada": 500.0,
+        "p_confirmacoesbarras": 1.0,
+        "p_pontosminimossetup": 5.0,
+        "p_imbalancesaida": 0.05,
+        "p_maxoperacoesdia": 350.0,
+        "p_maxstopsconsecutivos": 5.0,
+        "p_cooldownstopsbarras": 12.0,
+        "p_limiteperdadia": 150.0,
+        "p_horarioinicio": 915.0,
+        "p_horariofimentradas": 1815.0,
+        "p_horariozeragem": 1820.0
+      },
+      "modo_ohlc_original": {
+        "p_alvopontos": 50.0,
+        "p_stoppontos": 15.0,
+        "p_offsetstop": 5.0,
+        "p_lote": 1.0,
+        "p_segundosporbarra": 5.0,
+        "p_tempominsaidasegundos": 5.0,
+        "p_tempomaxsegundos": 20.0,
+        "p_cooldownbarras": 1.0,
+        "p_periodomedia": 9.0,
+        "p_periodovolatilidade": 20.0,
+        "p_minrangebarra": 10.0,
+        "p_maxrangebarra": 80.0,
+        "p_minmediarangecompra": 5.0,
+        "p_maxmediarangecompra": 30.0,
+        "p_minmediarangevenda": 5.0,
+        "p_maxmediarangevenda": 30.0,
+        "p_distanciaminmedia": 0.0,
+        "p_distanciamaxmedia": 60.0,
+        "p_recuominpontos": 5.0,
+        "p_recuomaxpontos": 20.0,
+        "p_reacaominpontos": 5.0,
+        "p_validadesetupbarras": 2.0,
+        "p_modobook": 0.0,
+        "p_niveisbook": 5.0,
+        "p_maxspreadticks": 2.0,
+        "p_minqtdtopo": 10.0,
+        "p_minqtdbook": 50.0,
+        "p_minimbalancetopo": 0.1,
+        "p_minimbalancebook": 0.05,
+        "p_mindeslocamentomicroticks": 0.05,
+        "p_minagressaocontratos": 5.0,
+        "p_maxagressaocontratos": 2000.0,
+        "p_minagressaocomprafechada": 5.0,
+        "p_maxagressaocomprafechada": 1500.0,
+        "p_minagressaovendafechada": 5.0,
+        "p_maxagressaovendafechada": 1500.0,
+        "p_minrazaoagressaoentrada": 1.2,
+        "p_maxrazaoagressaoentrada": 8.0,
+        "p_razaoagressaosaida": 1.1,
+        "p_mintradescomprafechada": 10.0,
+        "p_maxtradescomprafechada": 500.0,
+        "p_mintradesvendafechada": 10.0,
+        "p_maxtradesvendafechada": 500.0,
+        "p_confirmacoesbarras": 1.0,
+        "p_pontosminimossetup": 5.0,
+        "p_imbalancesaida": 0.05,
+        "p_maxoperacoesdia": 350.0,
+        "p_maxstopsconsecutivos": 5.0,
+        "p_cooldownstopsbarras": 12.0,
+        "p_limiteperdadia": 150.0,
+        "p_horarioinicio": 915.0,
+        "p_horariofimentradas": 1815.0,
+        "p_horariozeragem": 1820.0
+      },
+      "perfil_publicado": {
+        "p_alvopontos": 50.0,
+        "p_stoppontos": 15.0,
+        "p_offsetstop": 5.0,
+        "p_lote": 2,
+        "p_segundosporbarra": 5.0,
+        "p_tempominsaidasegundos": 5.0,
+        "p_tempomaxsegundos": 20.0,
+        "p_cooldownbarras": 1.0,
+        "p_periodomedia": 9.0,
+        "p_periodovolatilidade": 20.0,
+        "p_minrangebarra": 10.0,
+        "p_maxrangebarra": 80.0,
+        "p_minmediarangecompra": 5.0,
+        "p_maxmediarangecompra": 30.0,
+        "p_minmediarangevenda": 5.0,
+        "p_maxmediarangevenda": 30.0,
+        "p_distanciaminmedia": 0.0,
+        "p_distanciamaxmedia": 60.0,
+        "p_recuominpontos": 5.0,
+        "p_recuomaxpontos": 20.0,
+        "p_reacaominpontos": 5.0,
+        "p_validadesetupbarras": 2.0,
+        "p_modobook": 0.0,
+        "p_niveisbook": 5.0,
+        "p_maxspreadticks": 2.0,
+        "p_minqtdtopo": 10.0,
+        "p_minqtdbook": 50.0,
+        "p_minimbalancetopo": 0.1,
+        "p_minimbalancebook": 0.05,
+        "p_mindeslocamentomicroticks": 0.05,
+        "p_minagressaocontratos": 5.0,
+        "p_maxagressaocontratos": 2000.0,
+        "p_minagressaocomprafechada": 5.0,
+        "p_maxagressaocomprafechada": 1500.0,
+        "p_minagressaovendafechada": 5.0,
+        "p_maxagressaovendafechada": 1500.0,
+        "p_minrazaoagressaoentrada": 1.2,
+        "p_maxrazaoagressaoentrada": 8.0,
+        "p_razaoagressaosaida": 1.1,
+        "p_mintradescomprafechada": 10.0,
+        "p_maxtradescomprafechada": 500.0,
+        "p_mintradesvendafechada": 10.0,
+        "p_maxtradesvendafechada": 500.0,
+        "p_confirmacoesbarras": 1.0,
+        "p_pontosminimossetup": 5.0,
+        "p_imbalancesaida": 0.05,
+        "p_maxoperacoesdia": 350.0,
+        "p_maxstopsconsecutivos": 5.0,
+        "p_cooldownstopsbarras": 12.0,
+        "p_limiteperdadia": 150.0,
+        "p_horarioinicio": 915.0,
+        "p_horariofimentradas": 1815.0,
+        "p_horariozeragem": 1820.0
+      },
+      "busca": {
+        "p_alvopontos": {
+          "valores": [
+            20,
+            35,
+            50,
+            100,
+            150,
+            200
+          ]
+        },
+        "p_cooldownbarras": {
+          "valores": [
+            0,
+            1,
+            3,
+            5
+          ]
+        },
+        "p_horarioinicio": {
+          "valores": [
+            915,
+            945,
+            1015
+          ]
+        },
+        "p_lote": {
+          "valores": [
+            2
+          ]
+        },
+        "p_minrazaoagressaoentrada": {
+          "valores": [
+            1.0,
+            1.2,
+            1.5
+          ]
+        },
+        "p_offsetstop": {
+          "valores": [
+            5,
+            10,
+            20,
+            50
+          ]
+        },
+        "p_periodomedia": {
+          "valores": [
+            5,
+            9,
+            15
+          ]
+        },
+        "p_stoppontos": {
+          "valores": [
+            15,
+            25,
+            40,
+            75,
+            150
+          ]
+        },
+        "p_tempomaxsegundos": {
+          "valores": [
+            15,
+            20.0,
+            25,
+            45,
+            90
+          ]
+        }
+      }
+    },
+    {
+      "id": "pr2:estrategias/execucao/modelo_scalper_micro_hft_v3_0.ntsl",
+      "local": "github",
+      "commit": "d2429a4549b497fcdbdb0cfef04e02c01d6be997",
+      "arquivo": "estrategias/execucao/modelo_scalper_micro_hft_v3_0.ntsl",
+      "versao": "3.0",
+      "sha256": "ab13625c100358c7b364cd77920ec08d24adc9aa64cca50d48699804e11abd33",
+      "sha256_texto_lf": "ab13625c100358c7b364cd77920ec08d24adc9aa64cca50d48699804e11abd33",
+      "bytes": 8413,
+      "tipo": "estrategia",
+      "compilador": "aceito",
+      "inputs": {
+        "p_alvopontos": 50.0,
+        "p_stoppontos": 40.0,
+        "p_offsetstop": 10.0,
+        "p_lote": 1.0,
+        "p_segundosporbarra": 1.0,
+        "p_tempomaxsegundos": 8.0,
+        "p_cooldownbarras": 3.0,
+        "p_maxspreadticks": 1.0,
+        "p_minqtdtopo": 20.0,
+        "p_minimbalance": 0.35,
+        "p_mindeltaagressao": 5.0,
+        "p_minimpulsobook": 1.0,
+        "p_mintradesbarra": 3.0,
+        "p_imbalancesaida": 0.15,
+        "p_deltaagressaosaida": 3.0,
+        "p_maxoperacoesdia": 30.0,
+        "p_limiteperdadia": 300.0,
+        "p_horarioinicio": 915.0,
+        "p_horariofimentradas": 1655.0,
+        "p_horariozeragem": 1700.0
+      },
+      "usados": [
+        "p_alvopontos",
+        "p_cooldownbarras",
+        "p_deltaagressaosaida",
+        "p_horariofimentradas",
+        "p_horarioinicio",
+        "p_horariozeragem",
+        "p_imbalancesaida",
+        "p_limiteperdadia",
+        "p_lote",
+        "p_maxoperacoesdia",
+        "p_maxspreadticks",
+        "p_mindeltaagressao",
+        "p_minimbalance",
+        "p_minimpulsobook",
+        "p_minqtdtopo",
+        "p_mintradesbarra",
+        "p_offsetstop",
+        "p_segundosporbarra",
+        "p_stoppontos",
+        "p_tempomaxsegundos"
+      ],
+      "dependencias": [
+        "agressionvolbalance",
+        "askprice",
+        "asksize",
+        "bidprice",
+        "bidsize",
+        "trades"
+      ],
+      "grupo": "win_1s_2c",
+      "status": "apta",
+      "ranking_original": {
+        "p_alvopontos": 50.0,
+        "p_stoppontos": 40.0,
+        "p_offsetstop": 10.0,
+        "p_lote": 2,
+        "p_segundosporbarra": 1.0,
+        "p_tempomaxsegundos": 8.0,
+        "p_cooldownbarras": 3.0,
+        "p_maxspreadticks": 1.0,
+        "p_minqtdtopo": 20.0,
+        "p_minimbalance": 0.35,
+        "p_mindeltaagressao": 5.0,
+        "p_minimpulsobook": 1.0,
+        "p_mintradesbarra": 3.0,
+        "p_imbalancesaida": 0.15,
+        "p_deltaagressaosaida": 3.0,
+        "p_maxoperacoesdia": 30.0,
+        "p_limiteperdadia": 300.0,
+        "p_horarioinicio": 915.0,
+        "p_horariofimentradas": 1655.0,
+        "p_horariozeragem": 1700.0
+      },
+      "modo_ohlc_original": {
+        "p_alvopontos": 50.0,
+        "p_stoppontos": 40.0,
+        "p_offsetstop": 10.0,
+        "p_lote": 1.0,
+        "p_segundosporbarra": 1.0,
+        "p_tempomaxsegundos": 8.0,
+        "p_cooldownbarras": 3.0,
+        "p_maxspreadticks": 1.0,
+        "p_minqtdtopo": 20.0,
+        "p_minimbalance": 0.35,
+        "p_mindeltaagressao": 5.0,
+        "p_minimpulsobook": 1.0,
+        "p_mintradesbarra": 3.0,
+        "p_imbalancesaida": 0.15,
+        "p_deltaagressaosaida": 3.0,
+        "p_maxoperacoesdia": 30.0,
+        "p_limiteperdadia": 300.0,
+        "p_horarioinicio": 915.0,
+        "p_horariofimentradas": 1655.0,
+        "p_horariozeragem": 1700.0
+      },
+      "perfil_publicado": {
+        "p_alvopontos": 50.0,
+        "p_stoppontos": 40.0,
+        "p_offsetstop": 10.0,
+        "p_lote": 2,
+        "p_segundosporbarra": 1.0,
+        "p_tempomaxsegundos": 8.0,
+        "p_cooldownbarras": 3.0,
+        "p_maxspreadticks": 1.0,
+        "p_minqtdtopo": 20.0,
+        "p_minimbalance": 0.35,
+        "p_mindeltaagressao": 5.0,
+        "p_minimpulsobook": 1.0,
+        "p_mintradesbarra": 3.0,
+        "p_imbalancesaida": 0.15,
+        "p_deltaagressaosaida": 3.0,
+        "p_maxoperacoesdia": 30.0,
+        "p_limiteperdadia": 300.0,
+        "p_horarioinicio": 915.0,
+        "p_horariofimentradas": 1655.0,
+        "p_horariozeragem": 1700.0
+      },
+      "busca": {
+        "p_alvopontos": {
+          "valores": [
+            20,
+            35,
+            50,
+            100,
+            150,
+            200
+          ]
+        },
+        "p_cooldownbarras": {
+          "valores": [
+            0,
+            1,
+            3,
+            5
+          ]
+        },
+        "p_horarioinicio": {
+          "valores": [
+            915,
+            945,
+            1015
+          ]
+        },
+        "p_lote": {
+          "valores": [
+            2
+          ]
+        },
+        "p_mindeltaagressao": {
+          "valores": [
+            2,
+            5,
+            10
+          ]
+        },
+        "p_minimpulsobook": {
+          "valores": [
+            0.5,
+            1,
+            2
+          ]
+        },
+        "p_mintradesbarra": {
+          "valores": [
+            1,
+            3,
+            5,
+            10
+          ]
+        },
+        "p_offsetstop": {
+          "valores": [
+            5,
+            10,
+            20,
+            50
+          ]
+        },
+        "p_stoppontos": {
+          "valores": [
+            15,
+            25,
+            40,
+            75,
+            150
+          ]
+        },
+        "p_tempomaxsegundos": {
+          "valores": [
+            2,
+            5,
+            8,
+            12
+          ]
+        }
+      }
+    },
+    {
+      "id": "pr2:estrategias/execucao/modelo_scalper_v1_1.ntsl",
+      "local": "github",
+      "commit": "d2429a4549b497fcdbdb0cfef04e02c01d6be997",
+      "arquivo": "estrategias/execucao/modelo_scalper_v1_1.ntsl",
+      "versao": "1.1",
+      "sha256": "64d74abc6dda857582351fd8c797d1801a457fc4cc40b95c6c1d754a1899cf0c",
+      "sha256_texto_lf": "64d74abc6dda857582351fd8c797d1801a457fc4cc40b95c6c1d754a1899cf0c",
+      "bytes": 5327,
+      "tipo": "estrategia",
+      "compilador": "aceito",
+      "inputs": {
+        "p_alvopontos": 50.0,
+        "p_stoppontos": 45.0,
+        "p_offsetstop": 5.0,
+        "p_lote": 1.0,
+        "p_periodofluxo": 1.0,
+        "p_periodomediafluxo": 20.0,
+        "p_thresholdfluxo": 1.8,
+        "p_mintradesbarra": 300.0,
+        "p_maxbarrasposicao": 2.0,
+        "p_maxstopsconsecutivos": 3.0,
+        "p_cooldownminutos": 15.0,
+        "p_limiteperdadia": 300.0,
+        "p_horarioinicio": 905.0,
+        "p_horariofimentradas": 1655.0,
+        "p_horariozeragem": 1700.0
+      },
+      "usados": [
+        "p_alvopontos",
+        "p_cooldownminutos",
+        "p_horariofimentradas",
+        "p_horarioinicio",
+        "p_horariozeragem",
+        "p_limiteperdadia",
+        "p_lote",
+        "p_maxbarrasposicao",
+        "p_maxstopsconsecutivos",
+        "p_mintradesbarra",
+        "p_offsetstop",
+        "p_periodofluxo",
+        "p_periodomediafluxo",
+        "p_stoppontos",
+        "p_thresholdfluxo"
+      ],
+      "dependencias": [
+        "agressionvolbalance",
+        "trades"
+      ],
+      "grupo": "win_60s_2c",
+      "status": "apta",
+      "ranking_original": {
+        "p_alvopontos": 50.0,
+        "p_stoppontos": 45.0,
+        "p_offsetstop": 5.0,
+        "p_lote": 2,
+        "p_periodofluxo": 1.0,
+        "p_periodomediafluxo": 20.0,
+        "p_thresholdfluxo": 1.8,
+        "p_mintradesbarra": 300.0,
+        "p_maxbarrasposicao": 2.0,
+        "p_maxstopsconsecutivos": 3.0,
+        "p_cooldownminutos": 15.0,
+        "p_limiteperdadia": 300.0,
+        "p_horarioinicio": 905.0,
+        "p_horariofimentradas": 1655.0,
+        "p_horariozeragem": 1700.0
+      },
+      "modo_ohlc_original": {
+        "p_alvopontos": 50.0,
+        "p_stoppontos": 45.0,
+        "p_offsetstop": 5.0,
+        "p_lote": 1.0,
+        "p_periodofluxo": 1.0,
+        "p_periodomediafluxo": 20.0,
+        "p_thresholdfluxo": 1.8,
+        "p_mintradesbarra": 300.0,
+        "p_maxbarrasposicao": 2.0,
+        "p_maxstopsconsecutivos": 3.0,
+        "p_cooldownminutos": 15.0,
+        "p_limiteperdadia": 300.0,
+        "p_horarioinicio": 905.0,
+        "p_horariofimentradas": 1655.0,
+        "p_horariozeragem": 1700.0
+      },
+      "perfil_publicado": {
+        "p_alvopontos": 50.0,
+        "p_stoppontos": 45.0,
+        "p_offsetstop": 5.0,
+        "p_lote": 2,
+        "p_periodofluxo": 1.0,
+        "p_periodomediafluxo": 20.0,
+        "p_thresholdfluxo": 1.8,
+        "p_mintradesbarra": 300.0,
+        "p_maxbarrasposicao": 2.0,
+        "p_maxstopsconsecutivos": 3.0,
+        "p_cooldownminutos": 15.0,
+        "p_limiteperdadia": 300.0,
+        "p_horarioinicio": 905.0,
+        "p_horariofimentradas": 1655.0,
+        "p_horariozeragem": 1700.0
+      },
+      "busca": {
+        "p_alvopontos": {
+          "valores": [
+            20,
+            35,
+            50,
+            100,
+            150,
+            200
+          ]
+        },
+        "p_cooldownminutos": {
+          "valores": [
+            5,
+            10,
+            15
+          ]
+        },
+        "p_horarioinicio": {
+          "valores": [
+            905.0,
+            915,
+            945,
+            1015
+          ]
+        },
+        "p_lote": {
+          "valores": [
+            2
+          ]
+        },
+        "p_maxbarrasposicao": {
+          "valores": [
+            2,
+            4,
+            6
+          ]
+        },
+        "p_mintradesbarra": {
+          "valores": [
+            100,
+            200,
+            300,
+            400
+          ]
+        },
+        "p_offsetstop": {
+          "valores": [
+            5,
+            10,
+            20,
+            50
+          ]
+        },
+        "p_periodomediafluxo": {
+          "valores": [
+            12,
+            20,
+            30
+          ]
+        },
+        "p_stoppontos": {
+          "valores": [
+            15,
+            25,
+            40,
+            45.0,
+            75,
+            150
+          ]
+        },
+        "p_thresholdfluxo": {
+          "valores": [
+            1.3,
+            1.8,
+            2.3
+          ]
+        }
+      }
+    },
+    {
+      "id": "pr2:estrategias/execucao/modelo_scalper_v2_0.ntsl",
+      "local": "github",
+      "commit": "d2429a4549b497fcdbdb0cfef04e02c01d6be997",
+      "arquivo": "estrategias/execucao/modelo_scalper_v2_0.ntsl",
+      "versao": "2.0",
+      "sha256": "4b3c9678cb58ed35febbcaa5a93b462a3ab3f0de0bdcb5ba6e1ea8b1e63b39ef",
+      "sha256_texto_lf": "4b3c9678cb58ed35febbcaa5a93b462a3ab3f0de0bdcb5ba6e1ea8b1e63b39ef",
+      "bytes": 7946,
+      "tipo": "estrategia",
+      "compilador": "aceito",
+      "inputs": {
+        "p_alvopontos": 200.0,
+        "p_stoppontos": 150.0,
+        "p_offsetstop": 20.0,
+        "p_lote": 1.0,
+        "p_segundosporbarra": 5.0,
+        "p_tempomaxsegundos": 90.0,
+        "p_minbarrasantesexaustao": 1.0,
+        "p_minvelocidade": 10.0,
+        "p_minaceleracao": 5.0,
+        "p_minforcacontratos": 50.0,
+        "p_razaodesbalanco": 2.5,
+        "p_mintradesbarra": 10.0,
+        "p_periodomediapreco": 9.0,
+        "p_maxstopsconsecutivos": 3.0,
+        "p_cooldownminutos": 15.0,
+        "p_limiteperdadia": 300.0,
+        "p_horarioinicio": 915.0,
+        "p_horariofimentradas": 1700.0,
+        "p_horariozeragem": 1730.0
+      },
+      "usados": [
+        "p_alvopontos",
+        "p_cooldownminutos",
+        "p_horariofimentradas",
+        "p_horarioinicio",
+        "p_horariozeragem",
+        "p_limiteperdadia",
+        "p_lote",
+        "p_maxstopsconsecutivos",
+        "p_minaceleracao",
+        "p_minbarrasantesexaustao",
+        "p_minforcacontratos",
+        "p_mintradesbarra",
+        "p_minvelocidade",
+        "p_offsetstop",
+        "p_periodomediapreco",
+        "p_razaodesbalanco",
+        "p_segundosporbarra",
+        "p_stoppontos",
+        "p_tempomaxsegundos"
+      ],
+      "dependencias": [
+        "agressionvolbuy",
+        "agressionvolsell",
+        "trades"
+      ],
+      "grupo": "win_5s_2c",
+      "status": "apta",
+      "ranking_original": {
+        "p_alvopontos": 200.0,
+        "p_stoppontos": 150.0,
+        "p_offsetstop": 20.0,
+        "p_lote": 2,
+        "p_segundosporbarra": 5.0,
+        "p_tempomaxsegundos": 90.0,
+        "p_minbarrasantesexaustao": 1.0,
+        "p_minvelocidade": 10.0,
+        "p_minaceleracao": 5.0,
+        "p_minforcacontratos": 50.0,
+        "p_razaodesbalanco": 2.5,
+        "p_mintradesbarra": 10.0,
+        "p_periodomediapreco": 9.0,
+        "p_maxstopsconsecutivos": 3.0,
+        "p_cooldownminutos": 15.0,
+        "p_limiteperdadia": 300.0,
+        "p_horarioinicio": 915.0,
+        "p_horariofimentradas": 1700.0,
+        "p_horariozeragem": 1730.0
+      },
+      "modo_ohlc_original": {
+        "p_alvopontos": 200.0,
+        "p_stoppontos": 150.0,
+        "p_offsetstop": 20.0,
+        "p_lote": 1.0,
+        "p_segundosporbarra": 5.0,
+        "p_tempomaxsegundos": 90.0,
+        "p_minbarrasantesexaustao": 1.0,
+        "p_minvelocidade": 10.0,
+        "p_minaceleracao": 5.0,
+        "p_minforcacontratos": 50.0,
+        "p_razaodesbalanco": 2.5,
+        "p_mintradesbarra": 10.0,
+        "p_periodomediapreco": 9.0,
+        "p_maxstopsconsecutivos": 3.0,
+        "p_cooldownminutos": 15.0,
+        "p_limiteperdadia": 300.0,
+        "p_horarioinicio": 915.0,
+        "p_horariofimentradas": 1700.0,
+        "p_horariozeragem": 1730.0
+      },
+      "perfil_publicado": {
+        "p_alvopontos": 200.0,
+        "p_stoppontos": 150.0,
+        "p_offsetstop": 20.0,
+        "p_lote": 2,
+        "p_segundosporbarra": 5.0,
+        "p_tempomaxsegundos": 90.0,
+        "p_minbarrasantesexaustao": 1.0,
+        "p_minvelocidade": 10.0,
+        "p_minaceleracao": 5.0,
+        "p_minforcacontratos": 50.0,
+        "p_razaodesbalanco": 2.5,
+        "p_mintradesbarra": 10.0,
+        "p_periodomediapreco": 9.0,
+        "p_maxstopsconsecutivos": 3.0,
+        "p_cooldownminutos": 15.0,
+        "p_limiteperdadia": 300.0,
+        "p_horarioinicio": 915.0,
+        "p_horariofimentradas": 1700.0,
+        "p_horariozeragem": 1730.0
+      },
+      "busca": {
+        "p_alvopontos": {
+          "valores": [
+            20,
+            35,
+            50,
+            100,
+            150,
+            200
+          ]
+        },
+        "p_cooldownminutos": {
+          "valores": [
+            5,
+            10,
+            15
+          ]
+        },
+        "p_horarioinicio": {
+          "valores": [
+            915,
+            945,
+            1015
+          ]
+        },
+        "p_lote": {
+          "valores": [
+            2
+          ]
+        },
+        "p_minaceleracao": {
+          "valores": [
+            0.2,
+            0.5,
+            1,
+            5
+          ]
+        },
+        "p_minforcacontratos": {
+          "valores": [
+            5,
+            10,
+            25,
+            50
+          ]
+        },
+        "p_mintradesbarra": {
+          "valores": [
+            1,
+            3,
+            5,
+            10
+          ]
+        },
+        "p_minvelocidade": {
+          "valores": [
+            1,
+            2,
+            5,
+            10
+          ]
+        },
+        "p_offsetstop": {
+          "valores": [
+            5,
+            10,
+            20,
+            50
+          ]
+        },
+        "p_periodomediapreco": {
+          "valores": [
+            5,
+            9,
+            15
+          ]
+        },
+        "p_razaodesbalanco": {
+          "valores": [
+            1.0,
+            1.15,
+            1.5,
+            2.5
+          ]
+        },
+        "p_stoppontos": {
+          "valores": [
+            15,
+            25,
+            40,
+            75,
+            150
+          ]
+        },
+        "p_tempomaxsegundos": {
+          "valores": [
+            15,
+            25,
+            45,
+            90
+          ]
+        }
+      }
+    },
+    {
+      "id": "pr2:estrategias/execucao/modelo_scalper_v2_1.ntsl",
+      "local": "github",
+      "commit": "d2429a4549b497fcdbdb0cfef04e02c01d6be997",
+      "arquivo": "estrategias/execucao/modelo_scalper_v2_1.ntsl",
+      "versao": "2.1",
+      "sha256": "b3d57177c8b7157c533f7bc2bcd9e34260b6d53a703f1195d5801dc460ea73a7",
+      "sha256_texto_lf": "b3d57177c8b7157c533f7bc2bcd9e34260b6d53a703f1195d5801dc460ea73a7",
+      "bytes": 7784,
+      "tipo": "estrategia",
+      "compilador": "aceito",
+      "inputs": {
+        "p_alvopontos": 200.0,
+        "p_stoppontos": 150.0,
+        "p_offsetstop": 20.0,
+        "p_lote": 1.0,
+        "p_segundosporbarra": 5.0,
+        "p_tempomaxsegundos": 90.0,
+        "p_minbarrasantesexaustao": 1.0,
+        "p_minvelocidade": 2.0,
+        "p_minaceleracao": 0.2,
+        "p_minforcacontratos": 10.0,
+        "p_razaodesbalanco": 1.5,
+        "p_mintradesbarra": 5.0,
+        "p_periodomediapreco": 9.0,
+        "p_maxstopsconsecutivos": 3.0,
+        "p_cooldownminutos": 15.0,
+        "p_limiteperdadia": 300.0,
+        "p_horarioinicio": 915.0,
+        "p_horariofimentradas": 1700.0,
+        "p_horariozeragem": 1730.0
+      },
+      "usados": [
+        "p_alvopontos",
+        "p_cooldownminutos",
+        "p_horariofimentradas",
+        "p_horarioinicio",
+        "p_horariozeragem",
+        "p_limiteperdadia",
+        "p_lote",
+        "p_maxstopsconsecutivos",
+        "p_minaceleracao",
+        "p_minbarrasantesexaustao",
+        "p_minforcacontratos",
+        "p_mintradesbarra",
+        "p_minvelocidade",
+        "p_offsetstop",
+        "p_periodomediapreco",
+        "p_razaodesbalanco",
+        "p_segundosporbarra",
+        "p_stoppontos",
+        "p_tempomaxsegundos"
+      ],
+      "dependencias": [
+        "agressionvolbuy",
+        "agressionvolsell",
+        "trades"
+      ],
+      "grupo": "win_5s_2c",
+      "status": "apta",
+      "ranking_original": {
+        "p_alvopontos": 200.0,
+        "p_stoppontos": 150.0,
+        "p_offsetstop": 20.0,
+        "p_lote": 2,
+        "p_segundosporbarra": 5.0,
+        "p_tempomaxsegundos": 90.0,
+        "p_minbarrasantesexaustao": 1.0,
+        "p_minvelocidade": 2.0,
+        "p_minaceleracao": 0.2,
+        "p_minforcacontratos": 10.0,
+        "p_razaodesbalanco": 1.5,
+        "p_mintradesbarra": 5.0,
+        "p_periodomediapreco": 9.0,
+        "p_maxstopsconsecutivos": 3.0,
+        "p_cooldownminutos": 15.0,
+        "p_limiteperdadia": 300.0,
+        "p_horarioinicio": 915.0,
+        "p_horariofimentradas": 1700.0,
+        "p_horariozeragem": 1730.0
+      },
+      "modo_ohlc_original": {
+        "p_alvopontos": 200.0,
+        "p_stoppontos": 150.0,
+        "p_offsetstop": 20.0,
+        "p_lote": 1.0,
+        "p_segundosporbarra": 5.0,
+        "p_tempomaxsegundos": 90.0,
+        "p_minbarrasantesexaustao": 1.0,
+        "p_minvelocidade": 2.0,
+        "p_minaceleracao": 0.2,
+        "p_minforcacontratos": 10.0,
+        "p_razaodesbalanco": 1.5,
+        "p_mintradesbarra": 5.0,
+        "p_periodomediapreco": 9.0,
+        "p_maxstopsconsecutivos": 3.0,
+        "p_cooldownminutos": 15.0,
+        "p_limiteperdadia": 300.0,
+        "p_horarioinicio": 915.0,
+        "p_horariofimentradas": 1700.0,
+        "p_horariozeragem": 1730.0
+      },
+      "perfil_publicado": {
+        "p_alvopontos": 200.0,
+        "p_stoppontos": 150.0,
+        "p_offsetstop": 20.0,
+        "p_lote": 2,
+        "p_segundosporbarra": 5.0,
+        "p_tempomaxsegundos": 90.0,
+        "p_minbarrasantesexaustao": 1.0,
+        "p_minvelocidade": 2.0,
+        "p_minaceleracao": 0.2,
+        "p_minforcacontratos": 10.0,
+        "p_razaodesbalanco": 1.5,
+        "p_mintradesbarra": 5.0,
+        "p_periodomediapreco": 9.0,
+        "p_maxstopsconsecutivos": 3.0,
+        "p_cooldownminutos": 15.0,
+        "p_limiteperdadia": 300.0,
+        "p_horarioinicio": 915.0,
+        "p_horariofimentradas": 1700.0,
+        "p_horariozeragem": 1730.0
+      },
+      "busca": {
+        "p_alvopontos": {
+          "valores": [
+            20,
+            35,
+            50,
+            100,
+            150,
+            200
+          ]
+        },
+        "p_cooldownminutos": {
+          "valores": [
+            5,
+            10,
+            15
+          ]
+        },
+        "p_horarioinicio": {
+          "valores": [
+            915,
+            945,
+            1015
+          ]
+        },
+        "p_lote": {
+          "valores": [
+            2
+          ]
+        },
+        "p_minaceleracao": {
+          "valores": [
+            0.2,
+            0.5,
+            1,
+            5
+          ]
+        },
+        "p_minforcacontratos": {
+          "valores": [
+            5,
+            10,
+            25,
+            50
+          ]
+        },
+        "p_mintradesbarra": {
+          "valores": [
+            1,
+            3,
+            5,
+            10
+          ]
+        },
+        "p_minvelocidade": {
+          "valores": [
+            1,
+            2,
+            5,
+            10
+          ]
+        },
+        "p_offsetstop": {
+          "valores": [
+            5,
+            10,
+            20,
+            50
+          ]
+        },
+        "p_periodomediapreco": {
+          "valores": [
+            5,
+            9,
+            15
+          ]
+        },
+        "p_razaodesbalanco": {
+          "valores": [
+            1.0,
+            1.15,
+            1.5,
+            2.5
+          ]
+        },
+        "p_stoppontos": {
+          "valores": [
+            15,
+            25,
+            40,
+            75,
+            150
+          ]
+        },
+        "p_tempomaxsegundos": {
+          "valores": [
+            15,
+            25,
+            45,
+            90
+          ]
+        }
+      }
+    },
+    {
+      "id": "pr2:estrategias/execucao/modelo_scalper_v2_2.ntsl",
+      "local": "github",
+      "commit": "d2429a4549b497fcdbdb0cfef04e02c01d6be997",
+      "arquivo": "estrategias/execucao/modelo_scalper_v2_2.ntsl",
+      "versao": "2.2",
+      "sha256": "fd1da0fa8fdd5d1339f9607aa74c08258ecf84b6bfd75643266661ee722adea2",
+      "sha256_texto_lf": "fd1da0fa8fdd5d1339f9607aa74c08258ecf84b6bfd75643266661ee722adea2",
+      "bytes": 7786,
+      "tipo": "estrategia",
+      "compilador": "aceito",
+      "inputs": {
+        "p_alvopontos": 200.0,
+        "p_stoppontos": 150.0,
+        "p_offsetstop": 20.0,
+        "p_lote": 1.0,
+        "p_segundosporbarra": 5.0,
+        "p_tempomaxsegundos": 90.0,
+        "p_minbarrasantesexaustao": 1.0,
+        "p_minvelocidade": 2.0,
+        "p_minaceleracao": 0.2,
+        "p_minforcacontratos": 10.0,
+        "p_razaodesbalanco": 1.0,
+        "p_mintradesbarra": 5.0,
+        "p_periodomediapreco": 9.0,
+        "p_maxstopsconsecutivos": 3.0,
+        "p_cooldownminutos": 15.0,
+        "p_limiteperdadia": 300.0,
+        "p_horarioinicio": 915.0,
+        "p_horariofimentradas": 1700.0,
+        "p_horariozeragem": 1730.0
+      },
+      "usados": [
+        "p_alvopontos",
+        "p_cooldownminutos",
+        "p_horariofimentradas",
+        "p_horarioinicio",
+        "p_horariozeragem",
+        "p_limiteperdadia",
+        "p_lote",
+        "p_maxstopsconsecutivos",
+        "p_minaceleracao",
+        "p_minbarrasantesexaustao",
+        "p_minforcacontratos",
+        "p_mintradesbarra",
+        "p_minvelocidade",
+        "p_offsetstop",
+        "p_periodomediapreco",
+        "p_razaodesbalanco",
+        "p_segundosporbarra",
+        "p_stoppontos",
+        "p_tempomaxsegundos"
+      ],
+      "dependencias": [
+        "agressionvolbuy",
+        "agressionvolsell",
+        "trades"
+      ],
+      "grupo": "win_5s_2c",
+      "status": "apta",
+      "ranking_original": {
+        "p_alvopontos": 200.0,
+        "p_stoppontos": 150.0,
+        "p_offsetstop": 20.0,
+        "p_lote": 2,
+        "p_segundosporbarra": 5.0,
+        "p_tempomaxsegundos": 90.0,
+        "p_minbarrasantesexaustao": 1.0,
+        "p_minvelocidade": 2.0,
+        "p_minaceleracao": 0.2,
+        "p_minforcacontratos": 10.0,
+        "p_razaodesbalanco": 1.0,
+        "p_mintradesbarra": 5.0,
+        "p_periodomediapreco": 9.0,
+        "p_maxstopsconsecutivos": 3.0,
+        "p_cooldownminutos": 15.0,
+        "p_limiteperdadia": 300.0,
+        "p_horarioinicio": 915.0,
+        "p_horariofimentradas": 1700.0,
+        "p_horariozeragem": 1730.0
+      },
+      "modo_ohlc_original": {
+        "p_alvopontos": 200.0,
+        "p_stoppontos": 150.0,
+        "p_offsetstop": 20.0,
+        "p_lote": 1.0,
+        "p_segundosporbarra": 5.0,
+        "p_tempomaxsegundos": 90.0,
+        "p_minbarrasantesexaustao": 1.0,
+        "p_minvelocidade": 2.0,
+        "p_minaceleracao": 0.2,
+        "p_minforcacontratos": 10.0,
+        "p_razaodesbalanco": 1.0,
+        "p_mintradesbarra": 5.0,
+        "p_periodomediapreco": 9.0,
+        "p_maxstopsconsecutivos": 3.0,
+        "p_cooldownminutos": 15.0,
+        "p_limiteperdadia": 300.0,
+        "p_horarioinicio": 915.0,
+        "p_horariofimentradas": 1700.0,
+        "p_horariozeragem": 1730.0
+      },
+      "perfil_publicado": {
+        "p_alvopontos": 200.0,
+        "p_stoppontos": 150.0,
+        "p_offsetstop": 20.0,
+        "p_lote": 2,
+        "p_segundosporbarra": 5.0,
+        "p_tempomaxsegundos": 90.0,
+        "p_minbarrasantesexaustao": 1.0,
+        "p_minvelocidade": 2.0,
+        "p_minaceleracao": 0.2,
+        "p_minforcacontratos": 10.0,
+        "p_razaodesbalanco": 1.0,
+        "p_mintradesbarra": 5.0,
+        "p_periodomediapreco": 9.0,
+        "p_maxstopsconsecutivos": 3.0,
+        "p_cooldownminutos": 15.0,
+        "p_limiteperdadia": 300.0,
+        "p_horarioinicio": 915.0,
+        "p_horariofimentradas": 1700.0,
+        "p_horariozeragem": 1730.0
+      },
+      "busca": {
+        "p_alvopontos": {
+          "valores": [
+            20,
+            35,
+            50,
+            100,
+            150,
+            200
+          ]
+        },
+        "p_cooldownminutos": {
+          "valores": [
+            5,
+            10,
+            15
+          ]
+        },
+        "p_horarioinicio": {
+          "valores": [
+            915,
+            945,
+            1015
+          ]
+        },
+        "p_lote": {
+          "valores": [
+            2
+          ]
+        },
+        "p_minaceleracao": {
+          "valores": [
+            0.2,
+            0.5,
+            1,
+            5
+          ]
+        },
+        "p_minforcacontratos": {
+          "valores": [
+            5,
+            10,
+            25,
+            50
+          ]
+        },
+        "p_mintradesbarra": {
+          "valores": [
+            1,
+            3,
+            5,
+            10
+          ]
+        },
+        "p_minvelocidade": {
+          "valores": [
+            1,
+            2,
+            5,
+            10
+          ]
+        },
+        "p_offsetstop": {
+          "valores": [
+            5,
+            10,
+            20,
+            50
+          ]
+        },
+        "p_periodomediapreco": {
+          "valores": [
+            5,
+            9,
+            15
+          ]
+        },
+        "p_razaodesbalanco": {
+          "valores": [
+            1.0,
+            1.15,
+            1.5,
+            2.5
+          ]
+        },
+        "p_stoppontos": {
+          "valores": [
+            15,
+            25,
+            40,
+            75,
+            150
+          ]
+        },
+        "p_tempomaxsegundos": {
+          "valores": [
+            15,
+            25,
+            45,
+            90
+          ]
+        }
+      }
+    },
+    {
+      "id": "pr2:estrategias/execucao/modelo_scalper_v2_3.ntsl",
+      "local": "github",
+      "commit": "d2429a4549b497fcdbdb0cfef04e02c01d6be997",
+      "arquivo": "estrategias/execucao/modelo_scalper_v2_3.ntsl",
+      "versao": "2.3",
+      "sha256": "863fab842bdff2ff2a207c53e3874cf34a52aa5f41c597dd5b5da44a5b74fd15",
+      "sha256_texto_lf": "863fab842bdff2ff2a207c53e3874cf34a52aa5f41c597dd5b5da44a5b74fd15",
+      "bytes": 8595,
+      "tipo": "estrategia",
+      "compilador": "aceito",
+      "inputs": {
+        "p_alvopontos": 200.0,
+        "p_stoppontos": 150.0,
+        "p_offsetstop": 20.0,
+        "p_lote": 1.0,
+        "p_segundosporbarra": 5.0,
+        "p_tempomaxsegundos": 90.0,
+        "p_minbarrasantesexaustao": 3.0,
+        "p_aceleracaosaida": 0.8,
+        "p_razaofluxosaida": 1.2,
+        "p_minvelocidade": 2.0,
+        "p_minaceleracao": 0.2,
+        "p_minforcacontratos": 10.0,
+        "p_razaodesbalanco": 1.15,
+        "p_mintradesbarra": 5.0,
+        "p_periodomediapreco": 9.0,
+        "p_maxstopsconsecutivos": 3.0,
+        "p_cooldownminutos": 15.0,
+        "p_cooldownentreentradasbarras": 12.0,
+        "p_maxoperacoesdia": 30.0,
+        "p_limiteperdadia": 300.0,
+        "p_horarioinicio": 915.0,
+        "p_horariofimentradas": 1700.0,
+        "p_horariozeragem": 1730.0
+      },
+      "usados": [
+        "p_aceleracaosaida",
+        "p_alvopontos",
+        "p_cooldownentreentradasbarras",
+        "p_cooldownminutos",
+        "p_horariofimentradas",
+        "p_horarioinicio",
+        "p_horariozeragem",
+        "p_limiteperdadia",
+        "p_lote",
+        "p_maxoperacoesdia",
+        "p_maxstopsconsecutivos",
+        "p_minaceleracao",
+        "p_minbarrasantesexaustao",
+        "p_minforcacontratos",
+        "p_mintradesbarra",
+        "p_minvelocidade",
+        "p_offsetstop",
+        "p_periodomediapreco",
+        "p_razaodesbalanco",
+        "p_razaofluxosaida",
+        "p_segundosporbarra",
+        "p_stoppontos",
+        "p_tempomaxsegundos"
+      ],
+      "dependencias": [
+        "agressionvolbuy",
+        "agressionvolsell",
+        "trades"
+      ],
+      "grupo": "win_5s_2c",
+      "status": "apta",
+      "ranking_original": {
+        "p_alvopontos": 200.0,
+        "p_stoppontos": 150.0,
+        "p_offsetstop": 20.0,
+        "p_lote": 2,
+        "p_segundosporbarra": 5.0,
+        "p_tempomaxsegundos": 90.0,
+        "p_minbarrasantesexaustao": 3.0,
+        "p_aceleracaosaida": 0.8,
+        "p_razaofluxosaida": 1.2,
+        "p_minvelocidade": 2.0,
+        "p_minaceleracao": 0.2,
+        "p_minforcacontratos": 10.0,
+        "p_razaodesbalanco": 1.15,
+        "p_mintradesbarra": 5.0,
+        "p_periodomediapreco": 9.0,
+        "p_maxstopsconsecutivos": 3.0,
+        "p_cooldownminutos": 15.0,
+        "p_cooldownentreentradasbarras": 12.0,
+        "p_maxoperacoesdia": 30.0,
+        "p_limiteperdadia": 300.0,
+        "p_horarioinicio": 915.0,
+        "p_horariofimentradas": 1700.0,
+        "p_horariozeragem": 1730.0
+      },
+      "modo_ohlc_original": {
+        "p_alvopontos": 200.0,
+        "p_stoppontos": 150.0,
+        "p_offsetstop": 20.0,
+        "p_lote": 1.0,
+        "p_segundosporbarra": 5.0,
+        "p_tempomaxsegundos": 90.0,
+        "p_minbarrasantesexaustao": 3.0,
+        "p_aceleracaosaida": 0.8,
+        "p_razaofluxosaida": 1.2,
+        "p_minvelocidade": 2.0,
+        "p_minaceleracao": 0.2,
+        "p_minforcacontratos": 10.0,
+        "p_razaodesbalanco": 1.15,
+        "p_mintradesbarra": 5.0,
+        "p_periodomediapreco": 9.0,
+        "p_maxstopsconsecutivos": 3.0,
+        "p_cooldownminutos": 15.0,
+        "p_cooldownentreentradasbarras": 12.0,
+        "p_maxoperacoesdia": 30.0,
+        "p_limiteperdadia": 300.0,
+        "p_horarioinicio": 915.0,
+        "p_horariofimentradas": 1700.0,
+        "p_horariozeragem": 1730.0
+      },
+      "perfil_publicado": {
+        "p_alvopontos": 200.0,
+        "p_stoppontos": 150.0,
+        "p_offsetstop": 20.0,
+        "p_lote": 2,
+        "p_segundosporbarra": 5.0,
+        "p_tempomaxsegundos": 90.0,
+        "p_minbarrasantesexaustao": 3.0,
+        "p_aceleracaosaida": 0.8,
+        "p_razaofluxosaida": 1.2,
+        "p_minvelocidade": 2.0,
+        "p_minaceleracao": 0.2,
+        "p_minforcacontratos": 10.0,
+        "p_razaodesbalanco": 1.15,
+        "p_mintradesbarra": 5.0,
+        "p_periodomediapreco": 9.0,
+        "p_maxstopsconsecutivos": 3.0,
+        "p_cooldownminutos": 15.0,
+        "p_cooldownentreentradasbarras": 12.0,
+        "p_maxoperacoesdia": 30.0,
+        "p_limiteperdadia": 300.0,
+        "p_horarioinicio": 915.0,
+        "p_horariofimentradas": 1700.0,
+        "p_horariozeragem": 1730.0
+      },
+      "busca": {
+        "p_alvopontos": {
+          "valores": [
+            20,
+            35,
+            50,
+            100,
+            150,
+            200
+          ]
+        },
+        "p_cooldownminutos": {
+          "valores": [
+            5,
+            10,
+            15
+          ]
+        },
+        "p_horarioinicio": {
+          "valores": [
+            915,
+            945,
+            1015
+          ]
+        },
+        "p_lote": {
+          "valores": [
+            2
+          ]
+        },
+        "p_minaceleracao": {
+          "valores": [
+            0.2,
+            0.5,
+            1,
+            5
+          ]
+        },
+        "p_minforcacontratos": {
+          "valores": [
+            5,
+            10,
+            25,
+            50
+          ]
+        },
+        "p_mintradesbarra": {
+          "valores": [
+            1,
+            3,
+            5,
+            10
+          ]
+        },
+        "p_minvelocidade": {
+          "valores": [
+            1,
+            2,
+            5,
+            10
+          ]
+        },
+        "p_offsetstop": {
+          "valores": [
+            5,
+            10,
+            20,
+            50
+          ]
+        },
+        "p_periodomediapreco": {
+          "valores": [
+            5,
+            9,
+            15
+          ]
+        },
+        "p_razaodesbalanco": {
+          "valores": [
+            1.0,
+            1.15,
+            1.5,
+            2.5
+          ]
+        },
+        "p_stoppontos": {
+          "valores": [
+            15,
+            25,
+            40,
+            75,
+            150
+          ]
+        },
+        "p_tempomaxsegundos": {
+          "valores": [
+            15,
+            25,
+            45,
+            90
+          ]
+        }
+      }
+    },
+    {
+      "id": "pesquisa:docs/colaboracao/evidencias/estrategia_pullback_20_pregoes_v1/pullback_tendencia_v1_2.ntsl",
+      "local": "github",
+      "commit": "3e2720016e83436c7a648eac51f134de4e68393a",
+      "arquivo": "docs/colaboracao/evidencias/estrategia_pullback_20_pregoes_v1/pullback_tendencia_v1_2.ntsl",
+      "versao": "1.2",
+      "sha256": "6175f537d2535fd90da95643dc30cae865d603e8bd672e22865ce5e19586318f",
+      "sha256_texto_lf": "6175f537d2535fd90da95643dc30cae865d603e8bd672e22865ce5e19586318f",
+      "bytes": 3017,
+      "tipo": "estrategia",
+      "compilador": "aceito",
+      "inputs": {
+        "p_rapida": 9.0,
+        "p_lenta": 34.0,
+        "p_alvo": 200.0,
+        "p_stop": 150.0,
+        "p_folgastop": 50.0,
+        "p_tempomax": 30.0,
+        "p_maxentradasdia": 4.0,
+        "p_espera": 3.0,
+        "p_perdamaxdia": 150.0,
+        "p_horainicio": 930.0,
+        "p_horafimentradas": 1700.0,
+        "p_horazeragem": 1745.0
+      },
+      "usados": [
+        "p_alvo",
+        "p_espera",
+        "p_folgastop",
+        "p_horafimentradas",
+        "p_horainicio",
+        "p_horazeragem",
+        "p_lenta",
+        "p_maxentradasdia",
+        "p_perdamaxdia",
+        "p_rapida",
+        "p_stop",
+        "p_tempomax"
+      ],
+      "dependencias": [],
+      "grupo": "win_60s_1c",
+      "status": "apta",
+      "ranking_original": {
+        "p_rapida": 9.0,
+        "p_lenta": 34.0,
+        "p_alvo": 200.0,
+        "p_stop": 150.0,
+        "p_folgastop": 50.0,
+        "p_tempomax": 30.0,
+        "p_maxentradasdia": 4.0,
+        "p_espera": 3.0,
+        "p_perdamaxdia": 150.0,
+        "p_horainicio": 930.0,
+        "p_horafimentradas": 1700.0,
+        "p_horazeragem": 1745.0
+      },
+      "modo_ohlc_original": {
+        "p_rapida": 9.0,
+        "p_lenta": 34.0,
+        "p_alvo": 200.0,
+        "p_stop": 150.0,
+        "p_folgastop": 50.0,
+        "p_tempomax": 30.0,
+        "p_maxentradasdia": 4.0,
+        "p_espera": 3.0,
+        "p_perdamaxdia": 150.0,
+        "p_horainicio": 930.0,
+        "p_horafimentradas": 1700.0,
+        "p_horazeragem": 1745.0
+      },
+      "perfil_publicado": {
+        "p_rapida": 20,
+        "p_lenta": 21,
+        "p_alvo": 200,
+        "p_stop": 300,
+        "p_folgastop": 50.0,
+        "p_tempomax": 15,
+        "p_maxentradasdia": 2,
+        "p_espera": 3,
+        "p_perdamaxdia": 150.0,
+        "p_horainicio": 1000,
+        "p_horafimentradas": 1700.0,
+        "p_horazeragem": 1745.0
+      },
+      "busca": {
+        "p_alvo": {
+          "valores": [
+            60,
+            100,
+            150,
+            200,
+            250
+          ]
+        },
+        "p_espera": {
+          "valores": [
+            1,
+            3,
+            5
+          ]
+        },
+        "p_folgastop": {
+          "valores": [
+            25,
+            50,
+            100
+          ]
+        },
+        "p_horafimentradas": {
+          "valores": [
+            1530,
+            1630,
+            1700
+          ]
+        },
+        "p_horainicio": {
+          "valores": [
+            930,
+            1000,
+            1030
+          ]
+        },
+        "p_lenta": {
+          "valores": [
+            21,
+            27,
+            34,
+            48
+          ]
+        },
+        "p_maxentradasdia": {
+          "valores": [
+            2,
+            4,
+            8,
+            12,
+            24
+          ]
+        },
+        "p_rapida": {
+          "valores": [
+            5,
+            9,
+            15,
+            20
+          ]
+        },
+        "p_stop": {
+          "valores": [
+            75,
+            110,
+            150,
+            200,
+            300
+          ]
+        },
+        "p_tempomax": {
+          "valores": [
+            5,
+            10,
+            15,
+            30
+          ]
+        }
+      }
+    },
+    {
+      "id": "pesquisa:docs/colaboracao/evidencias/estrategia_pullback_20_pregoes_v1/pullback_tendencia_v1_3.ntsl",
+      "local": "github",
+      "commit": "3e2720016e83436c7a648eac51f134de4e68393a",
+      "arquivo": "docs/colaboracao/evidencias/estrategia_pullback_20_pregoes_v1/pullback_tendencia_v1_3.ntsl",
+      "versao": "1.3",
+      "sha256": "adfeb4c3a2075d0eea4df98a4bee8dfc4c1626942945f214cab2583f276ed016",
+      "sha256_texto_lf": "adfeb4c3a2075d0eea4df98a4bee8dfc4c1626942945f214cab2583f276ed016",
+      "bytes": 3002,
+      "tipo": "estrategia",
+      "compilador": "aceito",
+      "inputs": {
+        "p_rapida": 9.0,
+        "p_lenta": 34.0,
+        "p_alvo": 200.0,
+        "p_stop": 150.0,
+        "p_folgastop": 50.0,
+        "p_tempomax": 30.0,
+        "p_maxentradasdia": 4.0,
+        "p_espera": 3.0,
+        "p_perdamaxdia": 150.0,
+        "p_horainicio": 930.0,
+        "p_horafimentradas": 1700.0,
+        "p_horazeragem": 1745.0
+      },
+      "usados": [
+        "p_alvo",
+        "p_espera",
+        "p_folgastop",
+        "p_horafimentradas",
+        "p_horainicio",
+        "p_horazeragem",
+        "p_lenta",
+        "p_maxentradasdia",
+        "p_perdamaxdia",
+        "p_rapida",
+        "p_stop",
+        "p_tempomax"
+      ],
+      "dependencias": [],
+      "grupo": "win_60s_1c",
+      "status": "apta",
+      "ranking_original": {
+        "p_rapida": 9.0,
+        "p_lenta": 34.0,
+        "p_alvo": 200.0,
+        "p_stop": 150.0,
+        "p_folgastop": 50.0,
+        "p_tempomax": 30.0,
+        "p_maxentradasdia": 4.0,
+        "p_espera": 3.0,
+        "p_perdamaxdia": 150.0,
+        "p_horainicio": 930.0,
+        "p_horafimentradas": 1700.0,
+        "p_horazeragem": 1745.0
+      },
+      "modo_ohlc_original": {
+        "p_rapida": 9.0,
+        "p_lenta": 34.0,
+        "p_alvo": 200.0,
+        "p_stop": 150.0,
+        "p_folgastop": 50.0,
+        "p_tempomax": 30.0,
+        "p_maxentradasdia": 4.0,
+        "p_espera": 3.0,
+        "p_perdamaxdia": 150.0,
+        "p_horainicio": 930.0,
+        "p_horafimentradas": 1700.0,
+        "p_horazeragem": 1745.0
+      },
+      "perfil_publicado": {
+        "p_rapida": 20,
+        "p_lenta": 21,
+        "p_alvo": 200,
+        "p_stop": 75,
+        "p_folgastop": 50.0,
+        "p_tempomax": 5,
+        "p_maxentradasdia": 12,
+        "p_espera": 1,
+        "p_perdamaxdia": 150.0,
+        "p_horainicio": 1000,
+        "p_horafimentradas": 1700.0,
+        "p_horazeragem": 1745.0
+      },
+      "busca": {
+        "p_alvo": {
+          "valores": [
+            60,
+            100,
+            150,
+            200,
+            250
+          ]
+        },
+        "p_espera": {
+          "valores": [
+            1,
+            3,
+            5
+          ]
+        },
+        "p_folgastop": {
+          "valores": [
+            25,
+            50,
+            100
+          ]
+        },
+        "p_horafimentradas": {
+          "valores": [
+            1530,
+            1630,
+            1700
+          ]
+        },
+        "p_horainicio": {
+          "valores": [
+            930,
+            1000,
+            1030
+          ]
+        },
+        "p_lenta": {
+          "valores": [
+            21,
+            27,
+            34,
+            48
+          ]
+        },
+        "p_maxentradasdia": {
+          "valores": [
+            4,
+            8,
+            12,
+            24
+          ]
+        },
+        "p_rapida": {
+          "valores": [
+            5,
+            9,
+            15,
+            20
+          ]
+        },
+        "p_stop": {
+          "valores": [
+            75,
+            110,
+            150,
+            200,
+            300
+          ]
+        },
+        "p_tempomax": {
+          "valores": [
+            5,
+            10,
+            15,
+            30
+          ]
+        }
+      }
+    },
+    {
+      "id": "pesquisa:docs/colaboracao/evidencias/estrategia_pullback_adaptativo_v1/pullback_tendencia_v1_5.ntsl",
+      "local": "github",
+      "commit": "3e2720016e83436c7a648eac51f134de4e68393a",
+      "arquivo": "docs/colaboracao/evidencias/estrategia_pullback_adaptativo_v1/pullback_tendencia_v1_5.ntsl",
+      "versao": "1.5",
+      "sha256": "d3cd8b81f73e750c6f340802e859244ed0c8a78a9745ac5f73f9eb4ae7c03906",
+      "sha256_texto_lf": "d3cd8b81f73e750c6f340802e859244ed0c8a78a9745ac5f73f9eb4ae7c03906",
+      "bytes": 4050,
+      "tipo": "estrategia",
+      "compilador": "aceito",
+      "inputs": {
+        "p_rapida": 9.0,
+        "p_lenta": 34.0,
+        "p_alvo": 150.0,
+        "p_usaralvodinamico": 1.0,
+        "p_janelaamplitude": 10.0,
+        "p_fatoramplitude": 1.0,
+        "p_alvomin": 50.0,
+        "p_alvomax": 220.0,
+        "p_rompimento": 1.0,
+        "p_stop": 75.0,
+        "p_fatorstop": 0.65,
+        "p_folgastop": 50.0,
+        "p_tempomax": 30.0,
+        "p_maxentradasdia": 4.0,
+        "p_espera": 3.0,
+        "p_perdamaxdia": 150.0,
+        "p_horainicio": 930.0,
+        "p_horafimentradas": 1700.0,
+        "p_horazeragem": 1745.0
+      },
+      "usados": [
+        "p_alvo",
+        "p_alvomax",
+        "p_alvomin",
+        "p_espera",
+        "p_fatoramplitude",
+        "p_fatorstop",
+        "p_folgastop",
+        "p_horafimentradas",
+        "p_horainicio",
+        "p_horazeragem",
+        "p_janelaamplitude",
+        "p_lenta",
+        "p_maxentradasdia",
+        "p_perdamaxdia",
+        "p_rapida",
+        "p_rompimento",
+        "p_stop",
+        "p_tempomax",
+        "p_usaralvodinamico"
+      ],
+      "dependencias": [],
+      "grupo": "win_60s_2c",
+      "status": "apta",
+      "ranking_original": {
+        "p_rapida": 9.0,
+        "p_lenta": 34.0,
+        "p_alvo": 150.0,
+        "p_usaralvodinamico": 1.0,
+        "p_janelaamplitude": 10.0,
+        "p_fatoramplitude": 1.0,
+        "p_alvomin": 50.0,
+        "p_alvomax": 220.0,
+        "p_rompimento": 1.0,
+        "p_stop": 75.0,
+        "p_fatorstop": 0.65,
+        "p_folgastop": 50.0,
+        "p_tempomax": 30.0,
+        "p_maxentradasdia": 4.0,
+        "p_espera": 3.0,
+        "p_perdamaxdia": 150.0,
+        "p_horainicio": 930.0,
+        "p_horafimentradas": 1700.0,
+        "p_horazeragem": 1745.0
+      },
+      "modo_ohlc_original": {
+        "p_rapida": 9.0,
+        "p_lenta": 34.0,
+        "p_alvo": 150.0,
+        "p_usaralvodinamico": 1.0,
+        "p_janelaamplitude": 10.0,
+        "p_fatoramplitude": 1.0,
+        "p_alvomin": 50.0,
+        "p_alvomax": 220.0,
+        "p_rompimento": 1.0,
+        "p_stop": 75.0,
+        "p_fatorstop": 0.65,
+        "p_folgastop": 50.0,
+        "p_tempomax": 30.0,
+        "p_maxentradasdia": 4.0,
+        "p_espera": 3.0,
+        "p_perdamaxdia": 150.0,
+        "p_horainicio": 930.0,
+        "p_horafimentradas": 1700.0,
+        "p_horazeragem": 1745.0
+      },
+      "perfil_publicado": {
+        "p_rapida": 20,
+        "p_lenta": 21,
+        "p_alvo": 200,
+        "p_usaralvodinamico": 1,
+        "p_janelaamplitude": 5,
+        "p_fatoramplitude": 1.6,
+        "p_alvomin": 50,
+        "p_alvomax": 220,
+        "p_rompimento": 1,
+        "p_stop": 110,
+        "p_fatorstop": 0.8,
+        "p_folgastop": 50,
+        "p_tempomax": 5,
+        "p_maxentradasdia": 24,
+        "p_espera": 1,
+        "p_perdamaxdia": 150,
+        "p_horainicio": 1000,
+        "p_horafimentradas": 1700,
+        "p_horazeragem": 1745
+      },
+      "busca": {
+        "p_alvo": {
+          "valores": [
+            60,
+            100,
+            150,
+            200,
+            250
+          ]
+        },
+        "p_espera": {
+          "valores": [
+            1,
+            3,
+            5
+          ]
+        },
+        "p_fatoramplitude": {
+          "valores": [
+            0.8,
+            1.0,
+            1.2,
+            1.6
+          ]
+        },
+        "p_fatorstop": {
+          "valores": [
+            0.55,
+            0.65,
+            0.8
+          ]
+        },
+        "p_folgastop": {
+          "valores": [
+            25,
+            50,
+            100
+          ]
+        },
+        "p_horafimentradas": {
+          "valores": [
+            1530,
+            1630,
+            1700
+          ]
+        },
+        "p_horainicio": {
+          "valores": [
+            930,
+            1000,
+            1030
+          ]
+        },
+        "p_janelaamplitude": {
+          "valores": [
+            5,
+            10,
+            15
+          ]
+        },
+        "p_lenta": {
+          "valores": [
+            21,
+            27,
+            34,
+            48
+          ]
+        },
+        "p_maxentradasdia": {
+          "valores": [
+            4,
+            8,
+            12,
+            24
+          ]
+        },
+        "p_rapida": {
+          "valores": [
+            5,
+            9,
+            15,
+            20
+          ]
+        },
+        "p_rompimento": {
+          "valores": [
+            0,
+            1
+          ]
+        },
+        "p_stop": {
+          "valores": [
+            75,
+            110,
+            150,
+            200,
+            300
+          ]
+        },
+        "p_tempomax": {
+          "valores": [
+            5,
+            10,
+            15,
+            30
+          ]
+        },
+        "p_usaralvodinamico": {
+          "valores": [
+            0,
+            1
+          ]
+        }
+      }
+    },
+    {
+      "id": "pesquisa:docs/colaboracao/evidencias/estrategia_pullback_adaptativo_v1/pullback_tendencia_v1_6.ntsl",
+      "local": "github",
+      "commit": "3e2720016e83436c7a648eac51f134de4e68393a",
+      "arquivo": "docs/colaboracao/evidencias/estrategia_pullback_adaptativo_v1/pullback_tendencia_v1_6.ntsl",
+      "versao": "1.6",
+      "sha256": "7686633b5649d011dd7e572377291bda8aceb9094ba6d0218d88c9e346b75db9",
+      "sha256_texto_lf": "7686633b5649d011dd7e572377291bda8aceb9094ba6d0218d88c9e346b75db9",
+      "bytes": 4143,
+      "tipo": "estrategia",
+      "compilador": "aceito",
+      "inputs": {
+        "p_rapida": 9.0,
+        "p_lenta": 34.0,
+        "p_alvo": 150.0,
+        "p_usaralvodinamico": 1.0,
+        "p_janelaamplitude": 10.0,
+        "p_fatoramplitude": 1.0,
+        "p_alvomin": 50.0,
+        "p_alvomax": 220.0,
+        "p_rompimento": 1.0,
+        "p_stop": 75.0,
+        "p_fatorstop": 0.65,
+        "p_separacao": 0.1,
+        "p_folgastop": 50.0,
+        "p_tempomax": 30.0,
+        "p_maxentradasdia": 4.0,
+        "p_espera": 3.0,
+        "p_perdamaxdia": 150.0,
+        "p_horainicio": 930.0,
+        "p_horafimentradas": 1700.0,
+        "p_horazeragem": 1745.0
+      },
+      "usados": [
+        "p_alvo",
+        "p_alvomax",
+        "p_alvomin",
+        "p_espera",
+        "p_fatoramplitude",
+        "p_fatorstop",
+        "p_folgastop",
+        "p_horafimentradas",
+        "p_horainicio",
+        "p_horazeragem",
+        "p_janelaamplitude",
+        "p_lenta",
+        "p_maxentradasdia",
+        "p_perdamaxdia",
+        "p_rapida",
+        "p_rompimento",
+        "p_separacao",
+        "p_stop",
+        "p_tempomax",
+        "p_usaralvodinamico"
+      ],
+      "dependencias": [],
+      "grupo": "win_60s_2c",
+      "status": "apta",
+      "ranking_original": {
+        "p_rapida": 9.0,
+        "p_lenta": 34.0,
+        "p_alvo": 150.0,
+        "p_usaralvodinamico": 1.0,
+        "p_janelaamplitude": 10.0,
+        "p_fatoramplitude": 1.0,
+        "p_alvomin": 50.0,
+        "p_alvomax": 220.0,
+        "p_rompimento": 1.0,
+        "p_stop": 75.0,
+        "p_fatorstop": 0.65,
+        "p_separacao": 0.1,
+        "p_folgastop": 50.0,
+        "p_tempomax": 30.0,
+        "p_maxentradasdia": 4.0,
+        "p_espera": 3.0,
+        "p_perdamaxdia": 150.0,
+        "p_horainicio": 930.0,
+        "p_horafimentradas": 1700.0,
+        "p_horazeragem": 1745.0
+      },
+      "modo_ohlc_original": {
+        "p_rapida": 9.0,
+        "p_lenta": 34.0,
+        "p_alvo": 150.0,
+        "p_usaralvodinamico": 1.0,
+        "p_janelaamplitude": 10.0,
+        "p_fatoramplitude": 1.0,
+        "p_alvomin": 50.0,
+        "p_alvomax": 220.0,
+        "p_rompimento": 1.0,
+        "p_stop": 75.0,
+        "p_fatorstop": 0.65,
+        "p_separacao": 0.1,
+        "p_folgastop": 50.0,
+        "p_tempomax": 30.0,
+        "p_maxentradasdia": 4.0,
+        "p_espera": 3.0,
+        "p_perdamaxdia": 150.0,
+        "p_horainicio": 930.0,
+        "p_horafimentradas": 1700.0,
+        "p_horazeragem": 1745.0
+      },
+      "perfil_publicado": {
+        "p_rapida": 20,
+        "p_lenta": 21,
+        "p_alvo": 200,
+        "p_usaralvodinamico": 1.0,
+        "p_janelaamplitude": 5,
+        "p_fatoramplitude": 1.6,
+        "p_alvomin": 50.0,
+        "p_alvomax": 220.0,
+        "p_rompimento": 1.0,
+        "p_stop": 110,
+        "p_fatorstop": 0.55,
+        "p_separacao": 0.1,
+        "p_folgastop": 50.0,
+        "p_tempomax": 5,
+        "p_maxentradasdia": 24,
+        "p_espera": 1,
+        "p_perdamaxdia": 150.0,
+        "p_horainicio": 1000,
+        "p_horafimentradas": 1700.0,
+        "p_horazeragem": 1745.0
+      },
+      "busca": {
+        "p_alvo": {
+          "valores": [
+            60,
+            100,
+            150,
+            200,
+            250
+          ]
+        },
+        "p_espera": {
+          "valores": [
+            1,
+            3,
+            5
+          ]
+        },
+        "p_fatoramplitude": {
+          "valores": [
+            0.8,
+            1.0,
+            1.2,
+            1.6
+          ]
+        },
+        "p_fatorstop": {
+          "valores": [
+            0.55,
+            0.65,
+            0.8
+          ]
+        },
+        "p_folgastop": {
+          "valores": [
+            25,
+            50,
+            100
+          ]
+        },
+        "p_horafimentradas": {
+          "valores": [
+            1530,
+            1630,
+            1700
+          ]
+        },
+        "p_horainicio": {
+          "valores": [
+            930,
+            1000,
+            1030
+          ]
+        },
+        "p_janelaamplitude": {
+          "valores": [
+            5,
+            10,
+            15
+          ]
+        },
+        "p_lenta": {
+          "valores": [
+            21,
+            27,
+            34,
+            48
+          ]
+        },
+        "p_maxentradasdia": {
+          "valores": [
+            4,
+            8,
+            12,
+            24
+          ]
+        },
+        "p_rapida": {
+          "valores": [
+            5,
+            9,
+            15,
+            20
+          ]
+        },
+        "p_rompimento": {
+          "valores": [
+            0,
+            1
+          ]
+        },
+        "p_separacao": {
+          "valores": [
+            0.05,
+            0.1,
+            0.2
+          ]
+        },
+        "p_stop": {
+          "valores": [
+            75,
+            110,
+            150,
+            200,
+            300
+          ]
+        },
+        "p_tempomax": {
+          "valores": [
+            5,
+            10,
+            15,
+            30
+          ]
+        },
+        "p_usaralvodinamico": {
+          "valores": [
+            0,
+            1
+          ]
+        }
+      }
+    },
+    {
+      "id": "pesquisa:docs/colaboracao/evidencias/estrategia_pullback_alvo_dinamico_v1/pullback_tendencia_v1_4.ntsl",
+      "local": "github",
+      "commit": "3e2720016e83436c7a648eac51f134de4e68393a",
+      "arquivo": "docs/colaboracao/evidencias/estrategia_pullback_alvo_dinamico_v1/pullback_tendencia_v1_4.ntsl",
+      "versao": "1.4",
+      "sha256": "1c064d2b38d006b9109ec8779d8b55951f772871d0c5e369630cf965e26106c2",
+      "sha256_texto_lf": "1c064d2b38d006b9109ec8779d8b55951f772871d0c5e369630cf965e26106c2",
+      "bytes": 3798,
+      "tipo": "estrategia",
+      "compilador": "aceito",
+      "inputs": {
+        "p_rapida": 9.0,
+        "p_lenta": 34.0,
+        "p_alvo": 150.0,
+        "p_usaralvodinamico": 1.0,
+        "p_janelaamplitude": 10.0,
+        "p_fatoramplitude": 1.0,
+        "p_alvomin": 50.0,
+        "p_alvomax": 220.0,
+        "p_rompimento": 1.0,
+        "p_stop": 150.0,
+        "p_folgastop": 50.0,
+        "p_tempomax": 30.0,
+        "p_maxentradasdia": 4.0,
+        "p_espera": 3.0,
+        "p_perdamaxdia": 150.0,
+        "p_horainicio": 930.0,
+        "p_horafimentradas": 1700.0,
+        "p_horazeragem": 1745.0
+      },
+      "usados": [
+        "p_alvo",
+        "p_alvomax",
+        "p_alvomin",
+        "p_espera",
+        "p_fatoramplitude",
+        "p_folgastop",
+        "p_horafimentradas",
+        "p_horainicio",
+        "p_horazeragem",
+        "p_janelaamplitude",
+        "p_lenta",
+        "p_maxentradasdia",
+        "p_perdamaxdia",
+        "p_rapida",
+        "p_rompimento",
+        "p_stop",
+        "p_tempomax",
+        "p_usaralvodinamico"
+      ],
+      "dependencias": [],
+      "grupo": "win_60s_2c",
+      "status": "apta",
+      "ranking_original": {
+        "p_rapida": 9.0,
+        "p_lenta": 34.0,
+        "p_alvo": 150.0,
+        "p_usaralvodinamico": 1.0,
+        "p_janelaamplitude": 10.0,
+        "p_fatoramplitude": 1.0,
+        "p_alvomin": 50.0,
+        "p_alvomax": 220.0,
+        "p_rompimento": 1.0,
+        "p_stop": 150.0,
+        "p_folgastop": 50.0,
+        "p_tempomax": 30.0,
+        "p_maxentradasdia": 4.0,
+        "p_espera": 3.0,
+        "p_perdamaxdia": 150.0,
+        "p_horainicio": 930.0,
+        "p_horafimentradas": 1700.0,
+        "p_horazeragem": 1745.0
+      },
+      "modo_ohlc_original": {
+        "p_rapida": 9.0,
+        "p_lenta": 34.0,
+        "p_alvo": 150.0,
+        "p_usaralvodinamico": 1.0,
+        "p_janelaamplitude": 10.0,
+        "p_fatoramplitude": 1.0,
+        "p_alvomin": 50.0,
+        "p_alvomax": 220.0,
+        "p_rompimento": 1.0,
+        "p_stop": 150.0,
+        "p_folgastop": 50.0,
+        "p_tempomax": 30.0,
+        "p_maxentradasdia": 4.0,
+        "p_espera": 3.0,
+        "p_perdamaxdia": 150.0,
+        "p_horainicio": 930.0,
+        "p_horafimentradas": 1700.0,
+        "p_horazeragem": 1745.0
+      },
+      "perfil_publicado": {
+        "p_rapida": 20,
+        "p_lenta": 21,
+        "p_alvo": 200,
+        "p_usaralvodinamico": 1.0,
+        "p_janelaamplitude": 5,
+        "p_fatoramplitude": 0.8,
+        "p_alvomin": 50.0,
+        "p_alvomax": 220.0,
+        "p_rompimento": 1,
+        "p_stop": 75,
+        "p_folgastop": 50.0,
+        "p_tempomax": 5,
+        "p_maxentradasdia": 24,
+        "p_espera": 1,
+        "p_perdamaxdia": 150.0,
+        "p_horainicio": 1000,
+        "p_horafimentradas": 1700.0,
+        "p_horazeragem": 1745.0
+      },
+      "busca": {
+        "p_alvo": {
+          "valores": [
+            60,
+            100,
+            150,
+            200,
+            250
+          ]
+        },
+        "p_espera": {
+          "valores": [
+            1,
+            3,
+            5
+          ]
+        },
+        "p_fatoramplitude": {
+          "valores": [
+            0.8,
+            1.0,
+            1.2,
+            1.6
+          ]
+        },
+        "p_folgastop": {
+          "valores": [
+            25,
+            50,
+            100
+          ]
+        },
+        "p_horafimentradas": {
+          "valores": [
+            1530,
+            1630,
+            1700
+          ]
+        },
+        "p_horainicio": {
+          "valores": [
+            930,
+            1000,
+            1030
+          ]
+        },
+        "p_janelaamplitude": {
+          "valores": [
+            5,
+            10,
+            15
+          ]
+        },
+        "p_lenta": {
+          "valores": [
+            21,
+            27,
+            34,
+            48
+          ]
+        },
+        "p_maxentradasdia": {
+          "valores": [
+            4,
+            8,
+            12,
+            24
+          ]
+        },
+        "p_rapida": {
+          "valores": [
+            5,
+            9,
+            15,
+            20
+          ]
+        },
+        "p_rompimento": {
+          "valores": [
+            0,
+            1
+          ]
+        },
+        "p_stop": {
+          "valores": [
+            75,
+            110,
+            150,
+            200,
+            300
+          ]
+        },
+        "p_tempomax": {
+          "valores": [
+            5,
+            10,
+            15,
+            30
+          ]
+        },
+        "p_usaralvodinamico": {
+          "valores": [
+            0,
+            1
+          ]
+        }
+      }
+    },
+    {
+      "id": "pesquisa:estrategias/execucao/pullback_tendencia_v1_7.ntsl",
+      "local": "github",
+      "commit": "3e2720016e83436c7a648eac51f134de4e68393a",
+      "arquivo": "estrategias/execucao/pullback_tendencia_v1_7.ntsl",
+      "versao": "1.7",
+      "sha256": "ec5904bce4b7f429287eff55f975c9c3598cf38bc65e8f50948c34f7c0726ba4",
+      "sha256_texto_lf": "ec5904bce4b7f429287eff55f975c9c3598cf38bc65e8f50948c34f7c0726ba4",
+      "bytes": 5781,
+      "tipo": "estrategia",
+      "compilador": "aceito",
+      "inputs": {
+        "p_rapida": 9.0,
+        "p_lenta": 34.0,
+        "p_alvo": 150.0,
+        "p_usaralvodinamico": 1.0,
+        "p_janelaamplitude": 10.0,
+        "p_fatoramplitude": 1.0,
+        "p_alvomin": 50.0,
+        "p_alvomax": 220.0,
+        "p_rompimento": 1.0,
+        "p_stop": 75.0,
+        "p_fatorstop": 0.65,
+        "p_folgastop": 50.0,
+        "p_tempomax": 30.0,
+        "p_maxentradasdia": 4.0,
+        "p_espera": 3.0,
+        "p_perdamaxdia": 150.0,
+        "p_horainicio": 930.0,
+        "p_horafimentradas": 1700.0,
+        "p_horazeragem": 1745.0,
+        "p_ativarsaidafalha": 0.0,
+        "p_janelafalha": 1.0,
+        "p_toleranciafalhaticks": 0.0
+      },
+      "usados": [
+        "p_alvo",
+        "p_alvomax",
+        "p_alvomin",
+        "p_ativarsaidafalha",
+        "p_espera",
+        "p_fatoramplitude",
+        "p_fatorstop",
+        "p_folgastop",
+        "p_horafimentradas",
+        "p_horainicio",
+        "p_horazeragem",
+        "p_janelaamplitude",
+        "p_janelafalha",
+        "p_lenta",
+        "p_maxentradasdia",
+        "p_perdamaxdia",
+        "p_rapida",
+        "p_rompimento",
+        "p_stop",
+        "p_tempomax",
+        "p_toleranciafalhaticks",
+        "p_usaralvodinamico"
+      ],
+      "dependencias": [],
+      "grupo": "win_60s_2c",
+      "status": "apta",
+      "ranking_original": {
+        "p_rapida": 9.0,
+        "p_lenta": 34.0,
+        "p_alvo": 150.0,
+        "p_usaralvodinamico": 1.0,
+        "p_janelaamplitude": 10.0,
+        "p_fatoramplitude": 1.0,
+        "p_alvomin": 50.0,
+        "p_alvomax": 220.0,
+        "p_rompimento": 1.0,
+        "p_stop": 75.0,
+        "p_fatorstop": 0.65,
+        "p_folgastop": 50.0,
+        "p_tempomax": 30.0,
+        "p_maxentradasdia": 4.0,
+        "p_espera": 3.0,
+        "p_perdamaxdia": 150.0,
+        "p_horainicio": 930.0,
+        "p_horafimentradas": 1700.0,
+        "p_horazeragem": 1745.0,
+        "p_ativarsaidafalha": 0.0,
+        "p_janelafalha": 1.0,
+        "p_toleranciafalhaticks": 0.0
+      },
+      "modo_ohlc_original": {
+        "p_rapida": 9.0,
+        "p_lenta": 34.0,
+        "p_alvo": 150.0,
+        "p_usaralvodinamico": 1.0,
+        "p_janelaamplitude": 10.0,
+        "p_fatoramplitude": 1.0,
+        "p_alvomin": 50.0,
+        "p_alvomax": 220.0,
+        "p_rompimento": 1.0,
+        "p_stop": 75.0,
+        "p_fatorstop": 0.65,
+        "p_folgastop": 50.0,
+        "p_tempomax": 30.0,
+        "p_maxentradasdia": 4.0,
+        "p_espera": 3.0,
+        "p_perdamaxdia": 150.0,
+        "p_horainicio": 930.0,
+        "p_horafimentradas": 1700.0,
+        "p_horazeragem": 1745.0,
+        "p_ativarsaidafalha": 0.0,
+        "p_janelafalha": 1.0,
+        "p_toleranciafalhaticks": 0.0
+      },
+      "perfil_publicado": {
+        "p_rapida": 20,
+        "p_lenta": 21,
+        "p_alvo": 200,
+        "p_usaralvodinamico": 1,
+        "p_janelaamplitude": 5,
+        "p_fatoramplitude": 1.6,
+        "p_alvomin": 50,
+        "p_alvomax": 220,
+        "p_rompimento": 1,
+        "p_stop": 110,
+        "p_fatorstop": 0.8,
+        "p_folgastop": 50,
+        "p_tempomax": 5,
+        "p_maxentradasdia": 24,
+        "p_espera": 1,
+        "p_perdamaxdia": 150,
+        "p_horainicio": 1000,
+        "p_horafimentradas": 1700,
+        "p_horazeragem": 1745,
+        "p_ativarsaidafalha": 0,
+        "p_janelafalha": 1.0,
+        "p_toleranciafalhaticks": 0.0
+      },
+      "busca": {
+        "p_alvo": {
+          "valores": [
+            60,
+            100,
+            150,
+            200,
+            250
+          ]
+        },
+        "p_ativarsaidafalha": {
+          "valores": [
+            0
+          ]
+        },
+        "p_espera": {
+          "valores": [
+            1,
+            3,
+            5
+          ]
+        },
+        "p_fatoramplitude": {
+          "valores": [
+            0.8,
+            1.0,
+            1.2,
+            1.6
+          ]
+        },
+        "p_fatorstop": {
+          "valores": [
+            0.55,
+            0.65,
+            0.8
+          ]
+        },
+        "p_folgastop": {
+          "valores": [
+            25,
+            50,
+            100
+          ]
+        },
+        "p_horafimentradas": {
+          "valores": [
+            1530,
+            1630,
+            1700
+          ]
+        },
+        "p_horainicio": {
+          "valores": [
+            930,
+            1000,
+            1030
+          ]
+        },
+        "p_janelaamplitude": {
+          "valores": [
+            5,
+            10,
+            15
+          ]
+        },
+        "p_lenta": {
+          "valores": [
+            21,
+            27,
+            34,
+            48
+          ]
+        },
+        "p_maxentradasdia": {
+          "valores": [
+            4,
+            8,
+            12,
+            24
+          ]
+        },
+        "p_rapida": {
+          "valores": [
+            5,
+            9,
+            15,
+            20
+          ]
+        },
+        "p_rompimento": {
+          "valores": [
+            0,
+            1
+          ]
+        },
+        "p_stop": {
+          "valores": [
+            75,
+            110,
+            150,
+            200,
+            300
+          ]
+        },
+        "p_tempomax": {
+          "valores": [
+            5,
+            10,
+            15,
+            30
+          ]
+        },
+        "p_usaralvodinamico": {
+          "valores": [
+            0,
+            1
+          ]
+        }
+      }
+    },
+    {
+      "id": "pesquisa:estrategias/pesquisa/pullback_tendencia_v1_0.ntsl",
+      "local": "github",
+      "commit": "3e2720016e83436c7a648eac51f134de4e68393a",
+      "arquivo": "estrategias/pesquisa/pullback_tendencia_v1_0.ntsl",
+      "versao": "1.0",
+      "sha256": "9d5dd028907c3d4aed2b1fddc2a1a1631d6eee515b4c9096de5554d45b8a9dd7",
+      "sha256_texto_lf": "9d5dd028907c3d4aed2b1fddc2a1a1631d6eee515b4c9096de5554d45b8a9dd7",
+      "bytes": 3219,
+      "tipo": "estrategia",
+      "compilador": "aceito",
+      "inputs": {
+        "p_rapida": 9.0,
+        "p_lenta": 34.0,
+        "p_alvo": 200.0,
+        "p_stop": 150.0,
+        "p_folgastop": 50.0,
+        "p_tempomax": 30.0,
+        "p_maxentradasdia": 4.0,
+        "p_espera": 3.0,
+        "p_perdamaxdia": 150.0,
+        "p_horainicio": 930.0,
+        "p_horafimentradas": 1700.0,
+        "p_horazeragem": 1745.0
+      },
+      "usados": [
+        "p_alvo",
+        "p_espera",
+        "p_folgastop",
+        "p_horafimentradas",
+        "p_horainicio",
+        "p_horazeragem",
+        "p_lenta",
+        "p_maxentradasdia",
+        "p_perdamaxdia",
+        "p_rapida",
+        "p_stop",
+        "p_tempomax"
+      ],
+      "dependencias": [],
+      "grupo": "win_60s_1c",
+      "status": "apta",
+      "ranking_original": {
+        "p_rapida": 9.0,
+        "p_lenta": 34.0,
+        "p_alvo": 200.0,
+        "p_stop": 150.0,
+        "p_folgastop": 50.0,
+        "p_tempomax": 30.0,
+        "p_maxentradasdia": 4.0,
+        "p_espera": 3.0,
+        "p_perdamaxdia": 150.0,
+        "p_horainicio": 930.0,
+        "p_horafimentradas": 1700.0,
+        "p_horazeragem": 1745.0
+      },
+      "modo_ohlc_original": {
+        "p_rapida": 9.0,
+        "p_lenta": 34.0,
+        "p_alvo": 200.0,
+        "p_stop": 150.0,
+        "p_folgastop": 50.0,
+        "p_tempomax": 30.0,
+        "p_maxentradasdia": 4.0,
+        "p_espera": 3.0,
+        "p_perdamaxdia": 150.0,
+        "p_horainicio": 930.0,
+        "p_horafimentradas": 1700.0,
+        "p_horazeragem": 1745.0
+      },
+      "perfil_publicado": null,
+      "busca": {
+        "p_alvo": {
+          "valores": [
+            60,
+            100,
+            150,
+            200,
+            250
+          ]
+        },
+        "p_espera": {
+          "valores": [
+            1,
+            3,
+            5
+          ]
+        },
+        "p_folgastop": {
+          "valores": [
+            25,
+            50,
+            100
+          ]
+        },
+        "p_horafimentradas": {
+          "valores": [
+            1530,
+            1630,
+            1700
+          ]
+        },
+        "p_horainicio": {
+          "valores": [
+            930,
+            1000,
+            1030
+          ]
+        },
+        "p_lenta": {
+          "valores": [
+            21,
+            27,
+            34,
+            48
+          ]
+        },
+        "p_maxentradasdia": {
+          "valores": [
+            4,
+            8,
+            12,
+            24
+          ]
+        },
+        "p_rapida": {
+          "valores": [
+            5,
+            9,
+            15,
+            20
+          ]
+        },
+        "p_stop": {
+          "valores": [
+            75,
+            110,
+            150,
+            200,
+            300
+          ]
+        },
+        "p_tempomax": {
+          "valores": [
+            5,
+            10,
+            15,
+            30
+          ]
+        }
+      }
+    },
+    {
+      "id": "pesquisa:estrategias/pesquisa/pullback_tendencia_v1_1.ntsl",
+      "local": "github",
+      "commit": "3e2720016e83436c7a648eac51f134de4e68393a",
+      "arquivo": "estrategias/pesquisa/pullback_tendencia_v1_1.ntsl",
+      "versao": "1.1",
+      "sha256": "38b368998b3885beaaab1eadfc0dec1ece0bdba75ab9b33548b4113fb9aa643e",
+      "sha256_texto_lf": "38b368998b3885beaaab1eadfc0dec1ece0bdba75ab9b33548b4113fb9aa643e",
+      "bytes": 3046,
+      "tipo": "estrategia",
+      "compilador": "aceito",
+      "inputs": {
+        "p_rapida": 9.0,
+        "p_lenta": 34.0,
+        "p_alvo": 200.0,
+        "p_stop": 150.0,
+        "p_folgastop": 50.0,
+        "p_tempomax": 30.0,
+        "p_maxentradasdia": 4.0,
+        "p_espera": 3.0,
+        "p_perdamaxdia": 150.0,
+        "p_horainicio": 930.0,
+        "p_horafimentradas": 1700.0,
+        "p_horazeragem": 1745.0
+      },
+      "usados": [
+        "p_alvo",
+        "p_espera",
+        "p_folgastop",
+        "p_horafimentradas",
+        "p_horainicio",
+        "p_horazeragem",
+        "p_lenta",
+        "p_maxentradasdia",
+        "p_perdamaxdia",
+        "p_rapida",
+        "p_stop",
+        "p_tempomax"
+      ],
+      "dependencias": [],
+      "grupo": "win_60s_1c",
+      "status": "apta",
+      "ranking_original": {
+        "p_rapida": 9.0,
+        "p_lenta": 34.0,
+        "p_alvo": 200.0,
+        "p_stop": 150.0,
+        "p_folgastop": 50.0,
+        "p_tempomax": 30.0,
+        "p_maxentradasdia": 4.0,
+        "p_espera": 3.0,
+        "p_perdamaxdia": 150.0,
+        "p_horainicio": 930.0,
+        "p_horafimentradas": 1700.0,
+        "p_horazeragem": 1745.0
+      },
+      "modo_ohlc_original": {
+        "p_rapida": 9.0,
+        "p_lenta": 34.0,
+        "p_alvo": 200.0,
+        "p_stop": 150.0,
+        "p_folgastop": 50.0,
+        "p_tempomax": 30.0,
+        "p_maxentradasdia": 4.0,
+        "p_espera": 3.0,
+        "p_perdamaxdia": 150.0,
+        "p_horainicio": 930.0,
+        "p_horafimentradas": 1700.0,
+        "p_horazeragem": 1745.0
+      },
+      "perfil_publicado": {
+        "p_rapida": 20,
+        "p_lenta": 21,
+        "p_alvo": 200,
+        "p_stop": 300,
+        "p_folgastop": 50.0,
+        "p_tempomax": 15,
+        "p_maxentradasdia": 2,
+        "p_espera": 3,
+        "p_perdamaxdia": 150.0,
+        "p_horainicio": 1000,
+        "p_horafimentradas": 1700.0,
+        "p_horazeragem": 1745.0
+      },
+      "busca": {
+        "p_alvo": {
+          "valores": [
+            60,
+            100,
+            150,
+            200,
+            250
+          ]
+        },
+        "p_espera": {
+          "valores": [
+            1,
+            3,
+            5
+          ]
+        },
+        "p_folgastop": {
+          "valores": [
+            25,
+            50,
+            100
+          ]
+        },
+        "p_horafimentradas": {
+          "valores": [
+            1530,
+            1630,
+            1700
+          ]
+        },
+        "p_horainicio": {
+          "valores": [
+            930,
+            1000,
+            1030
+          ]
+        },
+        "p_lenta": {
+          "valores": [
+            21,
+            27,
+            34,
+            48
+          ]
+        },
+        "p_maxentradasdia": {
+          "valores": [
+            2,
+            4,
+            8,
+            12,
+            24
+          ]
+        },
+        "p_rapida": {
+          "valores": [
+            5,
+            9,
+            15,
+            20
+          ]
+        },
+        "p_stop": {
+          "valores": [
+            75,
+            110,
+            150,
+            200,
+            300
+          ]
+        },
+        "p_tempomax": {
+          "valores": [
+            5,
+            10,
+            15,
+            30
+          ]
+        }
+      }
+    }
+  ]
+}

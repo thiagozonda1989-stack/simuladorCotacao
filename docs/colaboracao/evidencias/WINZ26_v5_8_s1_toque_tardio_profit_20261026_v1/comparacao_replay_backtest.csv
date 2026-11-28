@@ -1,0 +1,3 @@
+sonda;ordens_resumidas;linhas_trade;entrada_replay_menos_backtest_pts;saida_replay_menos_backtest_pts;resultado_replay_pts
+s1_alvo;2;2;0.00;0.00;430.00
+s1_stop;2;0;25.00;25.00;-795.00

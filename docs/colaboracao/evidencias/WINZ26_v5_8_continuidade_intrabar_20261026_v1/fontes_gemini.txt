@@ -1,0 +1,482 @@
+FONTES PARA O GEMINI | Continuidade histórica e ordem observada dos negócios da v5.8
+PR #2 | Código 0d2f19a47307d5390f5d89bb53d70e6c87a37856
+
+=== docs/colaboracao/evidencias/WINZ26_v5_8_continuidade_intrabar_20261026_v1/README.md ===
+
+# Continuidade histórica da v5.8 e saída das 10:15
+
+PR #2, código executado `0d2f19a47307d5390f5d89bb53d70e6c87a37856`, base `c9ddc63f0ac983688061114f4d1b393b0d14e761`. A rodada usa WINZ26, barras de 1 minuto, fuso America/Sao_Paulo, `p_Exec_Tick=0`, lote 5, alvo 400 pontos, stop 350 pontos, folga stop-limit 50 pontos, tick 5, R$ 0,20/ponto, custos e slippage zero. Os replays da v5.8 usam avaliação pós-preenchimento, VWAP contínua, Volume NTSL financeiro e agressão de referência. O histórico prefixado é de 20/10 para 21/10 e de 23/10 para 26/10. A comparação mantém um corte de 63 barras por segmento e confere solicitações no pregão inteiro. [Inputs completos e configuração do Profit](../WINZ26_v5_8_validacao_20261021_20261026_v1/README.md) · [Evidências anteriores](../WINZ26_v5_8_captura_profit_20261021_20261026_v2/README.md)
+
+## Saída das 10:15 em 26/10
+
+Em 10:14 no console do Profit, a avaliação 635 vê posição zero, tem sinal de compra e solicita cinco contratos. No mesmo rótulo de contexto, a avaliação 636 vê posição comprada de cinco e solicita alvo em +400, gatilho do stop em −350 e limite em −400 pontos em relação à entrada. A exportação registra entrada e saída às 10:15, com saída a +400. A avaliação regular 637, rotulada 10:15, já vê posição zerada. O rastreio do simulador registra as mesmas solicitações e o stop a −350. [Rastreio por camada](eventos_10h15.csv) · [Níveis de referência](../WINZ26_v5_8_captura_profit_20261021_20261026_v2/ambiguidade_10h15.csv)
+
+Na captura de Negócios, o primeiro registro às **10:15:00.000** tem o preço de entrada da exportação e quantidade de um contrato. Ele marca o início observado do minuto, sem vínculo com o preenchimento de cinco do backtest. Depois desse registro, o primeiro negócio na faixa do alvo ocorre às **10:15:12.283** (sequência da captura 268564). O preço exato do alvo aparece no mesmo milissegundo (268582). O primeiro negócio na faixa do gatilho do stop ocorre às **10:15:43.810** (274300), com o preço exato no mesmo milissegundo (274311). O primeiro preço na faixa do limite do stop ocorre às **10:15:44.720** (274806). Os primeiros toques de alvo e gatilho estão separados por **31,527 s** no relógio de mercado. [Primeiros negócios observados](toques_10h15.csv)
+
+O minuto observado vai de 10:15:00.000 a 10:15:59.999, tem registros em 57 dos 60 segundos e intervalo máximo de 2.966 ms entre timestamps, com até 1.076 ms entre registros até o primeiro alvo. Há 12.352 negócios e 22.974 contratos no CSV, equivalentes a **64,84%** dos 19.050 Trades e **65,93%** dos 34.844 contratos das barras de referência. A abertura, máxima e fechamento reconstituídos coincidem. A mínima da captura fica 15 pontos acima da mínima da barra. A referência de Trades é a série Profit já conferida no console. A referência de quantidade é a exportação privada usada para preparar o replay. A exportação nova de OHLC tem apenas preços. [Cobertura e comparação de totais](cobertura_negocios_10h15.csv)
+
+Há 4.773 timestamps distintos, 1.996 milissegundos com mais de um negócio, zero repetições de `Sequencia` e 4.731 inversões de timestamp entre linhas físicas adjacentes. A análise ordena por horário de mercado (`Coluna_1`) e usa `Sequencia` como desempate de apresentação. A sequência pertence à captura ProfitRTD, sem confirmação de ser o sequencial da bolsa. O relógio do coletor `DataHora_PC` pertence à coleta posterior. Os dados sustentam **alvo antes do stop entre os negócios capturados**. Os registros ausentes permitem que o mercado tenha tocado um nível em outro instante.
+
+Busquei exportações de histórico de ordens no workspace, Documentos, Downloads, Área de Trabalho e nas pastas Nelogica e OneDrive disponíveis. Os arquivos de ciclo de ordem encontrados são do simulador. O Debug do Profit registra solicitações e observações de posição. A exportação de operações registra a saída no alvo com resolução de minuto. Continuam indeterminados o horário subminuto de entrada, a ativação do alvo e do stop, o instante e a sequência dos eventos de disparo e preenchimento e o cancelamento da perna OCO. Para fechar esse vínculo, é necessário um histórico nativo do mesmo backtest com IDs das ordens, vínculo OCO, status e timestamps subminuto e, para a sequência de mercado completa, os negócios faltantes ou uma captura equivalente. A regra adversa continua valendo no OHLC. [Rastreio por camada](eventos_10h15.csv)
+
+## Cobertura de outros duplos toques
+
+A varredura usa os replays com continuidade e conserva somente operações associadas por hora de entrada, hora de saída, direção, quantidade e preço de entrada. Em cada passagem de ordens, verifica o alvo e o stop ainda por disparar que estão elegíveis para a posição naquele momento. Inclui a avaliação extra de proteção na abertura. Conta barras únicas de operações pareadas. Esta cobertura é de OHLC e proteções do simulador com solicitações conferidas no Profit. A disponibilidade de negócios foi medida no único minuto de duplo toque.
+
+| Pregão | Operações associadas e protegidas | Barras com as duas proteções elegíveis | Barras com duplo toque |
+|---|---:|---:|---:|
+| 21/10 | 7/7 | 149 | 0 |
+| 26/10 | 10/10 | 26 | 1 |
+| Total | 17/17 | 175 | 1 |
+
+O único caso é 10:15. Nenhuma regra de trajetória foi inferida de um caso. [Censo de proteções](censo_duplo_toque.csv)
+
+## Opção de replay e resultados
+
+`--historico-continuo-lacunas` preserva janelas móveis, `TrueRange` e referências históricas `[n]` das barras existentes ao retomar uma lacuna intradiária. O padrão reinicia esse contexto. `CurrentBar` avança uma unidade por barra recebida nos dois modos. O identificador de segmento, a flag de lacuna, `BarrasNoSegmento` e o corte da comparação continuam marcando a retomada. A opção conserva escalares e posição como no padrão, cancela ordens pendentes na lacuna e mantém as regras de sessão. A acumulação da VWAP usa a opção própria, e a agressão injetada usa o valor exportado. Cada replay consome somente os candles disponíveis. Em 26/10, a lacuna do pregão alvo vai de 09:30 a 09:38, com retomada às 09:39. O histórico de 23/10 também tem uma retomada às 17:55. As duas fronteiras ficaram registradas no replay com continuidade, sem posição exposta ou ordens canceladas nessa amostra.
+
+| Pregão | Reinício padrão | Continuidade explícita |
+|---|---:|---:|
+| 21/10 | 7/7 | 7/7 |
+| 26/10 | 8/10 | 9/10 |
+
+Em 21/10, os dois modos registram 306 solicitações coincidentes e 509 avaliações comparáveis sem divergência nas camadas de sinal, filtro, indicadores, posição e estado. Em 26/10, a primeira solicitação divergente no padrão é às 09:50 e a primeira execução sem par ocorre às 09:51. Com a opção, as 62 solicitações, as 472 avaliações comparáveis e as dez entradas coincidem. A primeira diferença de preenchimento é a saída das 10:15. Os candles e eventos de ordens da nova continuidade em 26/10 reproduzem byte a byte o diagnóstico anterior. As execuções são iguais após interpretar a coluna de custos como número. [Matriz v5.8](matriz_v5_8.csv)
+
+A sonda v2 permanece uma pendência do motor para arrays e histórico de estado gravado na avaliação extra. No fechamento zerado de contexto 13:04, Profit e simulador leram Boolean 1. O array e `estado[1]` retornaram 17 e 23 no Profit e 0 e 0 no simulador. [Sonda v2](../WINZ26_v5_8_captura_profit_20261021_20261026_v2/sonda_v2_profit_simulador.csv)
+
+## Testes e reprodução
+
+Python 3.11.3, Windows, pandas 3.1.1. Passaram **75 testes**, com 12 avisos de timezone do pandas que já ocorriam na base. Os controles novos cobrem referências de preço e estado, médias, `TrueRange`, `CurrentBar`, `BarrasNoSegmento`, configuração de sessão, cancelamento de pendentes mesmo com posição aberta, rejeição do modo tick e ambiguidade de toques no mesmo milissegundo. Os seis replays da v5.7 e os dois de plots reproduziram 26 arquivos byte a byte. A v5.7 manteve 10/10 em 21/10 nos três modos e 8/12, 11/12 e 12/12 em 26/10. A #182 ficou exata em pós-preenchimento. [Matriz v5.7](regressao_v5_7.csv)
+
+Em cada pregão, use o histórico privado preparado na rodada anterior. Rode uma vez com `$lacunas = @()` e outra com `$lacunas = @('--historico-continuo-lacunas')`. Use destinos inéditos em cada execução.
+
+```powershell
+$evid = 'docs/colaboracao/evidencias/WINZ26_v5_8_validacao_20261021_20261026_v1'
+$auditoria = "$evid/Modelo_Unificado_v5_8_Auditoria_simulador_v1_0.ntsl"
+$inputs = "$evid/inputs_v5_8.json"
+$comum = @('--segundos','60','--formato','ohlc','--tick','5','--valor-ponto','0.2',
+           '--volume-financeiro-ntsl','--agressao-referencia-injetada','--vwap-continuo-lacunas')
+py -3.11 estrategia.py --csv $barrasComHistorico --ntsl $auditoria --inputs $inputs `
+  --saida $replay @comum --avaliacao-pos-preenchimento --rastrear-ordens @lacunas
+py -3.11 tools/comparar_v5_8.py --data $dia --aquecimento 63 `
+  --console-profit $consoleProfit --operacoes-profit $operacoesProfit `
+  --barras-profit $barrasProfit --barras-preparadas $barrasComHistorico `
+  --console-simulador "$replay/console.csv" --candles-simulador "$replay/candles.csv" `
+  --execucoes-simulador "$replay/execucoes.csv" --saida $comparacao
+py -3.11 -m tools.investigar_protecoes_v5_8 --data $dia --barras $barrasComHistorico `
+  --ntsl $auditoria --inputs $inputs --negocios $negocios `
+  --operacoes-profit $operacoesProfit --saida $auditoriaIntrabar
+py -3.11 -m pytest -q
+```
+
+A regressão da v5.7 usa `p_Lote=1`, o NTSL original, as barras de cada pregão, VWAP contínua e os três modos anteriores, com a opção nova desativada. O comparador de indicadores mantém o corte de 63 barras por segmento. [Comandos da v5.7](../WINZ26_v5_7_persistencia_escalar_20261026_v2/README.md#comandos)
+
+O manifesto registra os arquivos compartilhados. Os CSVs contêm contagens, horários de diagnóstico, níveis relativos e resultados de paridade. Os CSVs brutos e preparados, identificadores de participantes e cotações absolutas ficam no Windows. [Inventário de fontes privadas](fontes_privadas.csv) · [SHA-256 dos artefatos](SHA256SUMS.txt) · [Fontes completas para o Gemini](fontes_gemini.txt)
+
+=== docs/colaboracao/evidencias/WINZ26_v5_8_continuidade_intrabar_20261026_v1/censo_duplo_toque.csv ===
+
+pregao;operacoes_profit;operacoes_replay;pares_mesmos_horarios_entrada_saida_e_preco_entrada;operacoes_com_protecao_elegivel;barras_com_protecao_elegivel;barras_duplo_toque
+2026-10-21;7;7;7;7;149;0
+2026-10-26;10;10;10;10;26;1
+
+=== docs/colaboracao/evidencias/WINZ26_v5_8_continuidade_intrabar_20261026_v1/cobertura_negocios_10h15.csv ===
+
+pregao;rotulo_barra_ohlc;negocios;trades_profit;contratos;quantity_profit;inicio;fim;ms_com_empate;ms_distintos;sequencias_repetidas;inversoes_temporais_ordem_fisica;segundos_com_negocios;maior_intervalo_ms;maior_intervalo_ate_o_primeiro_alvo_ms;primeiro_limiar_observado;percentual_trades;percentual_contratos;delta_abertura_pontos;delta_maxima_pontos;delta_minima_pontos;delta_fechamento_pontos
+2026-10-26;10:15;12352;19050;22974;34844;10:15:00.000;10:15:59.999;1996;4773;0;4731;57;2966;1076;alvo;64.84;65.93;0.0;0.0;15.0;0.0
+
+=== docs/colaboracao/evidencias/WINZ26_v5_8_continuidade_intrabar_20261026_v1/eventos_10h15.csv ===
+
+fonte;rotulo_contexto_barra;hora_execucao_minuto;sequencia_console_profit;evento;posicao;quantidade;nivel_relativo_pontos
+Profit console;10:14;;635;avaliação com sinal de compra;0;;
+Profit console;10:14;;635;solicitação compra a mercado;0;5;
+Profit console;10:14;;636;avaliação observa posição comprada;5;;
+Profit console;10:14;;636;solicitação alvo;5;5;400
+Profit console;10:14;;636;solicitação stop-limit;5;5;-350/-400
+Profit console;10:15;;637;avaliação observa posição zerada;0;;
+Profit exportação;;10:15;;entrada;5;5;0
+Profit exportação;;10:15;;saída;0;5;400
+Simulador;10:14;;;solicitação compra a mercado;0;5;
+Simulador;10:15;10:15;;preenchimento da compra;5;5;0
+Simulador;10:14;;;solicitação alvo na avaliação extra;5;5;400
+Simulador;10:14;;;solicitação stop-limit na avaliação extra;5;5;-350/-400
+Simulador;10:15;;;gatilho do stop modelado;5;5;-350
+Simulador;10:15;10:15;;preenchimento adverso do stop;0;5;-350
+
+=== docs/colaboracao/evidencias/WINZ26_v5_8_continuidade_intrabar_20261026_v1/fontes_privadas.csv ===
+
+arquivo;bytes;sha256;uso
+win_negocios_21102026.csv;518068335;e3198fdead01e3c3bb673961af68d65f7cbed16b4e5ea6bf6a18d2edfdd84b17;"Negócios ProfitRTD; referência da auditoria"
+win_negocios_26102026.csv;568983191;1d89701275b3ecb247303961d643a6c33641638de5fd0f804ad3b9a4e77941e4;"Negócios ProfitRTD; cobertura e ordem dos toques observados"
+operacoes_v58.csv;43885;66cece48ff5c3e1aca3d42d4482665451d39195bf0be50fc497d302a77585c7d;"Exportação Profit; entradas e saídas"
+console_58.txt;1083641;38624ee2aab7c55ea12287f29736d7bfea3a3f0fce2140d833aeea8633e5bb69;"Debug Profit; avaliações e solicitações, primeiro de dois blocos idênticos"
+barras_v58.csv;920086;1036ce183e5e0ff371ca10b21b2774e2f8420598c50d71b107cbe6a1eebf6863;"OHLC Profit; preço das barras"
+2026-10-21-barras-historico.csv;127607;f1d85e4454e8c6c61e47c44832f5d9fc7280d60f44fa7ff49ff1d1bda9ffdf6b;"20/10 e 21/10; barras preparadas com histórico"
+2026-10-26-barras-historico.csv;125330;bd13dfa559bb6c26ff0c253d3414b8b9994fe699af3482a80b9129b66ab1ec13;"23/10 e 26/10; barras preparadas com histórico"
+
+=== docs/colaboracao/evidencias/WINZ26_v5_8_continuidade_intrabar_20261026_v1/matriz_v5_8.csv ===
+
+pregao;modo;exec_tick;barras_ohlc_comuns;barras_elegiveis;operacoes_profit;operacoes_replay;operacoes_exatas;solicitacoes_comparadas_pregao;solicitacoes_divergentes_pregao;primeira_divergencia_solicitacao_contexto;avaliacoes_estado_comparadas;avaliacoes_estado_divergentes;divergencias_sinais;divergencias_filtros;divergencias_indicadores;divergencias_posicao;hora_primeiro_fill_divergente_profit;hora_primeiro_fill_divergente_simulador;evento_primeiro_fill_divergente;lacunas_com_historico_prefixado;posicao_exposta_em_lacunas;ordens_canceladas_em_lacunas
+2026-10-21;reinicio;0;565;502;7;7;7;306;0;;509;0;0;0;0;0;;;;0;0;0
+2026-10-21;continuidade;0;565;502;7;7;7;306;0;;509;0;0;0;0;0;;;;0;0;0
+2026-10-26;reinicio;0;553;463;10;10;8;68;18;09:50;472;263;1;1;1;4;10:15;09:51;long;2;0;0
+2026-10-26;continuidade;0;553;463;10;10;9;62;0;;472;0;0;0;0;0;10:15;10:15;exit_long;2;0;0
+
+=== docs/colaboracao/evidencias/WINZ26_v5_8_continuidade_intrabar_20261026_v1/regressao_v5_7.csv ===
+
+pregao;modo;operacoes_profit;operacoes_exatas;barras_elegiveis;plots_sem_divergencia_de_8;artefatos_identicos_rodada_anterior;operacao_182_exata;arquivos_replay_identicos
+2026-10-21;padrao;10;10;502;8;1;;4
+2026-10-21;protecao-legada;10;10;502;8;1;;4
+2026-10-21;pos-preenchimento;10;10;502;8;1;;4
+2026-10-26;padrao;12;8;463;8;1;0;4
+2026-10-26;protecao-legada;12;11;463;8;1;0;4
+2026-10-26;pos-preenchimento;12;12;463;8;1;1;4
+
+=== docs/colaboracao/evidencias/WINZ26_v5_8_continuidade_intrabar_20261026_v1/toques_10h15.csv ===
+
+pregao;rotulo_barra_ohlc;hora_entrada_exportacao;evento_de_preco;nivel_relativo_pontos;hora;sequencia_captura;negocios_no_ms;preco_relativo
+2026-10-26;10:15;10:15;preco_entrada;0;10:15:00.000;266837;1;0.0
+2026-10-26;10:15;10:15;alvo;400;10:15:12.283;268564;47;425.0
+2026-10-26;10:15;10:15;preco_exato_alvo;400;10:15:12.283;268582;47;400.0
+2026-10-26;10:15;10:15;gatilho_stop;-350;10:15:43.810;274300;39;-360.0
+2026-10-26;10:15;10:15;preco_exato_gatilho;-350;10:15:43.810;274311;39;-350.0
+2026-10-26;10:15;10:15;limite_stop;-400;10:15:44.720;274806;8;-400.0
+
+=== docs/colaboracao/evidencias/WINZ26_v5_8_continuidade_intrabar_20261026_v1/SHA256SUMS.txt ===
+
+522ec479b8c40f6330a1cd508d5b35acd3d4da975505c211e1a5c02bc8d19dcb  README.md
+86b40416a5f25eeab554dd265022f8020159d53af9910493463c3f800a459230  censo_duplo_toque.csv
+7f38e0466362d7f636eb2122f05e524337914e480c55958f3d91550714ebdc65  cobertura_negocios_10h15.csv
+a535206f2ccd670fe791783f7b77e5b1189cd6a927beb81516ce7f5ffc18eafe  eventos_10h15.csv
+3096d8192d5d14a6d9ccc30eb7b0dd9f2beff80b6733de17dad21e9c55fd8552  fontes_privadas.csv
+721cbd9463153e12ef065d0e19fdc070c2e2fdfc8ba228912341bb834dadbd49  matriz_v5_8.csv
+56bcd373f33cc3d5eb3ca9dd92f2911304255ef8b7144f1493ab93654b91a835  regressao_v5_7.csv
+050fab4c43303e2800a7a10ff2dffbdd9d8302708f2ffef8d991dab3d7afef9a  toques_10h15.csv
+
+=== docs/colaboracao/evidencias/WINZ26_v5_8_validacao_20261021_20261026_v1/inputs_v5_8.json ===
+
+{
+  "p_Exec_Tick": 0,
+  "p_Periodo_ATR": 14,
+  "p_Periodo_Regime_ATR": 50,
+  "p_Desvio_VWAP": 2.1,
+  "p_Modo_Banda": 0,
+  "p_Periodo_Desvio": 20,
+  "p_ZScore_Vol": 1.5,
+  "p_Stop_Pontos": 350,
+  "p_Alvo_Pontos": 400,
+  "p_MinimoTrades": 100,
+  "p_Lote": 5,
+  "p_Offset_Limite_Stop": 50,
+  "p_Barras_Espera": 3,
+  "p_Max_Entradas_Dia": 10,
+  "p_Hora_Inicio": 915,
+  "p_Hora_Fim_Entradas": 1645,
+  "p_Hora_Zeragem": 1700,
+  "p_Noticia1_Ini": 1025,
+  "p_Noticia1_Fim": 1035,
+  "p_Noticia2_Ini": 1425,
+  "p_Noticia2_Fim": 1435,
+  "p_Zerar_Na_Noticia": 1
+}
+
+=== docs/colaboracao/evidencias/WINZ26_v5_8_captura_profit_20261021_20261026_v2/ambiguidade_10h15.csv ===
+
+pregao;hora_contexto_protecao;hora_exportacao_entrada_saida;lado;quantidade;alvo_pontos_relativos;gatilho_stop_pontos_relativos;limite_stop_pontos_relativos;alvo_alcancado_ohlc;stop_alcancado_ohlc;saida_profit_pontos_relativos;saida_simulador_pontos_relativos
+2026-10-26;10:14;10:15;C;5;400;-350;-400;1;1;400;-350
+
+=== docs/colaboracao/evidencias/WINZ26_v5_8_captura_profit_20261021_20261026_v2/sonda_v2_profit_simulador.csv ===
+
+motor;ordem;hora_barra_contexto;barra_contexto;seq;posicao;boolean_antes;boolean_depois;array_antes;array_depois;estado_1;estado_depois
+profit;1;13:03;27005;1;0;0;0;0;0;0;0
+profit;2;13:03;27005;2;1;0;1;0;17;0;23
+profit;3;13:04;27006;3;0;1;0;17;0;23;0
+profit;4;13:05;27007;4;0;0;0;0;0;0;0
+simulador;1;13:03;2;1;0;0;0;0;0;0;0
+simulador;2;13:03;2;2;1;0;1;0;17;0;23
+simulador;3;13:04;3;3;0;1;0;0;0;0;0
+simulador;4;13:05;4;4;0;0;0;0;0;0;0
+
+=== tools/investigar_protecoes_v5_8.py ===
+
+"""Audita toques nas proteções elegíveis da v5.8 e a cobertura de Negócios."""
+
+import argparse
+import json
+from collections import Counter, defaultdict
+from datetime import datetime
+from pathlib import Path
+
+import pandas as pd
+
+from estrategia import Engine, load_bars, source_text
+from ntsl import compile_ntsl
+from tools.comparar_paridade_profit_win import (
+    local_round_trips, profit_round_trips, read_profit_operations, sha256,
+)
+
+
+class ProtectionAudit(Engine):
+    def run(self):
+        self.protected = []
+        super().run(record_trace=False)
+
+    def process_orders(self, only_keys=None):
+        exit_action = "exit_long" if self.position > 0 else "exit_short"
+        eligible = [order for key, order in self.orders.items()
+                    if (only_keys is None or key in only_keys) and order.eligible_at <= self.row
+                    and self.position and order.action == exit_action]
+        stops = [order for order in eligible if order.kind == "stop" and not order.triggered]
+        targets = [order for order in eligible if order.kind == "limit"]
+        if len(stops) == len(targets) == 1:
+            self.protected.append((self.row, self.position, self.basis, targets[0].price,
+                                   stops[0].price, stops[0].limit))
+        super().process_orders(only_keys)
+
+
+def trade_minutes(path, minutes):
+    prefixes = {pd.Timestamp(minute).strftime("%d/%m/%Y %H:%M").encode("ascii") for minute in minutes}
+    data = defaultdict(list)
+    if not prefixes:
+        return data
+    with path.open("rb") as stream:
+        for line in stream:
+            # Captura ProfitRTD delimitada por ponto e vírgula, com aspas.
+            parts = line.split(b'";"', 6)
+            if len(parts) < 7 or parts[2][:16] not in prefixes:
+                continue
+            seq, _, stamp, _, price, qty, _ = parts
+            ts = datetime.strptime(stamp.decode("ascii"), "%d/%m/%Y %H:%M:%S.%f")
+            data[ts.replace(second=0, microsecond=0)].append(
+                (ts, int(seq.lstrip(b'"')), float(price.replace(b",", b".")), int(qty)))
+    return data
+
+
+def describe_trade_minute(rows, bar, side, entry, target, stop, limit):
+    inversions = sum(left[0] > right[0] for left, right in zip(rows, rows[1:]))
+    rows = sorted(rows, key=lambda row: (row[0], row[1]))
+    if not rows:
+        return {"negocios": 0, "primeiro_limiar_observado": "sem_dados"}
+    times = Counter(row[0] for row in rows)
+    prices = [row[2] for row in rows]
+    ohlc = [prices[0], max(prices), min(prices), prices[-1]]
+    wanted = [bar.abertura, bar.maxima, bar.minima, bar.fechamento]
+    target_hit = lambda price: (price - target) * side >= 0
+    stop_hit = lambda price: (price - stop) * side <= 0
+    limit_hit = lambda price: limit is not None and (price - limit) * side <= 0
+    first = {name: next((row for row in rows if match(row[2])), None) for name, match in (
+        ("preco_entrada", lambda price: price == entry), ("alvo", target_hit),
+        ("gatilho_stop", stop_hit), ("limite_stop", limit_hit),
+        ("preco_exato_alvo", lambda price: price == target),
+        ("preco_exato_gatilho", lambda price: price == stop),
+    )}
+    a, s = first["alvo"], first["gatilho_stop"]
+    if not a or not s:
+        order = "um_ou_ambos_ausentes"
+    else:
+        order = "empate_ms" if a[0] == s[0] else "alvo" if a[0] < s[0] else "gatilho_stop"
+    time_gaps = [(b, round((b - a).total_seconds() * 1000)) for a, b in zip(times, list(times)[1:])]
+    return {
+        "negocios": len(rows), "contratos": sum(row[3] for row in rows),
+        "trades_profit": int(bar.v_trades_atual), "quantity_profit": int(bar.volume_contratos),
+        "inicio": rows[0][0].time().isoformat(timespec="milliseconds"),
+        "fim": rows[-1][0].time().isoformat(timespec="milliseconds"),
+        "ms_com_empate": sum(count > 1 for count in times.values()),
+        "ms_distintos": len(times),
+        "sequencias_repetidas": len(rows) - len({row[1] for row in rows}),
+        "inversoes_temporais_ordem_fisica": inversions,
+        "segundos_com_negocios": len({stamp.second for stamp in times}),
+        "maior_intervalo_ms": max((gap for _, gap in time_gaps), default=0),
+        "maior_intervalo_ate_o_primeiro_alvo_ms": (
+            max((gap for stamp, gap in time_gaps if stamp <= a[0]), default=0) if a else None
+        ),
+        "delta_ohlc": [observed - reference for observed, reference in zip(ohlc, wanted)],
+        "primeiro_limiar_observado": order,
+        "primeiros": {name: {"hora": row[0].time().isoformat(timespec="milliseconds"),
+                             "sequencia_captura": row[1], "negocios_no_ms": times[row[0]],
+                             "preco_relativo": row[2] - entry}
+                      if row else None for name, row in first.items()},
+    }
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    for name in ("barras", "ntsl", "inputs", "negocios", "operacoes-profit", "saida"):
+        parser.add_argument("--" + name, type=Path, required=True)
+    parser.add_argument("--data", required=True)
+    args = parser.parse_args()
+    day = args.data
+    bars = load_bars(args.barras, 60, "ohlc")
+    rules = dict(avaliacao_pos_preenchimento=True, historico_continuo_lacunas=True,
+                 vwap_continuo_lacunas=True, volume_financeiro_ntsl=True,
+                 agressao_referencia_injetada=True)
+    code = compile_ntsl(source_text(args.ntsl))
+    engine = ProtectionAudit(code, bars, 5, json.loads(args.inputs.read_text(encoding="utf-8")),
+                             60, 0.2, regras=rules)
+    engine.run()
+    fills = pd.DataFrame(engine.fills, columns=["pregao", "barra", "acao", "quantidade", "preco"])
+    fills = fills.loc[fills["pregao"].eq(day)]
+    sim = local_round_trips(fills, bars.rename_axis("indice").reset_index())
+    profit = profit_round_trips(read_profit_operations(args.operacoes_profit, day))
+    fields = ["entrada", "saida", "lado", "quantidade", "preco_entrada"]
+    pairs = profit.merge(sim, on=fields, suffixes=("_profit", "_sim"), validate="one_to_one")
+    candidates = []
+    stamps = pd.to_datetime(bars["timestamp"])
+    have_protections = set()
+    protected_bars = set()
+    for row, position, basis, target, stop, limit in engine.protected:
+        ts = stamps.iloc[row]
+        side = "C" if position > 0 else "V"
+        match = pairs.loc[(pairs["entrada"] <= ts) & (pairs["saida"] >= ts)
+                          & pairs["preco_entrada"].eq(basis) & pairs["lado"].eq(side)
+                          & pairs["quantidade"].eq(abs(position))]
+        if len(match) != 1:
+            continue
+        number = int(match.iloc[0].numero_operacao)
+        have_protections.add(number)
+        protected_bars.add(row)
+        bar = bars.iloc[row]
+        both = (bar.maxima >= target and bar.minima <= stop if position > 0
+                else bar.minima <= target and bar.maxima >= stop)
+        if both:
+            candidates.append((row, number, position, basis, target, stop, limit))
+    data = trade_minutes(args.negocios, {stamps.iloc[row] for row, *_ in candidates})
+    results = []
+    for row, number, position, basis, target, stop, limit in candidates:
+        ts = stamps.iloc[row]
+        report = describe_trade_minute(data[ts.tz_localize(None)], bars.iloc[row],
+                                       1 if position > 0 else -1, basis, target, stop, limit)
+        match = pairs.loc[pairs.numero_operacao.eq(number)].iloc[0]
+        results.append({
+            "hora_barra": ts.strftime("%H:%M"), "hora_entrada_exportacao": match.entrada.strftime("%H:%M"),
+            "hora_saida_exportacao": match.saida.strftime("%H:%M"),
+            "lado": match.lado, "quantidade": abs(position),
+            "alvo_relativo": target - basis, "gatilho_relativo": stop - basis,
+            "limite_relativo": None if limit is None else limit - basis,
+            "saida_profit_relativa": match.preco_saida_profit - basis,
+            "saida_simulador_relativa": match.preco_saida_sim - basis,
+            **report,
+        })
+    with args.saida.open("x", encoding="utf-8") as output:
+        json.dump({"pregao": day, "negocios_sha256": sha256(args.negocios),
+                   "operacoes_profit": len(profit), "operacoes_replay": len(sim),
+                   "pares_mesmos_horarios_entrada_saida_e_preco_entrada": len(pairs),
+                   "operacoes_com_protecao_elegivel": len(have_protections),
+                   "barras_com_protecao_elegivel": len(protected_bars),
+                   "barras_duplo_toque": len({row for row, *_ in candidates}), "casos": results},
+                  output, indent=2, ensure_ascii=False)
+        output.write("\n")
+
+
+if __name__ == "__main__":
+    main()
+
+=== Diff do motor e testes ===
+
+diff --git a/estrategia.py b/estrategia.py
+index c10f1b2..bc69498 100644
+--- a/estrategia.py
++++ b/estrategia.py
+@@ -130,0 +131 @@ class ExecutionRules:
++    historico_continuo_lacunas: bool = False
+@@ -139,0 +141,2 @@ class ExecutionRules:
++        if self.motor_ticks and self.historico_continuo_lacunas:
++            raise ValueError("A continuidade histórica em lacunas só se aplica ao motor OHLC.")
+@@ -153 +156,2 @@ class ExecutionRules:
+-                      self.rastrear_ordens, self.avaliacao_pos_preenchimento):
++                      self.rastrear_ordens, self.avaliacao_pos_preenchimento,
++                      self.historico_continuo_lacunas):
+@@ -179 +183,2 @@ class Engine:
+-        self.segment_starts = np.maximum.accumulate(np.where(self.gap, np.arange(len(frame)), 0))
++        history_resets = self.gap & (not self.rules.historico_continuo_lacunas)
++        self.segment_starts = np.maximum.accumulate(np.where(history_resets, np.arange(len(frame)), 0))
+@@ -789 +794,2 @@ class Engine:
+-                self.rolling.clear()
++                if not self.rules.historico_continuo_lacunas:
++                    self.rolling.clear()
+@@ -970,0 +977,2 @@ def main():
++    p.add_argument("--historico-continuo-lacunas", action="store_true",
++                   help="OHLC: preserva janelas e referências históricas em lacunas intradiárias")
+diff --git a/tests/test_replay.py b/tests/test_replay.py
+index 1c396cb..6012adb 100644
+--- a/tests/test_replay.py
++++ b/tests/test_replay.py
+@@ -8 +8 @@ import pytest
+-from estrategia import Engine, Order, run_strategy
++from estrategia import Engine, ExecutionRules, Order, run_strategy
+@@ -69,0 +70,53 @@ def test_historico_e_media_entre_pregoes():
++@pytest.mark.parametrize("continuous,session_history,expected", [
++    (False, True, (0, 140, 0, 0, 170)),
++    (True, True, (120, 130, 2, 20, 170)),
++    (True, False, (120, 130, 2, 20, 200)),
++])
++def test_historico_em_lacunas(continuous, session_history, expected):
++    source = '''
++    var n: Integer;
++    begin
++      n := CurrentBar;
++      Plot(CurrentBar);
++      Plot2(Close[1]);
++      Plot3(Media(2, Close));
++      Plot4(n[1]);
++      Plot5(TrueRange);
++      Plot6(BarrasNoSegmento);
++    end;
++    '''
++    engine = run(source, [100, 120, 140, 200],
++                 ["2026-10-02"] * 3 + ["2026-10-05"],
++                 {"historico_continuo_lacunas": continuous, "historico_continuo": session_history},
++                 lacuna_intradiaria=[False, False, True, False],
++                 barras_no_segmento=[1, 2, 1, 1])
++    lag, mean, prior_state, true_range, next_session_mean = expected
++    columns = ("plot", "plot2", "plot3", "plot4", "plot5", "plot6")
++    assert [engine.trace[2][column] for column in columns] == [3, lag, mean, prior_state, true_range, 1]
++    assert engine.trace[3]["plot3"] == next_session_mean
++    assert engine.gap.tolist() == [False, False, True, False]
++
++
++@pytest.mark.parametrize("continuous", [False, True])
++def test_ordens_e_posicao_na_lacuna_independem_do_historico(continuous):
++    source = '''
++    begin
++      if CurrentBar=1 then BuyAtMarket(1);
++      if IsBought then SellToCoverStop(95, 90, 1);
++    end;
++    '''
++    engine = run(source, [100, 100, 94, 94],
++                 rules={"historico_continuo_lacunas": continuous,
++                        "avaliacao_pos_preenchimento": True, "rastrear_ordens": True},
++                 lacuna_intradiaria=[False, False, True, False])
++    assert engine.orders_cancelled_at_gaps == engine.gaps_with_exposure == 1
++    assert [(fill["barra"], fill["ordem"], fill["preco"]) for fill in engine.fills] == [
++        (2, "buyatmarket", 100), (4, "selltocoverstop", 94),
++    ]
++
++
++def test_modo_ticks_rejeita_continuidade_em_lacunas_ohlc():
++    with pytest.raises(ValueError, match="só se aplica ao motor OHLC"):
++        ExecutionRules(motor_ticks=True, historico_continuo_lacunas=True)
++
++
+diff --git a/tests/test_v5_8_paridade.py b/tests/test_v5_8_paridade.py
+index bae4d63..c21607f 100644
+--- a/tests/test_v5_8_paridade.py
++++ b/tests/test_v5_8_paridade.py
+@@ -198,0 +199,18 @@ def test_comparador_v5_8_marca_campos_ausentes_na_exportacao_ohlc():
++
++
++def test_toques_no_mesmo_milissegundo_nao_provam_ordem():
++    from datetime import datetime
++    from types import SimpleNamespace
++
++    from tools.investigar_protecoes_v5_8 import describe_trade_minute
++
++    start = datetime(2026, 10, 26, 10, 15)
++    tie = start.replace(microsecond=1000)
++    rows = [(start, 1, 100, 1), (tie, 3, 95, 1), (tie, 2, 105, 1)]
++    bar = SimpleNamespace(abertura=100, maxima=105, minima=90, fechamento=95,
++                          v_trades_atual=4, volume_contratos=4)
++    result = describe_trade_minute(rows, bar, 1, 100, 105, 95, 90)
++    assert result["primeiro_limiar_observado"] == "empate_ms"
++    assert result["primeiros"]["alvo"]["sequencia_captura"] == 2
++    assert result["primeiros"]["limite_stop"] is None
++    assert result["delta_ohlc"] == [0, 0, 5, 0]

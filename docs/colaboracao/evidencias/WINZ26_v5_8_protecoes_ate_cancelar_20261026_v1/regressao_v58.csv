@@ -1,0 +1,13 @@
+pregao;modo;protecoes_ate_cancelar;profit;simulador;exatas;solicitacoes_comparadas;solicitacoes_divergentes;primeiro_preenchimento_diferente_profit;primeiro_preenchimento_diferente_simulador
+2026-10-21;reinicio;off;7;7;7;306;0;;
+2026-10-21;reinicio;on;7;7;7;306;0;;
+2026-10-21;continuidade;off;7;7;7;306;0;;
+2026-10-21;continuidade;on;7;7;7;306;0;;
+2026-10-21;entrada;off;7;7;7;306;0;;
+2026-10-21;entrada;on;7;7;7;306;0;;
+2026-10-26;reinicio;off;10;10;8;68;18;10:15;09:51
+2026-10-26;reinicio;on;10;10;8;68;18;10:15;09:51
+2026-10-26;continuidade;off;10;10;9;62;0;10:15;10:15
+2026-10-26;continuidade;on;10;10;9;62;0;10:15;10:15
+2026-10-26;entrada;off;10;10;9;62;0;10:15;10:15
+2026-10-26;entrada;on;10;10;9;62;0;10:15;10:15

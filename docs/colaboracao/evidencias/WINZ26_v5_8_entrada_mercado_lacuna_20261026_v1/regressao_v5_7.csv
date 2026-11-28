@@ -1,0 +1,11 @@
+pregao;modo;profit;simulador;exatas;operacao_182_exata;arquivos_com_hash_igual;referencia
+2026-10-21;padrao;10;10;10;;4;replay anterior
+2026-10-21;protecao-legada;10;10;10;;4;replay anterior
+2026-10-21;pos-preenchimento;10;10;10;;4;replay anterior
+2026-10-21;pareado-continuidade;10;10;10;;4;par com continuidade
+2026-10-21;pareado-entrada;10;10;10;;4;par com continuidade
+2026-10-26;padrao;12;10;8;0;4;replay anterior
+2026-10-26;protecao-legada;12;11;11;0;4;replay anterior
+2026-10-26;pos-preenchimento;12;12;12;1;4;replay anterior
+2026-10-26;pareado-continuidade;12;12;12;1;4;par com continuidade
+2026-10-26;pareado-entrada;12;12;12;1;4;par com continuidade

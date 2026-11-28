@@ -1,0 +1,472 @@
+FONTES PARA O GEMINI | S1, proteção única e toque em t+3
+PR #2 | Motor 142dbe882ae2a0436c4273a6e5bfa1268222e5d3
+
+=== docs/colaboracao/evidencias/WINZ26_v5_8_s1_toque_tardio_20261026_v1/barras_relativas.csv ===
+
+pregao;hora_barra;deslocamento_desde_envio;abertura_pts_entrada;maxima_pts_entrada;minima_pts_entrada;fechamento_pts_entrada
+2026-10-26;10:51;-1;110;375;-200;-5
+2026-10-26;10:52;0;0;175;-425;-290
+2026-10-26;10:53;1;-285;225;-355;35
+2026-10-26;10:54;2;35;405;-85;220
+2026-10-26;10:55;3;220;445;-875;-260
+2026-10-26;10:56;4;-260;-70;-705;-90
+2026-10-26;10:57;5;-95;200;-425;-375
+2026-10-26;10:58;6;-375;-235;-615;-540
+
+=== docs/colaboracao/evidencias/WINZ26_v5_8_s1_toque_tardio_20261026_v1/estados_simulador.csv ===
+
+sonda;modo;seq_avaliacao;hora_contexto_ntsl;currentbar;posicao;has_pending_orders
+s1_alvo;padrao;1;10:51;100;0;0
+s1_alvo;padrao;2;10:51;100;1;0
+s1_alvo;padrao;3;10:52;101;1;0
+s1_alvo;padrao;4;10:53;102;1;1
+s1_alvo;padrao;5;10:54;103;1;0
+s1_alvo;padrao;6;10:55;104;1;0
+s1_alvo;padrao;7;10:56;105;1;0
+s1_alvo;padrao;8;10:57;106;1;0
+s1_alvo;padrao;9;10:58;107;0;0
+s1_alvo;diagnostico;1;10:51;100;0;0
+s1_alvo;diagnostico;2;10:51;100;1;0
+s1_alvo;diagnostico;3;10:52;101;1;0
+s1_alvo;diagnostico;4;10:53;102;1;1
+s1_alvo;diagnostico;5;10:54;103;1;1
+s1_alvo;diagnostico;6;10:55;104;0;0
+s1_alvo;diagnostico;7;10:56;105;0;0
+s1_alvo;diagnostico;8;10:57;106;0;0
+s1_alvo;diagnostico;9;10:58;107;0;0
+s1_stop;padrao;1;10:51;100;0;0
+s1_stop;padrao;2;10:51;100;1;0
+s1_stop;padrao;3;10:52;101;1;0
+s1_stop;padrao;4;10:53;102;1;1
+s1_stop;padrao;5;10:54;103;1;0
+s1_stop;padrao;6;10:55;104;1;0
+s1_stop;padrao;7;10:56;105;1;0
+s1_stop;padrao;8;10:57;106;1;0
+s1_stop;padrao;9;10:58;107;0;0
+s1_stop;diagnostico;1;10:51;100;0;0
+s1_stop;diagnostico;2;10:51;100;1;0
+s1_stop;diagnostico;3;10:52;101;1;0
+s1_stop;diagnostico;4;10:53;102;1;1
+s1_stop;diagnostico;5;10:54;103;1;1
+s1_stop;diagnostico;6;10:55;104;0;0
+s1_stop;diagnostico;7;10:56;105;0;0
+s1_stop;diagnostico;8;10:57;106;0;0
+s1_stop;diagnostico;9;10:58;107;0;0
+
+=== docs/colaboracao/evidencias/WINZ26_v5_8_s1_toque_tardio_20261026_v1/eventos_simulador.csv ===
+
+sonda;modo;hora_barra_replay;contexto_ntsl;hora_execucao;evento;ordem;posicao;quantidade;gatilho_pts_entrada;limite_pts_entrada;preco_execucao_pts_entrada
+s1_alvo;padrao;10:51;10:51;;avaliacao_ntsl;;0;;;;
+s1_alvo;padrao;10:51;10:51;;solicitacao;buyatmarket;0;1;;;
+s1_alvo;padrao;10:52;10:52;10:52;preenchimento;buyatmarket;1;1;;;0.0
+s1_alvo;padrao;10:52;10:51;;avaliacao_ntsl_pos_preenchimento;;1;;;;
+s1_alvo;padrao;10:52;10:52;;avaliacao_ntsl;;1;;;;
+s1_alvo;padrao;10:52;10:52;;solicitacao;selltocoverlimit;1;1;430.0;;
+s1_alvo;padrao;10:53;10:53;;avaliacao_ntsl;;1;;;;
+s1_alvo;padrao;10:54;10:54;;avaliacao_ntsl;;1;;;;
+s1_alvo;padrao;10:55;10:55;;avaliacao_ntsl;;1;;;;
+s1_alvo;padrao;10:56;10:56;;avaliacao_ntsl;;1;;;;
+s1_alvo;padrao;10:57;10:57;;avaliacao_ntsl;;1;;;;
+s1_alvo;padrao;10:57;10:57;;solicitacao;closeposition;1;1;;;
+s1_alvo;padrao;10:58;10:58;10:58;preenchimento;closeposition;0;1;;;-375.0
+s1_alvo;padrao;10:58;10:58;;avaliacao_ntsl;;0;;;;
+s1_alvo;diagnostico;10:51;10:51;;avaliacao_ntsl;;0;;;;
+s1_alvo;diagnostico;10:51;10:51;;solicitacao;buyatmarket;0;1;;;
+s1_alvo;diagnostico;10:52;10:52;10:52;preenchimento;buyatmarket;1;1;;;0.0
+s1_alvo;diagnostico;10:52;10:51;;avaliacao_ntsl_pos_preenchimento;;1;;;;
+s1_alvo;diagnostico;10:52;10:52;;avaliacao_ntsl;;1;;;;
+s1_alvo;diagnostico;10:52;10:52;;solicitacao;selltocoverlimit;1;1;430.0;;
+s1_alvo;diagnostico;10:53;10:53;;avaliacao_ntsl;;1;;;;
+s1_alvo;diagnostico;10:54;10:54;;avaliacao_ntsl;;1;;;;
+s1_alvo;diagnostico;10:55;10:55;10:55;preenchimento;selltocoverlimit;0;1;430.0;;430.0
+s1_alvo;diagnostico;10:55;10:55;;avaliacao_ntsl;;0;;;;
+s1_alvo;diagnostico;10:56;10:56;;avaliacao_ntsl;;0;;;;
+s1_alvo;diagnostico;10:57;10:57;;avaliacao_ntsl;;0;;;;
+s1_alvo;diagnostico;10:58;10:58;;avaliacao_ntsl;;0;;;;
+s1_stop;padrao;10:51;10:51;;avaliacao_ntsl;;0;;;;
+s1_stop;padrao;10:51;10:51;;solicitacao;buyatmarket;0;1;;;
+s1_stop;padrao;10:52;10:52;10:52;preenchimento;buyatmarket;1;1;;;0.0
+s1_stop;padrao;10:52;10:51;;avaliacao_ntsl_pos_preenchimento;;1;;;;
+s1_stop;padrao;10:52;10:52;;avaliacao_ntsl;;1;;;;
+s1_stop;padrao;10:52;10:52;;solicitacao;selltocoverstop;1;1;-795.0;-895.0;
+s1_stop;padrao;10:53;10:53;;avaliacao_ntsl;;1;;;;
+s1_stop;padrao;10:54;10:54;;avaliacao_ntsl;;1;;;;
+s1_stop;padrao;10:55;10:55;;avaliacao_ntsl;;1;;;;
+s1_stop;padrao;10:56;10:56;;avaliacao_ntsl;;1;;;;
+s1_stop;padrao;10:57;10:57;;avaliacao_ntsl;;1;;;;
+s1_stop;padrao;10:57;10:57;;solicitacao;closeposition;1;1;;;
+s1_stop;padrao;10:58;10:58;10:58;preenchimento;closeposition;0;1;;;-375.0
+s1_stop;padrao;10:58;10:58;;avaliacao_ntsl;;0;;;;
+s1_stop;diagnostico;10:51;10:51;;avaliacao_ntsl;;0;;;;
+s1_stop;diagnostico;10:51;10:51;;solicitacao;buyatmarket;0;1;;;
+s1_stop;diagnostico;10:52;10:52;10:52;preenchimento;buyatmarket;1;1;;;0.0
+s1_stop;diagnostico;10:52;10:51;;avaliacao_ntsl_pos_preenchimento;;1;;;;
+s1_stop;diagnostico;10:52;10:52;;avaliacao_ntsl;;1;;;;
+s1_stop;diagnostico;10:52;10:52;;solicitacao;selltocoverstop;1;1;-795.0;-895.0;
+s1_stop;diagnostico;10:53;10:53;;avaliacao_ntsl;;1;;;;
+s1_stop;diagnostico;10:54;10:54;;avaliacao_ntsl;;1;;;;
+s1_stop;diagnostico;10:55;10:55;;gatilho_stop;selltocoverstop;1;1;-795.0;-895.0;
+s1_stop;diagnostico;10:55;10:55;10:55;preenchimento;selltocoverstop;0;1;-795.0;-895.0;-795.0
+s1_stop;diagnostico;10:55;10:55;;avaliacao_ntsl;;0;;;;
+s1_stop;diagnostico;10:56;10:56;;avaliacao_ntsl;;0;;;;
+s1_stop;diagnostico;10:57;10:57;;avaliacao_ntsl;;0;;;;
+s1_stop;diagnostico;10:58;10:58;;avaliacao_ntsl;;0;;;;
+
+=== docs/colaboracao/evidencias/WINZ26_v5_8_s1_toque_tardio_20261026_v1/exportacoes_profit.md ===
+
+# Exportações do Profit · S1-Alvo e S1-Stop
+
+Em Backtest OHLC, execute cada sonda com os parâmetros descritos no [relatório](README.md#configuração-das-duas-sondas). Use o mesmo pregão e oito barras consecutivas de **10:51 a 10:58 de 26/10/2026**. Comece cada execução zerada e sem pendências. Preserve os arquivos privados em seus formatos originais.
+
+| Prefixo | Sonda | Proteção única |
+|---|---|---|
+| `s1_alvo_toque_tardio` | [NTSL de alvo](sonda_s1_alvo_toque_tardio_profit_v1_0.ntsl) | Alvo +430 pontos |
+| `s1_stop_toque_tardio` | [NTSL de stop](sonda_s1_stop_toque_tardio_profit_v1_0.ntsl) | Gatilho −795 e limite −895 pontos |
+
+Acrescente estes sufixos ao prefixo de cada execução.
+
+| Sufixo | Conteúdo |
+|---|---|
+| `_console.txt` | Todas as linhas `SONDA_S1_ALVO;` ou `SONDA_S1_STOP;` e os avisos do Profit. Preserve ordem, sequências, rótulos repetidos, posição, pendências, OHLC e níveis. |
+| `_barras.csv` | WINZ26, 1 minuto, fuso, data/hora, abertura, máxima, mínima e fechamento das barras 10:51–10:58. |
+| `_operacoes.csv` | Relatório do mesmo backtest com número ou ID, ativo, lado, quantidade, preços e horários de entrada e saída. Preserve os segundos e os cabeçalhos. |
+| `_config.txt` ou captura | Build do Profit, modo OHLC, intervalo, lote e máximo, slippage, custos, execução nos limites e valores dos parâmetros. |
+| `_ordens.csv`, se disponível | Histórico nativo do mesmo backtest, com IDs e IDs substituídos, estados e motivos, tipo/lado, quantidades, preços e timestamps subminuto dos eventos de aceitação, execução, expiração ou cancelamento. Inclua IDs/vínculo OCO quando o relatório apresentar esse campo. |
+
+A configuração de cada sonda envia uma única proteção, sem par OCO previsto. Caso o histórico nativo esteja indisponível, o console e a operação exportada permitem observar a pendência e o horário de preenchimento. A identidade da ordem e o motivo de um eventual desaparecimento continuam dependentes da linha de estado nativa.
+
+=== docs/colaboracao/evidencias/WINZ26_v5_8_s1_toque_tardio_20261026_v1/insumos_privados.csv ===
+
+fonte;tamanho_bytes;sha256;janela_conferida;barras_conferidas
+WINZ26_20261026_profit_1min_privado.csv;62218;adace8f7c2ab691c3686e9e85533e2094b4bfd957ff7d377b3854fcb90fd92b9;2026-10-26 10:51 a 10:58;8
+barras_v58.csv;920086;1036ce183e5e0ff371ca10b21b2774e2f8420598c50d71b107cbe6a1eebf6863;2026-10-26 10:51 a 10:58;8
+
+=== docs/colaboracao/evidencias/WINZ26_v5_8_s1_toque_tardio_20261026_v1/matriz_profit_simulador.csv ===
+
+sonda;motor;modo;contexto_envio_protecao;nivel_pts_entrada;limite_pts_entrada;pendentes_t1;pendentes_t2;pendentes_t3;pendentes_t4;hora_preenchimento_protecao;hora_saida_limpeza;pontos_saida;resultado_liquido_brl;classificacao
+s1_alvo;Simulador;padrao;10:52;430;430;1;0;0;0;;10:58;-375.0;-75.0;expirada
+s1_alvo;Simulador;diagnostico;10:52;430;430;1;1;0;0;10:55;;430.0;86.0;preenchida após espera
+s1_alvo;Profit;Backtest OHLC;10:52 (programado);430;430;;;;;;;;;aguarda execução manual
+s1_stop;Simulador;padrao;10:52;-795;-895;1;0;0;0;;10:58;-375.0;-75.0;expirada
+s1_stop;Simulador;diagnostico;10:52;-795;-895;1;1;0;0;10:55;;-795.0;-159.0;preenchida após espera
+s1_stop;Profit;Backtest OHLC;10:52 (programado);-795;-895;;;;;;;;;aguarda execução manual
+
+=== docs/colaboracao/evidencias/WINZ26_v5_8_s1_toque_tardio_20261026_v1/README.md ===
+
+# S1 com uma proteção e toque na terceira barra elegível
+
+## Aceitação da opção experimental
+
+`--entrada-mercado-atraves-lacuna` fica **aceita como experimental** no replay OHLC. A opção é desativada por padrão e exige `--historico-continuo-lacunas`. A evidência cobre entradas a mercado elegíveis com posição zerada. O caso 1 da V3 reproduziu a solicitação no contexto 09:29, o preenchimento às 09:39, a avaliação extra em contexto 09:29 e a saída às 09:42, com +125 pontos. **O caso 2, com posição aberta e proteções pendentes na lacuna, permanece fora da paridade demonstrada.** [Claude](https://github.com/thiagozonda1989-stack/simuladorCotacao/pull/2#issuecomment-7071858509) · [Gemini](https://github.com/thiagozonda1989-stack/simuladorCotacao/pull/2#issuecomment-7071942061) · [Matriz da opção](../WINZ26_v5_8_entrada_mercado_lacuna_20261026_v1/controles_v3.csv)
+
+- Motor executado e revisado `142dbe882ae2a0436c4273a6e5bfa1268222e5d3`.
+- Evidências da opção `5166699dabb51b787db977fbc8028d8e2474437a`.
+- Evidências S1/S2 e base desta rodada `a1f693e8c73e4fce272d2c8b213a743b568a5f32`.
+
+## Configuração das duas sondas
+
+Use **Profit Backtest OHLC**, WINZ26, barras de 1 minuto, pregão de **26/10/2026**, fuso America/Sao_Paulo, um contrato, quantidade máxima um, slippage e custos zero e **Executar nos Limites** ativo. Comece cada execução com posição zerada e sem ordens. Mantenha a janela de teste sem filtros de horário ou zeragem externa entre 10:51 e 10:58. Compile cada NTSL como estratégia de execução e rode separadamente com os parâmetros padrão. A compilação e a execução nativas desta rodada estão pendentes.
+
+| Parâmetro | S1-Alvo | S1-Stop |
+|---|---:|---:|
+| `p_Data` | 1261026 | 1261026 |
+| `p_Entrada` | 1051 | 1051 |
+| `p_Protecao` (t) | 1052 | 1052 |
+| `p_Cancela` | 1056 | 1056 |
+| `p_Zera` | 1057 | 1057 |
+| `p_Fim` | 1058 | 1058 |
+| `p_Distancia`, pontos | 430 acima da entrada | 795 abaixo da entrada |
+| `p_Folga`, pontos | — | 100 abaixo do gatilho |
+
+A compra é solicitada no contexto 10:51. Em 10:52 (t), com a posição comprada, **S1-Alvo** solicita somente `SellToCoverLimit` a +430 pontos. **S1-Stop** solicita somente `SellToCoverStop`, com gatilho a −795 pontos e limite a −895. Cada proteção é enviada uma única vez. O cancelamento de limpeza, se ainda houver pendências, é solicitado às 10:56. Se a posição continuar aberta, a zeragem a mercado é solicitada às 10:57. A janela de log termina às 10:58. [NTSL S1-Alvo](sonda_s1_alvo_toque_tardio_profit_v1_0.ntsl) · [NTSL S1-Stop](sonda_s1_stop_toque_tardio_profit_v1_0.ntsl) · [Lista de exportações](exportacoes_profit.md)
+
+### Geometria conferida das barras
+
+A janela de 10:51–10:58 tem oito barras consecutivas. Os quatro campos OHLC coincidiram nas oito barras entre a exportação privada do Profit da v5.8 e as barras preparadas do replay. Os valores abaixo estão em pontos relativos à abertura de 10:52, preço de entrada no simulador. Confirme a geometria com as **barras e o preço de entrada das novas execuções do Profit** antes de classificar o resultado.
+
+| Barra | Abertura | Máxima | Mínima | Fechamento |
+|---|---:|---:|---:|---:|
+| 10:52 · t | 0 | +175 | −425 | −290 |
+| 10:53 · t+1 | −285 | +225 | −355 | +35 |
+| 10:54 · t+2 | +35 | +405 | −85 | +220 |
+| 10:55 · t+3 | +220 | +445 | −875 | −260 |
+| 10:56 · t+4 | −260 | −70 | −705 | −90 |
+
+A máxima de 10:55 excede o alvo em 15 pontos. A abertura fica abaixo do alvo, acima do gatilho do stop e coincide com o fechamento anterior. A mínima de 10:55 passa 80 pontos abaixo do gatilho e fica 20 pontos acima do limite do stop. Nenhuma barra anterior desde o envio toca a respectiva proteção. Às 10:56, os dois níveis voltam a ficar fora da faixa, o que permite observar eventual pendência antes da limpeza. Cada execução tem uma única proteção. [OHLC relativo completo](barras_relativas.csv) · [Insumos e hashes](insumos_privados.csv)
+
+## Matriz Profit × simulador
+
+| Proteção | Motor/modo | Pendências em t+1 / t+2 / t+3 | Preenchimento da proteção | Saída de limpeza | Classificação |
+|---|---|---|---|---|---|
+| Alvo | Profit OHLC | A coletar | A coletar | A coletar | Aguarda execução manual |
+| Alvo | Simulador padrão | 1 / 0 / 0 | — | 10:58, −375 pontos | Expirada após 10:53 |
+| Alvo | Simulador diagnóstico | 1 / 1 / 0 | 10:55, +430 pontos | — | Preenchida após espera |
+| Stop | Profit OHLC | A coletar | A coletar | A coletar | Aguarda execução manual |
+| Stop | Simulador padrão | 1 / 0 / 0 | — | 10:58, −375 pontos | Expirada após 10:53 |
+| Stop | Simulador diagnóstico | 1 / 1 / 0 | 10:55, −795 pontos | — | Preenchida após espera |
+
+O diagnóstico usa a flag existente `--no-ordem-so-proxima-barra` para confirmar que a geometria permite o preenchimento em t+3 quando a ordem se mantém ativa. Essa flag afeta a validade das ordens em geral. O padrão continua `ordem_so_proxima_barra=True`. Com a regra padrão, a ordem é vista em 10:53 e removida ao final dessa barra sem renovação. Nos quatro replays, a compra de 1 contrato ocorreu na abertura das 10:52. O histórico registra contexto NTSL e horário do preenchimento em campos distintos. A leitura de `HasPendingOrders` acontece no início da avaliação, após o processamento de ordens da barra pelo simulador. [Matriz CSV](matriz_profit_simulador.csv) · [Estados por avaliação](estados_simulador.csv) · [Solicitações e preenchimentos](eventos_simulador.csv)
+
+### Classificação da captura nativa
+
+Classifique **cada perna separadamente**, após conferir a janela e a solicitação única.
+
+- **Preenchida após espera.** O CSV atribui a saída à proteção em 10:55 (t+3), antes da limpeza, com posição zerada na avaliação correspondente ou evidência nativa equivalente.
+- **Pendente sem preenchimento observado.** A única proteção ainda aparece como pendente em 10:55 ou 10:56, com posição aberta e sem saída da proteção antes da limpeza.
+- **Expirada.** O simulador permite confirmar pela própria regra. No Profit, use o estado nativo de expiração. Se a pendência sumir sem preenchimento ou cancelamento solicitado, registre a hora da primeira avaliação sem pendência e mantenha o motivo indeterminado até obter o evento nativo.
+
+Use o log, o CSV de operações e o histórico nativo para confirmar a transição. Preserve diferenças de horário, preço ou estado antes de considerar uma opção específica de persistência de proteções. O caso 2 da lacuna (saída 09:40 no Profit e 09:42 no simulador) e a saída de 10:15, ambígua em OHLC, permanecem investigações separadas. Os resultados da S1 anterior confirmam presença de pelo menos uma pendência, e os da S2 cobrem abertura além do gatilho em barras consecutivas. [S1/S2 anteriores](../WINZ26_v5_8_sondas_s1_s2_profit_20261026_v1/README.md) · [Caso 2 da V3](../WINZ26_v5_8_sonda_profit_20261026_v3_teste2/README.md#caso-2) · [Ambiguidade às 10:15](../WINZ26_v5_8_entrada_mercado_lacuna_20261026_v1/README.md#regressões-e-testes)
+
+## Reprodução no simulador
+
+A cópia local do NTSL substitui `FloatToString(expr, 0)` por `(expr)` e remove o argumento de cor `clYellow` das chamadas a `ConsoleLog`. Use o CSV privado preparado de 26/10. Execute com destinos distintos para alvo e stop.
+
+```powershell
+# Para o diagnóstico de seleção da janela, use $flags = @('--no-ordem-so-proxima-barra').
+$flags = @()
+py -3.11 estrategia.py --csv $barrasPreparadas --ntsl $sondaLocal --saida $pastaReplay `
+  --formato ohlc --segundos 60 --tick 5 --valor-ponto 0.2 `
+  --avaliacao-pos-preenchimento --rastrear-ordens @flags
+py -3.11 -m pytest -q
+```
+
+Os quatro replays locais foram executados e os **89 testes** passaram, com 12 avisos de timezone do pandas já conhecidos. O motor e a validade padrão foram preservados. Os originais privados seguem no Windows. [Fontes completas para o Gemini](fontes_gemini.txt) · [Manifesto](SHA256SUMS.txt)
+
+=== docs/colaboracao/evidencias/WINZ26_v5_8_s1_toque_tardio_20261026_v1/sonda_s1_alvo_toque_tardio_profit_v1_0.ntsl ===
+
+{ S1 toque tardio: apenas SellToCoverLimit. Somente Backtest OHLC. }
+input
+  p_Data(1261026);
+  p_Entrada(1051);
+  p_Protecao(1052);
+  p_Cancela(1056);
+  p_Zera(1057);
+  p_Fim(1058);
+  p_Distancia(430);
+
+var
+  v_Seq, v_Pendentes : Integer;
+  v_EntradaEnviada, v_ProtecaoEnviada, v_Cancelou, v_Zerou : Boolean;
+  v_Limite : Float;
+
+begin
+  if (Date = p_Data) and (Time >= p_Entrada) and (Time <= p_Fim) then
+  begin
+    v_Seq := v_Seq + 1;
+    if HasPendingOrders then v_Pendentes := 1 else v_Pendentes := 0;
+    ConsoleLog("SONDA_S1_ALVO;AVALIACAO"
+      + ";data=" + FloatToString(Date, 0)
+      + ";hora=" + FloatToString(Time, 0)
+      + ";barra=" + FloatToString(CurrentBar, 0)
+      + ";seq=" + FloatToString(v_Seq, 0)
+      + ";posicao=" + FloatToString(PositionQty, 0)
+      + ";pendentes=" + FloatToString(v_Pendentes, 0)
+      + ";abertura=" + FloatToString(Open, 0)
+      + ";maxima=" + FloatToString(High, 0)
+      + ";minima=" + FloatToString(Low, 0)
+      + ";fechamento=" + FloatToString(Close, 0), clYellow);
+
+    if (Time = p_Entrada) and not v_EntradaEnviada and not HasPosition and not HasPendingOrders then
+    begin
+      v_EntradaEnviada := True;
+      ConsoleLog("SONDA_S1_ALVO;SOLICITA_COMPRA;seq=" + FloatToString(v_Seq, 0), clYellow);
+      BuyAtMarket(1);
+    end;
+
+    if (Time = p_Protecao) and IsBought and not v_ProtecaoEnviada then
+    begin
+      v_ProtecaoEnviada := True;
+      v_Limite := BuyPrice + p_Distancia;
+      ConsoleLog("SONDA_S1_ALVO;SOLICITA_ALVO;seq=" + FloatToString(v_Seq, 0)
+        + ";limite=" + FloatToString(v_Limite, 0), clYellow);
+      SellToCoverLimit(v_Limite, 1);
+    end;
+
+    if (Time = p_Cancela) and HasPendingOrders and not v_Cancelou then
+    begin
+      v_Cancelou := True;
+      ConsoleLog("SONDA_S1_ALVO;SOLICITA_CANCELAMENTO_LIMPEZA;seq=" + FloatToString(v_Seq, 0), clYellow);
+      CancelPendingOrders;
+    end;
+
+    if (Time = p_Zera) and HasPosition and not v_Zerou then
+    begin
+      v_Zerou := True;
+      ConsoleLog("SONDA_S1_ALVO;SOLICITA_ZERAGEM_LIMPEZA;seq=" + FloatToString(v_Seq, 0), clYellow);
+      ClosePosition;
+    end;
+  end;
+end;
+
+=== docs/colaboracao/evidencias/WINZ26_v5_8_s1_toque_tardio_20261026_v1/sonda_s1_stop_toque_tardio_profit_v1_0.ntsl ===
+
+{ S1 toque tardio: apenas SellToCoverStop. Somente Backtest OHLC. }
+input
+  p_Data(1261026);
+  p_Entrada(1051);
+  p_Protecao(1052);
+  p_Cancela(1056);
+  p_Zera(1057);
+  p_Fim(1058);
+  p_Distancia(795);
+  p_Folga(100);
+
+var
+  v_Seq, v_Pendentes : Integer;
+  v_EntradaEnviada, v_ProtecaoEnviada, v_Cancelou, v_Zerou : Boolean;
+  v_Limite, v_Gatilho : Float;
+
+begin
+  if (Date = p_Data) and (Time >= p_Entrada) and (Time <= p_Fim) then
+  begin
+    v_Seq := v_Seq + 1;
+    if HasPendingOrders then v_Pendentes := 1 else v_Pendentes := 0;
+    ConsoleLog("SONDA_S1_STOP;AVALIACAO"
+      + ";data=" + FloatToString(Date, 0)
+      + ";hora=" + FloatToString(Time, 0)
+      + ";barra=" + FloatToString(CurrentBar, 0)
+      + ";seq=" + FloatToString(v_Seq, 0)
+      + ";posicao=" + FloatToString(PositionQty, 0)
+      + ";pendentes=" + FloatToString(v_Pendentes, 0)
+      + ";abertura=" + FloatToString(Open, 0)
+      + ";maxima=" + FloatToString(High, 0)
+      + ";minima=" + FloatToString(Low, 0)
+      + ";fechamento=" + FloatToString(Close, 0), clYellow);
+
+    if (Time = p_Entrada) and not v_EntradaEnviada and not HasPosition and not HasPendingOrders then
+    begin
+      v_EntradaEnviada := True;
+      ConsoleLog("SONDA_S1_STOP;SOLICITA_COMPRA;seq=" + FloatToString(v_Seq, 0), clYellow);
+      BuyAtMarket(1);
+    end;
+
+    if (Time = p_Protecao) and IsBought and not v_ProtecaoEnviada then
+    begin
+      v_ProtecaoEnviada := True;
+      v_Gatilho := BuyPrice - p_Distancia;
+      v_Limite := v_Gatilho - p_Folga;
+      ConsoleLog("SONDA_S1_STOP;SOLICITA_STOP;seq=" + FloatToString(v_Seq, 0)
+        + ";gatilho=" + FloatToString(v_Gatilho, 0)
+        + ";limite=" + FloatToString(v_Limite, 0), clYellow);
+      SellToCoverStop(v_Gatilho, v_Limite, 1);
+    end;
+
+    if (Time = p_Cancela) and HasPendingOrders and not v_Cancelou then
+    begin
+      v_Cancelou := True;
+      ConsoleLog("SONDA_S1_STOP;SOLICITA_CANCELAMENTO_LIMPEZA;seq=" + FloatToString(v_Seq, 0), clYellow);
+      CancelPendingOrders;
+    end;
+
+    if (Time = p_Zera) and HasPosition and not v_Zerou then
+    begin
+      v_Zerou := True;
+      ConsoleLog("SONDA_S1_STOP;SOLICITA_ZERAGEM_LIMPEZA;seq=" + FloatToString(v_Seq, 0), clYellow);
+      ClosePosition;
+    end;
+  end;
+end;
+
+=== docs/colaboracao/evidencias/WINZ26_v5_8_s1_toque_tardio_20261026_v1/SHA256SUMS.txt ===
+
+24030af73b16497d6a2b611b857ecc1a1db028e181500fb602387c9e65f59e20  barras_relativas.csv
+500425b5a2b23035dcd895aebf124826979753eafd9e2085311bb12662ae8f29  estados_simulador.csv
+12d2a156caf2ceace54e568b29c7989c1d93ae1ded2203ce8768850301f699ca  eventos_simulador.csv
+b09250ab5466af773412b5f6b5724f9d94fe88380ec9d8b934ec48185125c3b7  exportacoes_profit.md
+3ed22009cb128c8623a367e9d60946233d3ff3b4774ad2e778d3c97260a01af8  insumos_privados.csv
+58d11806d8570193a9dd42e34a14a401d967938f185771eb71b5d63337bcadac  matriz_profit_simulador.csv
+485839642435e105217caa2af700ea72913ac0e073af752705d64aa0d02022b2  README.md
+3b00bd66e59408024ff9df0c10463409405153937ecdec2179bf9e824efbec2c  sonda_s1_alvo_toque_tardio_profit_v1_0.ntsl
+1abfeacdc1b66b62af9b86d03f4d773178d6a55ce8962690f48d0d63e4637cb8  sonda_s1_stop_toque_tardio_profit_v1_0.ntsl
+
+=== docs/colaboracao/evidencias/WINZ26_v5_8_entrada_mercado_lacuna_20261026_v1/controles_v3.csv ===
+
+caso;modo;canceladas_lacuna;lacunas_com_posicao;preenchimentos_total;posicao_avaliacao_regular_09h39;hora_entrada;hora_saida;contexto_extra_na_retomada;pontos;resultado_liquido_brl
+0;reinicio;0;0;0;0;;;;0.0;0.0
+0;continuidade;0;0;0;0;;;;0.0;0.0
+0;entrada;0;0;0;0;;;;0.0;0.0
+1;reinicio;1;0;0;0;;;;0.0;0.0
+1;continuidade;1;0;0;0;;;;0.0;0.0
+1;entrada;0;0;2;1;09:39;09:42;09:29;125.0;25.0
+2;reinicio;2;1;2;1;09:28;09:42;;-10300.0;-2060.0
+2;continuidade;2;1;2;1;09:28;09:42;;-10300.0;-2060.0
+2;entrada;2;1;2;1;09:28;09:42;;-10300.0;-2060.0
+
+=== docs/colaboracao/evidencias/WINZ26_v5_8_entrada_mercado_lacuna_20261026_v1/rastreio_caso1.csv ===
+
+motor;modo;hora_barra_replay;hora_contexto_ntsl;hora_execucao;evento;posicao;preco_relativo_pontos;ordem
+simulador;reinicio;09:29;09:29;;avaliacao_ntsl;0;;
+simulador;reinicio;09:29;09:29;;solicitacao;0;;buyatmarket
+simulador;reinicio;09:39;;;cancelamento_agregado;0;;
+simulador;reinicio;09:39;09:39;;avaliacao_ntsl;0;;
+simulador;reinicio;09:40;09:40;;avaliacao_ntsl;0;;
+simulador;reinicio;09:41;09:41;;avaliacao_ntsl;0;;
+simulador;reinicio;09:42;09:42;;avaliacao_ntsl;0;;
+simulador;continuidade;09:29;09:29;;avaliacao_ntsl;0;;
+simulador;continuidade;09:29;09:29;;solicitacao;0;;buyatmarket
+simulador;continuidade;09:39;;;cancelamento_agregado;0;;
+simulador;continuidade;09:39;09:39;;avaliacao_ntsl;0;;
+simulador;continuidade;09:40;09:40;;avaliacao_ntsl;0;;
+simulador;continuidade;09:41;09:41;;avaliacao_ntsl;0;;
+simulador;continuidade;09:42;09:42;;avaliacao_ntsl;0;;
+simulador;entrada;09:29;09:29;;avaliacao_ntsl;0;;
+simulador;entrada;09:29;09:29;;solicitacao;0;;buyatmarket
+simulador;entrada;09:39;09:39;09:39;preenchimento;1;0.0;buyatmarket
+simulador;entrada;09:39;09:29;;avaliacao_ntsl_pos_preenchimento;1;;
+simulador;entrada;09:39;09:39;;avaliacao_ntsl;1;;
+simulador;entrada;09:40;09:40;;avaliacao_ntsl;1;;
+simulador;entrada;09:41;09:41;;avaliacao_ntsl;1;;
+simulador;entrada;09:41;09:41;;solicitacao;1;;closeposition
+simulador;entrada;09:42;09:42;09:42;preenchimento;0;125.0;closeposition
+simulador;entrada;09:42;09:42;;avaliacao_ntsl;0;;
+Profit;OHLC;;09:29;;avaliação seq. 3;0;;
+Profit;OHLC;;09:29;;solicitação de compra;0;;
+Profit;OHLC;;;09:39;preenchimento;1;0;
+Profit;OHLC;;09:29;;avaliação extra seq. 4;1;;
+Profit;OHLC;;09:39;;avaliação seq. 5;1;;
+Profit;OHLC;;09:41;;solicitação de limpeza;1;;
+Profit;OHLC;;;09:42;preenchimento;0;125;
+Profit;OHLC;;09:42;;avaliação seq. 8;0;;
+
+=== docs/colaboracao/evidencias/WINZ26_v5_8_entrada_mercado_lacuna_20261026_v1/regressao_v5_7.csv ===
+
+pregao;modo;profit;simulador;exatas;operacao_182_exata;arquivos_com_hash_igual;referencia
+2026-10-21;padrao;10;10;10;;4;replay anterior
+2026-10-21;protecao-legada;10;10;10;;4;replay anterior
+2026-10-21;pos-preenchimento;10;10;10;;4;replay anterior
+2026-10-21;pareado-continuidade;10;10;10;;4;par com continuidade
+2026-10-21;pareado-entrada;10;10;10;;4;par com continuidade
+2026-10-26;padrao;12;10;8;0;4;replay anterior
+2026-10-26;protecao-legada;12;11;11;0;4;replay anterior
+2026-10-26;pos-preenchimento;12;12;12;1;4;replay anterior
+2026-10-26;pareado-continuidade;12;12;12;1;4;par com continuidade
+2026-10-26;pareado-entrada;12;12;12;1;4;par com continuidade
+
+=== docs/colaboracao/evidencias/WINZ26_v5_8_entrada_mercado_lacuna_20261026_v1/regressao_v5_8.csv ===
+
+pregao;modo;profit;simulador;exatas;solicitacoes_comparadas;solicitacoes_divergentes;primeiro_preenchimento_diferente_profit;primeiro_preenchimento_diferente_simulador;arquivos_iguais_a_referencia
+2026-10-21;reinicio;7;7;7;306;0;;;4
+2026-10-21;continuidade;7;7;7;306;0;;;4
+2026-10-21;entrada;7;7;7;306;0;;;4
+2026-10-26;reinicio;10;10;8;68;18;10:15;09:51;4
+2026-10-26;continuidade;10;10;9;62;0;10:15;10:15;4
+2026-10-26;entrada;10;10;9;62;0;10:15;10:15;4
+
+=== docs/colaboracao/evidencias/WINZ26_v5_8_sondas_s1_s2_profit_20261026_v1/persistencia_s1.csv ===
+
+hora_contexto;barra_apos_envio;posicao_profit;pendentes_profit;posicao_simulador;pendentes_simulador;solicitacao_cancelamento_profit;solicitacao_zeragem_ambos
+13:16;0;1;0;1;0;0;0
+13:17;1;1;1;1;1;0;0
+13:18;2;1;1;1;0;0;0
+13:19;3;1;1;1;0;0;0
+13:20;4;1;1;1;0;0;0
+13:21;5;1;1;1;0;1;0
+13:22;6;1;0;1;0;0;1
+13:23;7;0;0;0;0;0;0
+
+=== docs/colaboracao/evidencias/WINZ26_v5_8_sondas_s1_s2_profit_20261026_v1/comparacao.csv ===
+
+sonda;pregao;lado;quantidade;entrada_profit;saida_profit;entrada_simulador;saida_simulador;entrada_saida_exatas;saida_ordem_simulador;duracao_segundos;resultado_pontos_profit;resultado_pontos_simulador;liquido_brl_profit;liquido_brl_simulador;comissoes_brl_profit;entrada_ao_preco_abertura;saida_ao_preco_abertura;gatilho_contido_na_barra_de_saida;saida_pts_ao_gatilho
+s1;2026-10-26;C;1;13:16:00;13:23:00;13:16:00;13:23:00;1;closeposition;420;-1200.00;-1200.0;-240.00;-240.0;0.00;1;1;0;
+s2v1;2026-10-26;C;1;13:45:00;13:46:00;13:45:00;13:46:00;1;selltocoverstop;60;-25.00;-25.0;-5.00;-5.0;0.00;1;1;1;-5.00
+s2v2;2026-10-26;C;1;15:28:00;15:29:00;15:28:00;15:29:00;1;selltocoverstop;60;10.00;10.0;2.00;2.0;0.00;1;1;0;-5.00

@@ -1,0 +1,5 @@
+rodada;print_original;ativo;minutos;analise_inicio;analise_fim;quantidade;quantidade_maxima;slippage_ticks;custos_brl;executar_nos_limites;backtest_visivel;seletor_ohlc_visivel;p_Perna;p_SaidaMercado;p_Data;p_Entrada;p_Protecao;p_EnvioMercado;p_Limpeza;p_Fim;p_Alvo;p_Stop;p_Folga
+01_alvo_controle;01_alvo_mercado_configuracao.png;WINZ26;1;2026-10-26;2026-10-26;1;1;0;0.00;1;1;0;1;0;1261026;1051;1052;1054;1056;1058;428;793;101
+02_alvo_mercado;02_alvo_mercado_configuracao.png;WINZ26;1;2026-10-26;2026-10-26;1;1;0;0.00;1;1;0;1;1;1261026;1051;1052;1054;1056;1058;428;793;101
+03_stop_controle;03_stop_controle_configuracao.png;WINZ26;1;2026-10-26;2026-10-26;1;1;0;0.00;1;1;0;2;0;1261026;1051;1052;1054;1056;1058;428;793;101
+04_stop_mercado;04_stop_mercado_configuracao.png;WINZ26;1;2026-10-26;2026-10-26;1;1;0;0.00;1;1;0;2;1;1261026;1051;1052;1054;1056;1058;428;793;101

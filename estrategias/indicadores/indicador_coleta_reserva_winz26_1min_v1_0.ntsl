@@ -1,0 +1,23 @@
+{ Coleta da reserva WINZ26 em grafico de 1 minuto, versao 1.0. }
+{ Copiar Estudos para Excel inclui Data e OHLC do grafico. }
+
+var
+  v_Trades : Float;
+  v_Quantidade_Contratos : Float;
+  v_Volume_Financeiro : Float;
+  v_Saldo_Agressao : Float;
+  v_VWAP_Diaria : Float;
+
+begin
+  v_Trades := Trades;
+  v_Quantidade_Contratos := Quantity;
+  v_Volume_Financeiro := Volume;
+  v_Saldo_Agressao := AgressionVolBalance;
+  v_VWAP_Diaria := VWAP(1);
+
+  Plot(v_Trades);
+  Plot2(v_Quantidade_Contratos);
+  Plot3(v_Volume_Financeiro);
+  Plot4(v_Saldo_Agressao);
+  Plot5(v_VWAP_Diaria);
+end;

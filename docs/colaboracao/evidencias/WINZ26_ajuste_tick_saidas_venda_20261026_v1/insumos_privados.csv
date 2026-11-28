@@ -1,0 +1,10 @@
+arquivo;bytes;sha256;uso
+WINZ26_20261021_profit_1min_privado.csv;64357;7b1e173400d7bd68f6198fbda51e0ef2026c3f289b7ea51e956e4c8d04066e60;replay v5.7 em 21/10
+WINZ26_20261026_profit_1min_privado.csv;62218;adace8f7c2ab691c3686e9e85533e2094b4bfd957ff7d377b3854fcb90fd92b9;replay v5.7 em 26/10 e controles S1, prioridade, V3
+2026-10-21-barras-historico.csv;127607;f1d85e4454e8c6c61e47c44832f5d9fc7280d60f44fa7ff49ff1d1bda9ffdf6b;replay v5.8 em 21/10 com pregão anterior
+2026-10-26-barras-historico.csv;125330;bd13dfa559bb6c26ff0c253d3414b8b9994fe699af3482a80b9129b66ab1ec13;replay v5.8 em 26/10 com pregão anterior
+inputs_v5_7_paridade.json;18;1b357e35a59c0fe6668e5763e93a4f3335ff8e5798f6b6160db6838bfd72a982;p_Lote=1
+operacoes_teste_v.csv;48497;da6261fcdcd58bb6313ab409bd220fae39766665b513da2a9b554c17511d0a97;comparação v5.7 com o Profit
+operacoes_v58.csv;43885;66cece48ff5c3e1aca3d42d4482665451d39195bf0be50fc497d302a77585c7d;comparação v5.8 com o Profit
+console_58.txt;1083641;38624ee2aab7c55ea12287f29736d7bfea3a3f0fce2140d833aeea8633e5bb69;avaliações do Profit na regressão v5.8
+barras_v58.csv;920086;1036ce183e5e0ff371ca10b21b2774e2f8420598c50d71b107cbe6a1eebf6863;referência OHLC nativa v5.8
