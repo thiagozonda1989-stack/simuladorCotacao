@@ -1,0 +1,171 @@
+{
+  "fontes": [
+    {
+      "papel": "barras_subminuto",
+      "sha256": "f0cc7737b509b2d1ffcef81a3e26880cfdac84853a76714c60684453d20fab15",
+      "bytes": 757137
+    },
+    {
+      "papel": "coleta_1min",
+      "sha256": "eb9d86e58a6a32b4499657f0c4bb2163e3978b666daea2cd44b0c8e768aaa4c5",
+      "bytes": 1621285
+    },
+    {
+      "papel": "referencia_1min_anterior",
+      "sha256": "530d7efaed5c29d0973c9343ba55629915685cd4528e4e885ca3d5424935b8b5",
+      "bytes": 920086
+    }
+  ],
+  "pregao": "2026-11-23",
+  "linhas": 10106,
+  "colunas": [
+    "Data",
+    "Abertura",
+    "Máxima",
+    "Mínima",
+    "Fechamento",
+    "v_Trades",
+    "v_Quantidade_Contratos",
+    "v_Volume_Financeiro",
+    "v_Saldo_Agressao",
+    "v_VWAP_Diaria"
+  ],
+  "primeiro_rotulo": "2026-11-23T09:03",
+  "ultimo_rotulo": "2026-11-23T18:15",
+  "resolucao_exportada_do_rotulo": "minuto",
+  "avancos_na_ordem_fisica_entre_recortes": 1,
+  "minutos_distintos": 171,
+  "repeticoes_esperadas_do_rotulo_minuto": 9935,
+  "minutos_com_60_linhas": 165,
+  "minutos_com_60_linhas_e_ohlc_e_aditivos_iguais": 165,
+  "minutos_com_60_linhas_e_vwap_igual": 1,
+  "janelas": {
+    "09:00": {
+      "barras": 0
+    },
+    "09:01": {
+      "barras": 0
+    },
+    "09:02": {
+      "barras": 0
+    },
+    "09:03": {
+      "barras": 30,
+      "referencia_presente": true,
+      "ohlc_e_series_aditivas_iguais": true,
+      "vwap_ultimo_registro_igual": true,
+      "diferencas": {
+        "Abertura": 0.0,
+        "Máxima": 0.0,
+        "Mínima": 0.0,
+        "Fechamento": 0.0,
+        "v_Trades": 0.0,
+        "v_Quantidade_Contratos": 0.0,
+        "v_Volume_Financeiro": 0.0,
+        "v_Saldo_Agressao": 0.0,
+        "v_VWAP_Diaria": 0.0
+      }
+    },
+    "09:04": {
+      "barras": 60,
+      "referencia_presente": true,
+      "ohlc_e_series_aditivas_iguais": true,
+      "vwap_ultimo_registro_igual": true,
+      "diferencas": {
+        "Abertura": 0.0,
+        "Máxima": 0.0,
+        "Mínima": 0.0,
+        "Fechamento": 0.0,
+        "v_Trades": 0.0,
+        "v_Quantidade_Contratos": 0.0,
+        "v_Volume_Financeiro": 0.0,
+        "v_Saldo_Agressao": 0.0,
+        "v_VWAP_Diaria": 0.0
+      }
+    },
+    "09:05": {
+      "barras": 6,
+      "referencia_presente": true,
+      "ohlc_e_series_aditivas_iguais": false,
+      "vwap_ultimo_registro_igual": false,
+      "diferencas": {
+        "Abertura": 0.0,
+        "Máxima": 0.0,
+        "Mínima": 140.0,
+        "Fechamento": -10.0,
+        "v_Trades": -31872.0,
+        "v_Quantidade_Contratos": -78947.0,
+        "v_Volume_Financeiro": -2619937054.0,
+        "v_Saldo_Agressao": -1329.0,
+        "v_VWAP_Diaria": 85.49
+      }
+    },
+    "18:13": {
+      "barras": 60,
+      "referencia_presente": true,
+      "ohlc_e_series_aditivas_iguais": true,
+      "vwap_ultimo_registro_igual": false,
+      "diferencas": {
+        "Abertura": 0.0,
+        "Máxima": 0.0,
+        "Mínima": 0.0,
+        "Fechamento": 0.0,
+        "v_Trades": 0.0,
+        "v_Quantidade_Contratos": 0.0,
+        "v_Volume_Financeiro": 0.0,
+        "v_Saldo_Agressao": 0.0,
+        "v_VWAP_Diaria": -9.5
+      }
+    },
+    "18:14": {
+      "barras": 60,
+      "referencia_presente": true,
+      "ohlc_e_series_aditivas_iguais": true,
+      "vwap_ultimo_registro_igual": false,
+      "diferencas": {
+        "Abertura": 0.0,
+        "Máxima": 0.0,
+        "Mínima": 0.0,
+        "Fechamento": 0.0,
+        "v_Trades": 0.0,
+        "v_Quantidade_Contratos": 0.0,
+        "v_Volume_Financeiro": 0.0,
+        "v_Saldo_Agressao": 0.0,
+        "v_VWAP_Diaria": -9.79
+      }
+    },
+    "18:15": {
+      "barras": 33,
+      "referencia_presente": true,
+      "ohlc_e_series_aditivas_iguais": false,
+      "vwap_ultimo_registro_igual": false,
+      "diferencas": {
+        "Abertura": 0.0,
+        "Máxima": 0.0,
+        "Mínima": 0.0,
+        "Fechamento": -10.0,
+        "v_Trades": -1009.0,
+        "v_Quantidade_Contratos": -2749.0,
+        "v_Volume_Financeiro": -91343587.0,
+        "v_Saldo_Agressao": 70.0,
+        "v_VWAP_Diaria": -10.13
+      }
+    }
+  },
+  "vwap_1min_vs_volume_e_quantidade_acumulados": {
+    "2026-11-23": {
+      "barras": 562,
+      "barras_dentro_de_001_ponto": 562
+    },
+    "2026-11-24": {
+      "barras": 565,
+      "barras_dentro_de_001_ponto": 565
+    }
+  },
+  "diferenca_ohlc_18h14_coleta_1min_menos_referencia_anterior": {
+    "Abertura": 0.0,
+    "Máxima": 0.0,
+    "Mínima": -10.0,
+    "Fechamento": -45.0
+  }
+}
